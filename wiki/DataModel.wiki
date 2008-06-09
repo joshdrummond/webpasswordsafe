@@ -1,55 +1,87 @@
 #labels design,database
+|| *subjects* ||||||
+||id||long||pk||
+||type||char(1)||||
+
 || *users* ||||||
 ||id||long||pk||
+||subject_id||long||fk subjects||
 ||username||varchar(8)||||
 ||password||varchar(64)||encrypted||
 ||fullname||varchar(100)||||
 ||email||varchar(321)||||
 ||active||char(1)||||
 
-|| *audit* ||||||
+|| *groups* ||||||
+||id||long||pk||
+||subject_id||long||fk subjects||
+||name||varchar||||
+
+|| *user_groups* ||||||
+||id||long||pk||
+||user_id||long||fk users||
+||group_id||long||fk groups||
+
+|| *subject_roles* ||||||
+||id||long||pk||
+||subject_id||long||fk subjects||
+||role_id||long||fk roles||
+
+|| *roles* ||||||
+||id||long||pk||
+||name||varchar||||
+
+|| *passwords* ||||||
+||id||long||pk||
+||name||varchar||||
+||username||varchar||||
+||password||varchar(108)||encrypted of 64||
+||notes||text||||
+
+|| *permissions* ||||||
+||id||long||pk||
+||password_id||long||fk passwords||
+||subject_id||long||fk subjects||
+||access_level||int||1,2,3||
+
+|| *templates* ||||||
+||id||long||pk||
+||user_id||long||fk users||
+||name||varchar||||
+||share||char(1)||y/n||
+
+|| *template_details* ||||||
+||id||long||pk||
+||template_id||long||fk templates||
+||subject_id||long||fk subjects||
+||access_level||int||1,2,3||
+
+|| *tags* ||||||
+||id||long||pk||
+||name||varchar||||
+
+|| *password_tags* ||||||
+||id||long||pk||
+||password_id||long||fk passwords||
+||tag_id||long||fk tags||
+
+|| *global_settings* ||||||
+||id||long||pk||
+||name||varchar||||
+||value||varchar||||
+
+|| *audit_history* ||||||
 ||id||long||pk||
 ||source_id||long||fk users||
 ||target_id||long||fk users, secrets||
 ||action_id||long||fk audit_actions||
 ||type_id||long||fk audit_types||
+||audit_date||datetime||||
 
-*audit_actions*
-  * id
-  * name
+|| *audit_actions* ||||||
+||id||long||pk||
+||name||varchar||||
 
-*audit_types*
-  * id
-  * name
-
-*user_roles*
-  * id
-  * user_id
-  * role_id
-
-*roles*
-  * id
-  * name
-
-*groups*
-  * id
-  * name
-
-*user_groups*
-  * id
-  * user_id
-  * group_id
-
-*secrets*
-  * id
-  * name
-  * username
-  * password (encrypted)
-  * notes
-
-*permissions*
-  * id
-  * secret_id
-  * target_type?
-  * target_id
-  * access_level
+|| *audit_types* ||||||
+||id||long||pk||
+||name||varchar||||
