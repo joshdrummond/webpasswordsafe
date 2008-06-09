@@ -1,22 +1,29 @@
-=Use-Case Requirements=
+=Requirements=
 
 == Version 1 ==
 
   # Administrator
-    # Create New User
-    # Modify Existing User
-      # Name, Password, Groups, Role
-    # Deactivate User
-    # Create Group
-    # Assign User to Group
-    # Remove User from Group
+    # CRUD User
+    # CRUD Group
+    # Assign/Remove User to/from Group
+    # Set global settings, authentication strength, auto password rules
+    # View system audit
   # Regular User
-    # Create New Password
-    # Modify Existing Password
-      # Attributes, Permissions
-    # Create New Permission Template
+    # CRUD Password
+    # CRUD Permission Template
+    # Assign Permissions to Password, directly or with template
+    # Change user password
     # Modify Existing Permission Template
+    # View Password Audit, reporting?
+    # Generate strong password tool
+    # Set personal settings
+    # Import/export csv
+    # Web service API for retrieving password
+  # Non-functional
+    # Pluggable event auditing
+    # Pluggable authentication
 
 
 == Future ==
-
+  # Different Password types
+  # JMS based remote password changing
