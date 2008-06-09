@@ -1,0 +1,55 @@
+#labels design,database
+|| *users* ||||||
+||id||long||pk||
+||username||varchar(8)||||
+||password||varchar(64)||encrypted||
+||fullname||varchar(100)||||
+||email||varchar(321)||||
+||active||char(1)||||
+
+|| *audit* ||||||
+||id||long||pk||
+||source_id||long||fk users||
+||target_id||long||fk users, secrets||
+||action_id||long||fk audit_actions||
+||type_id||long||fk audit_types||
+
+*audit_actions*
+  * id
+  * name
+
+*audit_types*
+  * id
+  * name
+
+*user_roles*
+  * id
+  * user_id
+  * role_id
+
+*roles*
+  * id
+  * name
+
+*groups*
+  * id
+  * name
+
+*user_groups*
+  * id
+  * user_id
+  * group_id
+
+*secrets*
+  * id
+  * name
+  * username
+  * password (encrypted)
+  * notes
+
+*permissions*
+  * id
+  * secret_id
+  * target_type?
+  * target_id
+  * access_level
