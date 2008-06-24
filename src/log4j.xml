@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!--
+    Copyright 2008 Josh Drummond
+
+    This file is part of WebPasswordSafe.
+
+    WebPasswordSafe is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    WebPasswordSafe is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with WebPasswordSafe; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+  <appender name="dailyFile" class="org.apache.log4j.DailyRollingFileAppender">
+      <param name="File" value="${catalina.base}/logs/webpasswordsafe.log" />
+      <param name="Append" value="true" />
+      <param name="DatePattern" value="'.'yyyy-MM-dd" />
+    <layout class="org.apache.log4j.PatternLayout"> 
+      <param name="ConversionPattern" value="%d %-5p [%t]: %m%n"/>
+    </layout>
+  </appender>
+
+  <appender name="console" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name= "ConversionPattern" value= "%d %-5p %c [%t]: %m%n"/>
+    </layout>
+  </appender>
+
+  <category name="com.joshdrummond" additivity="false">
+    <priority value="debug" />
+    <appender-ref ref="console" />
+  </category>
+
+  <root>
+    <priority value="info" />
+    <appender-ref ref="console" />
+  </root>
+
+</log4j:configuration>
