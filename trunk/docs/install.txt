@@ -1,0 +1,33 @@
+WebPasswordSafe Installation Instructions
+
+1. Requirements:
+	a. Java 5.0 +
+	b. Java Servlet Container (i.e. Apache Tomcat 5.5+)
+	c. JDBC compatible RDBMS (i.e. MySQL 5.x)
+
+2. Additional 3rd Party library requirements:
+
+WEB-INF/lib/
+	ant-antlr.jar [1]
+	antlr.jar [1]
+	asm-attrs.jar [1]
+	asm.jar [1]
+	cglib.jar [1]
+	commons-collections.jar [1]
+	commons-dbcp.jar [2]
+	commons-logging.jar [1]
+	commons-pool.jar [2]
+	dom4j.jar [1]
+	gwt-sl.jar [3]
+	hibernate3.jar [1]
+	jta.jar [1]
+	log4j.jar [1]
+	mysql-connector-java-3.1.13-bin.jar [4]
+	spring.jar [2]
+	spring-webmvc.jar [2]
+
+[1] Hibernate 3.2 distribution (http://www.hibernate.org/)
+[2] Spring 2.5 with dependencies distribution (http://www.springframework.org/)
+[3] GWT-SL 0.1.5 (http://gwt-widget.sourceforge.net/)
+[4] MySQL Connector/J JDBC distribution (http://dev.mysql.com/downloads/connector/j/3.1.html)
+[5] GWT 1.4.62 (http://code.google.com/webtoolkit/)
