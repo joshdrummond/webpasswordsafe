@@ -17,49 +17,16 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-package com.joshdrummond.webpasswordsafe.client.model;
-
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
+package com.joshdrummond.webpasswordsafe.client.model.common;
 
 /**
  * @author Josh Drummond
  *
  */
-public class ClientModel
+public class RoleDTO
 {
-    private UserDTO user;
-    private boolean isLoggedIn;
-    
-    public ClientModel()
-    {
-        user = new UserDTO();
-        isLoggedIn = false;
-    }
 
-    public boolean isAuthorized(String permission)
-    {
-        return isLoggedIn();
-    }
+    private long id;
+    private String name;
     
-    public boolean isLoggedIn()
-    {
-        return isLoggedIn;
-    }
-    
-    public void setLoggedIn(boolean isLoggedIn)
-    {
-        this.isLoggedIn = isLoggedIn;
-    }
-
-    public UserDTO getLoggedInUser()
-    {
-        return user;
-    }
-    
-    public void setLoggedInUser(UserDTO user)
-    {
-        this.user = user;
-    }
-
 }

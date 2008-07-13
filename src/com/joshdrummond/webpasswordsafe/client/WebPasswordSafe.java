@@ -22,14 +22,16 @@ package com.joshdrummond.webpasswordsafe.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
+//import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.joshdrummond.webpasswordsafe.client.model.ClientModel;
+import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.ui.LoginDialog;
+import com.joshdrummond.webpasswordsafe.client.ui.UserDialog;
 
 
 /**
@@ -53,17 +55,18 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
             headerGwtLabel = new Label(TITLE);
             rootPanel.add(headerGwtLabel, 10, 12);
             headerGwtLabel.setStyleName("gwt-Label-MainTitle");
-            headerGwtLabel.setWidth("499px");
+            headerGwtLabel.setWidth("216px");
 
             notLoggedInLabel = new Label(NOT_LOGGED_IN);
-            rootPanel.add(notLoggedInLabel, 551, 12);
+            rootPanel.add(notLoggedInLabel, 310, 12);
             notLoggedInLabel.setStyleName("gwt-Label-LoggedInUser");
             notLoggedInLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-            notLoggedInLabel.setWidth("276px");
+            notLoggedInLabel.setWidth("330px");
 
             final MenuBar menuBar = new MenuBar();
+            menuBar.setAutoOpen(true);
             rootPanel.add(menuBar, 8, 33);
-            menuBar.setWidth("834px");
+            menuBar.setWidth("632px");
 
             final MenuBar menuBar_2 = new MenuBar(true);
 
@@ -72,6 +75,22 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
                     doLogin();
                 }
             });
+
+            final MenuBar menuBar_1 = new MenuBar(true);
+
+            menuBar_1.addItem("General", (Command)null);
+
+            menuBar_1.addItem("Change Password", (Command)null);
+
+            menuBar_2.addItem("Settings", menuBar_1);
+
+            final MenuBar menuBar_13 = new MenuBar(true);
+
+            menuBar_13.addItem("User", (Command)null);
+
+            menuBar_13.addItem("Admin", (Command)null);
+
+            menuBar_2.addItem("Role", menuBar_13);
 
             menuBar_2.addItem("Logout", new Command() {
                 public void execute() {
@@ -82,26 +101,76 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
 
             menuBar.addItem("User", menuBar_2);
 
-            final MenuBar menuBar_1 = new MenuBar(true);
+            final MenuBar menuBar_3 = new MenuBar(true);
 
-            menuBar.addItem("Project", menuBar_1);
+            menuBar_3.addItem("Help", (Command)null);
 
-            menuBar_1.addItem("Open...", new Command() {
+            menuBar_3.addItem("About", (Command)null);
+
+            final MenuBar menuBar_5 = new MenuBar(true);
+
+            menuBar_5.addItem("User Audit", (Command)null);
+
+            menuBar_5.addItem("Permissions", (Command)null);
+
+            final MenuBar menuBar_6 = new MenuBar(true);
+
+            menuBar_6.addItem("New", (Command)null);
+
+            final MenuBar menuBar_7 = new MenuBar(true);
+
+            menuBar_7.addItem("New", (Command)null);
+
+            menuBar_7.addItem("Edit", (Command)null);
+
+            menuBar_6.addItem("Template", menuBar_7);
+
+            menuBar_6.addItem("Search", (Command)null);
+
+            menuBar.addItem("Password", menuBar_6);
+
+            menuBar.addItem("Reports", menuBar_5);
+
+            final MenuBar menuBar_4 = new MenuBar(true);
+
+            menuBar_4.addItem("Settings", (Command)null);
+
+            final MenuBar menuBar_8 = new MenuBar(true);
+
+            final MenuBar menuBar_9 = new MenuBar(true);
+
+            menuBar_9.addItem("Add", (Command)null);
+
+            menuBar_9.addItem("Edit", (Command)null);
+
+            final MenuBar menuBar_10 = new MenuBar(true);
+
+            menuBar_10.addItem("Add", new Command() {
                 public void execute() {
-                    doOpenProject();
+                    doAddUser();
                 }
             });
 
-            menuBar_1.addItem("Close", new Command() {
+            menuBar_10.addItem("Edit", new Command() {
                 public void execute() {
-                    doCloseProject();
+                    doEditUser();
                 }
             });
+
+            menuBar_4.addItem("Users", menuBar_10);
+
+            menuBar_4.addItem("Groups", menuBar_9);
+
+            menuBar_4.addItem("Roles", menuBar_8);
+
+            menuBar.addItem("Admin", menuBar_4);
+
+            menuBar.addItem("About", menuBar_3);
         }
 
         simplePanel = new SimplePanel();
         rootPanel.add(simplePanel, 10, 62);
-        simplePanel.setSize("832px", "545px");
+        simplePanel.setSize("630px", "418px");
 
     }
 
@@ -109,7 +178,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     {
         if (clientModel.isLoggedIn())
         {
-            notLoggedInLabel.setText(LOGGED_IN+clientModel.getUserName());
+            notLoggedInLabel.setText(LOGGED_IN+clientModel.getLoggedInUser().getUsername());
         }
         else
         {
@@ -127,38 +196,66 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         displayLoginDialog();
     }
 
+    private void doAddUser()
+    {
+        if (clientModel.isAuthorized("ADD_USER"))
+        {
+            displayUserDialog(new UserDTO());
+        }
+    }
+    
+    private void doEditUser()
+    {
+        if (clientModel.isAuthorized("EDIT_USER"))
+        {
+            UserDTO editUser = new UserDTO();
+            editUser.setActive(true);
+            editUser.setUsername("josh");
+            editUser.setEmail("josh@test.com");
+            editUser.setFullname("Josh Drummond");
+            editUser.setId(1);
+            displayUserDialog(editUser);
+        }
+    }
+    
     private void doLogout()
     {
-        clientModel.setUserName("");
+        clientModel.getLoggedInUser().setUsername("");
+        clientModel.setLoggedIn(false);
         refreshLoginStatus();
     }
 
-    private void doOpenProject()
-    {
-        if (clientModel.isLoggedIn())
-        {
-            displayOpenProjectDialog();
-        }
-        else
-        {
-            Window.alert("Must be logged in first.");
-        }
-    }
+//    private void doOpenProject()
+//    {
+//        if (clientModel.isLoggedIn())
+//        {
+//            displayOpenProjectDialog();
+//        }
+//        else
+//        {
+//            Window.alert("Must be logged in first.");
+//        }
+//    }
 
-    private void doCloseProject()
-    {
-//        clientModel.setProjectName("");
-//        refreshProjectPanel();
-    }
+//    private void doCloseProject()
+//    {
+////        clientModel.setProjectName("");
+////        refreshProjectPanel();
+//    }
     
     private void displayLoginDialog()
     {
         new LoginDialog(this).show();
     }
-    private void displayOpenProjectDialog()
+    
+    private void displayUserDialog(UserDTO user)
     {
-//        new OpenProjectDialog(this).show();
+        new UserDialog(user).show();
     }
+//    private void displayOpenProjectDialog()
+//    {
+////        new OpenProjectDialog(this).show();
+//    }
     public void refreshProjectPanel()
     {
 //        refreshProjectStatus();
