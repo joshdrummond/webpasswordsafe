@@ -6,16 +6,18 @@
 || *users* ||||||
 ||id||long||pk||
 ||subject_id||long||fk subjects||
-||username||varchar(8)||||
-||password||varchar(64)||encrypted||
-||fullname||varchar(100)||||
+||username||varchar(64)||immutable||
+||password||varchar(64)||hash encrypted of 64||
+||fullname||varchar(256)||||
 ||email||varchar(321)||||
 ||active||char(1)||||
+||date_created||datetime||||
+||last_login||datetime||||
 
 || *groups* ||||||
 ||id||long||pk||
 ||subject_id||long||fk subjects||
-||name||varchar||||
+||name||varchar(256)||||
 
 || *user_groups* ||||||
 ||id||long||pk||
@@ -29,14 +31,32 @@
 
 || *roles* ||||||
 ||id||long||pk||
-||name||varchar||||
+||name||varchar(256)||||
 
 || *passwords* ||||||
 ||id||long||pk||
-||name||varchar||||
-||username||varchar||||
-||password||varchar(108)||encrypted of 64||
+||name||varchar(256)||||
+||username||varchar(64)||immutable||
 ||notes||text||||
+||max_history||int||-1 = infinite?||
+||active||char(1)||||
+||date_created||datetime||||
+||user_created_id||long||fk users||
+||date_last_update||datetime||||
+||user_last_update_id||long||fk users||
+
+|| *password_data* ||||||
+||id||long||pk||
+||password_id||long||fk passwords||
+||password||varchar(108)||encrypted of 64||
+||date_created||datetime||||
+||user_created_id||long||fk users||
+
+|| *password_access_audit* ||||||
+||id||long||pk||
+||password_id||long||fk passwords||
+||user_id||long||fk users||
+||date_accessed||datetime||||
 
 || *permissions* ||||||
 ||id||long||pk||
@@ -47,7 +67,7 @@
 || *templates* ||||||
 ||id||long||pk||
 ||user_id||long||fk users||
-||name||varchar||||
+||name||varchar(256)||||
 ||share||char(1)||y/n||
 
 || *template_details* ||||||
@@ -58,7 +78,7 @@
 
 || *tags* ||||||
 ||id||long||pk||
-||name||varchar||||
+||name||varchar(256)||||
 
 || *password_tags* ||||||
 ||id||long||pk||
@@ -67,21 +87,11 @@
 
 || *global_settings* ||||||
 ||id||long||pk||
-||name||varchar||||
-||value||varchar||||
+||name||varchar(256)||||
+||value||varchar(256)||||
 
-|| *audit_history* ||||||
+|| *user_settings* ||||||
 ||id||long||pk||
-||source_id||long||fk users||
-||target_id||long||fk users, secrets||
-||action_id||long||fk audit_actions||
-||type_id||long||fk audit_types||
-||audit_date||datetime||||
-
-|| *audit_actions* ||||||
-||id||long||pk||
-||name||varchar||||
-
-|| *audit_types* ||||||
-||id||long||pk||
-||name||varchar||||
+||user_id||long||fk users||
+||name||varchar(256)||||
+||value||varchar(256)||||
