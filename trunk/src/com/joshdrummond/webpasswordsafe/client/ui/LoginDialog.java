@@ -26,6 +26,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -34,9 +36,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 
+/**
+ * 
+ * @author Josh Drummond
+ *
+ */
 public class LoginDialog extends DialogBox {
 
-    private TextBox textBox;
+    private TextBox usernameTextBox;
     private PasswordTextBox passwordTextBox;
     private MainWindow main;
     
@@ -54,9 +61,9 @@ public class LoginDialog extends DialogBox {
         flexTable.setWidget(0, 0, usernameLabel);
 
         passwordTextBox = new PasswordTextBox();
-        textBox = new TextBox();
-        flexTable.setWidget(0, 2, textBox);
-        textBox.addKeyboardListener(new KeyboardListener() {
+        usernameTextBox = new TextBox();
+        flexTable.setWidget(0, 2, usernameTextBox);
+        usernameTextBox.addKeyboardListener(new KeyboardListener() {
             public void onKeyDown(Widget sender, char keyCode, int modifiers) {
             }
             public void onKeyPress(Widget sender, char keyCode, int modifiers) {
@@ -79,40 +86,45 @@ public class LoginDialog extends DialogBox {
             public void onKeyPress(Widget sender, char keyCode, int modifiers) {
                 if (keyCode == KEY_ENTER)
                 {
-                    submit();
+                    doSubmit();
                 }
             }
             public void onKeyUp(Widget sender, char keyCode, int modifiers) {
             }
         });
 
+        final FlowPanel flowPanel = new FlowPanel();
+        flexTable.setWidget(2, 0, flowPanel);
+        flexTable.getCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_CENTER);
+        flexTable.getFlexCellFormatter().setColSpan(2, 0, 3);
+
         final Button enterButton = new Button();
-        flexTable.setWidget(2, 0, enterButton);
+        flowPanel.add(enterButton);
         enterButton.addClickListener(new ClickListener() {
             public void onClick(Widget sender) {
-                submit();
+                doSubmit();
             }
         });
         enterButton.setText("Submit");
 
         final Button cancelButton = new Button();
-        flexTable.setWidget(2, 2, cancelButton);
+        flowPanel.add(cancelButton);
         cancelButton.addClickListener(new ClickListener() {
             public void onClick(Widget sender) {
-                cancel();
+                doCancel();
             }
         });
         cancelButton.setText("Cancel");
 
     }
 
-//        public void show()
-//        {
-//            super.show();
-//            textBox.setFocus(true);
-//        }
+    public void show()
+    {
+        super.show();
+        usernameTextBox.setFocus(true);
+    }
     
-    private void submit()
+    private void doSubmit()
     {
         AsyncCallback callback = new AsyncCallback()
         {
@@ -124,7 +136,8 @@ public class LoginDialog extends DialogBox {
             public void onSuccess(Object result) {
                 if (((Boolean)result).booleanValue())
                 {
-                    main.getClientModel().setUserName(textBox.getText());
+                    main.getClientModel().getLoggedInUser().setUsername(usernameTextBox.getText());
+                    main.getClientModel().setLoggedIn(true);
                     main.refreshLoginStatus();
                     hide();
                 }
@@ -134,11 +147,11 @@ public class LoginDialog extends DialogBox {
                 }
             }
         };
-        LoginService.Util.getInstance().login(textBox.getText(), 
+        LoginService.Util.getInstance().login(usernameTextBox.getText(), 
                 passwordTextBox.getText(), callback);
     }
     
-    private void cancel()
+    private void doCancel()
     {
         hide();
     }
