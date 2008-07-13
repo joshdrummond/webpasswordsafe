@@ -1,7 +1,7 @@
 #labels design,database
 || *subjects* ||||||
 ||id||long||pk||
-||type||char(1)||||
+||type||char(1)||u/g||
 
 || *users* ||||||
 ||id||long||pk||
@@ -10,7 +10,7 @@
 ||password||varchar(64)||hash encrypted of 64||
 ||fullname||varchar(256)||||
 ||email||varchar(321)||||
-||active||char(1)||||
+||active||char(1)||y/n||
 ||date_created||datetime||||
 ||last_login||datetime||||
 
@@ -39,7 +39,7 @@
 ||username||varchar(64)||immutable||
 ||notes||text||||
 ||max_history||int||-1 = infinite?||
-||active||char(1)||||
+||active||char(1)||y/n||
 ||date_created||datetime||||
 ||user_created_id||long||fk users||
 ||date_last_update||datetime||||
