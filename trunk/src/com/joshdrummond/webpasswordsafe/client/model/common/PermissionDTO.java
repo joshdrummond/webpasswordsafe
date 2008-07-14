@@ -16,63 +16,74 @@
     You should have received a copy of the GNU General Public License
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
+*/
 package com.joshdrummond.webpasswordsafe.client.model.common;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Josh Drummond
- * 
+ *
  */
-public class GroupDTO
-    extends SubjectDTO
+public class PermissionDTO
 {
-    private String name;
-    private List users;
+    private long id;
+    private SubjectDTO subject;
+    private int accessLevel;
     /**
      * 
      */
-    public GroupDTO()
+    public PermissionDTO()
     {
-        super();
-        users = new ArrayList();
     }
     /**
-     * @return the name
+     * @param accessLevel
+     * @param subject
      */
-    public String getName()
+    public PermissionDTO(SubjectDTO subject, int accessLevel)
     {
-        return this.name;
+        this.accessLevel = accessLevel;
+        this.subject = subject;
     }
     /**
-     * @param name the name to set
+     * @return the id
      */
-    public void setName(String name)
+    public long getId()
     {
-        this.name = name;
+        return this.id;
     }
     /**
-     * @return the users
+     * @param id the id to set
      */
-    public List getUsers()
+    public void setId(long id)
     {
-        return this.users;
+        this.id = id;
     }
     /**
-     * @param users the users to set
+     * @return the subject
      */
-    public void setUsers(List users)
+    public SubjectDTO getSubject()
     {
-        this.users = users;
+        return this.subject;
     }
     /**
-     * @param userDTO
+     * @param subject the subject to set
      */
-    public void addUser(UserDTO user)
+    public void setSubject(SubjectDTO subject)
     {
-        users.add(user);
+        this.subject = subject;
+    }
+    /**
+     * @return the accessLevel
+     */
+    public int getAccessLevel()
+    {
+        return this.accessLevel;
+    }
+    /**
+     * @param accessLevel the accessLevel to set
+     */
+    public void setAccessLevel(int accessLevel)
+    {
+        this.accessLevel = accessLevel;
     }
 
 }

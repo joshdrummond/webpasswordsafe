@@ -22,16 +22,14 @@ package com.joshdrummond.webpasswordsafe.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Command;
-//import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.joshdrummond.webpasswordsafe.client.model.ClientModel;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
-import com.joshdrummond.webpasswordsafe.client.ui.LoginDialog;
-import com.joshdrummond.webpasswordsafe.client.ui.UserDialog;
+import com.joshdrummond.webpasswordsafe.client.model.common.*;
+import com.joshdrummond.webpasswordsafe.client.ui.*;
 
 
 /**
@@ -115,7 +113,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
 
             final MenuBar menuBar_6 = new MenuBar(true);
 
-            menuBar_6.addItem("New", (Command)null);
+            menuBar_6.addItem("New", new Command() {
+                public void execute() {
+                    doNewPassword();
+                }
+            });
 
             final MenuBar menuBar_7 = new MenuBar(true);
 
@@ -139,9 +141,17 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
 
             final MenuBar menuBar_9 = new MenuBar(true);
 
-            menuBar_9.addItem("Add", (Command)null);
+            menuBar_9.addItem("Add", new Command() {
+                public void execute() {
+                    doAddGroup();
+                }
+            });
 
-            menuBar_9.addItem("Edit", (Command)null);
+            menuBar_9.addItem("Edit", new Command() {
+                public void execute() {
+                    doEditGroup();
+                }
+            });
 
             final MenuBar menuBar_10 = new MenuBar(true);
 
@@ -172,6 +182,61 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         rootPanel.add(simplePanel, 10, 62);
         simplePanel.setSize("630px", "418px");
 
+    }
+
+    /**
+     * 
+     */
+    protected void doNewPassword()
+    {
+        if (clientModel.isAuthorized("NEW_PASSWORD"))
+        {
+            displayPasswordDialog(new PasswordDTO());
+        }
+    }
+
+    /**
+     * @param passwordDTO
+     */
+    private void displayPasswordDialog(PasswordDTO passwordDTO)
+    {
+        new PasswordDialog(passwordDTO).show();
+    }
+
+    /**
+     * 
+     */
+    protected void doEditGroup()
+    {
+        if (clientModel.isAuthorized("EDIT_GROUP"))
+        {
+            // for testing...
+            GroupDTO group = new GroupDTO();
+            group.setId(1);
+            group.setName("Everyone");
+            group.addUser(new UserDTO(1, "obama", "Barak Obama", "b@obama.net", true));
+            group.addUser(new UserDTO(2, "mccain", "John McCain", "j@mccain.net", true));
+            displayGroupDialog(group);
+        }
+    }
+
+    /**
+     * 
+     */
+    protected void doAddGroup()
+    {
+        if (clientModel.isAuthorized("ADD_GROUP"))
+        {
+            displayGroupDialog(new GroupDTO());
+        }
+    }
+
+    /**
+     * @param groupDTO
+     */
+    private void displayGroupDialog(GroupDTO group)
+    {
+        new GroupDialog(group).show();
     }
 
     public void refreshLoginStatus()

@@ -27,8 +27,9 @@ import java.util.List;
  * 
  */
 public class UserDTO
+    extends SubjectDTO
 {
-    private long id;
+
     private String username;
     private String password;
     private String fullname;
@@ -49,20 +50,20 @@ public class UserDTO
     }
 
     /**
-     * @return the id
-     */
-    public long getId()
-    {
-        return this.id;
-    }
-
-    /**
+     * @param email
+     * @param fullname
      * @param id
-     *            the id to set
+     * @param isActive
+     * @param username
      */
-    public void setId(long id)
+    public UserDTO(long id, String username, String fullname, String email, boolean isActive)
     {
+        super();
+        this.email = email;
+        this.fullname = fullname;
         this.id = id;
+        this.isActive = isActive;
+        this.username = username;
     }
 
     /**
