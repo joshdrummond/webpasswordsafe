@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.joshdrummond.webpasswordsafe.client.model.ClientModel;
 import com.joshdrummond.webpasswordsafe.client.model.common.*;
 import com.joshdrummond.webpasswordsafe.client.ui.*;
+import com.joshdrummond.webpasswordsafe.client.ui.PasswordSearchPanel;
 
 
 /**
@@ -181,6 +182,10 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         simplePanel = new SimplePanel();
         rootPanel.add(simplePanel, 10, 62);
         simplePanel.setSize("630px", "418px");
+
+        final PasswordSearchPanel passwordSearchPanel = new PasswordSearchPanel();
+        simplePanel.setWidget(passwordSearchPanel);
+        passwordSearchPanel.setSize("100%", "100%");
 
     }
 
