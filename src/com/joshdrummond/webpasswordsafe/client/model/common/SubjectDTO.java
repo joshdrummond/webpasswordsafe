@@ -16,63 +16,30 @@
     You should have received a copy of the GNU General Public License
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
+*/
 package com.joshdrummond.webpasswordsafe.client.model.common;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Josh Drummond
- * 
+ *
  */
-public class GroupDTO
-    extends SubjectDTO
+public abstract class SubjectDTO
 {
-    private String name;
-    private List users;
+    protected long id;
+
     /**
-     * 
+     * @return the id
      */
-    public GroupDTO()
+    public long getId()
     {
-        super();
-        users = new ArrayList();
-    }
-    /**
-     * @return the name
-     */
-    public String getName()
-    {
-        return this.name;
-    }
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-    /**
-     * @return the users
-     */
-    public List getUsers()
-    {
-        return this.users;
-    }
-    /**
-     * @param users the users to set
-     */
-    public void setUsers(List users)
-    {
-        this.users = users;
-    }
-    /**
-     * @param userDTO
-     */
-    public void addUser(UserDTO user)
-    {
-        users.add(user);
+        return this.id;
     }
 
+    /**
+     * @param id the id to set
+     */
+    public void setId(long id)
+    {
+        this.id = id;
+    }
 }

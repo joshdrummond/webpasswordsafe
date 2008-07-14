@@ -76,17 +76,14 @@ public class UserDialog extends DialogBox
         flexTable.setWidget(5, 0, enabledLabel);
 
         usernameTextBox = new TextBox();
-        usernameTextBox.setText(user.getUsername());
         flexTable.setWidget(0, 1, usernameTextBox);
         usernameTextBox.setWidth("100%");
 
         fullnameTextBox = new TextBox();
-        fullnameTextBox.setText(user.getFullname());
         flexTable.setWidget(1, 1, fullnameTextBox);
         fullnameTextBox.setWidth("100%");
 
         emailTextBox = new TextBox();
-        emailTextBox.setText(user.getEmail());
         flexTable.setWidget(2, 1, emailTextBox);
         emailTextBox.setWidth("100%");
 
@@ -99,7 +96,6 @@ public class UserDialog extends DialogBox
         password2TextBox.setWidth("100%");
 
         enabledCheckBox = new CheckBox();
-        enabledCheckBox.setChecked(user.isActive());
         flexTable.setWidget(5, 1, enabledCheckBox);
 
         final FlowPanel flowPanel = new FlowPanel();
@@ -126,6 +122,16 @@ public class UserDialog extends DialogBox
             }
         });
         cancelButton.setText("Cancel");
+        
+        setFields();
+    }
+    
+    private void setFields()
+    {
+        usernameTextBox.setText(user.getUsername());
+        fullnameTextBox.setText(user.getFullname());
+        emailTextBox.setText(user.getEmail());
+        enabledCheckBox.setChecked(user.isActive());
     }
     
     private boolean validateFields()
