@@ -4,8 +4,7 @@
 ||type||char(1)||u/g||
 
 || *users* ||||||
-||id||long||pk||
-||subject_id||long||fk subjects||
+||id||long||pk, fk subjects||
 ||username||varchar(64)||immutable||
 ||password||varchar(64)||hash encrypted of 64||
 ||fullname||varchar(256)||||
@@ -15,8 +14,7 @@
 ||last_login||datetime||||
 
 || *groups* ||||||
-||id||long||pk||
-||subject_id||long||fk subjects||
+||id||long||pk, fk subjects||
 ||name||varchar(256)||||
 
 || *user_groups* ||||||
