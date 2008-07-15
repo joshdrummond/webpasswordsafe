@@ -26,6 +26,5 @@ public interface MainWindow {
 
     public ClientModel getClientModel();
     public void refreshLoginStatus();
-    public void refreshProjectPanel();
 
 }

@@ -18,29 +18,34 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
-<project name="WebPasswordSafe" default="all" basedir="/Users/josh/Documents/workspace/webpasswordsafe">
+<project name="WebPasswordSafe" default="all" basedir=".">
 	<description>
 		This is build file for GWT module 'com.joshdrummond.webpasswordsafe.WebPasswordSafe' deployment.
 	</description>
 
+	<property file="build.properties"/>
+	<property file="${user.home}/build.properties"/>
+	
 	<property name="gwt.home" value="/usr/local/gwt" />
 	<property name="gwt.module.id" value="com.joshdrummond.webpasswordsafe.WebPasswordSafe" />
+	<property name="gwt.platform.jar" value="gwt-dev-mac.jar" />
 	<property name="war.name" value="WebPasswordSafe.war" />
+	<property name="deploy.dir" value="/usr/local/apache-tomcat-5.5.26/webapps" />
 
 	<target name="jars" description="Package up the module project and required projects as jars">
 		<delete dir="@dot" />
 		<mkdir dir="@dot/${gwt.module.id}/WEB-INF/lib" />
 		<!--=== webpasswordsafe ===-->
 		<jar destfile="@dot/${gwt.module.id}/WEB-INF/lib/webpasswordsafe.jar">
-			<fileset dir="/Users/josh/Documents/workspace/webpasswordsafe/src">
+			<fileset dir="${basedir}/src">
 				<include name="**"/>
 			</fileset>
-			<fileset dir="/Users/josh/Documents/workspace/webpasswordsafe/build/classes">
+			<fileset dir="${basedir}/build/classes">
 				<include name="**/*.class"/>
 			</fileset>
 		</jar>
 		<copy todir="@dot/${gwt.module.id}/WEB-INF/lib">
-			<fileset dir="/Users/josh/Documents/workspace/webpasswordsafe/web/WEB-INF/lib">
+			<fileset dir="${basedir}/web/WEB-INF/lib">
 			   <include name="*.jar"/>
 			</fileset>
 		</copy>		
@@ -49,10 +54,10 @@
 	<target name="gwt-compile" description="Compile to JavaScript">
 		<java classname="com.google.gwt.dev.GWTCompiler" fork="yes" failonerror="true" maxmemory="128m">
 			<classpath>
-				<pathelement location="/Users/josh/Documents/workspace/webpasswordsafe/src" />
-				<pathelement location="/Users/josh/Documents/workspace/webpasswordsafe/build/classes" />
-				<pathelement location="/usr/local/gwt/gwt-user.jar" />
-				<pathelement location="/usr/local/gwt/gwt-dev-mac.jar" />
+				<pathelement location="${basedir}/src" />
+				<pathelement location="${basedir}/build/classes" />
+				<pathelement location="${gwt.home}/gwt-user.jar" />
+				<pathelement location="${gwt.home}/${gwt.platform.jar}" />
 			</classpath>
 			<arg value="-style"/>
 			<arg value="OBFUSCATED"/>
@@ -64,10 +69,10 @@
 
 	<target name="web-xml">
 		<mkdir dir="@dot/${gwt.module.id}/WEB-INF" />
-		<copy file="/Users/josh/Documents/workspace/webpasswordsafe/web/WEB-INF/web.xml" tofile="@dot/${gwt.module.id}/WEB-INF/web.xml" />
-		<copy file="/Users/josh/Documents/workspace/webpasswordsafe/web/WEB-INF/rpc-servlet.xml" tofile="@dot/${gwt.module.id}/WEB-INF/rpc-servlet.xml" />
-		<copy file="/Users/josh/Documents/workspace/webpasswordsafe/web/WEB-INF/webpasswordsafe-data.xml" tofile="@dot/${gwt.module.id}/WEB-INF/webpasswordsafe-data.xml" />
-		<copy file="/Users/josh/Documents/workspace/webpasswordsafe/web/WEB-INF/webpasswordsafe-service.xml" tofile="@dot/${gwt.module.id}/WEB-INF/webpasswordsafe-service.xml" />
+		<copy file="${basedir}/web/WEB-INF/web.xml" tofile="@dot/${gwt.module.id}/WEB-INF/web.xml" />
+		<copy file="${basedir}/web/WEB-INF/rpc-servlet.xml" tofile="@dot/${gwt.module.id}/WEB-INF/rpc-servlet.xml" />
+		<copy file="${basedir}/web/WEB-INF/webpasswordsafe-data.xml" tofile="@dot/${gwt.module.id}/WEB-INF/webpasswordsafe-data.xml" />
+		<copy file="${basedir}/web/WEB-INF/webpasswordsafe-service.xml" tofile="@dot/${gwt.module.id}/WEB-INF/webpasswordsafe-service.xml" />
 	</target>
 
 	<target name="war" depends="jars, gwt-compile, web-xml">
@@ -78,7 +83,7 @@
 	</target>
 	
 	<target name="deploy" depends="war">
-		<move file="${war.name}" todir="/usr/local/apache-tomcat-5.5.26/webapps" />
+		<move file="${war.name}" todir="${deploy.dir}" />
 	</target>
 
 	<target name="all" depends="deploy" />

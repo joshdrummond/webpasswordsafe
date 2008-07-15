@@ -20,15 +20,20 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.TreeListener;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author Josh Drummond
@@ -36,6 +41,10 @@ import com.google.gwt.user.client.ui.Tree;
  */
 public class PasswordSearchPanel extends Composite
 {
+    private static final int VISIBLE_ROW_COUNT=10;
+    private FlexTable passwordTable;
+    private Tree tagTree;
+    private TextBox searchTextBox;
 
     public PasswordSearchPanel()
     {
@@ -45,29 +54,110 @@ public class PasswordSearchPanel extends Composite
 
         final ScrollPanel scrollPanel = new ScrollPanel();
         flexTable.setWidget(1, 0, scrollPanel);
+        flexTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
+        flexTable.getCellFormatter().setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_CENTER);
+        flexTable.getCellFormatter().setHeight(1, 0, "100%");
+        flexTable.getCellFormatter().setWidth(1, 0, "25%");
 
-        final Tree tree = new Tree();
-        scrollPanel.setWidget(tree);
-        tree.setSize("100%", "100%");
-
-        final Grid grid = new Grid();
-        flexTable.setWidget(1, 1, grid);
-        grid.resize(1, 5);
+        tagTree = new Tree();
+        scrollPanel.setWidget(tagTree);
+        tagTree.addTreeListener(new TreeListener() {
+            public void onTreeItemSelected(final TreeItem item)
+            {
+                doTagClicked(item);
+            }
+            public void onTreeItemStateChanged(final TreeItem item)
+            {
+            }
+        });
+        tagTree.setSize("100%", "100%");
 
         final HorizontalPanel horizontalPanel = new HorizontalPanel();
         flexTable.setWidget(0, 0, horizontalPanel);
+        flexTable.getCellFormatter().setHeight(0, 0, "20%");
+        horizontalPanel.setHeight("20%");
+        horizontalPanel.setSpacing(10);
         flexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+        flexTable.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
 
         final Label passwordLabel = new Label("Password");
         horizontalPanel.add(passwordLabel);
 
-        final TextBox textBox = new TextBox();
-        horizontalPanel.add(textBox);
-        textBox.setFocus(true);
+        searchTextBox = new TextBox();
+        horizontalPanel.add(searchTextBox);
+        searchTextBox.addKeyboardListener(new KeyboardListenerAdapter() {
+            public void onKeyPress(final Widget sender, final char keyCode, final int modifiers)
+            {
+            }
+        });
+        searchTextBox.setVisibleLength(30);
+        searchTextBox.setMaxLength(1000);
+        searchTextBox.setFocus(true);
 
         final Button searchButton = new Button();
         horizontalPanel.add(searchButton);
+        searchButton.addClickListener(new ClickListener() {
+            public void onClick(final Widget sender)
+            {
+                doSearch();
+            }
+        });
         searchButton.setText("Search");
+
+        passwordTable = new FlexTable();
+        flexTable.setWidget(1, 1, passwordTable);
+        flexTable.getCellFormatter().setWordWrap(1, 1, false);
+        flexTable.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_CENTER);
+        flexTable.getCellFormatter().setVerticalAlignment(1, 1, HasVerticalAlignment.ALIGN_TOP);
+        passwordTable.setSize("100%", "100%");
+        
+        initTable();
+    }
+
+    /**
+     * @param item
+     */
+    protected void doTagClicked(TreeItem item)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * 
+     */
+    protected void doSearch()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * 
+     */
+    private void initTable()
+    {
+            // Create the header row.
+        passwordTable.setText(0, 0, "Title");
+        passwordTable.setText(0, 1, "Username");
+        passwordTable.setText(0, 2, "Password");
+        passwordTable.setText(0, 3, "Notes");
+//        passwordTable.setWidget(0, 3, navBar);
+//        passwordTable.getRowFormatter().setStyleName(0, "mail-ListHeader");
+
+            // Initialize the rest of the rows.
+            for (int i = 0; i < VISIBLE_ROW_COUNT; ++i) {
+                passwordTable.setText(i + 1, 0, "");
+                passwordTable.setText(i + 1, 1, "");
+                passwordTable.setText(i + 1, 2, "");
+                passwordTable.setText(i + 1, 3, "");
+                passwordTable.getCellFormatter().setWordWrap(i + 1, 0, false);
+                passwordTable.getCellFormatter().setWordWrap(i + 1, 1, false);
+                passwordTable.getCellFormatter().setWordWrap(i + 1, 2, false);
+                passwordTable.getCellFormatter().setWordWrap(i + 1, 3, false);
+//                passwordTable.getFlexCellFormatter().setColSpan(i + 1, 2, 2);
+            }
+          
     }
 
 }

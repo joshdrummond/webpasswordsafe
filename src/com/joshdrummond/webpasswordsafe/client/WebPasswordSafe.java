@@ -22,6 +22,7 @@ package com.joshdrummond.webpasswordsafe.client;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -30,7 +31,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.joshdrummond.webpasswordsafe.client.model.ClientModel;
 import com.joshdrummond.webpasswordsafe.client.model.common.*;
 import com.joshdrummond.webpasswordsafe.client.ui.*;
-import com.joshdrummond.webpasswordsafe.client.ui.PasswordSearchPanel;
 
 
 /**
@@ -45,6 +45,9 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     private final static String TITLE = "WebPasswordSafe v"+VERSION;
     private Label headerGwtLabel;
     private SimplePanel simplePanel;
+    private MenuBar userMenu;
+    private MenuBar adminMenu;
+    private PasswordSearchPanel passwordSearchPanel;
 
     public void onModuleLoad() {
         final RootPanel rootPanel = RootPanel.get();
@@ -62,133 +65,151 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
             notLoggedInLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
             notLoggedInLabel.setWidth("330px");
 
-            final MenuBar menuBar = new MenuBar();
-            menuBar.setAutoOpen(true);
-            rootPanel.add(menuBar, 8, 33);
-            menuBar.setWidth("632px");
+            final MenuBar mainMenu = new MenuBar();
+            mainMenu.setAutoOpen(true);
+            rootPanel.add(mainMenu, 8, 33);
+            mainMenu.setWidth("632px");
 
-            final MenuBar menuBar_2 = new MenuBar(true);
+            userMenu = new MenuBar(true);
 
-            menuBar_2.addItem("Login", new Command() {
+            userMenu.addItem("Login", new Command() {
                 public void execute() {
                     doLogin();
                 }
             });
 
-            final MenuBar menuBar_1 = new MenuBar(true);
+            final MenuBar userSettingsMenu = new MenuBar(true);
 
-            menuBar_1.addItem("General", (Command)null);
+            userSettingsMenu.addItem("General", (Command)null);
 
-            menuBar_1.addItem("Change Password", (Command)null);
+            userSettingsMenu.addItem("Change Password", (Command)null);
 
-            menuBar_2.addItem("Settings", menuBar_1);
+            userMenu.addItem("Settings", userSettingsMenu);
 
-            final MenuBar menuBar_13 = new MenuBar(true);
+            final MenuBar userRoleMenu = new MenuBar(true);
 
-            menuBar_13.addItem("User", (Command)null);
+            userRoleMenu.addItem("User", (Command)null);
 
-            menuBar_13.addItem("Admin", (Command)null);
+            userRoleMenu.addItem("Admin", (Command)null);
 
-            menuBar_2.addItem("Role", menuBar_13);
+            userMenu.addItem("Role", userRoleMenu);
 
-            menuBar_2.addItem("Logout", new Command() {
+            userMenu.addItem("Logout", new Command() {
                 public void execute() {
                     doLogout();
                 }
             });
 //            menuItemLogout.setVisible(false);
 
-            menuBar.addItem("User", menuBar_2);
+            mainMenu.addItem("User", userMenu);
 
-            final MenuBar menuBar_3 = new MenuBar(true);
+            final MenuBar aboutMenu = new MenuBar(true);
 
-            menuBar_3.addItem("Help", (Command)null);
+            aboutMenu.addItem("Help", (Command)null);
 
-            menuBar_3.addItem("About", (Command)null);
+            aboutMenu.addItem("About", (Command)null);
 
-            final MenuBar menuBar_5 = new MenuBar(true);
+            final MenuBar reportsMenu = new MenuBar(true);
 
-            menuBar_5.addItem("User Audit", (Command)null);
+            reportsMenu.addItem("User Audit", (Command)null);
 
-            menuBar_5.addItem("Permissions", (Command)null);
+            reportsMenu.addItem("Permissions", (Command)null);
 
-            final MenuBar menuBar_6 = new MenuBar(true);
+            final MenuBar passwordMenu = new MenuBar(true);
 
-            menuBar_6.addItem("New", new Command() {
+            passwordMenu.addItem("New", new Command() {
                 public void execute() {
                     doNewPassword();
                 }
             });
 
-            final MenuBar menuBar_7 = new MenuBar(true);
+            final MenuBar passwordTemplateMenu = new MenuBar(true);
 
-            menuBar_7.addItem("New", (Command)null);
+            passwordTemplateMenu.addItem("New", (Command)null);
 
-            menuBar_7.addItem("Edit", (Command)null);
+            passwordTemplateMenu.addItem("Edit", (Command)null);
 
-            menuBar_6.addItem("Template", menuBar_7);
+            passwordMenu.addItem("Template", passwordTemplateMenu);
 
-            menuBar_6.addItem("Search", (Command)null);
+            passwordMenu.addItem("Search", new Command() {
+                public void execute() {
+                    doPasswordSearch();
+                }
+            });
 
-            menuBar.addItem("Password", menuBar_6);
+            mainMenu.addItem("Password", passwordMenu);
 
-            menuBar.addItem("Reports", menuBar_5);
+            mainMenu.addItem("Reports", reportsMenu);
 
-            final MenuBar menuBar_4 = new MenuBar(true);
+            adminMenu = new MenuBar(true);
 
-            menuBar_4.addItem("Settings", (Command)null);
+            adminMenu.addItem("Settings", (Command)null);
 
-            final MenuBar menuBar_8 = new MenuBar(true);
+            final MenuBar adminRoleMenu = new MenuBar(true);
 
-            final MenuBar menuBar_9 = new MenuBar(true);
+            final MenuBar adminGroupMenu = new MenuBar(true);
 
-            menuBar_9.addItem("Add", new Command() {
+            adminGroupMenu.addItem("Add", new Command() {
                 public void execute() {
                     doAddGroup();
                 }
             });
 
-            menuBar_9.addItem("Edit", new Command() {
+            adminGroupMenu.addItem("Edit", new Command() {
                 public void execute() {
                     doEditGroup();
                 }
             });
 
-            final MenuBar menuBar_10 = new MenuBar(true);
+            final MenuBar adminUserMenu = new MenuBar(true);
 
-            menuBar_10.addItem("Add", new Command() {
+            adminUserMenu.addItem("Add", new Command() {
                 public void execute() {
                     doAddUser();
                 }
             });
 
-            menuBar_10.addItem("Edit", new Command() {
+            adminUserMenu.addItem("Edit", new Command() {
                 public void execute() {
                     doEditUser();
                 }
             });
 
-            menuBar_4.addItem("Users", menuBar_10);
+            adminMenu.addItem("Users", adminUserMenu);
 
-            menuBar_4.addItem("Groups", menuBar_9);
+            adminMenu.addItem("Groups", adminGroupMenu);
 
-            menuBar_4.addItem("Roles", menuBar_8);
+            adminMenu.addItem("Roles", adminRoleMenu);
 
-            menuBar.addItem("Admin", menuBar_4);
+            mainMenu.addItem("Admin", adminMenu);
 
-            menuBar.addItem("About", menuBar_3);
+            mainMenu.addItem("About", aboutMenu);
         }
 
         simplePanel = new SimplePanel();
         rootPanel.add(simplePanel, 10, 62);
         simplePanel.setSize("630px", "418px");
 
-        final PasswordSearchPanel passwordSearchPanel = new PasswordSearchPanel();
-        simplePanel.setWidget(passwordSearchPanel);
+        passwordSearchPanel = new PasswordSearchPanel();
         passwordSearchPanel.setSize("100%", "100%");
 
+        refreshMenu();
     }
 
+    /**
+     * 
+     */
+    protected void doPasswordSearch()
+    {
+        simplePanel.setWidget(passwordSearchPanel);
+    }
+
+    private void refreshMenu()
+    {
+        boolean isLoggedIn = clientModel.isLoggedIn();
+        adminMenu.setVisible(isLoggedIn);
+    }
+    
     /**
      * 
      */
@@ -254,11 +275,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         {
             notLoggedInLabel.setText(NOT_LOGGED_IN);
         }
-    }
-    
-    public void refreshProjectStatus()
-    {
-
+        refreshMenu();
     }
 
     private void doLogin()
@@ -286,6 +303,10 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
             editUser.setId(1);
             displayUserDialog(editUser);
         }
+        else
+        {
+          Window.alert("Must be logged in first.");
+        }
     }
     
     private void doLogout()
@@ -294,24 +315,6 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         clientModel.setLoggedIn(false);
         refreshLoginStatus();
     }
-
-//    private void doOpenProject()
-//    {
-//        if (clientModel.isLoggedIn())
-//        {
-//            displayOpenProjectDialog();
-//        }
-//        else
-//        {
-//            Window.alert("Must be logged in first.");
-//        }
-//    }
-
-//    private void doCloseProject()
-//    {
-////        clientModel.setProjectName("");
-////        refreshProjectPanel();
-//    }
     
     private void displayLoginDialog()
     {
@@ -321,33 +324,6 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     private void displayUserDialog(UserDTO user)
     {
         new UserDialog(user).show();
-    }
-//    private void displayOpenProjectDialog()
-//    {
-////        new OpenProjectDialog(this).show();
-//    }
-    public void refreshProjectPanel()
-    {
-//        refreshProjectStatus();
-//        if (!clientModel.isProjectOpen())
-//        {
-//            if (simplePanel.getWidget() != null)
-//            {
-//                simplePanel.remove(simplePanel.getWidget());
-//            }
-//        }
-//        else
-//        {
-//            if (simplePanel.getWidget() == null)
-//            {
-//                simplePanel.add(new ProjectPanel(this));
-//            }
-//            else
-//            {
-//                simplePanel.remove(simplePanel.getWidget());
-//                simplePanel.add(new ProjectPanel(this));
-//            }
-//        }
     }
     
     public ClientModel getClientModel()
