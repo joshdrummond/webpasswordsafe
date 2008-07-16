@@ -55,7 +55,6 @@ public class PasswordSearchPanel extends Composite
         final ScrollPanel scrollPanel = new ScrollPanel();
         flexTable.setWidget(1, 0, scrollPanel);
         flexTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
-        flexTable.getCellFormatter().setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_CENTER);
         flexTable.getCellFormatter().setHeight(1, 0, "100%");
         flexTable.getCellFormatter().setWidth(1, 0, "25%");
 
@@ -106,12 +105,30 @@ public class PasswordSearchPanel extends Composite
 
         passwordTable = new FlexTable();
         flexTable.setWidget(1, 1, passwordTable);
+        passwordTable.setWidth("100%");
         flexTable.getCellFormatter().setWordWrap(1, 1, false);
         flexTable.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_CENTER);
         flexTable.getCellFormatter().setVerticalAlignment(1, 1, HasVerticalAlignment.ALIGN_TOP);
-        passwordTable.setSize("100%", "100%");
         
         initTable();
+        initTags();
+    }
+
+    /**
+     * 
+     */
+    private void initTags()
+    {
+        TreeItem root = new TreeItem("<b>Tags</b>");
+        root.addItem("unix");
+        root.addItem("windows");
+        root.addItem("web");
+        root.addItem("vendor");
+        for (int i = 0; i < 100; i++)
+        {
+            root.addItem("hello"+i);
+        }
+        tagTree.addItem(root);
     }
 
     /**
@@ -128,8 +145,29 @@ public class PasswordSearchPanel extends Composite
      */
     protected void doSearch()
     {
-        // TODO Auto-generated method stub
-        
+        String[][] data = new String[][] {{"korea - root", "root", "", ""} , {"china - root", "root", "", ""}};
+        refreshTable(data);
+    }
+
+    /**
+     * @param data
+     */
+    private void refreshTable(String[][] data)
+    {
+        for (int i = 0; i < data.length; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                if (j == 2)
+                {
+                    passwordTable.setText(i + 1, j, "******");
+                }
+                else
+                {
+                    passwordTable.setText(i + 1, j, data[i][j]);
+                }
+            }
+        }
     }
 
     /**
