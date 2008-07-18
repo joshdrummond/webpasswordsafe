@@ -17,46 +17,29 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.client.model.common;
+package com.joshdrummond.webpasswordsafe.server.dao;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
+ * Generic interface for all DAO
+ * 
  * @author Josh Drummond
  *
  */
-public abstract class SubjectDTO
-{
-    protected long id;
-    protected char type;
+public interface GenericDAO<T, ID extends Serializable> {
+    public T findById(ID id, boolean lock);
 
-    /**
-     * @return the id
-     */
-    public long getId()
-    {
-        return this.id;
-    }
+    public List<T> findAll();
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(long id)
-    {
-        this.id = id;
-    }
+    public List<T> findByExample(T example, String... excludeProperty);
 
-    /**
-     * @return the type
-     */
-    public char getType()
-    {
-        return this.type;
-    }
+    public T makePersistent(T entity);
 
-    /**
-     * @param type the type to set
-     */
-    public void setType(char type)
-    {
-        this.type = type;
-    }
+    public T makeTransient(T entity);
+
+    public void flush();
+
+    public void clear();
 }

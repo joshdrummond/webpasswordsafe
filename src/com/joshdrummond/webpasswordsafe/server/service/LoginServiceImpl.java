@@ -18,13 +18,16 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-package com.joshdrummond.webpasswordsafe.server;
+package com.joshdrummond.webpasswordsafe.server.service;
 
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.server.authentication.Authenticator;
 
+@Transactional
 public class LoginServiceImpl implements LoginService {
     private static Logger LOG = Logger.getLogger(LoginServiceImpl.class);
     private static final long serialVersionUID = 7281742835626324457L;
@@ -58,6 +61,7 @@ public class LoginServiceImpl implements LoginService {
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#login(java.lang.String, java.lang.String)
      */
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public boolean login(String username, String password)
     {
         boolean isValidLogin = false;

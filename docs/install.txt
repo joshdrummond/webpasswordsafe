@@ -21,7 +21,7 @@ WEB-INF/lib/
 	gwt-sl.jar [3]
 	hibernate3.jar [1]
 	jta.jar [1]
-	log4j.jar [1]
+	log4j.jar [2]
 	mysql-connector-java-3.1.13-bin.jar [4]
 	spring.jar [2]
 	spring-webmvc.jar [2]

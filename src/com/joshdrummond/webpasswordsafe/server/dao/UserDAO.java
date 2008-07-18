@@ -17,46 +17,17 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.client.model.common;
+package com.joshdrummond.webpasswordsafe.server.dao;
+
+import com.joshdrummond.webpasswordsafe.server.model.User;
 
 /**
+ * DAO interface for User
+ * 
  * @author Josh Drummond
  *
  */
-public abstract class SubjectDTO
-{
-    protected long id;
-    protected char type;
-
-    /**
-     * @return the id
-     */
-    public long getId()
-    {
-        return this.id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(long id)
-    {
-        this.id = id;
-    }
-
-    /**
-     * @return the type
-     */
-    public char getType()
-    {
-        return this.type;
-    }
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(char type)
-    {
-        this.type = type;
-    }
+public interface UserDAO extends GenericDAO<User, Long> {
+    // Empty
+    public User findActiveUserByUsername(String username);
 }

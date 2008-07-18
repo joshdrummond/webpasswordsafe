@@ -20,19 +20,34 @@
 
 package com.joshdrummond.webpasswordsafe.server.authentication;
 
+import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
+import com.joshdrummond.webpasswordsafe.server.model.User;
+
 /**
- * @author josh
+ * @author Josh Drummond
  *
  */
 public class LocalAuthenticator implements Authenticator
 {
-
+    private UserDAO userDAO;
+    
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.Authenticator#authenticate(java.lang.String, java.lang.String)
      */
     public boolean authenticate(String username, String password)
     {
-        return password.equals(String.valueOf(username.length()));
+        User user = userDAO.findActiveUserByUsername(username);
+        return ((user != null) && (user.getPassword().equals(password)));
+    }
+
+    public UserDAO getUserDAO()
+    {
+        return this.userDAO;
+    }
+
+    public void setUserDAO(UserDAO userDAO)
+    {
+        this.userDAO = userDAO;
     }
 
 }

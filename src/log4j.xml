@@ -43,7 +43,7 @@
   </category>
 
   <root>
-    <priority value="info" />
+    <priority value="all" />
     <appender-ref ref="console" />
   </root>
 
