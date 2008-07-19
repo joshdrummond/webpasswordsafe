@@ -18,16 +18,28 @@ WEB-INF/lib/
 	commons-logging.jar [1]
 	commons-pool.jar [2]
 	dom4j.jar [1]
+	ejb3-persistence.jar [6]
+	gwt-incubator.jar ?
 	gwt-sl.jar [3]
+	hibernate-annotations.jar [6]
+	hibernate-commons-annotations.jar [6]
+	hibernate-tools.jar [7]
 	hibernate3.jar [1]
 	jta.jar [1]
-	log4j.jar [2]
+	log4j.jar [2] (v1.2.12+)
 	mysql-connector-java-3.1.13-bin.jar [4]
-	spring.jar [2]
+	slf4j-api.jar [8]
+	slf4j-log4j12.jar [8]
+	spring-orm.jar [2]
+	spring-tx.jar [2]
 	spring-webmvc.jar [2]
+	spring.jar [2]
 
-[1] Hibernate 3.2 distribution (http://www.hibernate.org/)
+[1] Hibernate Core 3.2 distribution (http://www.hibernate.org/)
 [2] Spring 2.5 with dependencies distribution (http://www.springframework.org/)
 [3] GWT-SL 0.1.5 (http://gwt-widget.sourceforge.net/)
 [4] MySQL Connector/J JDBC distribution (http://dev.mysql.com/downloads/connector/j/3.1.html)
 [5] GWT 1.4.62 (http://code.google.com/webtoolkit/)
+[6] Hibernate Annotations 3.3 distribution (http://www.hibernate.org/)
+[7] Hibernate Tools 3.2 distribution (http://www.hibernate.org)
+[8] Simple Logging Facade for Java 1.5.2 (http://www.slf4j.org/)

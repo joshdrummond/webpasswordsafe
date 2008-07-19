@@ -269,7 +269,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     {
         if (clientModel.isLoggedIn())
         {
-            notLoggedInLabel.setText(LOGGED_IN+clientModel.getLoggedInUser().getUsername());
+            notLoggedInLabel.setText(LOGGED_IN+clientModel.getLoggedInUser().getFullname());
         }
         else
         {

@@ -23,12 +23,13 @@ package com.joshdrummond.webpasswordsafe.client.remote;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 
 public interface LoginService extends RemoteService {
     
     public boolean login(String username, String password);
     public boolean logout();
-    public String getLogin();
+    public UserDTO getLogin();
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.

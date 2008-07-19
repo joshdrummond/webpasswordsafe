@@ -17,22 +17,31 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.dao;
+package com.joshdrummond.webpasswordsafe.server.assembler;
 
-import java.util.List;
-import org.hibernate.criterion.Restrictions;
+import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.server.model.User;
 
 /**
- * DAO implementation for User
- * 
  * @author Josh Drummond
  *
  */
-public class UserDAOHibernate extends GenericHibernateDAO<User, Long> implements UserDAO {
-    public User findActiveUserByUsername(String username) {
-        List<User> users = findByCriteria(Restrictions.eq("userName", username), Restrictions.eq("activeFlag", true));
-        return (users.size() > 0) ? users.get(0) : null;
-    }
-}
+public class UserAssembler
+{
 
+    /**
+     * @param findActiveUserByUsername
+     * @return
+     */
+    public static UserDTO buildDTO(User user)
+    {
+        UserDTO userDTO = null;
+        if (null != user)
+        {
+            userDTO = new UserDTO(user.getId(), user.getUserName(), user.getFullName(), 
+                    user.getEmail(), user.isActiveFlag());
+        }
+        return userDTO;
+    }
+
+}
