@@ -21,6 +21,7 @@ package com.joshdrummond.webpasswordsafe.client.model.common;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * @author Josh Drummond
@@ -28,9 +29,10 @@ import java.util.List;
  */
 public class GroupDTO
     extends SubjectDTO
+    implements IsSerializable
 {
     private String name;
-    private List users;
+    private transient List users;
     /**
      * 
      */

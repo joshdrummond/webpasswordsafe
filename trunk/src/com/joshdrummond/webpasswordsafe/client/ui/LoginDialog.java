@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
+import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 
 /**
@@ -136,10 +137,7 @@ public class LoginDialog extends DialogBox {
             public void onSuccess(Object result) {
                 if (((Boolean)result).booleanValue())
                 {
-                    main.getClientModel().getLoggedInUser().setUsername(usernameTextBox.getText());
-                    main.getClientModel().setLoggedIn(true);
-                    main.refreshLoginStatus();
-                    hide();
+                    doGetLoggedInUser();
                 }
                 else
                 {
@@ -151,6 +149,34 @@ public class LoginDialog extends DialogBox {
                 passwordTextBox.getText(), callback);
     }
     
+    private void doGetLoggedInUser()
+    {
+        AsyncCallback callback = new AsyncCallback()
+        {
+
+            public void onFailure(Throwable caught)
+            {
+                Window.alert("Error: "+caught.getMessage());
+            }
+
+            public void onSuccess(Object result)
+            {
+                if (null != result)
+                {
+                    main.getClientModel().setLoggedInUser((UserDTO)result);
+                    main.getClientModel().setLoggedIn(true);
+                    main.refreshLoginStatus();
+                    hide();
+                }
+                else
+                {
+                    Window.alert("Invalid User!");
+                }
+            }
+        };
+        LoginService.Util.getInstance().getLogin(callback);
+    }
+ 
     private void doCancel()
     {
         hide();

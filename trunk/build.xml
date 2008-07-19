@@ -25,27 +25,72 @@
 
 	<property file="build.properties"/>
 	<property file="${user.home}/build.properties"/>
-	
+
 	<property name="gwt.home" value="/usr/local/gwt" />
 	<property name="gwt.module.id" value="com.joshdrummond.webpasswordsafe.WebPasswordSafe" />
 	<property name="gwt.platform.jar" value="gwt-dev-mac.jar" />
 	<property name="war.name" value="WebPasswordSafe.war" />
-	<property name="deploy.dir" value="/usr/local/apache-tomcat-5.5.26/webapps" />
+	<property name="catalina.home" value="/usr/local/tomcat"/>
+	<property name="deploy.dir" value="${catalina.home}/webapps" />
+	<property name="web.home" value="${basedir}/web" />
+	<property name="build.home" value="${basedir}/build" />
+	<property name="dist.home" value="${build.home}/dist" />
+	<property name="src.home" value="${basedir}/src" />
+	<property name="dist.webinf" value="${dist.home}/${gwt.module.id}/WEB-INF" />
+	
+	<property name="compile.debug"       value="true"/>
+    <property name="compile.deprecation" value="false"/>
+    <property name="compile.optimize"    value="true"/>
 
-	<target name="jars" description="Package up the module project and required projects as jars">
-		<delete dir="@dot" />
-		<mkdir dir="@dot/${gwt.module.id}/WEB-INF/lib" />
+
+	<path id="compile.classpath">
+	    <!-- Include all JAR files that will be included in /WEB-INF/lib -->
+		<fileset dir="${web.home}/WEB-INF/lib">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="${gwt.home}/gwt-user.jar" />
+	    <!-- Include all elements that Tomcat exposes to applications -->
+	    <pathelement location="${catalina.home}/common/classes"/>
+	    <fileset dir="${catalina.home}/common/endorsed">
+	      <include name="*.jar"/>
+	    </fileset>
+	    <fileset dir="${catalina.home}/common/lib">
+	      <include name="*.jar"/>
+	    </fileset>
+	    <pathelement location="${catalina.home}/shared/classes"/>
+	    <fileset dir="${catalina.home}/shared/lib">
+	      <include name="*.jar"/>
+	    </fileset>
+	</path>
+
+	<target name="compile" description="Compile Java sources">
+	    <!-- Compile Java classes as necessary -->
+	    <mkdir dir="${build.home}/classes"/>
+	    <javac srcdir="${src.home}"
+	          destdir="${build.home}/classes"
+	            debug="${compile.debug}"
+	      deprecation="${compile.deprecation}"
+	         optimize="${compile.optimize}">
+	        <classpath refid="compile.classpath"/>
+	    </javac>
+
+	    <!-- Copy application resources -->
+	    <copy  todir="${build.home}/classes">
+	      <fileset dir="${src.home}" excludes="**/*.java"/>
+	    </copy>
+	</target>
+
+	<target name="jars" depends="compile" description="Package up the module project and required projects as jars">
+		<delete dir="${dist.home}" />
+		<mkdir dir="${dist.webinf}/lib" />
 		<!--=== webpasswordsafe ===-->
-		<jar destfile="@dot/${gwt.module.id}/WEB-INF/lib/webpasswordsafe.jar">
-			<fileset dir="${basedir}/src">
+		<jar destfile="${dist.webinf}/lib/webpasswordsafe.jar">
+			<fileset dir="${build.home}/classes">
 				<include name="**"/>
 			</fileset>
-			<fileset dir="${basedir}/build/classes">
-				<include name="**/*.class"/>
-			</fileset>
 		</jar>
-		<copy todir="@dot/${gwt.module.id}/WEB-INF/lib">
-			<fileset dir="${basedir}/web/WEB-INF/lib">
+		<copy todir="${dist.webinf}/lib">
+			<fileset dir="${web.home}/WEB-INF/lib">
 			   <include name="*.jar"/>
 			</fileset>
 		</copy>		
@@ -55,33 +100,32 @@
 		<java classname="com.google.gwt.dev.GWTCompiler" fork="yes" failonerror="true" maxmemory="128m">
 			<classpath>
 				<pathelement location="${basedir}/src" />
-				<pathelement location="${basedir}/build/classes" />
 				<pathelement location="${gwt.home}/gwt-user.jar" />
 				<pathelement location="${gwt.home}/${gwt.platform.jar}" />
 			</classpath>
 			<arg value="-style"/>
 			<arg value="OBFUSCATED"/>
 			<arg value="-out" />
-			<arg file="@dot" />
+			<arg file="${dist.home}" />
 			<arg value="${gwt.module.id}" />
 		</java>
 	</target>
 
 	<target name="web-xml">
-		<mkdir dir="@dot/${gwt.module.id}/WEB-INF" />
-		<copy file="${basedir}/web/WEB-INF/web.xml" tofile="@dot/${gwt.module.id}/WEB-INF/web.xml" />
-		<copy file="${basedir}/web/WEB-INF/rpc-servlet.xml" tofile="@dot/${gwt.module.id}/WEB-INF/rpc-servlet.xml" />
-		<copy file="${basedir}/web/WEB-INF/webpasswordsafe-data.xml" tofile="@dot/${gwt.module.id}/WEB-INF/webpasswordsafe-data.xml" />
-		<copy file="${basedir}/web/WEB-INF/webpasswordsafe-service.xml" tofile="@dot/${gwt.module.id}/WEB-INF/webpasswordsafe-service.xml" />
+		<mkdir dir="${dist.webinf}" />
+		<copy file="${web.home}/WEB-INF/web.xml" tofile="${dist.webinf}/web.xml" />
+		<copy file="${web.home}/WEB-INF/rpc-servlet.xml" tofile="${dist.webinf}/rpc-servlet.xml" />
+		<copy file="${web.home}/WEB-INF/webpasswordsafe-data.xml" tofile="${dist.webinf}/webpasswordsafe-data.xml" />
+		<copy file="${web.home}/WEB-INF/webpasswordsafe-service.xml" tofile="${dist.webinf}/webpasswordsafe-service.xml" />
 	</target>
 
 	<target name="war" depends="jars, gwt-compile, web-xml">
 		<delete file="${war.name}" />
-		<copy file="${gwt.home}/gwt-servlet.jar" todir="@dot/${gwt.module.id}/WEB-INF/lib" />
-		<jar destfile="${war.name}" basedir="@dot/${gwt.module.id}" duplicate="preserve" />
-		<delete dir="@dot" />
+		<copy file="${gwt.home}/gwt-servlet.jar" todir="${dist.webinf}/lib" />
+		<jar destfile="${war.name}" basedir="${dist.home}/${gwt.module.id}" duplicate="preserve" />
+		<delete dir="${dist.home}" />
 	</target>
-	
+
 	<target name="deploy" depends="war">
 		<move file="${war.name}" todir="${deploy.dir}" />
 	</target>

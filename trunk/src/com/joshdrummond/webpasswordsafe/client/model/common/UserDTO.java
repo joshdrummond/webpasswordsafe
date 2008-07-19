@@ -21,6 +21,7 @@ package com.joshdrummond.webpasswordsafe.client.model.common;
 
 import java.util.Date;
 import java.util.List;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * @author Josh Drummond
@@ -28,6 +29,7 @@ import java.util.List;
  */
 public class UserDTO
     extends SubjectDTO
+    implements IsSerializable
 {
 
     private String username;
@@ -37,7 +39,13 @@ public class UserDTO
     private boolean isActive;
     private Date dateCreated;
     private Date lastLogin;
+    /**
+     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.RoleDTO>
+     */
     private List roles;
+    /**
+     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.GroupDTO>
+     */
     private List groups;
     
 
@@ -50,11 +58,11 @@ public class UserDTO
     }
 
     /**
-     * @param email
-     * @param fullname
      * @param id
-     * @param isActive
      * @param username
+     * @param fullname
+     * @param email
+     * @param isActive
      */
     public UserDTO(long id, String username, String fullname, String email, boolean isActive)
     {

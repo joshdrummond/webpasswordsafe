@@ -20,19 +20,25 @@
 
 package com.joshdrummond.webpasswordsafe.server.service;
 
+import java.util.Date;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
+import com.joshdrummond.webpasswordsafe.server.assembler.UserAssembler;
 import com.joshdrummond.webpasswordsafe.server.authentication.Authenticator;
+import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
+import com.joshdrummond.webpasswordsafe.server.model.User;
 
 @Transactional
 public class LoginServiceImpl implements LoginService {
     private static Logger LOG = Logger.getLogger(LoginServiceImpl.class);
     private static final long serialVersionUID = 7281742835626324457L;
     private Authenticator authenticator;
-
+    private UserDAO userDAO;
+    
     /**
      * @return the authenticator
      */
@@ -49,32 +55,46 @@ public class LoginServiceImpl implements LoginService {
         this.authenticator = authenticator;
     }
 
+    public UserDAO getUserDAO()
+    {
+        return this.userDAO;
+    }
+
+    public void setUserDAO(UserDAO userDAO)
+    {
+        this.userDAO = userDAO;
+    }
+
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#getLogin()
      */
-    public String getLogin()
+    @Transactional(propagation=Propagation.REQUIRED)
+    public UserDTO getLogin()
     {
         String username = (String)ServletUtils.getRequest().getSession().getAttribute("username");
-        return (null == username) ? "" : username;
+        UserDTO userDTO = UserAssembler.buildDTO(userDAO.findActiveUserByUsername(username));
+        return userDTO;
     }
 
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#login(java.lang.String, java.lang.String)
      */
-    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    @Transactional(propagation=Propagation.REQUIRED)
     public boolean login(String username, String password)
     {
         boolean isValidLogin = false;
         if (authenticator.authenticate(username, password))
         {
-            LOG.info("login succeeded for "+username);
-            isValidLogin = true;
-            ServletUtils.getRequest().getSession().setAttribute("username", username);
+            User user = userDAO.findActiveUserByUsername(username);
+            if (null != user)
+            {
+                isValidLogin = true;
+                user.setLastLogin(new Date());
+                userDAO.makePersistent(user);
+                ServletUtils.getRequest().getSession().setAttribute("username", username);
+            }
         }
-        else
-        {
-            LOG.info("login failed for "+username);
-        }
+        LOG.info(username+" login "+ (isValidLogin ? "success" : "failure"));
         return isValidLogin;
     }
 
