@@ -20,12 +20,9 @@
 
 package com.joshdrummond.webpasswordsafe.client.remote;
 
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface LoginServiceAsync {
+public interface UserServiceAsync {
     
-    public void login(String username, String password, AsyncCallback callback);
-    public void logout(AsyncCallback callback);
-    public void getLogin(AsyncCallback callback);
+    public void changePassword(String password, AsyncCallback callback);
 }

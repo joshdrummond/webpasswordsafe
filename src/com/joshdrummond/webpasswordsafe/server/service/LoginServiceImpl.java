@@ -32,7 +32,11 @@ import com.joshdrummond.webpasswordsafe.server.authentication.Authenticator;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.model.User;
 
-@Transactional
+/**
+ * 
+ * @author Josh Drummond
+ *
+ */
 public class LoginServiceImpl implements LoginService {
     private static Logger LOG = Logger.getLogger(LoginServiceImpl.class);
     private static final long serialVersionUID = 7281742835626324457L;
@@ -68,7 +72,7 @@ public class LoginServiceImpl implements LoginService {
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#getLogin()
      */
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public UserDTO getLogin()
     {
         String username = (String)ServletUtils.getRequest().getSession().getAttribute("username");

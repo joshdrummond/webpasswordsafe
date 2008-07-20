@@ -13,8 +13,10 @@ WEB-INF/lib/
 	asm-attrs.jar [1]
 	asm.jar [1]
 	cglib.jar [1]
+	commons-codec.jar [9]
 	commons-collections.jar [1]
 	commons-dbcp.jar [2]
+	commons-lang.jar [9]
 	commons-logging.jar [1]
 	commons-pool.jar [2]
 	dom4j.jar [1]
@@ -25,6 +27,8 @@ WEB-INF/lib/
 	hibernate-commons-annotations.jar [6]
 	hibernate-tools.jar [7]
 	hibernate3.jar [1]
+	icu4j.jar [10]
+	jasypt.jar [9]
 	jta.jar [1]
 	log4j.jar [2] (v1.2.12+)
 	mysql-connector-java-3.1.13-bin.jar [4]
@@ -41,5 +45,7 @@ WEB-INF/lib/
 [4] MySQL Connector/J JDBC distribution (http://dev.mysql.com/downloads/connector/j/3.1.html)
 [5] GWT 1.4.62 (http://code.google.com/webtoolkit/)
 [6] Hibernate Annotations 3.3 distribution (http://www.hibernate.org/)
-[7] Hibernate Tools 3.2 distribution (http://www.hibernate.org)
+[7] Hibernate Tools 3.2 (http://www.hibernate.org)
 [8] Simple Logging Facade for Java 1.5.2 (http://www.slf4j.org/)
+[9] Jasypt 1.5 (http://www.jasypt.org/)
+[10] International Components for Unicode (ICU) 4.0 (http://www.icu-project.org/) for Java <= 5.0
