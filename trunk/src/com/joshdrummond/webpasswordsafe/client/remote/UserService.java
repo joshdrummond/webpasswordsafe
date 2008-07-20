@@ -20,12 +20,26 @@
 
 package com.joshdrummond.webpasswordsafe.client.remote;
 
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-public interface LoginServiceAsync {
+public interface UserService extends RemoteService {
     
-    public void login(String username, String password, AsyncCallback callback);
-    public void logout(AsyncCallback callback);
-    public void getLogin(AsyncCallback callback);
+    public void changePassword(String password);
+    
+	/**
+	 * Utility class for simplifying access to the instance of async service.
+	 */
+	public static class Util {
+		private static UserServiceAsync instance;
+		public static UserServiceAsync getInstance(){
+			if (instance == null) {
+				instance = (UserServiceAsync) GWT.create(UserService.class);
+				ServiceDefTarget target = (ServiceDefTarget) instance;
+				target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/UserService");
+			}
+			return instance;
+		}
+	}
 }

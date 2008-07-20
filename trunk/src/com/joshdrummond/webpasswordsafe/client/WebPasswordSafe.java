@@ -82,7 +82,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
 
             userSettingsMenu.addItem("General", (Command)null);
 
-            userSettingsMenu.addItem("Change Password", (Command)null);
+            userSettingsMenu.addItem("Change Password", new Command() {
+                public void execute() {
+                    doChangePassword();
+                }
+            });
 
             userMenu.addItem("Settings", userSettingsMenu);
 
@@ -194,6 +198,14 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         passwordSearchPanel.setSize("100%", "100%");
 
         refreshMenu();
+    }
+
+    /**
+     * 
+     */
+    protected void doChangePassword()
+    {
+        new ChangePasswordDialog().show();
     }
 
     /**

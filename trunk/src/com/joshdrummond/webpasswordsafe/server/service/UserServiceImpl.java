@@ -18,33 +18,44 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-package com.joshdrummond.webpasswordsafe.server.authentication;
+package com.joshdrummond.webpasswordsafe.server.service;
 
+import org.apache.log4j.Logger;
+import org.gwtwidgets.server.spring.ServletUtils;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
 import com.joshdrummond.webpasswordsafe.server.model.User;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
+ * 
  * @author Josh Drummond
  *
  */
-public class LocalAuthenticator implements Authenticator
-{
+public class UserServiceImpl extends RemoteServiceServlet implements UserService {
+    private static Logger LOG = Logger.getLogger(UserServiceImpl.class);
+    private static final long serialVersionUID = -8656307779047768662L;
     private UserDAO userDAO;
     private Digester digester;
-    
-    /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.Authenticator#authenticate(java.lang.String, java.lang.String)
-     */
-    public boolean authenticate(String username, String password)
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void changePassword(String password)
     {
-        boolean isValid = false;
-        User user = userDAO.findActiveUserByUsername(username);
-        if (null != user)
+        String loggedInUsername = (String)ServletUtils.getRequest().getSession().getAttribute("username");
+        if (null != loggedInUsername)
         {
-            isValid = digester.check(password, user.getPassword());
+            User user = userDAO.findActiveUserByUsername(loggedInUsername);
+            user.setPassword(digester.digest(password));
+            userDAO.makePersistent(user);
+            LOG.info(loggedInUsername + " changed password");
         }
-        return isValid;
+        else
+        {
+            throw new RuntimeException("Not logged in");
+        }
     }
 
     public UserDAO getUserDAO()
@@ -66,5 +77,4 @@ public class LocalAuthenticator implements Authenticator
     {
         this.digester = digester;
     }
-
 }

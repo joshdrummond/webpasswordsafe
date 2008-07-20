@@ -41,6 +41,11 @@
     <priority value="debug" />
     <appender-ref ref="console" />
   </category>
+  
+  <category name="org.hibernate.type" additivity="false">
+    <priority value="trace" />
+    <appender-ref ref="console" />
+  </category>
 
   <root>
     <priority value="info" />

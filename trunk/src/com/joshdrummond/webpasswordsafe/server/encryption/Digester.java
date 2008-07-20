@@ -17,15 +17,14 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+package com.joshdrummond.webpasswordsafe.server.encryption;
 
-package com.joshdrummond.webpasswordsafe.client.remote;
-
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
-public interface LoginServiceAsync {
-    
-    public void login(String username, String password, AsyncCallback callback);
-    public void logout(AsyncCallback callback);
-    public void getLogin(AsyncCallback callback);
+/**
+ * @author Josh Drummond
+ *
+ */
+public interface Digester
+{
+    public String digest(String clearText);
+    public boolean check(String clearText, String cryptedText);
 }
