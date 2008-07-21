@@ -20,11 +20,14 @@
 
 package com.joshdrummond.webpasswordsafe.server.service;
 
+import java.util.Date;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+import com.joshdrummond.webpasswordsafe.server.assembler.UserAssembler;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
 import com.joshdrummond.webpasswordsafe.server.model.User;
@@ -57,7 +60,21 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
             throw new RuntimeException("Not logged in");
         }
     }
+    
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void addUser(UserDTO userDTO)
+    {
+        User user = UserAssembler.createDO(userDTO);
+        user.setPassword(digester.digest(user.getPassword()));
+        user.setDateCreated(new Date());
+        userDAO.makePersistent(user);
+        LOG.info(userDTO.getUsername() + " added");
+    }
 
+    public void updateUser(UserDTO userDTO)
+    {
+    }
+    
     public UserDAO getUserDAO()
     {
         return this.userDAO;

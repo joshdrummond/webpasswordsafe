@@ -19,6 +19,8 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -31,6 +33,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
+import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 
 /**
  * @author Josh Drummond
@@ -143,9 +146,41 @@ public class UserDialog extends DialogBox
     {
         if (validateFields())
         {
+            user.setUsername(usernameTextBox.getText().trim());
+            user.setFullname(fullnameTextBox.getText().trim());
+            user.setEmail(emailTextBox.getText().trim());
+            user.setActive(enabledCheckBox.isChecked());
+            String pw1 = password1TextBox.getText().trim();
+            if (!pw1.equals(""))
+            {
+                user.setPassword(pw1);
+            }
             
+            AsyncCallback callback = new AsyncCallback()
+            {
+
+                public void onFailure(Throwable caught)
+                {
+                    Window.alert("Error: "+caught.getMessage());
+                }
+
+                public void onSuccess(Object result)
+                {
+                    hide();
+                }
+                
+            };
+            if (user.getId() == 0)
+            {
+                UserService.Util.getInstance().addUser(user, callback);
+            }
+            else
+            {
+                UserService.Util.getInstance().updateUser(user, callback);
+            }
         }
     }
+
     private void doCancel()
     {
         hide();

@@ -29,15 +29,22 @@ WEB-INF/lib/
 	hibernate3.jar [1]
 	icu4j.jar [10]
 	jasypt.jar [9]
+	jaxan.jar [11]
+	jdom.jar [11]
 	jta.jar [1]
 	log4j.jar [2] (v1.2.12+)
 	mysql-connector-java-3.1.13-bin.jar [4]
+	saaj-api.jar [11]
+	saaj-impl.jar [11]
 	slf4j-api.jar [8]
 	slf4j-log4j12.jar [8]
 	spring-orm.jar [2]
 	spring-tx.jar [2]
 	spring-webmvc.jar [2]
+	spring-ws.jar [11]
 	spring.jar [2]
+	stax-api.jar [11]
+	wsdl4j.jar [11]
 
 [1] Hibernate Core 3.2 distribution (http://www.hibernate.org/)
 [2] Spring 2.5 with dependencies distribution (http://www.springframework.org/)
@@ -49,3 +56,4 @@ WEB-INF/lib/
 [8] Simple Logging Facade for Java 1.5.2 (http://www.slf4j.org/)
 [9] Jasypt 1.5 (http://www.jasypt.org/)
 [10] International Components for Unicode (ICU) 4.0 (http://www.icu-project.org/) for Java <= 5.0
+[11] Spring Web Services 1.5 with dependencies distribution (http://static.springframework.org/spring-ws/sites/1.5/)
