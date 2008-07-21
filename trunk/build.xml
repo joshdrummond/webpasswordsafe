@@ -117,6 +117,9 @@
 		<copy file="${web.home}/WEB-INF/rpc-servlet.xml" tofile="${dist.webinf}/rpc-servlet.xml" />
 		<copy file="${web.home}/WEB-INF/webpasswordsafe-data.xml" tofile="${dist.webinf}/webpasswordsafe-data.xml" />
 		<copy file="${web.home}/WEB-INF/webpasswordsafe-service.xml" tofile="${dist.webinf}/webpasswordsafe-service.xml" />
+		<copy file="${web.home}/WEB-INF/webservice-servlet.xml" tofile="${dist.webinf}/webservice-servlet.xml" />
+		<mkdir dir="${dist.webinf}/schema" />
+		<copy file="${web.home}/WEB-INF/schema/WebPasswordSafeTypes.xsd" tofile="${dist.webinf}/schema/WebPasswordSafeTypes.xsd" />
 	</target>
 
 	<target name="war" depends="jars, gwt-compile, web-xml">

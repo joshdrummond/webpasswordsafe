@@ -44,4 +44,33 @@ public class UserAssembler
         return userDTO;
     }
 
+    public static User createDO(UserDTO userDTO)
+    {
+        User user = null;
+        if (null != userDTO)
+        {
+            user = new User();
+            user.setUserName(userDTO.getUsername());
+            user.setFullName(userDTO.getFullname());
+            user.setEmail(userDTO.getEmail());
+            user.setPassword(userDTO.getPassword());
+            user.setActiveFlag(userDTO.isActive());
+        }
+        return user;
+    }
+    
+    public static void updateDO(User user, UserDTO userDTO)
+    {
+        if ((user != null) && (userDTO != null))
+        {
+            if (!userDTO.getUsername().equals(""))
+            {
+                user.setUserName(userDTO.getUsername());
+            }
+            if (!userDTO.getFullname().equals(""))
+            {
+                
+            }
+        }
+    }
 }

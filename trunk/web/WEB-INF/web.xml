@@ -35,9 +35,27 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
+	<servlet>
+		<servlet-name>webservice</servlet-name>
+		<servlet-class>
+			org.springframework.ws.transport.http.MessageDispatcherServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>rpc</servlet-name>
 		<url-pattern>/rpc/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>webservice</servlet-name>
+		<url-pattern>/webservice/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>webservice</servlet-name>
+		<url-pattern>*.wsdl</url-pattern>
 	</servlet-mapping>
 
 	<listener>
