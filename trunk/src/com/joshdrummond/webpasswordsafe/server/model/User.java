@@ -20,11 +20,15 @@
 package com.joshdrummond.webpasswordsafe.server.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
@@ -45,11 +49,10 @@ public class User extends Subject {
     @Column(name = "password", nullable = false, length = 64)
     private String password;
 
-    @Column(name = "fullname", length = 100)
+    @Column(name = "fullname", length = 100, nullable=false)
     private String fullName;
 
-    @Column(name = "email", length = 100)
-    @Index(name = "idx_user_email")
+    @Column(name = "email", length = 100, nullable=false)
     private String email;
 
     @Column(name = "active", nullable = false)
@@ -62,14 +65,31 @@ public class User extends Subject {
     @Column(name = "last_login")
     private Date lastLogin;
 
+    @ManyToMany
+    @JoinTable(name="user_groups",
+            joinColumns={@JoinColumn(name="user_id")},
+            inverseJoinColumns={@JoinColumn(name="group_id")})
+    private Set<Group> groups;
+    
     public User() {
         super( 'U' );
+        groups = new HashSet<Group>();
     }
 
     public User( String userName, String password ) {
-        super( 'U' );
+        this();
         this.userName = userName;
         this.password = password;
+    }
+
+    public Set<Group> getGroups()
+    {
+        return this.groups;
+    }
+
+    public void setGroups(Set<Group> groups)
+    {
+        this.groups = groups;
     }
 
     public String getUserName() {

@@ -19,8 +19,11 @@
 */
 package com.joshdrummond.webpasswordsafe.server.model;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import org.hibernate.annotations.Index;
@@ -39,13 +42,37 @@ public class Group extends Subject {
     @Index(name = "idx_group_name")
     private String name;
 
+    @ManyToMany(mappedBy="groups")
+    private Set<User> users;
+    
     public Group() {
         super( 'G' );
+        users = new HashSet<User>();
     }
 
     public Group( String name ) {
-        super( 'G' );
+        this();
         this.name = name;
+    }
+
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public Set<User> getUsers()
+    {
+        return this.users;
+    }
+
+    public void setUsers(Set<User> users)
+    {
+        this.users = users;
     }
 
     public boolean equals( Object o ) {
