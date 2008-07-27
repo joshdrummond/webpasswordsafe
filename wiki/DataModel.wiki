@@ -18,14 +18,12 @@
 ||name||varchar(256)||||
 
 || *user_groups* ||||||
-||id||long||pk||
-||user_id||long||fk users||
-||group_id||long||fk groups||
+||user_id||long||pk, fk users||
+||group_id||long||pk, fk groups||
 
 || *subject_roles* ||||||
-||id||long||pk||
-||subject_id||long||fk subjects||
-||role_id||long||fk roles||
+||subject_id||long||pk, fk subjects||
+||role_id||long||pk, fk roles||
 
 || *roles* ||||||
 ||id||long||pk||
@@ -46,6 +44,7 @@
 || *password_data* ||||||
 ||id||long||pk||
 ||password_id||long||fk passwords||
+||password_position||int||||
 ||password||varchar(108)||encrypted of 64||
 ||date_created||datetime||||
 ||user_created_id||long||fk users||
@@ -79,9 +78,8 @@
 ||name||varchar(256)||||
 
 || *password_tags* ||||||
-||id||long||pk||
-||password_id||long||fk passwords||
-||tag_id||long||fk tags||
+||password_id||long||pk, fk passwords||
+||tag_id||long||pk, fk tags||
 
 || *global_settings* ||||||
 ||id||long||pk||
