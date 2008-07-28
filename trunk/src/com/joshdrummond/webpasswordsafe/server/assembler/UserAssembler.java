@@ -23,16 +23,14 @@ import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.server.model.User;
 
 /**
+ * DTO <-> Domain Object assembler for User
+ * 
  * @author Josh Drummond
  *
  */
 public class UserAssembler
 {
 
-    /**
-     * @param findActiveUserByUsername
-     * @return
-     */
     public static UserDTO buildDTO(User user)
     {
         UserDTO userDTO = null;

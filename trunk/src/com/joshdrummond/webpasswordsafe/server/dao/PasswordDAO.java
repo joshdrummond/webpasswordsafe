@@ -1,4 +1,4 @@
-<!--
+/*
     Copyright 2008 Josh Drummond
 
     This file is part of WebPasswordSafe.
@@ -16,11 +16,17 @@
     You should have received a copy of the GNU General Public License
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
--->
-<module>
-	<inherits name="com.google.gwt.user.User"/>
-	<entry-point class="com.joshdrummond.webpasswordsafe.client.WebPasswordSafe"/>
-	<servlet path="/LoginService" class="com.joshdrummond.webpasswordsafe.server.service.LoginServiceImpl"/>
-	<servlet path="/UserService" class="com.joshdrummond.webpasswordsafe.server.service.UserServiceImpl"/>
-	<servlet path="/PasswordService" class="com.joshdrummond.webpasswordsafe.server.service.PasswordServiceImpl"/>
-</module>
+*/
+package com.joshdrummond.webpasswordsafe.server.dao;
+
+import com.joshdrummond.webpasswordsafe.server.model.Password;
+
+/**
+ * DAO interface for Password
+ *  
+ * @author Josh Drummond
+ *
+ */
+public interface PasswordDAO extends GenericDAO<Password, Long> {
+
+}

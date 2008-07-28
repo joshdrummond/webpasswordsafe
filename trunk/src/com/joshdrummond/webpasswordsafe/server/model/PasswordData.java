@@ -27,8 +27,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.Parameter;
+import org.jasypt.hibernate.type.EncryptedStringType;
+
+@TypeDef(name="encryptedString", typeClass=EncryptedStringType.class,
+    parameters={@Parameter(name="encryptorRegisteredName", value="strongHibernateStringEncryptor")})
 
 /**
  * POJO model for password_data
@@ -44,22 +49,24 @@ public class PasswordData
     @GeneratedValue
     @Column(name="id")
     private long id;
-    
-    @Column(name="password", length=108, nullable=false)
-    //encrypted
+
+    @Column(name="password", length=128, updatable=false, nullable=false)
+    @Type(type="encryptedString")
     private String password;
     
-    @Column(name="date_created", insertable=false, updatable=false, nullable=false)
-    @Generated(GenerationTime.INSERT)
+    @Column(name="date_created", updatable=false, nullable=false)
     private Date dateCreated;
     
     @ManyToOne
-    @JoinColumn(name="user_created_id", nullable=false, updatable=false)
+    @JoinColumn(name="user_created_id", updatable=false, nullable=false)
     private User userCreated;
     
     @ManyToOne
     @JoinColumn(name="password_id", nullable=false)
     private Password parent;
+
+    @Column(name="password_position", nullable=false)
+    private int passwordPosition;
 
     public PasswordData()
     {
@@ -113,6 +120,16 @@ public class PasswordData
     public void setParent(Password parent)
     {
         this.parent = parent;
+    }
+
+    public int getPasswordPosition()
+    {
+        return this.passwordPosition;
+    }
+
+    public void setPasswordPosition(int passwordPosition)
+    {
+        this.passwordPosition = passwordPosition;
     }
     
 }

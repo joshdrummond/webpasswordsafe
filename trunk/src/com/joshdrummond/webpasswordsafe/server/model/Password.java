@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,8 +35,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
 
@@ -73,16 +70,14 @@ public class Password
     @Type(type="yes_no")
     private boolean active;
     
-    @Column(name="date_created", insertable=false, updatable=false, nullable=false)
-    @Generated(GenerationTime.INSERT)
+    @Column(name="date_created", updatable=false, nullable=false)
     private Date dateCreated;
     
     @ManyToOne
-    @JoinColumn(name="user_created_id", nullable=false, updatable=false)
+    @JoinColumn(name="user_created_id", updatable=false, nullable=false)
     private User userCreated;
     
-    @Column(name="date_last_update", insertable=false, updatable=false, nullable=false)
-    @Generated(GenerationTime.ALWAYS)
+    @Column(name="date_last_update", nullable=false)
     private Date dateLastUpdate;
     
     @ManyToOne
@@ -203,6 +198,10 @@ public class Password
     public void setPasswordData(List<PasswordData> passwordData)
     {
         this.passwordData = passwordData;
+    }
+    public void addPasswordData(PasswordData passwordDataItem)
+    {
+        this.passwordData.add(passwordDataItem);
     }
     
 }

@@ -26,6 +26,7 @@
 			<map>
 				<entry key="/LoginService" value-ref="LoginServiceBean" />
 				<entry key="/UserService" value-ref="UserServiceBean" />
+				<entry key="/PasswordService" value-ref="PasswordServiceBean" />
 			</map>
 		</property>
 	</bean>

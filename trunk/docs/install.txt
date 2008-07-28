@@ -12,6 +12,7 @@ WEB-INF/lib/
 	antlr.jar [1]
 	asm-attrs.jar [1]
 	asm.jar [1]
+	bcprov-jdk15-140.jar [12]
 	cglib.jar [1]
 	commons-codec.jar [9]
 	commons-collections.jar [1]
@@ -57,3 +58,4 @@ WEB-INF/lib/
 [9] Jasypt 1.5 (http://www.jasypt.org/)
 [10] International Components for Unicode (ICU) 4.0 (http://www.icu-project.org/) for Java <= 5.0
 [11] Spring Web Services 1.5 with dependencies distribution (http://static.springframework.org/spring-ws/sites/1.5/)
+[12] Bouncy Castle JCE Provider (http://www.bouncycastle.org/java.html)

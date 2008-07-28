@@ -41,7 +41,6 @@ import com.joshdrummond.webpasswordsafe.client.remote.UserService;
  */
 public class UserDialog extends DialogBox
 {
-//    private MainWindow main;
     private UserDTO user;
     private TextBox usernameTextBox;
     private TextBox fullnameTextBox;
@@ -50,10 +49,9 @@ public class UserDialog extends DialogBox
     private PasswordTextBox password2TextBox;
     private CheckBox enabledCheckBox;
     
-    public UserDialog(UserDTO pUser)
+    public UserDialog(UserDTO user)
     {
-//        this.main = main;
-        this.user = pUser;
+        this.user = user;
         setHTML("User");
 
         final FlexTable flexTable = new FlexTable();

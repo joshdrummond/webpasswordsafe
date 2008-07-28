@@ -23,12 +23,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 
 /**
  * @author Josh Drummond
  *
  */
 public class PasswordDTO
+    implements IsSerializable
 {
     private long id;
     private String name;
@@ -40,9 +43,17 @@ public class PasswordDTO
     private UserDTO userCreated;
     private Date dateLastUpdated;
     private UserDTO userLastUpdated;
+    private String currentPassword;
+    /**
+     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.PasswordDataDTO>
+     */
     private List passwordData;
+    /**
+     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.PermissionDTO>
+     */
     private List permissions;
-    private List tags;
+    private String tags;
+    
     /**
      * @param id
      * @param name
@@ -52,7 +63,7 @@ public class PasswordDTO
      * @param notes
      */
     public PasswordDTO(long id, String name, String username, String password, boolean active,
-            int maxHistory, String notes)
+            int maxHistory, String notes, String tags)
     {
         this.id = id;
         this.name = name;
@@ -60,11 +71,13 @@ public class PasswordDTO
         this.active = active;
         this.maxHistory = maxHistory;
         this.notes = notes;
-        PasswordDataDTO passwordDataItem = new PasswordDataDTO(password);
-        passwordData = new ArrayList();
-        passwordData.add(passwordDataItem);
+        this.tags = tags;
+        this.currentPassword = password;
+//        PasswordDataDTO passwordDataItem = new PasswordDataDTO(password);
+//        passwordData = new ArrayList();
+//        passwordData.add(passwordDataItem);
         permissions = new ArrayList();
-        tags = new ArrayList();
+//        tags = new ArrayList();
     }
     
     
@@ -245,18 +258,31 @@ public class PasswordDTO
     /**
      * @return the tags
      */
-    public List getTags()
+    public String getTags()
     {
         return this.tags;
     }
     /**
      * @param tags the tags to set
      */
-    public void setTags(List tags)
+    public void setTags(String tags)
     {
         this.tags = tags;
     }
+
+
+    public String getCurrentPassword()
+    {
+        return this.currentPassword;
+    }
+
+
+    public void setCurrentPassword(String currentPassword)
+    {
+        this.currentPassword = currentPassword;
+    }
     
+    /*
     public String getCurrentPassword()
     {
         String currentPassword = "";
@@ -279,4 +305,5 @@ public class PasswordDTO
         }
         return displayTags.trim();
     }
+    */
 }
