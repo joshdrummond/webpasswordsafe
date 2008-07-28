@@ -21,11 +21,14 @@ package com.joshdrummond.webpasswordsafe.client.model.common;
 
 import java.util.Date;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * @author Josh Drummond
  *
  */
 public class PasswordDataDTO
+    implements IsSerializable
 {
     private long id;
     private String password;

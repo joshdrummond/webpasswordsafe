@@ -19,6 +19,8 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -31,6 +33,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
+import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 
 /**
  * @author Josh Drummond
@@ -159,8 +162,45 @@ public class PasswordDialog extends DialogBox
      */
     protected void doSave()
     {
-        // TODO Auto-generated method stub
-        
+        if (validateFields())
+        {
+            password.setName(nameTextBox.getText().trim());
+            password.setUsername(usernameTextBox.getText().trim());
+            password.setCurrentPassword(passwordTextBox.getText().trim());
+            password.setTags(tagsTextBox.getText().trim());
+            password.setNotes(notesTextArea.getText().trim());
+            
+            AsyncCallback callback = new AsyncCallback()
+            {
+
+                public void onFailure(Throwable caught)
+                {
+                    Window.alert("Error: "+caught.getMessage());
+                }
+
+                public void onSuccess(Object result)
+                {
+                    hide();
+                }
+                
+            };
+            if (password.getId() == 0)
+            {
+                PasswordService.Util.getInstance().addPassword(password, callback);
+            }
+            else
+            {
+                PasswordService.Util.getInstance().updatePassword(password, callback);
+            }
+        }
+    }
+
+    /**
+     * @return
+     */
+    private boolean validateFields()
+    {
+        return true;
     }
 
     /**
@@ -180,7 +220,7 @@ public class PasswordDialog extends DialogBox
         nameTextBox.setText(password.getName());
         usernameTextBox.setText(password.getUsername());
         passwordTextBox.setText(password.getCurrentPassword());
-        tagsTextBox.setText(password.getTagsAsString());
+        tagsTextBox.setText(password.getTags());
         notesTextArea.setText(password.getNotes());
     }
 
