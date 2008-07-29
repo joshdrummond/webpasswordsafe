@@ -19,6 +19,9 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import java.util.List;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -34,6 +37,8 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.TreeListener;
 import com.google.gwt.user.client.ui.Widget;
+import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
+import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 
 /**
  * @author Josh Drummond
@@ -45,6 +50,7 @@ public class PasswordSearchPanel extends Composite
     private FlexTable passwordTable;
     private Tree tagTree;
     private TextBox searchTextBox;
+    private List passwords;
 
     public PasswordSearchPanel()
     {
@@ -54,6 +60,7 @@ public class PasswordSearchPanel extends Composite
 
         final ScrollPanel scrollPanel = new ScrollPanel();
         flexTable.setWidget(1, 0, scrollPanel);
+        scrollPanel.setSize("100", "300");
         flexTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
         flexTable.getCellFormatter().setHeight(1, 0, "100%");
         flexTable.getCellFormatter().setWidth(1, 0, "25%");
@@ -73,7 +80,8 @@ public class PasswordSearchPanel extends Composite
 
         final HorizontalPanel horizontalPanel = new HorizontalPanel();
         flexTable.setWidget(0, 0, horizontalPanel);
-        flexTable.getCellFormatter().setHeight(0, 0, "20%");
+        flexTable.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
+        flexTable.getCellFormatter().setHeight(0, 0, "15");
         horizontalPanel.setHeight("20%");
         horizontalPanel.setSpacing(10);
         flexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
@@ -87,6 +95,10 @@ public class PasswordSearchPanel extends Composite
         searchTextBox.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress(final Widget sender, final char keyCode, final int modifiers)
             {
+                if (keyCode == KEY_ENTER)
+                {
+                    doSearch();
+                }
             }
         });
         searchTextBox.setVisibleLength(30);
@@ -145,28 +157,40 @@ public class PasswordSearchPanel extends Composite
      */
     protected void doSearch()
     {
-        String[][] data = new String[][] {{"korea - root", "root", "", ""} , {"china - root", "root", "", ""}};
-        refreshTable(data);
+        AsyncCallback callback = new AsyncCallback()
+        {
+            public void onFailure(Throwable caught)
+            {
+                Window.alert("Error: "+caught.getMessage());
+            }
+            public void onSuccess(Object result)
+            {
+                passwords = (List)result;
+                refreshTable();
+            }
+        };
+        PasswordService.Util.getInstance().searchPassword(searchTextBox.getText().trim(), callback);
     }
 
     /**
      * @param data
      */
-    private void refreshTable(String[][] data)
+    private void refreshTable()
     {
-        for (int i = 0; i < data.length; i++)
+        for (int i = 0; i < passwords.size(); i++)
         {
-            for (int j = 0; j < 4; j++)
-            {
-                if (j == 2)
-                {
-                    passwordTable.setText(i + 1, j, "******");
-                }
-                else
-                {
-                    passwordTable.setText(i + 1, j, data[i][j]);
-                }
-            }
+            PasswordDTO passwordDTO = (PasswordDTO)passwords.get(i);
+            passwordTable.setText(i+1, 0, passwordDTO.getName());
+            passwordTable.setText(i+1, 1, passwordDTO.getUsername());
+            passwordTable.setText(i+1, 2, "******"); //password popup
+            passwordTable.setText(i+1, 3, passwordDTO.getNotes());
+        }
+        for (int i = passwords.size(); i < VISIBLE_ROW_COUNT; i++)
+        {
+            passwordTable.setText(i + 1, 0, "");
+            passwordTable.setText(i + 1, 1, "");
+            passwordTable.setText(i + 1, 2, "");
+            passwordTable.setText(i + 1, 3, "");
         }
     }
 

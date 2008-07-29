@@ -32,4 +32,5 @@ public interface PasswordServiceAsync {
     
     public void addPassword(PasswordDTO password, AsyncCallback callback);
     public void updatePassword(PasswordDTO password, AsyncCallback callback);
+    public void searchPassword(String query, AsyncCallback callback);
 }

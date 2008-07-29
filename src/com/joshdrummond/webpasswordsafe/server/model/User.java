@@ -44,13 +44,13 @@ import org.hibernate.annotations.Type;
 public class User extends Subject {
     @Column(name = "username", nullable = false, length = 64, updatable = false, unique = true)
     @Index(name = "idx_user_username")
-    private String userName;
+    private String username;
 
     @Column(name = "password", nullable = false, length = 64)
     private String password;
 
     @Column(name = "fullname", length = 100, nullable=false)
-    private String fullName;
+    private String fullname;
 
     @Column(name = "email", length = 100, nullable=false)
     private String email;
@@ -76,9 +76,9 @@ public class User extends Subject {
         groups = new HashSet<Group>();
     }
 
-    public User( String userName, String password ) {
+    public User( String username, String password ) {
         this();
-        this.userName = userName;
+        this.username = username;
         this.password = password;
     }
 
@@ -92,12 +92,12 @@ public class User extends Subject {
         this.groups = groups;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName( String userName ) {
-        this.userName = userName;
+    public void setUsername( String username ) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -108,12 +108,12 @@ public class User extends Subject {
         this.password = password;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setFullName( String fullName ) {
-        this.fullName = fullName;
+    public void setFullname( String fullname ) {
+        this.fullname = fullname;
     }
 
     public String getEmail() {
@@ -152,9 +152,9 @@ public class User extends Subject {
     public String toString() {
         return "User{" +
                 "id='" + getId() + '\'' +
-                "userName='" + userName + '\'' +
+                "username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", fullName='" + fullName + '\'' +
+                ", fullName='" + fullname + '\'' +
                 ", email='" + email + '\'' +
                 ", activeFlag=" + activeFlag +
                 '}';
@@ -179,13 +179,13 @@ public class User extends Subject {
         if ( email != null ? !email.equals( user.email ) : user.email != null ) {
             return false;
         }
-        if ( fullName != null ? !fullName.equals( user.fullName ) : user.fullName != null ) {
+        if ( fullname != null ? !fullname.equals( user.fullname ) : user.fullname != null ) {
             return false;
         }
         if ( !password.equals( user.password ) ) {
             return false;
         }
-        if ( !userName.equals( user.userName ) ) {
+        if ( !username.equals( user.username ) ) {
             return false;
         }
 
@@ -194,9 +194,9 @@ public class User extends Subject {
 
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + userName.hashCode();
+        result = 31 * result + username.hashCode();
         result = 31 * result + password.hashCode();
-        result = 31 * result + ( fullName != null ? fullName.hashCode() : 0 );
+        result = 31 * result + ( fullname != null ? fullname.hashCode() : 0 );
         result = 31 * result + ( email != null ? email.hashCode() : 0 );
         result = 31 * result + ( activeFlag ? 1 : 0 );
         return result;

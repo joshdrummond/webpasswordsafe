@@ -36,7 +36,7 @@ public class UserAssembler
         UserDTO userDTO = null;
         if (null != user)
         {
-            userDTO = new UserDTO(user.getId(), user.getUserName(), user.getFullName(), 
+            userDTO = new UserDTO(user.getId(), user.getUsername(), user.getFullname(), 
                     user.getEmail(), user.isActiveFlag());
         }
         return userDTO;
@@ -48,8 +48,8 @@ public class UserAssembler
         if (null != userDTO)
         {
             user = new User();
-            user.setUserName(userDTO.getUsername());
-            user.setFullName(userDTO.getFullname());
+            user.setUsername(userDTO.getUsername());
+            user.setFullname(userDTO.getFullname());
             user.setEmail(userDTO.getEmail());
             user.setPassword(userDTO.getPassword());
             user.setActiveFlag(userDTO.isActive());
@@ -63,7 +63,7 @@ public class UserAssembler
         {
             if (!userDTO.getUsername().equals(""))
             {
-                user.setUserName(userDTO.getUsername());
+                user.setUsername(userDTO.getUsername());
             }
             if (!userDTO.getFullname().equals(""))
             {

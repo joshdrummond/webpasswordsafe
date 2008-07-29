@@ -21,9 +21,9 @@ package com.joshdrummond.webpasswordsafe.server.model;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -98,7 +98,7 @@ public class Password
     {
         maxHistory = -1;
         passwordData = new ArrayList<PasswordData>();
-        tags = new HashSet<Tag>();
+        tags = new TreeSet<Tag>();
     }
     
     public Set<Tag> getTags()
@@ -203,5 +203,13 @@ public class Password
     {
         this.passwordData.add(passwordDataItem);
     }
-    
+    public String getTagsAsString()
+    {
+        StringBuilder tagString = new StringBuilder();
+        for (Tag tag : tags)
+        {
+            tagString.append(tag.getName()).append(" ");
+        }
+        return tagString.toString().trim();
+    }
 }

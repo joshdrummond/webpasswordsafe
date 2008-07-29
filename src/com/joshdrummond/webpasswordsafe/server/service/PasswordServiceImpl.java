@@ -19,8 +19,9 @@
 */
 package com.joshdrummond.webpasswordsafe.server.service;
 
+import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.transaction.annotation.Propagation;
@@ -68,6 +69,18 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
         LOG.debug("updating password");
     }
 
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public List searchPassword(String query)
+    {
+        List passwordsDTO = new ArrayList();
+        List<Password> passwordsDO = passwordDAO.findPasswordByFuzzySearch(query);
+        for (Password passwordDO : passwordsDO)
+        {
+            passwordsDTO.add(PasswordAssembler.buildDTO(passwordDO));
+        }
+        return passwordsDTO;
+    }
+    
     public PasswordDAO getPasswordDAO()
     {
         return this.passwordDAO;
@@ -87,6 +100,5 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     {
         this.userDAO = userDAO;
     }
-    
     
 }
