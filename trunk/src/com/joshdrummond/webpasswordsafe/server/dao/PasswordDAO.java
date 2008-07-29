@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
+import java.util.List;
 import com.joshdrummond.webpasswordsafe.server.model.Password;
 
 /**
@@ -29,4 +30,6 @@ import com.joshdrummond.webpasswordsafe.server.model.Password;
  */
 public interface PasswordDAO extends GenericDAO<Password, Long> {
 
+    public List<Password> findPasswordByFuzzySearch(String query);
+    
 }

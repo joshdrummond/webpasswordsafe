@@ -31,7 +31,7 @@ import com.joshdrummond.webpasswordsafe.server.model.User;
  */
 public class UserDAOHibernate extends GenericHibernateDAO<User, Long> implements UserDAO {
     public User findActiveUserByUsername(String username) {
-        List<User> users = findByCriteria(Restrictions.eq("userName", username), Restrictions.eq("activeFlag", true));
+        List<User> users = findByCriteria(Restrictions.eq("username", username), Restrictions.eq("activeFlag", true));
         return (users.size() > 0) ? users.get(0) : null;
     }
 }

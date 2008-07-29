@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.server.assembler;
 
+import java.util.Date;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.server.model.Password;
 import com.joshdrummond.webpasswordsafe.server.model.PasswordData;
@@ -47,5 +48,26 @@ public class PasswordAssembler
             password.addPasswordData(passwordDataItem);
         }
         return password;
+    }
+    
+    public static PasswordDTO buildDTO(Password password)
+    {
+        PasswordDTO passwordDTO = null;
+        if (null != password)
+        {
+            passwordDTO = new PasswordDTO();
+            passwordDTO.setId(password.getId());
+            passwordDTO.setName(password.getName());
+            passwordDTO.setUsername(password.getUsername());
+            passwordDTO.setNotes(password.getNotes());
+            passwordDTO.setMaxHistory(password.getMaxHistory());
+            passwordDTO.setActive(password.isActive());
+            passwordDTO.setDateCreated(new Date(password.getDateCreated().getTime()));
+            passwordDTO.setUserCreated(UserAssembler.buildDTO(password.getUserCreated()));
+            passwordDTO.setDateLastUpdated(new Date(password.getDateLastUpdate().getTime()));
+            passwordDTO.setUserLastUpdated(UserAssembler.buildDTO(password.getUserLastUpdate()));
+            passwordDTO.setTags(password.getTagsAsString());
+        }
+        return passwordDTO;
     }
 }
