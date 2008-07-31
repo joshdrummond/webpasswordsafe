@@ -17,14 +17,17 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+package com.joshdrummond.webpasswordsafe.server.dao;
 
-package com.joshdrummond.webpasswordsafe.server.authentication;
+import com.joshdrummond.webpasswordsafe.server.model.Tag;
 
 /**
- * @author josh
+ * DAO interface for Tag
+ * 
+ * @author Josh Drummond
  *
  */
-public interface Authenticator
+public interface TagDAO extends GenericDAO<Tag, Long>
 {
-    public boolean authenticate(String username, String password);
+    public Tag findTagByName(String name);
 }

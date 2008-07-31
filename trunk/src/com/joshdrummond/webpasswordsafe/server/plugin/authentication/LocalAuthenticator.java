@@ -18,7 +18,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-package com.joshdrummond.webpasswordsafe.server.authentication;
+package com.joshdrummond.webpasswordsafe.server.plugin.authentication;
 
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Digester;

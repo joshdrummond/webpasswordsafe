@@ -38,7 +38,7 @@ import org.hibernate.annotations.Index;
 @Table(name = "groups")
 @PrimaryKeyJoinColumn(name = "id")
 public class Group extends Subject {
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100, unique=true)
     @Index(name = "idx_group_name")
     private String name;
 

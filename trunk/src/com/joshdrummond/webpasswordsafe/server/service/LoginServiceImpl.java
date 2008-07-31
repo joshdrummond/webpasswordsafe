@@ -28,9 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.server.assembler.UserAssembler;
-import com.joshdrummond.webpasswordsafe.server.authentication.Authenticator;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.model.User;
+import com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator;
 
 /**
  * 

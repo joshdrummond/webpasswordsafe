@@ -17,22 +17,22 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-package com.joshdrummond.webpasswordsafe.client.remote;
-
-import java.util.List;
-import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+package com.joshdrummond.webpasswordsafe.server.plugin.generator;
 
 /**
+ * Interface defining a Password Generator
  * 
  * @author Josh Drummond
  *
  */
-public interface PasswordServiceAsync {
+public interface PasswordGenerator
+{
+
+    /**
+     * Returns a String representing a generated password
+     * 
+     * @return password String
+     */
+    public String generatePassword();
     
-    public void addPassword(PasswordDTO password, AsyncCallback callback);
-    public void updatePassword(PasswordDTO password, AsyncCallback callback);
-    public void searchPassword(String query, AsyncCallback callback);
-    public void generatePassword(AsyncCallback callback);
 }

@@ -43,7 +43,7 @@ public class Tag
     @Column(name="id")
     private long id;
     
-    @Column(name="name", nullable=false, updatable=false, unique=false)
+    @Column(name="name", nullable=false, updatable=false, unique=true)
     private String name;
     
     @ManyToMany(mappedBy="tags")
@@ -52,6 +52,12 @@ public class Tag
     public Tag()
     {
         passwords = new HashSet<Password>();
+    }
+    
+    public Tag(String name)
+    {
+        this();
+        this.name = name;
     }
     
     public long getId()
