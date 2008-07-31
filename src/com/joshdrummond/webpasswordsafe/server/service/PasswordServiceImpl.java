@@ -30,12 +30,15 @@ import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.server.assembler.PasswordAssembler;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
+import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.model.Password;
 import com.joshdrummond.webpasswordsafe.server.model.User;
+import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
+ * Implementation of Password Service
  * 
  * @author Josh Drummond
  *
@@ -46,12 +49,14 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     private static Logger LOG = Logger.getLogger(PasswordServiceImpl.class);
     private PasswordDAO passwordDAO;
     private UserDAO userDAO;
+    private TagDAO tagDAO;
+    private PasswordGenerator passwordGenerator;
 
     @Transactional(propagation=Propagation.REQUIRED)
     public void addPassword(PasswordDTO passwordDTO)
     {
         Date now = new Date();
-        Password password = PasswordAssembler.createDO(passwordDTO);
+        Password password = PasswordAssembler.createDO(passwordDTO, tagDAO);
         User loggedInUser = userDAO.findActiveUserByUsername((String)ServletUtils.getRequest().getSession().getAttribute("username"));
         password.setUserCreated(loggedInUser);
         password.setDateCreated(now);
@@ -80,7 +85,13 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
         }
         return passwordsDTO;
     }
-    
+ 
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public String generatePassword()
+    {
+        return passwordGenerator.generatePassword();
+    }
+
     public PasswordDAO getPasswordDAO()
     {
         return this.passwordDAO;
@@ -99,6 +110,26 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     public void setUserDAO(UserDAO userDAO)
     {
         this.userDAO = userDAO;
+    }
+
+    public TagDAO getTagDAO()
+    {
+        return this.tagDAO;
+    }
+
+    public void setTagDAO(TagDAO tagDAO)
+    {
+        this.tagDAO = tagDAO;
+    }
+
+    public PasswordGenerator getPasswordGenerator()
+    {
+        return this.passwordGenerator;
+    }
+
+    public void setPasswordGenerator(PasswordGenerator passwordGenerator)
+    {
+        this.passwordGenerator = passwordGenerator;
     }
     
 }

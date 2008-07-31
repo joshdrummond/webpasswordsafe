@@ -18,21 +18,13 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-package com.joshdrummond.webpasswordsafe.client.remote;
-
-import java.util.List;
-import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+package com.joshdrummond.webpasswordsafe.server.plugin.authentication;
 
 /**
- * 
- * @author Josh Drummond
+ * @author josh
  *
  */
-public interface PasswordServiceAsync {
-    
-    public void addPassword(PasswordDTO password, AsyncCallback callback);
-    public void updatePassword(PasswordDTO password, AsyncCallback callback);
-    public void searchPassword(String query, AsyncCallback callback);
-    public void generatePassword(AsyncCallback callback);
+public interface Authenticator
+{
+    public boolean authenticate(String username, String password);
 }

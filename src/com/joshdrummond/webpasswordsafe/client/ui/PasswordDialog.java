@@ -153,8 +153,21 @@ public class PasswordDialog extends DialogBox
      */
     protected void doGeneratePassword()
     {
-        // TODO Auto-generated method stub
-        
+        AsyncCallback callback = new AsyncCallback()
+        {
+
+            public void onFailure(Throwable caught)
+            {
+                Window.alert("Error: "+caught.getMessage());
+            }
+
+            public void onSuccess(Object result)
+            {
+                passwordTextBox.setText((String)result);
+            }
+            
+        };
+        PasswordService.Util.getInstance().generatePassword(callback);
     }
 
     /**

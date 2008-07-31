@@ -20,9 +20,12 @@
 package com.joshdrummond.webpasswordsafe.server.assembler;
 
 import java.util.Date;
+import java.util.StringTokenizer;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
+import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.model.Password;
 import com.joshdrummond.webpasswordsafe.server.model.PasswordData;
+import com.joshdrummond.webpasswordsafe.server.model.Tag;
 
 /**
  * DTO <-> Domain Object assembler for Password
@@ -32,16 +35,32 @@ import com.joshdrummond.webpasswordsafe.server.model.PasswordData;
  */
 public class PasswordAssembler
 {
-    public static Password createDO(PasswordDTO passwordDTO)
+    public static Password createDO(PasswordDTO passwordDTO, TagDAO tagDAO)
     {
         Password password = null;
         if (null != passwordDTO)
         {
+            // core data
             password = new Password();
             password.setName(passwordDTO.getName());
             password.setUsername(passwordDTO.getUsername());
             password.setNotes(passwordDTO.getNotes());
-            password.setActive(true);
+            password.setActive(passwordDTO.isActive());
+            password.setMaxHistory(passwordDTO.getMaxHistory());
+            // tags
+            StringTokenizer st = new StringTokenizer(passwordDTO.getTags());
+            while (st.hasMoreTokens())
+            {
+                String tagName = st.nextToken();
+                Tag tag = tagDAO.findTagByName(tagName);
+                if (tag == null)
+                {
+                    tag = new Tag(tagName);
+                }
+                tag.getPasswords().add(password);
+                password.addTag(tag);
+            }
+            // set initial password
             PasswordData passwordDataItem = new PasswordData();
             passwordDataItem.setParent(password);
             passwordDataItem.setPassword(passwordDTO.getCurrentPassword());

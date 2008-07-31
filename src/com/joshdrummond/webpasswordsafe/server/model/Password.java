@@ -21,9 +21,9 @@ package com.joshdrummond.webpasswordsafe.server.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -88,7 +88,7 @@ public class Password
     @IndexColumn(name="password_position", nullable=false)
     private List<PasswordData> passwordData;
     
-    @ManyToMany
+    @ManyToMany(cascade={CascadeType.ALL})
     @JoinTable(name="password_tags",
             joinColumns={@JoinColumn(name="password_id")},
             inverseJoinColumns={@JoinColumn(name="tag_id")})
@@ -98,7 +98,7 @@ public class Password
     {
         maxHistory = -1;
         passwordData = new ArrayList<PasswordData>();
-        tags = new TreeSet<Tag>();
+        tags = new HashSet<Tag>();
     }
     
     public Set<Tag> getTags()
@@ -211,5 +211,13 @@ public class Password
             tagString.append(tag.getName()).append(" ");
         }
         return tagString.toString().trim();
+    }
+
+    /**
+     * @param tag
+     */
+    public void addTag(Tag tag)
+    {
+        tags.add(tag);
     }
 }
