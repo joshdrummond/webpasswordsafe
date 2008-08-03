@@ -19,6 +19,7 @@
  */
 package com.joshdrummond.webpasswordsafe.client.model.common;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -55,6 +56,8 @@ public class UserDTO
     public UserDTO()
     {
         super();
+        roles = new ArrayList();
+        groups = new ArrayList();
     }
 
     /**
@@ -66,7 +69,7 @@ public class UserDTO
      */
     public UserDTO(long id, String username, String fullname, String email, boolean isActive)
     {
-        super();
+        this();
         this.email = email;
         this.fullname = fullname;
         this.id = id;

@@ -22,6 +22,7 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -47,6 +48,7 @@ public class PasswordDialog extends DialogBox
     private TextBox passwordTextBox;
     private TextBox tagsTextBox;
     private TextArea notesTextArea;
+    private CheckBox activeCheckBox;
 
     public PasswordDialog(PasswordDTO password)
     {
@@ -144,6 +146,10 @@ public class PasswordDialog extends DialogBox
             }
         });
         cancelButton.setText("Cancel");
+
+        activeCheckBox = new CheckBox();
+        flexTable.setWidget(5, 2, activeCheckBox);
+        activeCheckBox.setText("Active");
         
         setFields();
     }
@@ -182,6 +188,7 @@ public class PasswordDialog extends DialogBox
             password.setCurrentPassword(passwordTextBox.getText().trim());
             password.setTags(tagsTextBox.getText().trim());
             password.setNotes(notesTextArea.getText().trim());
+            password.setActive(activeCheckBox.isChecked());
             
             AsyncCallback callback = new AsyncCallback()
             {
@@ -235,6 +242,7 @@ public class PasswordDialog extends DialogBox
         passwordTextBox.setText(password.getCurrentPassword());
         tagsTextBox.setText(password.getTags());
         notesTextArea.setText(password.getNotes());
+        activeCheckBox.setChecked(password.isActive());
     }
 
     /**

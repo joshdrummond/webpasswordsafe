@@ -20,7 +20,9 @@
 
 package com.joshdrummond.webpasswordsafe.server.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.transaction.annotation.Propagation;
@@ -71,9 +73,26 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
         LOG.info(userDTO.getUsername() + " added");
     }
 
+    @Transactional(propagation=Propagation.REQUIRED)
     public void updateUser(UserDTO userDTO)
     {
     }
+    
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public List getUsers(boolean includeOnlyActive)
+    {
+        List<User> usersDO = userDAO.findAllUsers(includeOnlyActive);
+        List usersDTO = new ArrayList(usersDO.size());
+        for (User userDO : usersDO)
+        {
+            usersDTO.add(UserAssembler.buildDTO(userDO));
+        }
+        LOG.debug("found "+usersDTO.size()+" users");
+        return usersDTO;
+    }
+    
+    
+    // getters and setters
     
     public UserDAO getUserDAO()
     {
@@ -94,4 +113,5 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
     {
         this.digester = digester;
     }
+
 }

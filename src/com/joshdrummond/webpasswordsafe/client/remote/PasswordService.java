@@ -37,6 +37,7 @@ public interface PasswordService extends RemoteService {
     public void updatePassword(PasswordDTO password);
     public List searchPassword(String query);
     public String generatePassword();
+    public String getCurrentPassword(long passwordId);
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.

@@ -28,4 +28,5 @@ public interface UserServiceAsync {
     public void changePassword(String password, AsyncCallback callback);
     public void addUser(UserDTO userDTO, AsyncCallback callback);
     public void updateUser(UserDTO userDTO, AsyncCallback callback);
+    public void getUsers(boolean includeOnlyActive, AsyncCallback callback);
 }

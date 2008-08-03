@@ -21,10 +21,12 @@
 package com.joshdrummond.webpasswordsafe.client;
 
 import com.joshdrummond.webpasswordsafe.client.model.ClientModel;
+import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 
 public interface MainWindow {
 
     public ClientModel getClientModel();
     public void refreshLoginStatus();
+    public void displayPasswordDialog(PasswordDTO passwordDTO);
 
 }

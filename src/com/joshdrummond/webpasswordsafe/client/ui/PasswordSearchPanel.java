@@ -31,12 +31,15 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.TreeListener;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 
@@ -50,11 +53,20 @@ public class PasswordSearchPanel extends Composite
     private FlexTable passwordTable;
     private Tree tagTree;
     private TextBox searchTextBox;
+    /**
+     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO>
+     */
     private List passwords;
+    private MainWindow mainWindow;
 
+    public PasswordSearchPanel(MainWindow mainWindow)
+    {
+        this();
+        this.mainWindow = mainWindow;
+    }
+    
     public PasswordSearchPanel()
     {
-
         final FlexTable flexTable = new FlexTable();
         initWidget(flexTable);
 
@@ -180,10 +192,10 @@ public class PasswordSearchPanel extends Composite
         for (int i = 0; i < passwords.size(); i++)
         {
             PasswordDTO passwordDTO = (PasswordDTO)passwords.get(i);
-            passwordTable.setText(i+1, 0, passwordDTO.getName());
+            passwordTable.setWidget(i+1, 0, new PasswordEditLabel(passwordDTO));
             passwordTable.setText(i+1, 1, passwordDTO.getUsername());
-            passwordTable.setText(i+1, 2, "******"); //password popup
-            passwordTable.setText(i+1, 3, passwordDTO.getNotes());
+            passwordTable.setWidget(i+1, 2, new Button("View", new ViewPasswordClickListener(passwordDTO.getId()))); //password popup
+            passwordTable.setWidget(i+1, 3, new NotesLabel(passwordDTO.getNotes()));
         }
         for (int i = passwords.size(); i < VISIBLE_ROW_COUNT; i++)
         {
@@ -192,6 +204,87 @@ public class PasswordSearchPanel extends Composite
             passwordTable.setText(i + 1, 2, "");
             passwordTable.setText(i + 1, 3, "");
         }
+    }
+
+    private class PasswordEditLabel extends Label
+    {
+        public PasswordEditLabel(final PasswordDTO password)
+        {
+            super();
+            this.setText(password.getName());
+            this.addClickListener(new ClickListener()
+            {
+                public void onClick(Widget sender)
+                {
+                    mainWindow.displayPasswordDialog(password);
+                }
+            });
+        }
+    }
+    private class NotesLabel extends Label
+    {
+        public NotesLabel(final String notes)
+        {
+            super();
+            String shortNotes = (notes.length() > 10) ? notes.substring(0, 7) + "..." : notes;
+            this.setText(shortNotes);
+            this.addClickListener(new ClickListener() {
+                public void onClick(Widget sender)
+                {
+                    PopupPanel p = new PopupPanel(true);
+                    VerticalPanel panel = new VerticalPanel();
+                    panel.add(new Label("Notes:"));
+                    panel.add(new Label(notes));
+                    p.setWidget(panel);
+                    p.setPopupPosition(sender.getAbsoluteLeft(), sender.getAbsoluteTop());
+                    p.setStyleName("wps-NotesPopup");
+                    p.show();
+                }
+            });
+        }
+    }
+    
+    private class ViewPasswordClickListener
+        implements ClickListener
+    {
+        private long passwordId;
+        
+        public ViewPasswordClickListener(long passwordId)
+        {
+            this.passwordId = passwordId;
+        }
+
+        /* (non-Javadoc)
+         * @see com.google.gwt.user.client.ui.ClickListener#onClick(com.google.gwt.user.client.ui.Widget)
+         */
+        public void onClick(Widget sender)
+        {
+            showPasswordPopup(passwordId, sender.getAbsoluteLeft(), sender.getAbsoluteTop());
+        }
+    }
+    
+    private void showPasswordPopup(long passwordId, final int x, final int y)
+    {
+        AsyncCallback callback = new AsyncCallback()
+        {
+            public void onFailure(Throwable caught)
+            {
+                Window.alert("Error: "+caught.getMessage());
+            }
+            public void onSuccess(Object result)
+            {
+                String password = (String)result;
+                PopupPanel p = new PopupPanel(true);
+                VerticalPanel panel = new VerticalPanel();
+                panel.add(new Label("Current Password:"));
+                panel.add(new Label(password));
+                p.setWidget(panel);
+                p.setPopupPosition(x, y);
+                p.setStyleName("wps-CurrentPasswordPopup");
+                p.show();
+            }
+        };
+        PasswordService.Util.getInstance().getCurrentPassword(passwordId, callback);
     }
 
     /**

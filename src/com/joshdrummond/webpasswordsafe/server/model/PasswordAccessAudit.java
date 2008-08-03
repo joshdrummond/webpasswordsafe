@@ -27,8 +27,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 
 /**
  * POJO model for a password_access_audit
@@ -53,8 +51,7 @@ public class PasswordAccessAudit
     @JoinColumn(name="user_id", nullable=false, updatable=false)
     private User user;
     
-    @Column(name="date_accessed", insertable=false, updatable=false, nullable=false)
-    @Generated(GenerationTime.INSERT)
+    @Column(name="date_accessed", nullable=false, updatable=false)
     private Date dateAccessed;
 
     public PasswordAccessAudit()
