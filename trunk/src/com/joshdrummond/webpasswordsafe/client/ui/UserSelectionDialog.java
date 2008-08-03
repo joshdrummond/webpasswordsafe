@@ -19,9 +19,9 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -37,16 +37,22 @@ import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
  * @author Josh Drummond
  *
  */
-public class GroupUserDialog extends DialogBox
+public class UserSelectionDialog extends DialogBox
 {
 
     private ListBox userListBox;
     private UserListener userListener;
+    /**
+     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.UserDTO>
+     */
     private List users;
     
-    public GroupUserDialog(UserListener userListener, List users)
+    /** 
+     * @gwt.typeArgs users <com.joshdrummond.webpasswordsafe.client.model.common.UserDTO> 
+     */ 
+    public UserSelectionDialog(UserListener userListener, List users, boolean allowMultiple)
     {
-        setHTML("Add User");
+        setHTML("Users");
         this.userListener = userListener;
         this.users = users;
 
@@ -54,12 +60,13 @@ public class GroupUserDialog extends DialogBox
         setWidget(flexTable);
         flexTable.setSize("100%", "100%");
 
-        final Label usersLabel = new Label("Please select users to add to group:");
+        String selectLabelText = allowMultiple ? "Please select user(s):" : "Please select a user:";
+        final Label usersLabel = new Label(selectLabelText);
         flexTable.setWidget(0, 0, usersLabel);
 
         userListBox = new ListBox();
         flexTable.setWidget(1, 0, userListBox);
-        userListBox.setMultipleSelect(true);
+        userListBox.setMultipleSelect(allowMultiple);
         flexTable.getCellFormatter().setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_CENTER);
         userListBox.setVisibleItemCount(5);
 
@@ -98,7 +105,7 @@ public class GroupUserDialog extends DialogBox
         for (Iterator i = users.iterator(); i.hasNext(); )
         {
             UserDTO user = (UserDTO)i.next();
-            userListBox.addItem(user.getUsername(), String.valueOf(user.getId()));
+            userListBox.addItem(user.getFullname(), String.valueOf(user.getId()));
         }
     }
 
@@ -115,13 +122,15 @@ public class GroupUserDialog extends DialogBox
      */
     protected void doOkay()
     {
+        List usersSelected = new ArrayList();
         for (int i = 0; i < userListBox.getItemCount(); i++)
         {
             if (userListBox.isItemSelected(i))
             {
-                userListener.addUser((UserDTO)users.get(i));
+                usersSelected.add((UserDTO)users.get(i));
             }
         }
+        userListener.doUsersChosen(usersSelected);
         hide();
     }
 

@@ -86,6 +86,7 @@ public class PasswordDTO
      */
     public PasswordDTO()
     {
+        this(0, "", "", "", true, -1, "", "");
     }
     /**
      * @return the id

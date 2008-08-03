@@ -29,10 +29,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.server.assembler.PasswordAssembler;
+import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.model.Password;
+import com.joshdrummond.webpasswordsafe.server.model.PasswordAccessAudit;
 import com.joshdrummond.webpasswordsafe.server.model.User;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -50,6 +52,7 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     private PasswordDAO passwordDAO;
     private UserDAO userDAO;
     private TagDAO tagDAO;
+    private PasswordAccessAuditDAO passwordAccessAuditDAO;
     private PasswordGenerator passwordGenerator;
 
     @Transactional(propagation=Propagation.REQUIRED)
@@ -77,21 +80,48 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List searchPassword(String query)
     {
-        List passwordsDTO = new ArrayList();
         List<Password> passwordsDO = passwordDAO.findPasswordByFuzzySearch(query);
+        List passwordsDTO = new ArrayList(passwordsDO.size());
         for (Password passwordDO : passwordsDO)
         {
             passwordsDTO.add(PasswordAssembler.buildDTO(passwordDO));
         }
+        LOG.debug("searching for password query ["+query+"] found "+passwordsDTO.size());
         return passwordsDTO;
     }
  
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public String generatePassword()
     {
+        LOG.debug("generating password...");
         return passwordGenerator.generatePassword();
     }
 
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
+    public String getCurrentPassword(long passwordId)
+    {
+        String currentPasswordValue = "";
+        Password password = passwordDAO.findById(passwordId, false);
+        User loggedInUser = userDAO.findActiveUserByUsername((String)ServletUtils.getRequest().getSession().getAttribute("username"));
+        if (password != null)
+        {
+            LOG.debug("returning current password value for ["+password.getName()+"]");
+            currentPasswordValue = password.getPasswordData().get(0).getPassword();
+            PasswordAccessAudit passwordAccessAudit = new PasswordAccessAudit();
+            passwordAccessAudit.setDateAccessed(new Date());
+            passwordAccessAudit.setPassword(password);
+            passwordAccessAudit.setUser(loggedInUser);
+            passwordAccessAuditDAO.makePersistent(passwordAccessAudit);
+        }
+        else
+        {
+            LOG.debug("passwordId "+passwordId+" not found");
+        }
+        return currentPasswordValue;
+    }
+    
+    // Getters and Setters
+    
     public PasswordDAO getPasswordDAO()
     {
         return this.passwordDAO;
@@ -122,6 +152,16 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
         this.tagDAO = tagDAO;
     }
 
+    public PasswordAccessAuditDAO getPasswordAccessAuditDAO()
+    {
+        return this.passwordAccessAuditDAO;
+    }
+
+    public void setPasswordAccessAuditDAO(PasswordAccessAuditDAO passwordAccessAuditDAO)
+    {
+        this.passwordAccessAuditDAO = passwordAccessAuditDAO;
+    }
+
     public PasswordGenerator getPasswordGenerator()
     {
         return this.passwordGenerator;
@@ -131,5 +171,5 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     {
         this.passwordGenerator = passwordGenerator;
     }
-    
+
 }

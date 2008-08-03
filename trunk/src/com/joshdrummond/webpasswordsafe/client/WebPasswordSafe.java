@@ -20,9 +20,11 @@
 
 package com.joshdrummond.webpasswordsafe.client;
 
+import java.util.List;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
@@ -30,6 +32,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.joshdrummond.webpasswordsafe.client.model.ClientModel;
 import com.joshdrummond.webpasswordsafe.client.model.common.*;
+import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.client.ui.*;
 
 
@@ -194,7 +197,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         rootPanel.add(simplePanel, 10, 62);
         simplePanel.setSize("630px", "418px");
 
-        passwordSearchPanel = new PasswordSearchPanel();
+        passwordSearchPanel = new PasswordSearchPanel(this);
         passwordSearchPanel.setSize("100%", "100%");
 
         refreshMenu();
@@ -236,7 +239,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     /**
      * @param passwordDTO
      */
-    private void displayPasswordDialog(PasswordDTO passwordDTO)
+    public void displayPasswordDialog(PasswordDTO passwordDTO)
     {
         new PasswordDialog(passwordDTO).show();
     }
@@ -302,18 +305,23 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
             displayUserDialog(new UserDTO());
         }
     }
-    
+
     private void doEditUser()
     {
         if (clientModel.isAuthorized("EDIT_USER"))
         {
-            UserDTO editUser = new UserDTO();
-            editUser.setActive(true);
-            editUser.setUsername("josh");
-            editUser.setEmail("josh@test.com");
-            editUser.setFullname("Josh Drummond");
-            editUser.setId(1);
-            displayUserDialog(editUser);
+            AsyncCallback callback = new AsyncCallback()
+            {
+                public void onFailure(Throwable caught)
+                {
+                    Window.alert("Error: "+caught.getMessage());
+                }
+                public void onSuccess(Object result)
+                {
+                    new UserSelectionDialog(new EditUserListener(), (List)result, false).show();
+                }
+            };
+            UserService.Util.getInstance().getUsers(true, callback);
         }
         else
         {
@@ -341,5 +349,20 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     public ClientModel getClientModel()
     {
         return clientModel;
+    }
+    
+    private class EditUserListener implements UserListener
+    {
+
+        /* (non-Javadoc)
+         * @see com.joshdrummond.webpasswordsafe.client.ui.UserListener#doUsersChosen(java.util.List)
+         */
+        public void doUsersChosen(List users)
+        {
+            if (users.size() > 0)
+            {
+                displayUserDialog((UserDTO)users.get(0));
+            }
+        }
     }
 }

@@ -19,11 +19,14 @@
 */
 package com.joshdrummond.webpasswordsafe.client.model.common;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * @author Josh Drummond
  *
  */
 public abstract class SubjectDTO
+    implements IsSerializable
 {
     protected long id;
     protected char type;

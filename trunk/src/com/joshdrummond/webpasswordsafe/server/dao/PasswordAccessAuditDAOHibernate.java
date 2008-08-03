@@ -19,17 +19,17 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
-import java.util.List;
-import com.joshdrummond.webpasswordsafe.server.model.User;
+import com.joshdrummond.webpasswordsafe.server.model.PasswordAccessAudit;
 
 /**
- * DAO interface for User
+ * DAO implementation for PasswordAccessAudit
  * 
  * @author Josh Drummond
  *
  */
-public interface UserDAO extends GenericDAO<User, Long> {
-    
-    public User findActiveUserByUsername(String username);
-    public List<User> findAllUsers(boolean includeOnlyActive);
+public class PasswordAccessAuditDAOHibernate 
+    extends GenericHibernateDAO<PasswordAccessAudit, Long> 
+    implements PasswordAccessAuditDAO
+{
+
 }

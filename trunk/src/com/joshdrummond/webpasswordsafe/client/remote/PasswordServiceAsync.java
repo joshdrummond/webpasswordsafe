@@ -20,7 +20,6 @@
 
 package com.joshdrummond.webpasswordsafe.client.remote;
 
-import java.util.List;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -35,4 +34,5 @@ public interface PasswordServiceAsync {
     public void updatePassword(PasswordDTO password, AsyncCallback callback);
     public void searchPassword(String query, AsyncCallback callback);
     public void generatePassword(AsyncCallback callback);
+    public void getCurrentPassword(long passwordId, AsyncCallback callback);
 }
