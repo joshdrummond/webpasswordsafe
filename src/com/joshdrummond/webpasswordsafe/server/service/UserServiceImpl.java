@@ -66,9 +66,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
     @Transactional(propagation=Propagation.REQUIRED)
     public void addUser(UserDTO userDTO)
     {
+        userDTO.setPassword(digester.digest(userDTO.getPassword()));
+        userDTO.setDateCreated(new Date());
         User user = UserAssembler.createDO(userDTO);
-        user.setPassword(digester.digest(user.getPassword()));
-        user.setDateCreated(new Date());
         userDAO.makePersistent(user);
         LOG.info(userDTO.getUsername() + " added");
     }
@@ -76,6 +76,14 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
     @Transactional(propagation=Propagation.REQUIRED)
     public void updateUser(UserDTO userDTO)
     {
+        User user = userDAO.findById(userDTO.getId(), false);
+        if (!userDTO.getPassword().equals(""))
+        {
+            userDTO.setPassword(digester.digest(userDTO.getPassword()));
+        }
+        UserAssembler.updateDO(user, userDTO);
+        userDAO.makePersistent(user);
+        LOG.info(userDTO.getUsername() + " updated");
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
@@ -87,7 +95,7 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
         {
             usersDTO.add(UserAssembler.buildDTO(userDO));
         }
-        LOG.debug("found "+usersDTO.size()+" users");
+        LOG.info("found "+usersDTO.size()+" users");
         return usersDTO;
     }
     
