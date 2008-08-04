@@ -75,6 +75,7 @@ public class UserDTO
         this.id = id;
         this.isActive = isActive;
         this.username = username;
+        this.password = "";
     }
 
     /**

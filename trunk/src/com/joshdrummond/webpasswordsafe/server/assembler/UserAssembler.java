@@ -53,6 +53,7 @@ public class UserAssembler
             user.setEmail(userDTO.getEmail());
             user.setPassword(userDTO.getPassword());
             user.setActiveFlag(userDTO.isActive());
+            user.setDateCreated(userDTO.getDateCreated());
         }
         return user;
     }
@@ -61,14 +62,14 @@ public class UserAssembler
     {
         if ((user != null) && (userDTO != null))
         {
-            if (!userDTO.getUsername().equals(""))
+            user.setUsername(userDTO.getUsername());
+            user.setFullname(userDTO.getFullname());
+            user.setEmail(userDTO.getEmail());
+            if (!userDTO.getPassword().equals(""))
             {
-                user.setUsername(userDTO.getUsername());
+                user.setPassword(userDTO.getPassword());
             }
-            if (!userDTO.getFullname().equals(""))
-            {
-                
-            }
+            user.setActiveFlag(userDTO.isActive());
         }
     }
 }
