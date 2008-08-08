@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -41,6 +42,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
+import com.joshdrummond.webpasswordsafe.client.model.common.TagDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 
 /**
@@ -52,7 +54,10 @@ public class PasswordSearchPanel extends Composite
     private static final int VISIBLE_ROW_COUNT=10;
     private FlexTable passwordTable;
     private Tree tagTree;
+    private TreeItem rootTreeItem;
     private TextBox searchTextBox;
+    private List tags;
+    
     /**
      * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO>
      */
@@ -67,6 +72,7 @@ public class PasswordSearchPanel extends Composite
     
     public PasswordSearchPanel()
     {
+        tags = new ArrayList();
         final FlexTable flexTable = new FlexTable();
         initWidget(flexTable);
 
@@ -86,6 +92,7 @@ public class PasswordSearchPanel extends Composite
             }
             public void onTreeItemStateChanged(final TreeItem item)
             {
+                doTagExpanded(item);
             }
         });
         tagTree.setSize("100%", "100%");
@@ -134,8 +141,10 @@ public class PasswordSearchPanel extends Composite
         flexTable.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_CENTER);
         flexTable.getCellFormatter().setVerticalAlignment(1, 1, HasVerticalAlignment.ALIGN_TOP);
         
+        rootTreeItem = new TreeItem("<b>Tags</b>");
+        tagTree.addItem(rootTreeItem);
         initTable();
-        initTags();
+//        initTags();
     }
 
     /**
@@ -143,16 +152,51 @@ public class PasswordSearchPanel extends Composite
      */
     private void initTags()
     {
-        TreeItem root = new TreeItem("<b>Tags</b>");
-        root.addItem("unix");
-        root.addItem("windows");
-        root.addItem("web");
-        root.addItem("vendor");
-        for (int i = 0; i < 100; i++)
+        doLoadTags();
+        rootTreeItem.setState(true);
+    }
+
+    /**
+     * @param item
+     */
+    protected void doTagExpanded(TreeItem item)
+    {
+        if (item.equals(rootTreeItem) && item.getState())
         {
-            root.addItem("hello"+i);
+            doLoadTags();
         }
-        tagTree.addItem(root);
+    }
+
+    /**
+     * 
+     */
+    private void doLoadTags()
+    {
+        AsyncCallback callback = new AsyncCallback()
+        {
+            public void onFailure(Throwable caught)
+            {
+                Window.alert("Error: "+caught.getMessage());
+            }
+            public void onSuccess(Object result)
+            {
+                tags = (List)result;
+                refreshTags();
+            }
+        };
+        PasswordService.Util.getInstance().getAvailableTags(callback);
+    }
+    
+    /**
+     * 
+     */
+    private void refreshTags()
+    {
+        rootTreeItem.removeItems();
+        for (int i = 0; i < tags.size(); i++)
+        {
+            rootTreeItem.addItem(((TagDTO)tags.get(i)).getName());
+        }
     }
 
     /**
@@ -160,8 +204,10 @@ public class PasswordSearchPanel extends Composite
      */
     protected void doTagClicked(TreeItem item)
     {
-        // TODO Auto-generated method stub
-        
+        if (item.equals(rootTreeItem) && (0 == item.getChildCount()))
+        {
+            doLoadTags();
+        }
     }
 
     /**

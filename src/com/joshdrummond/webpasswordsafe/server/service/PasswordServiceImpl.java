@@ -29,12 +29,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.server.assembler.PasswordAssembler;
+import com.joshdrummond.webpasswordsafe.server.assembler.TagAssembler;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.model.Password;
 import com.joshdrummond.webpasswordsafe.server.model.PasswordAccessAudit;
+import com.joshdrummond.webpasswordsafe.server.model.Tag;
 import com.joshdrummond.webpasswordsafe.server.model.User;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -118,6 +120,20 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
             LOG.debug("passwordId "+passwordId+" not found");
         }
         return currentPasswordValue;
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public List getAvailableTags()
+    {
+        User loggedInUser = userDAO.findActiveUserByUsername((String)ServletUtils.getRequest().getSession().getAttribute("username"));
+        List<Tag> tagsDO = tagDAO.findTagsForUser(loggedInUser);
+        List tagsDTO = new ArrayList(tagsDO.size());
+        for (Tag tagDO : tagsDO)
+        {
+            tagsDTO.add(TagAssembler.buildDTO(tagDO));
+        }
+        LOG.debug("found "+tagsDTO.size() + " tags for "+loggedInUser.getUsername());
+        return tagsDTO;
     }
     
     // Getters and Setters

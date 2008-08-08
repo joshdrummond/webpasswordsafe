@@ -17,28 +17,28 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+package com.joshdrummond.webpasswordsafe.server.assembler;
 
-package com.joshdrummond.webpasswordsafe.client.remote;
-
-import java.util.List;
-import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.joshdrummond.webpasswordsafe.client.model.common.TagDTO;
+import com.joshdrummond.webpasswordsafe.server.model.Tag;
 
 /**
+ * DTO <-> Domain Object assembler for Tag
  * 
  * @author Josh Drummond
  *
  */
-public interface PasswordServiceAsync {
-    
-    public void addPassword(PasswordDTO password, AsyncCallback callback);
-    public void updatePassword(PasswordDTO password, AsyncCallback callback);
-    /**
-     */
-    public void searchPassword(String query, AsyncCallback callback);
-    public void generatePassword(AsyncCallback callback);
-    public void getCurrentPassword(long passwordId, AsyncCallback callback);
-    /**
-     */
-    public void getAvailableTags(AsyncCallback callback);
+public class TagAssembler
+{
+    public static TagDTO buildDTO(Tag tag)
+    {
+        TagDTO tagDTO = null;
+        if (null != tag)
+        {
+            tagDTO = new TagDTO();
+            tagDTO.setId(tag.getId());
+            tagDTO.setName(tag.getName());
+        }
+        return tagDTO;
+    }
 }

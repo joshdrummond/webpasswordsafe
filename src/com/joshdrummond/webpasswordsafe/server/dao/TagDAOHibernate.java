@@ -20,8 +20,10 @@
 package com.joshdrummond.webpasswordsafe.server.dao;
 
 import java.util.List;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import com.joshdrummond.webpasswordsafe.server.model.Tag;
+import com.joshdrummond.webpasswordsafe.server.model.User;
 
 /**
  * DAO implementation for Tag
@@ -39,6 +41,15 @@ public class TagDAOHibernate extends GenericHibernateDAO<Tag, Long> implements T
     {
         List<Tag> tags = findByCriteria(Restrictions.eq("name", name));
         return (tags.size() > 0) ? tags.get(0) : null;
+    }
+
+    /* (non-Javadoc)
+     * @see com.joshdrummond.webpasswordsafe.server.dao.TagDAO#findTagsForUser(com.joshdrummond.webpasswordsafe.server.model.User)
+     */
+    public List<Tag> findTagsForUser(User user)
+    {
+        Query hqlQuery = getSession().createQuery("select distinct t from Tag t join t.passwords p where p.userCreated = :userCreated order by t.name asc").setEntity("userCreated", user);
+        return hqlQuery.list();
     }
 
 }
