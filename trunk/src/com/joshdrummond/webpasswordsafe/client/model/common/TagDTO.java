@@ -19,11 +19,14 @@
 */
 package com.joshdrummond.webpasswordsafe.client.model.common;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * @author Josh Drummond
  *
  */
 public class TagDTO
+    implements IsSerializable
 {
     private long id;
     private String name;

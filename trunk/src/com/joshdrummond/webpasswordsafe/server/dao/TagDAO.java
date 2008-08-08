@@ -19,7 +19,9 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
+import java.util.List;
 import com.joshdrummond.webpasswordsafe.server.model.Tag;
+import com.joshdrummond.webpasswordsafe.server.model.User;
 
 /**
  * DAO interface for Tag
@@ -30,4 +32,5 @@ import com.joshdrummond.webpasswordsafe.server.model.Tag;
 public interface TagDAO extends GenericDAO<Tag, Long>
 {
     public Tag findTagByName(String name);
+    public List<Tag> findTagsForUser(User user);
 }

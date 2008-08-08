@@ -35,9 +35,16 @@ public interface PasswordService extends RemoteService {
     
     public void addPassword(PasswordDTO password);
     public void updatePassword(PasswordDTO password);
+    /**
+     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO>
+     */
     public List searchPassword(String query);
     public String generatePassword();
     public String getCurrentPassword(long passwordId);
+    /**
+     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.TagDTO>
+     */
+    public List getAvailableTags();
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.
