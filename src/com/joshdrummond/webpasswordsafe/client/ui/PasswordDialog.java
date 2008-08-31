@@ -19,6 +19,9 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -40,7 +43,7 @@ import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
  * @author Josh Drummond
  *
  */
-public class PasswordDialog extends DialogBox
+public class PasswordDialog extends DialogBox implements PermissionListener
 {
     private PasswordDTO password;
     private TextBox nameTextBox;
@@ -228,8 +231,7 @@ public class PasswordDialog extends DialogBox
      */
     protected void doEditPermissions()
     {
-        // TODO Auto-generated method stub
-        
+        new PermissionDialog(this, password, new ArrayList()).show();
     }
 
     /**
@@ -251,6 +253,15 @@ public class PasswordDialog extends DialogBox
     protected void doCancel()
     {
         hide();
+    }
+
+    /* (non-Javadoc)
+     * @see com.joshdrummond.webpasswordsafe.client.ui.PermissionListener#doPermissionsChanged(java.util.List)
+     */
+    public void doPermissionsChanged(List permissions)
+    {
+        // TODO Auto-generated method stub
+        
     }
 
 }
