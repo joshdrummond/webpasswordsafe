@@ -17,23 +17,15 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+package com.joshdrummond.webpasswordsafe.client.ui;
 
-package com.joshdrummond.webpasswordsafe.client.remote;
-
-import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.List;
 
 /**
- * 
  * @author Josh Drummond
  *
  */
-public interface PasswordServiceAsync {
-    
-    public void addPassword(PasswordDTO password, AsyncCallback callback);
-    public void updatePassword(PasswordDTO password, AsyncCallback callback);
-    public void searchPassword(String query, AsyncCallback callback);
-    public void generatePassword(AsyncCallback callback);
-    public void getCurrentPassword(long passwordId, AsyncCallback callback);
-    public void getAvailableTags(AsyncCallback callback);
+public interface PermissionListener
+{
+    public void doPermissionsChanged(List permissions);
 }
