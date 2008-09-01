@@ -20,7 +20,6 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -42,15 +41,9 @@ public class UserSelectionDialog extends DialogBox
 
     private ListBox userListBox;
     private UserListener userListener;
-    /**
-     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.UserDTO>
-     */
-    private List users;
+    private List<UserDTO> users;
     
-    /** 
-     * @gwt.typeArgs users <com.joshdrummond.webpasswordsafe.client.model.common.UserDTO> 
-     */ 
-    public UserSelectionDialog(UserListener userListener, List users, boolean allowMultiple)
+    public UserSelectionDialog(UserListener userListener, List<UserDTO> users, boolean allowMultiple)
     {
         setHTML("Users");
         this.userListener = userListener;
@@ -102,9 +95,8 @@ public class UserSelectionDialog extends DialogBox
      */
     private void setFields()
     {
-        for (Iterator i = users.iterator(); i.hasNext(); )
+        for (UserDTO user : users)
         {
-            UserDTO user = (UserDTO)i.next();
             userListBox.addItem(user.getFullname(), String.valueOf(user.getId()));
         }
     }
@@ -122,12 +114,12 @@ public class UserSelectionDialog extends DialogBox
      */
     protected void doOkay()
     {
-        List usersSelected = new ArrayList();
+        List<UserDTO> usersSelected = new ArrayList<UserDTO>();
         for (int i = 0; i < userListBox.getItemCount(); i++)
         {
             if (userListBox.isItemSelected(i))
             {
-                usersSelected.add((UserDTO)users.get(i));
+                usersSelected.add(users.get(i));
             }
         }
         userListener.doUsersChosen(usersSelected);

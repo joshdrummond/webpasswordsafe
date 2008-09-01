@@ -20,6 +20,7 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.List;
+import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 
 /**
  * @author Josh Drummond
@@ -27,5 +28,5 @@ import java.util.List;
  */
 public interface UserListener
 {
-    public void doUsersChosen(List users);
+    public void doUsersChosen(List<UserDTO> users);
 }

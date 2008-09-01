@@ -44,14 +44,8 @@ public class PasswordDTO
     private Date dateLastUpdated;
     private UserDTO userLastUpdated;
     private String currentPassword;
-    /**
-     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.PasswordDataDTO>
-     */
-    private List passwordData;
-    /**
-     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.PermissionDTO>
-     */
-    private List permissions;
+    private List<PasswordDataDTO> passwordData;
+    private List<PermissionDTO> permissions;
     private String tags;
     
     /**
@@ -76,7 +70,7 @@ public class PasswordDTO
 //        PasswordDataDTO passwordDataItem = new PasswordDataDTO(password);
 //        passwordData = new ArrayList();
 //        passwordData.add(passwordDataItem);
-        permissions = new ArrayList();
+        permissions = new ArrayList<PermissionDTO>();
 //        tags = new ArrayList();
     }
     
@@ -231,28 +225,28 @@ public class PasswordDTO
     /**
      * @return the passwordData
      */
-    public List getPasswordData()
+    public List<PasswordDataDTO> getPasswordData()
     {
         return this.passwordData;
     }
     /**
      * @param passwordData the passwordData to set
      */
-    public void setPasswordData(List passwordData)
+    public void setPasswordData(List<PasswordDataDTO> passwordData)
     {
         this.passwordData = passwordData;
     }
     /**
      * @return the permissions
      */
-    public List getPermissions()
+    public List<PermissionDTO> getPermissions()
     {
         return this.permissions;
     }
     /**
      * @param permissions the permissions to set
      */
-    public void setPermissions(List permissions)
+    public void setPermissions(List<PermissionDTO> permissions)
     {
         this.permissions = permissions;
     }

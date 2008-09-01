@@ -27,6 +27,7 @@ import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
+import com.joshdrummond.webpasswordsafe.client.model.common.TagDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.server.assembler.PasswordAssembler;
 import com.joshdrummond.webpasswordsafe.server.assembler.TagAssembler;
@@ -80,10 +81,10 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     }
 
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List searchPassword(String query)
+    public List<PasswordDTO> searchPassword(String query)
     {
         List<Password> passwordsDO = passwordDAO.findPasswordByFuzzySearch(query);
-        List passwordsDTO = new ArrayList(passwordsDO.size());
+        List<PasswordDTO> passwordsDTO = new ArrayList<PasswordDTO>(passwordsDO.size());
         for (Password passwordDO : passwordsDO)
         {
             passwordsDTO.add(PasswordAssembler.buildDTO(passwordDO));
@@ -123,11 +124,11 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List getAvailableTags()
+    public List<TagDTO> getAvailableTags()
     {
         User loggedInUser = userDAO.findActiveUserByUsername((String)ServletUtils.getRequest().getSession().getAttribute("username"));
         List<Tag> tagsDO = tagDAO.findTagsForUser(loggedInUser);
-        List tagsDTO = new ArrayList(tagsDO.size());
+        List<TagDTO> tagsDTO = new ArrayList<TagDTO>(tagsDO.size());
         for (Tag tagDO : tagsDO)
         {
             tagsDTO.add(TagAssembler.buildDTO(tagDO));

@@ -31,7 +31,7 @@ public interface UserService extends RemoteService {
     public void changePassword(String password);
     public void addUser(UserDTO userDTO);
     public void updateUser(UserDTO userDTO);
-    public List getUsers(boolean includeOnlyActive);
+    public List<UserDTO> getUsers(boolean includeOnlyActive);
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.

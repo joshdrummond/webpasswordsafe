@@ -20,6 +20,7 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.List;
+import com.joshdrummond.webpasswordsafe.client.model.common.PermissionDTO;
 
 /**
  * @author Josh Drummond
@@ -27,5 +28,5 @@ import java.util.List;
  */
 public interface PermissionListener
 {
-    public void doPermissionsChanged(List permissions);
+    public void doPermissionsChanged(List<PermissionDTO> permissions);
 }

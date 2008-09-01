@@ -310,15 +310,15 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     {
         if (clientModel.isAuthorized("EDIT_USER"))
         {
-            AsyncCallback callback = new AsyncCallback()
+            AsyncCallback<List<UserDTO>> callback = new AsyncCallback<List<UserDTO>>()
             {
                 public void onFailure(Throwable caught)
                 {
                     Window.alert("Error: "+caught.getMessage());
                 }
-                public void onSuccess(Object result)
+                public void onSuccess(List<UserDTO> result)
                 {
-                    new UserSelectionDialog(new EditUserListener(), (List)result, false).show();
+                    new UserSelectionDialog(new EditUserListener(), result, false).show();
                 }
             };
             UserService.Util.getInstance().getUsers(true, callback);
@@ -357,11 +357,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         /* (non-Javadoc)
          * @see com.joshdrummond.webpasswordsafe.client.ui.UserListener#doUsersChosen(java.util.List)
          */
-        public void doUsersChosen(List users)
+        public void doUsersChosen(List<UserDTO> users)
         {
             if (users.size() > 0)
             {
-                displayUserDialog((UserDTO)users.get(0));
+                displayUserDialog(users.get(0));
             }
         }
     }

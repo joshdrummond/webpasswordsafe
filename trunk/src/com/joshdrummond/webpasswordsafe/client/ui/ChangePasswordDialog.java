@@ -127,14 +127,14 @@ public class ChangePasswordDialog extends DialogBox
      */
     private void doChangePassword(String password)
     {
-        AsyncCallback callback = new AsyncCallback()
+        AsyncCallback<Void> callback = new AsyncCallback<Void>()
         {
             public void onFailure(Throwable caught)
             {
                 Window.alert("Error: "+caught.getMessage());
             }
 
-            public void onSuccess(Object result)
+            public void onSuccess(Void result)
             {
                 hide();
             }

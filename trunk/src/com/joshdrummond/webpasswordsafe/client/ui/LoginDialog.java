@@ -127,15 +127,15 @@ public class LoginDialog extends DialogBox {
     
     private void doSubmit()
     {
-        AsyncCallback callback = new AsyncCallback()
+        AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>()
         {
 
             public void onFailure(Throwable caught) {
                 Window.alert("Error: "+caught.getMessage());
             }
 
-            public void onSuccess(Object result) {
-                if (((Boolean)result).booleanValue())
+            public void onSuccess(Boolean result) {
+                if (result.booleanValue())
                 {
                     doGetLoggedInUser();
                 }
@@ -151,7 +151,7 @@ public class LoginDialog extends DialogBox {
     
     private void doGetLoggedInUser()
     {
-        AsyncCallback callback = new AsyncCallback()
+        AsyncCallback<UserDTO> callback = new AsyncCallback<UserDTO>()
         {
 
             public void onFailure(Throwable caught)
@@ -159,11 +159,11 @@ public class LoginDialog extends DialogBox {
                 Window.alert("Error: "+caught.getMessage());
             }
 
-            public void onSuccess(Object result)
+            public void onSuccess(UserDTO result)
             {
                 if (null != result)
                 {
-                    main.getClientModel().setLoggedInUser((UserDTO)result);
+                    main.getClientModel().setLoggedInUser(result);
                     main.getClientModel().setLoggedIn(true);
                     main.refreshLoginStatus();
                     hide();
