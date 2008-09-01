@@ -87,10 +87,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List getUsers(boolean includeOnlyActive)
+    public List<UserDTO> getUsers(boolean includeOnlyActive)
     {
         List<User> usersDO = userDAO.findAllUsers(includeOnlyActive);
-        List usersDTO = new ArrayList(usersDO.size());
+        List<UserDTO> usersDTO = new ArrayList<UserDTO>(usersDO.size());
         for (User userDO : usersDO)
         {
             usersDTO.add(UserAssembler.buildDTO(userDO));

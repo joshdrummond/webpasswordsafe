@@ -21,7 +21,6 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -37,6 +36,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
+import com.joshdrummond.webpasswordsafe.client.model.common.PermissionDTO;
+import com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 
 /**
@@ -162,7 +163,7 @@ public class PasswordDialog extends DialogBox implements PermissionListener
      */
     protected void doGeneratePassword()
     {
-        AsyncCallback callback = new AsyncCallback()
+        AsyncCallback<String> callback = new AsyncCallback<String>()
         {
 
             public void onFailure(Throwable caught)
@@ -170,9 +171,9 @@ public class PasswordDialog extends DialogBox implements PermissionListener
                 Window.alert("Error: "+caught.getMessage());
             }
 
-            public void onSuccess(Object result)
+            public void onSuccess(String result)
             {
-                passwordTextBox.setText((String)result);
+                passwordTextBox.setText(result);
             }
             
         };
@@ -193,7 +194,7 @@ public class PasswordDialog extends DialogBox implements PermissionListener
             password.setNotes(notesTextArea.getText().trim());
             password.setActive(activeCheckBox.isChecked());
             
-            AsyncCallback callback = new AsyncCallback()
+            AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
 
                 public void onFailure(Throwable caught)
@@ -201,7 +202,7 @@ public class PasswordDialog extends DialogBox implements PermissionListener
                     Window.alert("Error: "+caught.getMessage());
                 }
 
-                public void onSuccess(Object result)
+                public void onSuccess(Void result)
                 {
                     hide();
                 }
@@ -231,7 +232,7 @@ public class PasswordDialog extends DialogBox implements PermissionListener
      */
     protected void doEditPermissions()
     {
-        new PermissionDialog(this, password, new ArrayList()).show();
+        new PermissionDialog(this, password, new ArrayList<SubjectDTO>()).show();
     }
 
     /**
@@ -258,7 +259,7 @@ public class PasswordDialog extends DialogBox implements PermissionListener
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.ui.PermissionListener#doPermissionsChanged(java.util.List)
      */
-    public void doPermissionsChanged(List permissions)
+    public void doPermissionsChanged(List<PermissionDTO> permissions)
     {
         // TODO Auto-generated method stub
         

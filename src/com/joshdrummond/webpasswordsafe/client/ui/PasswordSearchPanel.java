@@ -56,12 +56,8 @@ public class PasswordSearchPanel extends Composite
     private Tree tagTree;
     private TreeItem rootTreeItem;
     private TextBox searchTextBox;
-    private List tags;
-    
-    /**
-     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO>
-     */
-    private List passwords;
+    private List<TagDTO> tags;
+    private List<PasswordDTO> passwords;
     private MainWindow mainWindow;
 
     public PasswordSearchPanel(MainWindow mainWindow)
@@ -72,7 +68,7 @@ public class PasswordSearchPanel extends Composite
     
     public PasswordSearchPanel()
     {
-        tags = new ArrayList();
+        tags = new ArrayList<TagDTO>();
         final FlexTable flexTable = new FlexTable();
         initWidget(flexTable);
 
@@ -150,11 +146,12 @@ public class PasswordSearchPanel extends Composite
     /**
      * 
      */
+    /*
     private void initTags()
     {
         doLoadTags();
         rootTreeItem.setState(true);
-    }
+    }*/
 
     /**
      * @param item
@@ -172,15 +169,15 @@ public class PasswordSearchPanel extends Composite
      */
     private void doLoadTags()
     {
-        AsyncCallback callback = new AsyncCallback()
+        AsyncCallback<List<TagDTO>> callback = new AsyncCallback<List<TagDTO>>()
         {
             public void onFailure(Throwable caught)
             {
                 Window.alert("Error: "+caught.getMessage());
             }
-            public void onSuccess(Object result)
+            public void onSuccess(List<TagDTO> result)
             {
-                tags = (List)result;
+                tags = result;
                 refreshTags();
             }
         };
@@ -193,9 +190,9 @@ public class PasswordSearchPanel extends Composite
     private void refreshTags()
     {
         rootTreeItem.removeItems();
-        for (int i = 0; i < tags.size(); i++)
+        for (TagDTO tag : tags)
         {
-            rootTreeItem.addItem(((TagDTO)tags.get(i)).getName());
+            rootTreeItem.addItem(tag.getName());
         }
     }
 
@@ -215,15 +212,15 @@ public class PasswordSearchPanel extends Composite
      */
     protected void doSearch()
     {
-        AsyncCallback callback = new AsyncCallback()
+        AsyncCallback<List<PasswordDTO>> callback = new AsyncCallback<List<PasswordDTO>>()
         {
             public void onFailure(Throwable caught)
             {
                 Window.alert("Error: "+caught.getMessage());
             }
-            public void onSuccess(Object result)
+            public void onSuccess(List<PasswordDTO> result)
             {
-                passwords = (List)result;
+                passwords = result;
                 refreshTable();
             }
         };
@@ -311,15 +308,15 @@ public class PasswordSearchPanel extends Composite
     
     private void showPasswordPopup(long passwordId, final int x, final int y)
     {
-        AsyncCallback callback = new AsyncCallback()
+        AsyncCallback<String> callback = new AsyncCallback<String>()
         {
             public void onFailure(Throwable caught)
             {
                 Window.alert("Error: "+caught.getMessage());
             }
-            public void onSuccess(Object result)
+            public void onSuccess(String result)
             {
-                String password = (String)result;
+                String password = result;
                 PopupPanel p = new PopupPanel(true);
                 VerticalPanel panel = new VerticalPanel();
                 panel.add(new Label("Current Password:"));

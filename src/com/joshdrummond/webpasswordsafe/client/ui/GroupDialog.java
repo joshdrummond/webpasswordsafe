@@ -20,7 +20,6 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -161,7 +160,7 @@ public class GroupDialog extends DialogBox implements UserListener
     protected void doAddMembers()
     {
         // fixme
-        List users = new ArrayList(2);
+        List<UserDTO> users = new ArrayList<UserDTO>(2);
         users.add(new UserDTO(5, "hillary", "Hillary Clinton", "h@clinton.net", true));
         users.add(new UserDTO(6, "edwards", "John Edwards", "j@edwards.net", true));
         new UserSelectionDialog(this, users, true).show();
@@ -173,9 +172,8 @@ public class GroupDialog extends DialogBox implements UserListener
     private void setFields()
     {
         nameTextBox.setText(group.getName());
-        for (Iterator i = group.getUsers().iterator(); i.hasNext(); )
+        for (UserDTO user : group.getUsers())
         {
-            UserDTO user = (UserDTO)i.next();
             membersListBox.addItem(user.getUsername(), String.valueOf(user.getId()));
         }
     }
@@ -191,11 +189,10 @@ public class GroupDialog extends DialogBox implements UserListener
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.ui.UserListener#doUsersChosen(java.util.List)
      */
-    public void doUsersChosen(List users)
+    public void doUsersChosen(List<UserDTO> users)
     {
-        for (int i = 0; i < users.size(); i++)
+        for (UserDTO user : users)
         {
-            UserDTO user = (UserDTO)users.get(i);
             group.addUser(user);
             membersListBox.addItem(user.getFullname(), String.valueOf(user.getId()));
         }

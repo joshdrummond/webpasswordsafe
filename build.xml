@@ -81,7 +81,6 @@
 	</target>
 
 	<target name="jars" depends="compile" description="Package up the module project and required projects as jars">
-		<delete dir="${dist.home}" />
 		<mkdir dir="${dist.webinf}/lib" />
 		<!--=== webpasswordsafe ===-->
 		<jar destfile="${dist.webinf}/lib/webpasswordsafe.jar">
@@ -103,6 +102,8 @@
 				<pathelement location="${gwt.home}/gwt-user.jar" />
 				<pathelement location="${gwt.home}/${gwt.platform.jar}" />
 			</classpath>
+			<arg value="-logLevel"/>
+			<arg value="INFO"/>
 			<arg value="-style"/>
 			<arg value="OBFUSCATED"/>
 			<arg value="-out" />
@@ -122,17 +123,20 @@
 		<copy file="${web.home}/WEB-INF/schema/WebPasswordSafeTypes.xsd" tofile="${dist.webinf}/schema/WebPasswordSafeTypes.xsd" />
 	</target>
 
-	<target name="war" depends="jars, gwt-compile, web-xml">
+	<target name="war" depends="gwt-compile, jars, web-xml">
 		<delete file="${war.name}" />
 		<copy file="${gwt.home}/gwt-servlet.jar" todir="${dist.webinf}/lib" />
 		<jar destfile="${war.name}" basedir="${dist.home}/${gwt.module.id}" duplicate="preserve" />
-		<delete dir="${dist.home}" />
 	</target>
 
 	<target name="deploy" depends="war">
 		<move file="${war.name}" todir="${deploy.dir}" />
 	</target>
 
-	<target name="all" depends="deploy" />
+	<target name="clean">
+		<delete dir="${build.home}" />
+	</target>
+	
+	<target name="all" depends="clean, deploy" />
 
 </project>

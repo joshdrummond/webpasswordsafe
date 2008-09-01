@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
+import com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO;
 
 /**
  * @author Josh Drummond
@@ -42,18 +43,12 @@ import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 public class PermissionDialog extends DialogBox
 {
     private PasswordDTO password;
-    /**
-     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO>
-     */
-    private List subjects;
+    private List<SubjectDTO> subjects;
     private Label passwordNameLabel;
     private Grid permissionsGrid;
     private ListBox subjectListBox;
     
-    /**
-     * @gwt.typeArgs subjects <com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO>
-     */
-    public PermissionDialog(PermissionListener permissionListener, PasswordDTO password, List subjects)
+    public PermissionDialog(PermissionListener permissionListener, PasswordDTO password, List<SubjectDTO> subjects)
     {
         this.password = password;
         this.subjects = subjects;

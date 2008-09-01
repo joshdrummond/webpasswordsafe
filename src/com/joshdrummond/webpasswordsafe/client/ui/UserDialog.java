@@ -154,7 +154,7 @@ public class UserDialog extends DialogBox
                 user.setPassword(pw1);
             }
             
-            AsyncCallback callback = new AsyncCallback()
+            AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
 
                 public void onFailure(Throwable caught)
@@ -162,7 +162,7 @@ public class UserDialog extends DialogBox
                     Window.alert("Error: "+caught.getMessage());
                 }
 
-                public void onSuccess(Object result)
+                public void onSuccess(Void result)
                 {
                     hide();
                 }

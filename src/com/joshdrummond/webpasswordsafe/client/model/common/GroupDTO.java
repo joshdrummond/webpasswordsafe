@@ -32,14 +32,15 @@ public class GroupDTO
     implements IsSerializable
 {
     private String name;
-    private transient List users;
+    private transient List<UserDTO> users;
+    
     /**
      * 
      */
     public GroupDTO()
     {
         super();
-        users = new ArrayList();
+        users = new ArrayList<UserDTO>();
     }
     /**
      * @return the name
@@ -58,14 +59,14 @@ public class GroupDTO
     /**
      * @return the users
      */
-    public List getUsers()
+    public List<UserDTO> getUsers()
     {
         return this.users;
     }
     /**
      * @param users the users to set
      */
-    public void setUsers(List users)
+    public void setUsers(List<UserDTO> users)
     {
         this.users = users;
     }

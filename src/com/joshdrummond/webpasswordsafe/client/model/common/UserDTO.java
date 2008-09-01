@@ -40,14 +40,8 @@ public class UserDTO
     private boolean isActive;
     private Date dateCreated;
     private Date lastLogin;
-    /**
-     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.RoleDTO>
-     */
-    private List roles;
-    /**
-     * @gwt.typeArgs <com.joshdrummond.webpasswordsafe.client.model.common.GroupDTO>
-     */
-    private List groups;
+    private List<RoleDTO> roles;
+    private List<GroupDTO> groups;
     
 
     /**
@@ -56,8 +50,8 @@ public class UserDTO
     public UserDTO()
     {
         super();
-        roles = new ArrayList();
-        groups = new ArrayList();
+        roles = new ArrayList<RoleDTO>();
+        groups = new ArrayList<GroupDTO>();
     }
 
     /**
