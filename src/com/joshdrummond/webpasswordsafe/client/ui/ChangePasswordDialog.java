@@ -19,17 +19,17 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 
 /**
@@ -71,18 +71,18 @@ public class ChangePasswordDialog extends DialogBox
 
         final Button okayButton = new Button();
         flowPanel.add(okayButton);
-        okayButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
-            {
+        okayButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event)
+			{
                 doOkay();
-            }
-        });
+			}
+		});
         okayButton.setText("Okay");
 
         final Button cancelButton = new Button();
         flowPanel.add(cancelButton);
-        cancelButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        cancelButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doCancel();
             }

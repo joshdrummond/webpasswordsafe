@@ -19,11 +19,12 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -31,7 +32,6 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 
@@ -106,8 +106,8 @@ public class UserDialog extends DialogBox
 
         final Button saveButton = new Button();
         flowPanel.add(saveButton);
-        saveButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        saveButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doSave();
             }
@@ -116,8 +116,8 @@ public class UserDialog extends DialogBox
 
         final Button cancelButton = new Button();
         flowPanel.add(cancelButton);
-        cancelButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        cancelButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doCancel();
             }
@@ -132,7 +132,7 @@ public class UserDialog extends DialogBox
         usernameTextBox.setText(user.getUsername());
         fullnameTextBox.setText(user.getFullname());
         emailTextBox.setText(user.getEmail());
-        enabledCheckBox.setChecked(user.isActive());
+        enabledCheckBox.setValue(user.isActive());
     }
     
     private boolean validateFields()
@@ -147,7 +147,7 @@ public class UserDialog extends DialogBox
             user.setUsername(usernameTextBox.getText().trim());
             user.setFullname(fullnameTextBox.getText().trim());
             user.setEmail(emailTextBox.getText().trim());
-            user.setActive(enabledCheckBox.isChecked());
+            user.setActive(enabledCheckBox.getValue());
             String pw1 = password1TextBox.getText().trim();
             if (!pw1.equals(""))
             {
