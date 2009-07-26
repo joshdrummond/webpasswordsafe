@@ -36,7 +36,8 @@
 	<property name="build.home" value="${basedir}/build" />
 	<property name="dist.home" value="${build.home}/dist" />
 	<property name="src.home" value="${basedir}/src" />
-	<property name="dist.webinf" value="${dist.home}/${gwt.module.id}/WEB-INF" />
+	<property name="dist.war" value="${dist.home}/war"/>
+	<property name="dist.webinf" value="${dist.war}/WEB-INF" />
 	
 	<property name="compile.debug"       value="true"/>
     <property name="compile.deprecation" value="false"/>
@@ -107,26 +108,32 @@
 			<arg value="-style"/>
 			<arg value="OBFUSCATED"/>
 			<arg value="-war" />
-			<arg file="${dist.home}" />
+			<arg file="${dist.war}" />
 			<arg value="${gwt.module.id}" />
 		</java>
 	</target>
 
 	<target name="web-xml">
 		<mkdir dir="${dist.webinf}" />
-		<copy file="${web.home}/WEB-INF/web.xml" tofile="${dist.webinf}/web.xml" />
-		<copy file="${web.home}/WEB-INF/rpc-servlet.xml" tofile="${dist.webinf}/rpc-servlet.xml" />
-		<copy file="${web.home}/WEB-INF/webpasswordsafe-data.xml" tofile="${dist.webinf}/webpasswordsafe-data.xml" />
-		<copy file="${web.home}/WEB-INF/webpasswordsafe-service.xml" tofile="${dist.webinf}/webpasswordsafe-service.xml" />
-		<copy file="${web.home}/WEB-INF/webservice-servlet.xml" tofile="${dist.webinf}/webservice-servlet.xml" />
+		<copy todir="${dist.webinf}">
+			<fileset dir="${web.home}/WEB-INF/">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
 		<mkdir dir="${dist.webinf}/schema" />
 		<copy file="${web.home}/WEB-INF/schema/WebPasswordSafeTypes.xsd" tofile="${dist.webinf}/schema/WebPasswordSafeTypes.xsd" />
+		<copy todir="${dist.war}">
+			<fileset dir="${web.home}">
+				<include name="WebPasswordSafe*"/>
+				<include name="*.gif"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="war" depends="gwt-compile, jars, web-xml">
 		<delete file="${war.name}" />
 		<copy file="${gwt.home}/gwt-servlet.jar" todir="${dist.webinf}/lib" />
-		<jar destfile="${war.name}" basedir="${dist.home}/${gwt.module.id}" duplicate="preserve" />
+		<jar destfile="${war.name}" basedir="${dist.war}" duplicate="preserve" />
 	</target>
 
 	<target name="deploy" depends="war">
