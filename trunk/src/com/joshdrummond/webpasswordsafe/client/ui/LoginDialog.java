@@ -20,19 +20,21 @@
 
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
@@ -64,34 +66,28 @@ public class LoginDialog extends DialogBox {
         passwordTextBox = new PasswordTextBox();
         usernameTextBox = new TextBox();
         flexTable.setWidget(0, 2, usernameTextBox);
-        usernameTextBox.addKeyboardListener(new KeyboardListener() {
-            public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-            }
-            public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-                if (keyCode == KEY_ENTER)
+        usernameTextBox.addKeyPressHandler(new KeyPressHandler() {
+			public void onKeyPress(KeyPressEvent event)
+			{
+                if (event.getCharCode() == KeyCodes.KEY_ENTER)
                 {
                     passwordTextBox.setFocus(true);
                 }
-            }
-            public void onKeyUp(Widget sender, char keyCode, int modifiers) {
-            }
+			}
         });
 
         final Label passwordLabel = new Label("Password:");
         flexTable.setWidget(1, 0, passwordLabel);
 
         flexTable.setWidget(1, 2, passwordTextBox);
-        passwordTextBox.addKeyboardListener(new KeyboardListener() {
-            public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-            }
-            public void onKeyPress(Widget sender, char keyCode, int modifiers) {
-                if (keyCode == KEY_ENTER)
+        passwordTextBox.addKeyPressHandler(new KeyPressHandler() {
+			public void onKeyPress(KeyPressEvent event)
+			{
+                if (event.getCharCode() == KeyCodes.KEY_ENTER)
                 {
                     doSubmit();
                 }
-            }
-            public void onKeyUp(Widget sender, char keyCode, int modifiers) {
-            }
+			}
         });
 
         final FlowPanel flowPanel = new FlowPanel();
@@ -101,17 +97,18 @@ public class LoginDialog extends DialogBox {
 
         final Button enterButton = new Button();
         flowPanel.add(enterButton);
-        enterButton.addClickListener(new ClickListener() {
-            public void onClick(Widget sender) {
+        enterButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event)
+			{
                 doSubmit();
-            }
+			}
         });
         enterButton.setText("Submit");
 
         final Button cancelButton = new Button();
         flowPanel.add(cancelButton);
-        cancelButton.addClickListener(new ClickListener() {
-            public void onClick(Widget sender) {
+        cancelButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
                 doCancel();
             }
         });

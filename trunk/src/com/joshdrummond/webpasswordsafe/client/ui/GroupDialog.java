@@ -21,8 +21,9 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -30,7 +31,6 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.model.common.GroupDTO;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 
@@ -66,9 +66,8 @@ public class GroupDialog extends DialogBox implements UserListener
         final Label membersLabel = new Label("Members");
         flexTable.setWidget(1, 0, membersLabel);
 
-        membersListBox = new ListBox();
+        membersListBox = new ListBox(true);
         flexTable.setWidget(1, 1, membersListBox);
-        membersListBox.setMultipleSelect(true);
         flexTable.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_CENTER);
         membersListBox.setVisibleItemCount(5);
 
@@ -79,18 +78,18 @@ public class GroupDialog extends DialogBox implements UserListener
 
         final Button saveButton = new Button();
         flowPanel.add(saveButton);
-        saveButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
-            {
+        saveButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event)
+			{
                 doSave();
-            }
+			}
         });
         saveButton.setText("Save");
 
         final Button cancelButton = new Button();
         flowPanel.add(cancelButton);
-        cancelButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        cancelButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doCancel();
             }
@@ -103,8 +102,8 @@ public class GroupDialog extends DialogBox implements UserListener
 
         final Button addButton = new Button();
         flowPanel_1.add(addButton);
-        addButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        addButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doAddMembers();
             }
@@ -113,8 +112,8 @@ public class GroupDialog extends DialogBox implements UserListener
 
         final Button removeButton = new Button();
         flowPanel_1.add(removeButton);
-        removeButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        removeButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doRemoveMembers();
             }

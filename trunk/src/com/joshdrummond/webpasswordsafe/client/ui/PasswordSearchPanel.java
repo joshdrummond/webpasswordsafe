@@ -21,25 +21,30 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.TreeListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.client.model.common.TagDTO;
@@ -81,15 +86,17 @@ public class PasswordSearchPanel extends Composite
 
         tagTree = new Tree();
         scrollPanel.setWidget(tagTree);
-        tagTree.addTreeListener(new TreeListener() {
-            public void onTreeItemSelected(final TreeItem item)
-            {
-                doTagClicked(item);
-            }
-            public void onTreeItemStateChanged(final TreeItem item)
-            {
-                doTagExpanded(item);
-            }
+        tagTree.addSelectionHandler(new SelectionHandler<TreeItem>() {
+			public void onSelection(SelectionEvent<TreeItem> event)
+			{
+                doTagClicked(event.getSelectedItem());
+			}
+        });
+        tagTree.addOpenHandler(new OpenHandler<TreeItem>() {
+			public void onOpen(OpenEvent<TreeItem> event)
+			{
+                doTagExpanded(event.getTarget());
+			}
         });
         tagTree.setSize("100%", "100%");
 
@@ -107,14 +114,14 @@ public class PasswordSearchPanel extends Composite
 
         searchTextBox = new TextBox();
         horizontalPanel.add(searchTextBox);
-        searchTextBox.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress(final Widget sender, final char keyCode, final int modifiers)
-            {
-                if (keyCode == KEY_ENTER)
+        searchTextBox.addKeyPressHandler(new KeyPressHandler() {
+			public void onKeyPress(KeyPressEvent event)
+			{
+                if (event.getCharCode() == KeyCodes.KEY_ENTER)
                 {
                     doSearch();
                 }
-            }
+			}
         });
         searchTextBox.setVisibleLength(30);
         searchTextBox.setMaxLength(1000);
@@ -122,11 +129,11 @@ public class PasswordSearchPanel extends Composite
 
         final Button searchButton = new Button();
         horizontalPanel.add(searchButton);
-        searchButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
-            {
+        searchButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event)
+			{
                 doSearch();
-            }
+			}
         });
         searchButton.setText("Search");
 
@@ -237,7 +244,7 @@ public class PasswordSearchPanel extends Composite
             PasswordDTO passwordDTO = (PasswordDTO)passwords.get(i);
             passwordTable.setWidget(i+1, 0, new PasswordEditLabel(passwordDTO));
             passwordTable.setText(i+1, 1, passwordDTO.getUsername());
-            passwordTable.setWidget(i+1, 2, new Button("View", new ViewPasswordClickListener(passwordDTO.getId()))); //password popup
+            passwordTable.setWidget(i+1, 2, new Button("View", new ViewPasswordClickHandler(passwordDTO.getId()))); //password popup
             passwordTable.setWidget(i+1, 3, new NotesLabel(passwordDTO.getNotes()));
         }
         for (int i = passwords.size(); i < VISIBLE_ROW_COUNT; i++)
@@ -255,12 +262,11 @@ public class PasswordSearchPanel extends Composite
         {
             super();
             this.setText(password.getName());
-            this.addClickListener(new ClickListener()
-            {
-                public void onClick(Widget sender)
-                {
+            this.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event)
+				{
                     mainWindow.displayPasswordDialog(password);
-                }
+				}
             });
         }
     }
@@ -271,15 +277,15 @@ public class PasswordSearchPanel extends Composite
             super();
             String shortNotes = (notes.length() > 10) ? notes.substring(0, 7) + "..." : notes;
             this.setText(shortNotes);
-            this.addClickListener(new ClickListener() {
-                public void onClick(Widget sender)
+            this.addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event)
                 {
                     PopupPanel p = new PopupPanel(true);
                     VerticalPanel panel = new VerticalPanel();
                     panel.add(new Label("Notes:"));
                     panel.add(new Label(notes));
                     p.setWidget(panel);
-                    p.setPopupPosition(sender.getAbsoluteLeft(), sender.getAbsoluteTop());
+                    p.setPopupPosition(event.getRelativeElement().getAbsoluteLeft(), event.getRelativeElement().getAbsoluteTop());
                     p.setStyleName("wps-NotesPopup");
                     p.show();
                 }
@@ -287,23 +293,23 @@ public class PasswordSearchPanel extends Composite
         }
     }
     
-    private class ViewPasswordClickListener
-        implements ClickListener
+    private class ViewPasswordClickHandler
+        implements ClickHandler
     {
         private long passwordId;
         
-        public ViewPasswordClickListener(long passwordId)
+        public ViewPasswordClickHandler(long passwordId)
         {
             this.passwordId = passwordId;
         }
 
-        /* (non-Javadoc)
-         * @see com.google.gwt.user.client.ui.ClickListener#onClick(com.google.gwt.user.client.ui.Widget)
-         */
-        public void onClick(Widget sender)
-        {
-            showPasswordPopup(passwordId, sender.getAbsoluteLeft(), sender.getAbsoluteTop());
-        }
+		/* (non-Javadoc)
+		 * @see com.google.gwt.event.dom.client.ClickHandler#onClick(com.google.gwt.event.dom.client.ClickEvent)
+		 */
+		public void onClick(ClickEvent event)
+		{
+            showPasswordPopup(passwordId, event.getRelativeElement().getAbsoluteLeft(), event.getRelativeElement().getAbsoluteTop());
+		}
     }
     
     private void showPasswordPopup(long passwordId, final int x, final int y)

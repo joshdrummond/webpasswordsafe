@@ -21,11 +21,12 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -34,7 +35,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.client.model.common.PermissionDTO;
 import com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO;
@@ -105,11 +105,11 @@ public class PasswordDialog extends DialogBox implements PermissionListener
 
         final Button editPermissionsButton = new Button();
         flexTable.setWidget(5, 1, editPermissionsButton);
-        editPermissionsButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
-            {
+        editPermissionsButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event)
+			{
                 doEditPermissions();
-            }
+			}
         });
         editPermissionsButton.setText("Edit Permissions");
 
@@ -118,8 +118,8 @@ public class PasswordDialog extends DialogBox implements PermissionListener
 
         final Button generateButton = new Button();
         verticalPanel.add(generateButton);
-        generateButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        generateButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doGeneratePassword();
             }
@@ -133,8 +133,8 @@ public class PasswordDialog extends DialogBox implements PermissionListener
 
         final Button saveButton = new Button();
         flowPanel.add(saveButton);
-        saveButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        saveButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doSave();
             }
@@ -143,8 +143,8 @@ public class PasswordDialog extends DialogBox implements PermissionListener
 
         final Button cancelButton = new Button();
         flowPanel.add(cancelButton);
-        cancelButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        cancelButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doCancel();
             }
@@ -192,7 +192,7 @@ public class PasswordDialog extends DialogBox implements PermissionListener
             password.setCurrentPassword(passwordTextBox.getText().trim());
             password.setTags(tagsTextBox.getText().trim());
             password.setNotes(notesTextArea.getText().trim());
-            password.setActive(activeCheckBox.isChecked());
+            password.setActive(activeCheckBox.getValue());
             
             AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
@@ -245,7 +245,7 @@ public class PasswordDialog extends DialogBox implements PermissionListener
         passwordTextBox.setText(password.getCurrentPassword());
         tagsTextBox.setText(password.getTags());
         notesTextArea.setText(password.getNotes());
-        activeCheckBox.setChecked(password.isActive());
+        activeCheckBox.setValue(password.isActive());
     }
 
     /**

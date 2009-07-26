@@ -21,15 +21,15 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 
 /**
@@ -57,9 +57,8 @@ public class UserSelectionDialog extends DialogBox
         final Label usersLabel = new Label(selectLabelText);
         flexTable.setWidget(0, 0, usersLabel);
 
-        userListBox = new ListBox();
+        userListBox = new ListBox(allowMultiple);
         flexTable.setWidget(1, 0, userListBox);
-        userListBox.setMultipleSelect(allowMultiple);
         flexTable.getCellFormatter().setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_CENTER);
         userListBox.setVisibleItemCount(5);
 
@@ -69,18 +68,18 @@ public class UserSelectionDialog extends DialogBox
 
         final Button okayButton = new Button();
         flowPanel.add(okayButton);
-        okayButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
-            {
+        okayButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event)
+			{
                 doOkay();
-            }
+			}
         });
         okayButton.setText("Okay");
 
         final Button cancelButton = new Button();
         flowPanel.add(cancelButton);
-        cancelButton.addClickListener(new ClickListener() {
-            public void onClick(final Widget sender)
+        cancelButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event)
             {
                 doCancel();
             }
