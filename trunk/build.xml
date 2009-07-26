@@ -32,7 +32,7 @@
 	<property name="war.name" value="WebPasswordSafe.war" />
 	<property name="catalina.home" value="/usr/local/tomcat"/>
 	<property name="deploy.dir" value="${catalina.home}/webapps" />
-	<property name="web.home" value="${basedir}/web" />
+	<property name="web.home" value="${basedir}/war" />
 	<property name="build.home" value="${basedir}/build" />
 	<property name="dist.home" value="${build.home}/dist" />
 	<property name="src.home" value="${basedir}/src" />
@@ -96,7 +96,7 @@
 	</target>
 
 	<target name="gwt-compile" description="Compile to JavaScript">
-		<java classname="com.google.gwt.dev.GWTCompiler" fork="yes" failonerror="true" maxmemory="128m">
+		<java classname="com.google.gwt.dev.Compiler" fork="yes" failonerror="true" maxmemory="128m">
 			<classpath>
 				<pathelement location="${basedir}/src" />
 				<pathelement location="${gwt.home}/gwt-user.jar" />
@@ -106,7 +106,7 @@
 			<arg value="INFO"/>
 			<arg value="-style"/>
 			<arg value="OBFUSCATED"/>
-			<arg value="-out" />
+			<arg value="-war" />
 			<arg file="${dist.home}" />
 			<arg value="${gwt.module.id}" />
 		</java>
