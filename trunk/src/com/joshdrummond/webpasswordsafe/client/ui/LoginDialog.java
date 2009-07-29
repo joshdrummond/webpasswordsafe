@@ -20,21 +20,19 @@
 
 package com.joshdrummond.webpasswordsafe.client.ui;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.KeyListener;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
@@ -44,82 +42,74 @@ import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
  * @author Josh Drummond
  *
  */
-public class LoginDialog extends DialogBox {
+public class LoginDialog extends Window
+{
 
-    private TextBox usernameTextBox;
-    private PasswordTextBox passwordTextBox;
+    private TextField<String> usernameTextBox;
+    private TextField<String> passwordTextBox;
+    private FormData formData = new FormData("-20"); 
     private MainWindow main;
     
     public LoginDialog(MainWindow main) {
-        //super();
         this.main = main;
+        this.setHeading("Login");
         
-        setText("Login");
+        FormPanel form = new FormPanel();
+        form.setHeaderVisible(false);
+        form.setFrame(true);
+        usernameTextBox = new TextField<String>();
+        usernameTextBox.setFieldLabel("Username");
+        usernameTextBox.addKeyListener(new KeyListener()
+        {
+        	@Override
+        	public void componentKeyPress(ComponentEvent event)
+        	{
+        		if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+        		{
+        			passwordTextBox.focus();
+        		}
+        	}
+        });
+        form.add(usernameTextBox, formData);
+        passwordTextBox = new TextField<String>();
+        passwordTextBox.setFieldLabel("Password");
+        passwordTextBox.setPassword(true);
+        passwordTextBox.addKeyListener(new KeyListener()
+        {
+        	@Override
+        	public void componentKeyPress(ComponentEvent event)
+        	{
+        		if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+        		{
+        			doSubmit();
+        		}
+        	}
+        });
+        form.add(passwordTextBox, formData);
         
-        final FlexTable flexTable = new FlexTable();
-        setWidget(flexTable);
-        flexTable.setSize("100%", "100%");
-
-        final Label usernameLabel = new Label("Username:");
-        flexTable.setWidget(0, 0, usernameLabel);
-
-        passwordTextBox = new PasswordTextBox();
-        usernameTextBox = new TextBox();
-        flexTable.setWidget(0, 2, usernameTextBox);
-        usernameTextBox.addKeyPressHandler(new KeyPressHandler() {
-			public void onKeyPress(KeyPressEvent event)
-			{
-                if (event.getCharCode() == KeyCodes.KEY_ENTER)
-                {
-                    passwordTextBox.setFocus(true);
-                }
-			}
-        });
-
-        final Label passwordLabel = new Label("Password:");
-        flexTable.setWidget(1, 0, passwordLabel);
-
-        flexTable.setWidget(1, 2, passwordTextBox);
-        passwordTextBox.addKeyPressHandler(new KeyPressHandler() {
-			public void onKeyPress(KeyPressEvent event)
-			{
-                if (event.getCharCode() == KeyCodes.KEY_ENTER)
-                {
-                    doSubmit();
-                }
-			}
-        });
-
-        final FlowPanel flowPanel = new FlowPanel();
-        flexTable.setWidget(2, 0, flowPanel);
-        flexTable.getCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_CENTER);
-        flexTable.getFlexCellFormatter().setColSpan(2, 0, 3);
-
-        final Button enterButton = new Button();
-        flowPanel.add(enterButton);
-        enterButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event)
-			{
+        Button enterButton = new Button("Submit", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doSubmit();
 			}
-        });
-        enterButton.setText("Submit");
-
-        final Button cancelButton = new Button();
-        flowPanel.add(cancelButton);
-        cancelButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
+		});
+        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doCancel();
-            }
-        });
-        cancelButton.setText("Cancel");
+			}
+		});
+        form.setButtonAlign(HorizontalAlignment.CENTER);
+        form.addButton(enterButton);
+        form.addButton(cancelButton);
+        this.add(form);
 
     }
 
     public void show()
     {
         super.show();
-        usernameTextBox.setFocus(true);
+        usernameTextBox.focus();
     }
     
     private void doSubmit()
@@ -128,7 +118,7 @@ public class LoginDialog extends DialogBox {
         {
 
             public void onFailure(Throwable caught) {
-                Window.alert("Error: "+caught.getMessage());
+            	MessageBox.alert("Error", caught.getMessage(), null);
             }
 
             public void onSuccess(Boolean result) {
@@ -138,12 +128,12 @@ public class LoginDialog extends DialogBox {
                 }
                 else
                 {
-                    Window.alert("Invalid Login!");
+                	MessageBox.alert("Error", "Invalid Login!", null);
                 }
             }
         };
-        LoginService.Util.getInstance().login(usernameTextBox.getText(), 
-                passwordTextBox.getText(), callback);
+        LoginService.Util.getInstance().login(usernameTextBox.getValue(), 
+                passwordTextBox.getValue(), callback);
     }
     
     private void doGetLoggedInUser()
@@ -153,7 +143,7 @@ public class LoginDialog extends DialogBox {
 
             public void onFailure(Throwable caught)
             {
-                Window.alert("Error: "+caught.getMessage());
+            	MessageBox.alert("Error", caught.getMessage(), null);
             }
 
             public void onSuccess(UserDTO result)
@@ -167,7 +157,7 @@ public class LoginDialog extends DialogBox {
                 }
                 else
                 {
-                    Window.alert("Invalid User!");
+                	MessageBox.alert("Error", "Invalid User!", null);
                 }
             }
         };

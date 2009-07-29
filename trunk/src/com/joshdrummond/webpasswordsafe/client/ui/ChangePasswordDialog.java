@@ -19,75 +19,61 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 
 /**
  * @author Josh Drummond
  *
  */
-public class ChangePasswordDialog extends DialogBox
+public class ChangePasswordDialog extends Window
 {
 
-    private PasswordTextBox password1TextBox;
-    private PasswordTextBox password2TextBox;
-
+    private TextField<String> password1;
+    private TextField<String> password2;
+    private FormData formData = new FormData("-20"); 
+    
     public ChangePasswordDialog()
     {
-        setHTML("Change Password");
-
-        final FlexTable flexTable = new FlexTable();
-        setWidget(flexTable);
-        flexTable.setSize("100%", "100%");
-
-        final Label password1Label = new Label("New Password");
-        flexTable.setWidget(0, 0, password1Label);
-
-        password1TextBox = new PasswordTextBox();
-        flexTable.setWidget(0, 1, password1TextBox);
-        password1TextBox.setWidth("100%");
-
-        final Label password2Label = new Label("New Password");
-        flexTable.setWidget(1, 0, password2Label);
-
-        password2TextBox = new PasswordTextBox();
-        flexTable.setWidget(1, 1, password2TextBox);
-        password2TextBox.setWidth("100%");
-
-        final FlowPanel flowPanel = new FlowPanel();
-        flexTable.setWidget(2, 0, flowPanel);
-        flexTable.getCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_CENTER);
-        flexTable.getFlexCellFormatter().setColSpan(2, 0, 2);
-
-        final Button okayButton = new Button();
-        flowPanel.add(okayButton);
-        okayButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event)
-			{
+    	this.setHeading("Change Password");
+    	
+        FormPanel form = new FormPanel();
+        form.setHeaderVisible(false);
+        form.setFrame(true);
+        password1 = new TextField<String>();
+        password1.setFieldLabel("New Password");
+        password1.setPassword(true);
+        form.add(password1, formData);
+        password2 = new TextField<String>();
+        password2.setFieldLabel("Re-enter Password");
+        password2.setPassword(true);
+        form.add(password2, formData);
+        
+        Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doOkay();
 			}
 		});
-        okayButton.setText("Okay");
-
-        final Button cancelButton = new Button();
-        flowPanel.add(cancelButton);
-        cancelButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
+        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doCancel();
-            }
-        });
-        cancelButton.setText("Cancel");
+			}
+		});
+        form.setButtonAlign(HorizontalAlignment.CENTER);
+        form.addButton(okayButton);
+        form.addButton(cancelButton);
+        this.add(form);
     }
 
     /**
@@ -103,13 +89,13 @@ public class ChangePasswordDialog extends DialogBox
      */
     protected void doOkay()
     {
-        String pw1 = password1TextBox.getText().trim();
-        String pw2 = password2TextBox.getText().trim();
+        String pw1 = password1.getValue().trim();
+        String pw2 = password2.getValue().trim();
         if (pw1.equals(pw2))
         {
             if (pw1.equals("") || pw2.equals(""))
             {
-                Window.alert("Must enter a password");
+            	MessageBox.alert("Error", "Must enter a password", null);
             }
             else
             {
@@ -118,7 +104,7 @@ public class ChangePasswordDialog extends DialogBox
         }
         else
         {
-            Window.alert("Passwords must match");
+        	MessageBox.alert("Error", "Passwords must match", null);
         }
     }
 
@@ -131,7 +117,7 @@ public class ChangePasswordDialog extends DialogBox
         {
             public void onFailure(Throwable caught)
             {
-                Window.alert("Error: "+caught.getMessage());
+            	MessageBox.alert("Error", caught.getMessage(), null);
             }
 
             public void onSuccess(Void result)
