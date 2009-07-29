@@ -45,7 +45,7 @@
 
 	<servlet-mapping>
 		<servlet-name>rpc</servlet-name>
-		<url-pattern>/com.joshdrummond.webpasswordsafe.WebPasswordSafe/rpc/*</url-pattern>
+		<url-pattern>/webpasswordsafe/rpc/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
