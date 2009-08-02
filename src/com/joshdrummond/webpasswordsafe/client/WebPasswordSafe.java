@@ -21,15 +21,28 @@
 package com.joshdrummond.webpasswordsafe.client;
 
 import java.util.List;
+import com.extjs.gxt.ui.client.Style.Orientation;
+import com.extjs.gxt.ui.client.event.MenuEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.util.Margins;
+import com.extjs.gxt.ui.client.util.Padding;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.Text;
+import com.extjs.gxt.ui.client.widget.Viewport;
+import com.extjs.gxt.ui.client.widget.layout.FillLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
+import com.extjs.gxt.ui.client.widget.layout.RowData;
+import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
+import com.extjs.gxt.ui.client.widget.menu.Menu;
+import com.extjs.gxt.ui.client.widget.menu.MenuBar;
+import com.extjs.gxt.ui.client.widget.menu.MenuBarItem;
+import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.joshdrummond.webpasswordsafe.client.model.ClientModel;
 import com.joshdrummond.webpasswordsafe.client.model.common.*;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
@@ -41,161 +54,154 @@ import com.joshdrummond.webpasswordsafe.client.ui.*;
  */
 public class WebPasswordSafe implements EntryPoint, MainWindow {
     private ClientModel clientModel = new ClientModel();
-    private Label notLoggedInLabel;
     private final static String NOT_LOGGED_IN = "Not Logged In";
     private final static String LOGGED_IN = "Logged In As: ";
     private final static String VERSION = "0.1";
     private final static String TITLE = "WebPasswordSafe v"+VERSION;
-    private Label headerGwtLabel;
-    private SimplePanel simplePanel;
-    private MenuBar userMenu;
-    private MenuBar adminMenu;
+    private Viewport viewport; 
+    private ContentPanel mainPanel, topPanel;
+    private Menu userMenu;
+    private Menu adminMenu;
     private PasswordSearchPanel passwordSearchPanel;
 
     public void onModuleLoad() {
-        final RootPanel rootPanel = RootPanel.get();
-        rootPanel.setSize("800", "600");
+    	
+        userMenu = new Menu();
+        userMenu.add(new MenuItem("Login", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doLogin();
+			}
+		}));
 
-        {
-            headerGwtLabel = new Label(TITLE);
-            rootPanel.add(headerGwtLabel, 10, 12);
-            headerGwtLabel.setStyleName("gwt-Label-MainTitle");
-            headerGwtLabel.setWidth("216px");
+        MenuItem userSettings = new MenuItem("Settings");
+        Menu userSettingsMenu = new Menu();
+        userSettingsMenu.add(new MenuItem("General"));
+        userSettingsMenu.add(new MenuItem("Change Password", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doChangePassword();
+            }
+        }));
+        userSettings.setSubMenu(userSettingsMenu);
+        userMenu.add(userSettings);
 
-            notLoggedInLabel = new Label(NOT_LOGGED_IN);
-            rootPanel.add(notLoggedInLabel, 310, 12);
-            notLoggedInLabel.setStyleName("gwt-Label-LoggedInUser");
-            notLoggedInLabel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-            notLoggedInLabel.setWidth("330px");
+        MenuItem userRole = new MenuItem("Role");
+        Menu userRoleMenu = new Menu();
+        userRoleMenu.add(new MenuItem("User"));
+        userRoleMenu.add(new MenuItem("Admin"));
+        userRole.setSubMenu(userRoleMenu);
+        userMenu.add(userRole);
 
-            final MenuBar mainMenu = new MenuBar();
-            mainMenu.setAutoOpen(true);
-            rootPanel.add(mainMenu, 8, 33);
-            mainMenu.setWidth("632px");
+        userMenu.add(new MenuItem("Logout", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doLogout();
+            }
+        }));
 
-            userMenu = new MenuBar(true);
 
-            userMenu.addItem("Login", new Command() {
-                public void execute() {
-                    doLogin();
-                }
-            });
+        Menu aboutMenu = new Menu();
+        aboutMenu.add(new MenuItem("Help"));
+        aboutMenu.add(new MenuItem("About"));
 
-            final MenuBar userSettingsMenu = new MenuBar(true);
+        Menu reportsMenu = new Menu();
+        reportsMenu.add(new MenuItem("User Audit"));
+        reportsMenu.add(new MenuItem("Permissions"));
 
-            userSettingsMenu.addItem("General", (Command)null);
+        Menu passwordMenu = new Menu();
+        passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doNewPassword();
+            }
+        }));
+        MenuItem passwordTemplate = new MenuItem("Template");
+        Menu passwordTemplateMenu = new Menu();
+        passwordTemplateMenu.add(new MenuItem("New"));
+        passwordTemplateMenu.add(new MenuItem("Edit"));
+        passwordTemplate.setSubMenu(passwordTemplateMenu);
+        passwordMenu.add(passwordTemplate);
+        passwordMenu.add(new MenuItem("Search", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doPasswordSearch();
+            }
+        }));
 
-            userSettingsMenu.addItem("Change Password", new Command() {
-                public void execute() {
-                    doChangePassword();
-                }
-            });
+        adminMenu = new Menu();
+        adminMenu.add(new MenuItem("Settings"));
 
-            userMenu.addItem("Settings", userSettingsMenu);
+        MenuItem adminUser = new MenuItem("Users");
+        Menu adminUserMenu = new Menu();
+        adminUserMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doAddUser();
+            }
+        }));
+        adminUserMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doEditUser();
+            }
+        }));
+        adminUser.setSubMenu(adminUserMenu);
+        adminMenu.add(adminUser);
+        
+        MenuItem adminGroup = new MenuItem("Groups");
+        Menu adminGroupMenu = new Menu();
+        adminGroupMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doAddGroup();
+            }
+        }));
+        adminGroupMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doEditGroup();
+            }
+        }));
+        adminGroup.setSubMenu(adminGroupMenu);
+        adminMenu.add(adminGroup);
 
-            final MenuBar userRoleMenu = new MenuBar(true);
+        MenuItem adminRole = new MenuItem("Roles");
+//        Menu adminRoleMenu = new Menu();
+        adminMenu.add(adminRole);
 
-            userRoleMenu.addItem("User", (Command)null);
+        MenuBar mainMenu = new MenuBar();
+        mainMenu.add(new MenuBarItem("User", userMenu));
+        mainMenu.add(new MenuBarItem("Password", passwordMenu));
+        mainMenu.add(new MenuBarItem("Reports", reportsMenu));
+        mainMenu.add(new MenuBarItem("Admin", adminMenu));
+        mainMenu.add(new MenuBarItem("About", aboutMenu));
 
-            userRoleMenu.addItem("Admin", (Command)null);
-
-            userMenu.addItem("Role", userRoleMenu);
-
-            userMenu.addItem("Logout", new Command() {
-                public void execute() {
-                    doLogout();
-                }
-            });
-//            menuItemLogout.setVisible(false);
-
-            mainMenu.addItem("User", userMenu);
-
-            final MenuBar aboutMenu = new MenuBar(true);
-
-            aboutMenu.addItem("Help", (Command)null);
-
-            aboutMenu.addItem("About", (Command)null);
-
-            final MenuBar reportsMenu = new MenuBar(true);
-
-            reportsMenu.addItem("User Audit", (Command)null);
-
-            reportsMenu.addItem("Permissions", (Command)null);
-
-            final MenuBar passwordMenu = new MenuBar(true);
-
-            passwordMenu.addItem("New", new Command() {
-                public void execute() {
-                    doNewPassword();
-                }
-            });
-
-            final MenuBar passwordTemplateMenu = new MenuBar(true);
-
-            passwordTemplateMenu.addItem("New", (Command)null);
-
-            passwordTemplateMenu.addItem("Edit", (Command)null);
-
-            passwordMenu.addItem("Template", passwordTemplateMenu);
-
-            passwordMenu.addItem("Search", new Command() {
-                public void execute() {
-                    doPasswordSearch();
-                }
-            });
-
-            mainMenu.addItem("Password", passwordMenu);
-
-            mainMenu.addItem("Reports", reportsMenu);
-
-            adminMenu = new MenuBar(true);
-
-            adminMenu.addItem("Settings", (Command)null);
-
-            final MenuBar adminRoleMenu = new MenuBar(true);
-
-            final MenuBar adminGroupMenu = new MenuBar(true);
-
-            adminGroupMenu.addItem("Add", new Command() {
-                public void execute() {
-                    doAddGroup();
-                }
-            });
-
-            adminGroupMenu.addItem("Edit", new Command() {
-                public void execute() {
-                    doEditGroup();
-                }
-            });
-
-            final MenuBar adminUserMenu = new MenuBar(true);
-
-            adminUserMenu.addItem("Add", new Command() {
-                public void execute() {
-                    doAddUser();
-                }
-            });
-
-            adminUserMenu.addItem("Edit", new Command() {
-                public void execute() {
-                    doEditUser();
-                }
-            });
-
-            adminMenu.addItem("Users", adminUserMenu);
-
-            adminMenu.addItem("Groups", adminGroupMenu);
-
-            adminMenu.addItem("Roles", adminRoleMenu);
-
-            mainMenu.addItem("Admin", adminMenu);
-
-            mainMenu.addItem("About", aboutMenu);
-        }
-
-        simplePanel = new SimplePanel();
-        rootPanel.add(simplePanel, 10, 62);
-        simplePanel.setSize("630px", "418px");
+        viewport = new Viewport();
+        viewport.setLayout(new RowLayout(Orientation.VERTICAL));
+        // title panel
+        topPanel = new ContentPanel();
+        HBoxLayout titleLayout = new HBoxLayout();
+        titleLayout.setPadding(new Padding(5));
+        titleLayout.setHBoxLayoutAlign(HBoxLayoutAlign.TOP);
+        topPanel.setLayout(titleLayout);
+        topPanel.setHeight(25);
+        topPanel.setHeaderVisible(false);
+        topPanel.setBorders(false);
+        refreshTopPanel();
+        viewport.add(topPanel, new RowData(1, -1));
+        //menu panel
+        ContentPanel menuPanel = new ContentPanel(new FillLayout());
+        menuPanel.add(mainMenu);
+        menuPanel.setHeaderVisible(false);
+        menuPanel.setBorders(false);
+        viewport.add(menuPanel, new RowData(1, -1));
+        //main panel
+        mainPanel = new ContentPanel(new FillLayout());
+        mainPanel.setHeaderVisible(false);
+        viewport.add(mainPanel, new RowData(1, 1));
+        
+        RootPanel.get().add(viewport);
 
         passwordSearchPanel = new PasswordSearchPanel(this);
         passwordSearchPanel.setSize("100%", "100%");
@@ -203,6 +209,27 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         refreshMenu();
     }
 
+    private void refreshTopPanel()
+    {
+    	topPanel.removeAll();
+        Text headerGwtLabel = new Text(TITLE);
+        Text loggedInLabel = null;
+        if (clientModel.isLoggedIn())
+        {
+            loggedInLabel = new Text(LOGGED_IN+clientModel.getLoggedInUser().getFullname());
+        }
+        else
+        {
+            loggedInLabel = new Text(NOT_LOGGED_IN);
+        }
+        topPanel.add(headerGwtLabel, new HBoxLayoutData(0, 5, 0, 0));
+        HBoxLayoutData flex = new HBoxLayoutData(new Margins(0, 5, 0, 0));
+        flex.setFlex(1);
+        topPanel.add(new Text(), flex);
+        topPanel.add(loggedInLabel, new HBoxLayoutData(new Margins(0)));
+        topPanel.layout();
+    }
+    
     /**
      * 
      */
@@ -216,7 +243,9 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
      */
     protected void doPasswordSearch()
     {
-        simplePanel.setWidget(passwordSearchPanel);
+        mainPanel.removeAll();
+        mainPanel.add(passwordSearchPanel);
+        mainPanel.layout();
     }
 
     private void refreshMenu()
@@ -282,14 +311,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
 
     public void refreshLoginStatus()
     {
-        if (clientModel.isLoggedIn())
-        {
-            notLoggedInLabel.setText(LOGGED_IN+clientModel.getLoggedInUser().getFullname());
-        }
-        else
-        {
-            notLoggedInLabel.setText(NOT_LOGGED_IN);
-        }
+        refreshTopPanel();
         refreshMenu();
     }
 
@@ -314,7 +336,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
             {
                 public void onFailure(Throwable caught)
                 {
-                    Window.alert("Error: "+caught.getMessage());
+                    MessageBox.alert("Error", caught.getMessage(), null);
                 }
                 public void onSuccess(List<UserDTO> result)
                 {
@@ -325,7 +347,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         }
         else
         {
-          Window.alert("Must be logged in first.");
+        	MessageBox.alert("Error", "Must be logged in first.", null);
         }
     }
     
@@ -353,10 +375,6 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     
     private class EditUserListener implements UserListener
     {
-
-        /* (non-Javadoc)
-         * @see com.joshdrummond.webpasswordsafe.client.ui.UserListener#doUsersChosen(java.util.List)
-         */
         public void doUsersChosen(List<UserDTO> users)
         {
             if (users.size() > 0)

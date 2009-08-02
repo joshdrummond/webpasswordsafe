@@ -53,6 +53,7 @@ public class LoginDialog extends Window
     public LoginDialog(MainWindow main) {
         this.main = main;
         this.setHeading("Login");
+        this.setModal(true);
         
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);

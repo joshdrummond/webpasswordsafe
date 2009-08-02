@@ -97,9 +97,10 @@
 	</target>
 
 	<target name="gwt-compile" description="Compile to JavaScript">
-		<java classname="com.google.gwt.dev.Compiler" fork="yes" failonerror="true" maxmemory="128m">
+		<java classname="com.google.gwt.dev.Compiler" fork="yes" failonerror="true" maxmemory="512m">
 			<classpath>
 				<pathelement location="${basedir}/src" />
+				<pathelement location="${web.home}/WEB-INF/lib/gxt.jar" />
 				<pathelement location="${gwt.home}/gwt-user.jar" />
 				<pathelement location="${gwt.home}/${gwt.platform.jar}" />
 			</classpath>
@@ -113,7 +114,7 @@
 		</java>
 	</target>
 
-	<target name="web-xml">
+	<target name="web">
 		<mkdir dir="${dist.webinf}" />
 		<copy todir="${dist.webinf}">
 			<fileset dir="${web.home}/WEB-INF/">
@@ -128,9 +129,12 @@
 				<include name="*.gif"/>
 			</fileset>
 		</copy>
+		<copy todir="${dist.war}/gxt">
+			<fileset dir="${web.home}/gxt"/>
+		</copy>
 	</target>
 
-	<target name="war" depends="gwt-compile, jars, web-xml">
+	<target name="war" depends="gwt-compile, jars, web">
 		<delete file="${war.name}" />
 		<copy file="${gwt.home}/gwt-servlet.jar" todir="${dist.webinf}/lib" />
 		<jar destfile="${war.name}" basedir="${dist.war}" duplicate="preserve" />

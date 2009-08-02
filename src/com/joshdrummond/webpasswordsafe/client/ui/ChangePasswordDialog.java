@@ -22,6 +22,7 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -45,7 +46,8 @@ public class ChangePasswordDialog extends Window
     public ChangePasswordDialog()
     {
     	this.setHeading("Change Password");
-    	
+        this.setModal(true);
+        
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);
         form.setFrame(true);
@@ -123,6 +125,7 @@ public class ChangePasswordDialog extends Window
             public void onSuccess(Void result)
             {
                 hide();
+                Info.display("Status", "Password Changed");
             }
         };
         UserService.Util.getInstance().changePassword(password, callback);
