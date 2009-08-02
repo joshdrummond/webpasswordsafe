@@ -19,19 +19,17 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 
@@ -39,99 +37,75 @@ import com.joshdrummond.webpasswordsafe.client.remote.UserService;
  * @author Josh Drummond
  *
  */
-public class UserDialog extends DialogBox
+public class UserDialog extends Window
 {
     private UserDTO user;
-    private TextBox usernameTextBox;
-    private TextBox fullnameTextBox;
-    private TextBox emailTextBox;
-    private PasswordTextBox password1TextBox;
-    private PasswordTextBox password2TextBox;
+    private TextField<String> usernameTextBox;
+    private TextField<String> fullnameTextBox;
+    private TextField<String> emailTextBox;
+    private TextField<String> password1TextBox;
+    private TextField<String> password2TextBox;
     private CheckBox enabledCheckBox;
+    private FormData formData = new FormData("-20"); 
     
     public UserDialog(UserDTO user)
     {
         this.user = user;
-        setHTML("User");
-
-        final FlexTable flexTable = new FlexTable();
-        setWidget(flexTable);
-        flexTable.setSize("100%", "100%");
-
-        final Label usernameLabel = new Label("Username");
-        flexTable.setWidget(0, 0, usernameLabel);
-
-        final Label fullnameLabel = new Label("Full Name");
-        flexTable.setWidget(1, 0, fullnameLabel);
-
-        final Label emailLabel = new Label("Email");
-        flexTable.setWidget(2, 0, emailLabel);
-
-        final Label password1Label = new Label("Password");
-        flexTable.setWidget(3, 0, password1Label);
-
-        final Label password2Label = new Label("");
-        flexTable.setWidget(4, 0, password2Label);
-
-        final Label enabledLabel = new Label("Enabled");
-        flexTable.setWidget(5, 0, enabledLabel);
-
-        usernameTextBox = new TextBox();
-        flexTable.setWidget(0, 1, usernameTextBox);
-        usernameTextBox.setWidth("100%");
-
-        fullnameTextBox = new TextBox();
-        flexTable.setWidget(1, 1, fullnameTextBox);
-        fullnameTextBox.setWidth("100%");
-
-        emailTextBox = new TextBox();
-        flexTable.setWidget(2, 1, emailTextBox);
-        emailTextBox.setWidth("100%");
-
-        password1TextBox = new PasswordTextBox();
-        flexTable.setWidget(3, 1, password1TextBox);
-        password1TextBox.setWidth("100%");
-
-        password2TextBox = new PasswordTextBox();
-        flexTable.setWidget(4, 1, password2TextBox);
-        password2TextBox.setWidth("100%");
-
-        enabledCheckBox = new CheckBox();
-        flexTable.setWidget(5, 1, enabledCheckBox);
-
-        final FlowPanel flowPanel = new FlowPanel();
-        flexTable.setWidget(6, 0, flowPanel);
-        flexTable.getCellFormatter().setHorizontalAlignment(6, 0, HasHorizontalAlignment.ALIGN_CENTER);
-        flexTable.getFlexCellFormatter().setColSpan(6, 0, 2);
-
-        final Button saveButton = new Button();
-        flowPanel.add(saveButton);
-        saveButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
-                doSave();
-            }
-        });
-        saveButton.setText("Save");
-
-        final Button cancelButton = new Button();
-        flowPanel.add(cancelButton);
-        cancelButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
-                doCancel();
-            }
-        });
-        cancelButton.setText("Cancel");
+        this.setHeading("User");
+        this.setModal(true);
         
+        FormPanel form = new FormPanel();
+        form.setHeaderVisible(false);
+        form.setFrame(true);
+
+        usernameTextBox = new TextField<String>();
+        usernameTextBox.setFieldLabel("Username");
+        form.add(usernameTextBox, formData);
+        fullnameTextBox = new TextField<String>();
+        fullnameTextBox.setFieldLabel("Full Name");
+        form.add(fullnameTextBox, formData);
+        emailTextBox = new TextField<String>();
+        emailTextBox.setFieldLabel("Email");
+        form.add(emailTextBox, formData);
+        password1TextBox = new TextField<String>();
+        password1TextBox.setPassword(true);
+        password1TextBox.setFieldLabel("Password");
+        form.add(password1TextBox, formData);
+        password2TextBox = new TextField<String>();
+        password2TextBox.setPassword(true);
+        form.add(password2TextBox, formData);
+        enabledCheckBox = new CheckBox();
+        enabledCheckBox.setFieldLabel("Enabled");
+        form.add(enabledCheckBox, formData);
+
+        Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+                doSave();
+			}
+		});
+
+        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+                doCancel();
+			}
+		});
+
+        form.setButtonAlign(HorizontalAlignment.CENTER);
+        form.addButton(saveButton);
+        form.addButton(cancelButton);
+
         setFields();
+
+        this.add(form);
     }
     
     private void setFields()
     {
-        usernameTextBox.setText(user.getUsername());
-        fullnameTextBox.setText(user.getFullname());
-        emailTextBox.setText(user.getEmail());
+        usernameTextBox.setValue(user.getUsername());
+        fullnameTextBox.setValue(user.getFullname());
+        emailTextBox.setValue(user.getEmail());
         enabledCheckBox.setValue(user.isActive());
     }
     
@@ -144,11 +118,11 @@ public class UserDialog extends DialogBox
     {
         if (validateFields())
         {
-            user.setUsername(usernameTextBox.getText().trim());
-            user.setFullname(fullnameTextBox.getText().trim());
-            user.setEmail(emailTextBox.getText().trim());
+            user.setUsername(usernameTextBox.getValue().trim());
+            user.setFullname(fullnameTextBox.getValue().trim());
+            user.setEmail(emailTextBox.getValue().trim());
             user.setActive(enabledCheckBox.getValue());
-            String pw1 = password1TextBox.getText().trim();
+            String pw1 = password1TextBox.getValue().trim();
             if (!pw1.equals(""))
             {
                 user.setPassword(pw1);
@@ -159,7 +133,7 @@ public class UserDialog extends DialogBox
 
                 public void onFailure(Throwable caught)
                 {
-                    Window.alert("Error: "+caught.getMessage());
+                    MessageBox.alert("Error", caught.getMessage(), null);
                 }
 
                 public void onSuccess(Void result)

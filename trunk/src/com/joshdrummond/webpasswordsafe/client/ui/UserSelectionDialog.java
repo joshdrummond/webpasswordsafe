@@ -21,72 +21,74 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.data.BaseModel;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.ListField;
+import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 
 /**
  * @author Josh Drummond
  *
  */
-public class UserSelectionDialog extends DialogBox
+public class UserSelectionDialog extends Window
 {
 
-    private ListBox userListBox;
+    private ListField<UserData> userListBox;
+    private ListStore<UserData> store;
     private UserListener userListener;
     private List<UserDTO> users;
+//    private FormData formData = new FormData("-20");
     
     public UserSelectionDialog(UserListener userListener, List<UserDTO> users, boolean allowMultiple)
     {
-        setHTML("Users");
+        this.setHeading("Users");
+        this.setModal(true);
         this.userListener = userListener;
         this.users = users;
 
-        final FlexTable flexTable = new FlexTable();
-        setWidget(flexTable);
-        flexTable.setSize("100%", "100%");
+        FormPanel form = new FormPanel();
+        form.setHeaderVisible(false);
+        form.setFrame(true);
+        form.setLabelAlign(LabelAlign.TOP);
+        form.setButtonAlign(HorizontalAlignment.CENTER);
+        
+        String selectLabelText = allowMultiple ? "Please select user(s)" : "Please select a user";
+        store = new ListStore<UserData>();
+        userListBox = new ListField<UserData>();
+        userListBox.setSize(300, 150);
+        userListBox.setDisplayField("fullname");
+        userListBox.setFieldLabel(selectLabelText);
+        form.add(userListBox);
 
-        String selectLabelText = allowMultiple ? "Please select user(s):" : "Please select a user:";
-        final Label usersLabel = new Label(selectLabelText);
-        flexTable.setWidget(0, 0, usersLabel);
-
-        userListBox = new ListBox(allowMultiple);
-        flexTable.setWidget(1, 0, userListBox);
-        flexTable.getCellFormatter().setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_CENTER);
-        userListBox.setVisibleItemCount(5);
-
-        final FlowPanel flowPanel = new FlowPanel();
-        flexTable.setWidget(2, 0, flowPanel);
-        flexTable.getCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_CENTER);
-
-        final Button okayButton = new Button();
-        flowPanel.add(okayButton);
-        okayButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event)
-			{
+        Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doOkay();
 			}
-        });
-        okayButton.setText("Okay");
+		});
 
-        final Button cancelButton = new Button();
-        flowPanel.add(cancelButton);
-        cancelButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
+        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doCancel();
-            }
-        });
-        cancelButton.setText("Cancel");
+			}
+		});
         
+        form.setButtonAlign(HorizontalAlignment.CENTER);
+        form.addButton(okayButton);
+        form.addButton(cancelButton);
+
         setFields();
+        
+        this.add(form);
     }
 
     /**
@@ -94,10 +96,13 @@ public class UserSelectionDialog extends DialogBox
      */
     private void setFields()
     {
+    	store.removeAll();
         for (UserDTO user : users)
         {
-            userListBox.addItem(user.getFullname(), String.valueOf(user.getId()));
+            store.add(new UserData(user));
+            Info.display("User", user.getFullname());
         }
+        userListBox.setStore(store);
     }
 
     /**
@@ -113,16 +118,24 @@ public class UserSelectionDialog extends DialogBox
      */
     protected void doOkay()
     {
-        List<UserDTO> usersSelected = new ArrayList<UserDTO>();
-        for (int i = 0; i < userListBox.getItemCount(); i++)
-        {
-            if (userListBox.isItemSelected(i))
-            {
-                usersSelected.add(users.get(i));
-            }
-        }
+    	List<UserData> dataSelected = userListBox.getSelection();
+        List<UserDTO> usersSelected = new ArrayList<UserDTO>(dataSelected.size());
+    	for (UserData ud : dataSelected)
+    	{
+    		usersSelected.add((UserDTO)ud.get("user"));
+    	}
         userListener.doUsersChosen(usersSelected);
         hide();
     }
 
+    private class UserData extends BaseModel
+    {
+    	private static final long serialVersionUID = 1L;
+    	public UserData(UserDTO user)
+    	{
+    		set("id", user.getId());
+    		set("fullname", user.getFullname());
+    		set("user", user);
+    	}
+    }
 }

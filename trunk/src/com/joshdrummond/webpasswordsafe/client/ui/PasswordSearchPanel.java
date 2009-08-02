@@ -21,30 +21,35 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.Style.Scroll;
+import com.extjs.gxt.ui.client.data.BaseModel;
+import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.KeyListener;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.TreeStore;
+import com.extjs.gxt.ui.client.util.Margins;
+import com.extjs.gxt.ui.client.util.Padding;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
+import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
+import com.extjs.gxt.ui.client.widget.grid.Grid;
+import com.extjs.gxt.ui.client.widget.layout.BorderLayout;
+import com.extjs.gxt.ui.client.widget.layout.BorderLayoutData;
+import com.extjs.gxt.ui.client.widget.layout.FillLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
+import com.extjs.gxt.ui.client.widget.layout.BoxLayout.BoxLayoutPack;
+import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
+import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
-import com.google.gwt.event.logical.shared.OpenHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.client.model.common.TagDTO;
@@ -54,15 +59,15 @@ import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
  * @author Josh Drummond
  *
  */
-public class PasswordSearchPanel extends Composite
+public class PasswordSearchPanel extends ContentPanel
 {
-    private static final int VISIBLE_ROW_COUNT=10;
-    private FlexTable passwordTable;
-    private Tree tagTree;
-    private TreeItem rootTreeItem;
-    private TextBox searchTextBox;
+    private Grid<PasswordSearchData> passwordGrid;
+    private ListStore<PasswordSearchData> store;
+//    private Tree tagTree;
+//    private TreeItem rootTreeItem;
+    private TextField<String> searchTextBox;
     private List<TagDTO> tags;
-    private List<PasswordDTO> passwords;
+//    private List<PasswordDTO> passwords;
     private MainWindow mainWindow;
 
     public PasswordSearchPanel(MainWindow mainWindow)
@@ -73,17 +78,55 @@ public class PasswordSearchPanel extends Composite
     
     public PasswordSearchPanel()
     {
+    	setLayout(new BorderLayout());
+    	setHeaderVisible(false);
+    	
+    	ContentPanel northPanel = new ContentPanel();
+    	northPanel.setHeading("Password Search");
+    	ContentPanel westPanel = new ContentPanel(new FillLayout());
+    	ContentPanel centerPanel = new ContentPanel(new FillLayout());
+    	
+    	HBoxLayout northLayout = new HBoxLayout();  
+    	northLayout.setPadding(new Padding(5));  
+    	northLayout.setHBoxLayoutAlign(HBoxLayoutAlign.MIDDLE);  
+    	northLayout.setPack(BoxLayoutPack.CENTER);  
+    	northPanel.setLayout(northLayout);  
+
+//    	Text passwordLabel = new Text("Password");
+    	searchTextBox = new TextField<String>();
+        searchTextBox.addKeyListener(new KeyListener() {
+        	@Override
+        	public void componentKeyPress(ComponentEvent event) {
+        		if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+        		{
+                    doSearch();
+        		}
+        	}
+        });
+//        searchTextBox.setVisibleLength(30);
+        searchTextBox.setWidth(300);
+        searchTextBox.setMaxLength(1000);
+        searchTextBox.focus();
+
+        Button searchButton = new Button("Search", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+                doSearch();
+			}
+		});
+    	HBoxLayoutData northSearchData = new HBoxLayoutData(new Margins(0, 5, 0, 0));  
+//    	northPanel.add(passwordLabel, northSearchData);  
+    	northPanel.add(searchTextBox, northSearchData);  
+    	northPanel.add(searchButton, northSearchData);  
+        
+        TreeStore<ModelData> treeStore = new TreeStore<ModelData>();  
+//        store.add(model.getChildren(), true);  
+        TreePanel<ModelData> tree = new TreePanel<ModelData>(treeStore);  
+        tree.setDisplayProperty("name");  
+//        tree.getStyle().setLeafIcon(Examples.ICONS.music());  
+        tree.setWidth(250);  
+        /*
         tags = new ArrayList<TagDTO>();
-        final FlexTable flexTable = new FlexTable();
-        initWidget(flexTable);
-
-        final ScrollPanel scrollPanel = new ScrollPanel();
-        flexTable.setWidget(1, 0, scrollPanel);
-        scrollPanel.setSize("100", "300");
-        flexTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
-        flexTable.getCellFormatter().setHeight(1, 0, "100%");
-        flexTable.getCellFormatter().setWidth(1, 0, "25%");
-
         tagTree = new Tree();
         scrollPanel.setWidget(tagTree);
         tagTree.addSelectionHandler(new SelectionHandler<TreeItem>() {
@@ -99,54 +142,73 @@ public class PasswordSearchPanel extends Composite
 			}
         });
         tagTree.setSize("100%", "100%");
-
-        final HorizontalPanel horizontalPanel = new HorizontalPanel();
-        flexTable.setWidget(0, 0, horizontalPanel);
-        flexTable.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
-        flexTable.getCellFormatter().setHeight(0, 0, "15");
-        horizontalPanel.setHeight("20%");
-        horizontalPanel.setSpacing(10);
-        flexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
-        flexTable.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
-
-        final Label passwordLabel = new Label("Password");
-        horizontalPanel.add(passwordLabel);
-
-        searchTextBox = new TextBox();
-        horizontalPanel.add(searchTextBox);
-        searchTextBox.addKeyPressHandler(new KeyPressHandler() {
-			public void onKeyPress(KeyPressEvent event)
-			{
-                if (event.getCharCode() == KeyCodes.KEY_ENTER)
-                {
-                    doSearch();
-                }
-			}
-        });
-        searchTextBox.setVisibleLength(30);
-        searchTextBox.setMaxLength(1000);
-        searchTextBox.setFocus(true);
-
-        final Button searchButton = new Button();
-        horizontalPanel.add(searchButton);
-        searchButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event)
-			{
-                doSearch();
-			}
-        });
-        searchButton.setText("Search");
-
+        rootTreeItem = new TreeItem("<b>Tags</b>");
+        tagTree.addItem(rootTreeItem);
+        */
+        westPanel.add(tree);
+        
+        centerPanel.setScrollMode(Scroll.AUTOX);
+        List<ColumnConfig> configs = new ArrayList<ColumnConfig>(4);
+        ColumnConfig column = new ColumnConfig();
+        column.setId("title");
+        column.setHeader("Title");
+        column.setWidth(200);
+        configs.add(column);
+        column = new ColumnConfig();
+        column.setId("username");
+        column.setHeader("Username");
+        column.setWidth(100);
+        configs.add(column);
+        column = new ColumnConfig();
+        column.setId("password");
+        column.setHeader("Password");
+        column.setWidth(100);
+        configs.add(column);
+        column = new ColumnConfig();
+        column.setId("notes");
+        column.setHeader("Notes");
+        column.setWidth(300);
+        configs.add(column);
+        
+        store = new ListStore<PasswordSearchData>();
+        ColumnModel cm = new ColumnModel(configs);
+        passwordGrid = new Grid<PasswordSearchData>(store, cm);
+        passwordGrid.setStyleAttribute("borderTop", "none");
+        passwordGrid.setBorders(true);
+        passwordGrid.setStripeRows(true);
+        centerPanel.add(passwordGrid);
+        
+    	BorderLayoutData northData = new BorderLayoutData(LayoutRegion.NORTH, 100);  
+    	northData.setCollapsible(true);  
+    	northData.setFloatable(false);  
+    	northData.setHideCollapseTool(false);  
+    	northData.setSplit(true);
+    	northData.setMargins(new Margins(5, 5, 0, 5));  
+    	
+    	BorderLayoutData westData = new BorderLayoutData(LayoutRegion.WEST, 150);  
+    	westData.setSplit(true);  
+    	westData.setCollapsible(true);  
+    	westData.setMargins(new Margins(5));  
+    	
+    	BorderLayoutData centerData = new BorderLayoutData(LayoutRegion.CENTER);  
+    	centerData.setMargins(new Margins(5, 0, 5, 0));  
+    	
+    	add(northPanel, northData);
+    	add(westPanel, westData);
+    	add(centerPanel, centerData);
+    	
+    	
+        /*
         passwordTable = new FlexTable();
         flexTable.setWidget(1, 1, passwordTable);
         passwordTable.setWidth("100%");
         flexTable.getCellFormatter().setWordWrap(1, 1, false);
         flexTable.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_CENTER);
         flexTable.getCellFormatter().setVerticalAlignment(1, 1, HasVerticalAlignment.ALIGN_TOP);
+        */
         
-        rootTreeItem = new TreeItem("<b>Tags</b>");
-        tagTree.addItem(rootTreeItem);
-        initTable();
+
+//        initTable();
 //        initTags();
     }
 
@@ -163,6 +225,7 @@ public class PasswordSearchPanel extends Composite
     /**
      * @param item
      */
+    /*
     protected void doTagExpanded(TreeItem item)
     {
         if (item.equals(rootTreeItem) && item.getState())
@@ -170,6 +233,7 @@ public class PasswordSearchPanel extends Composite
             doLoadTags();
         }
     }
+    */
 
     /**
      * 
@@ -180,12 +244,12 @@ public class PasswordSearchPanel extends Composite
         {
             public void onFailure(Throwable caught)
             {
-                Window.alert("Error: "+caught.getMessage());
+                MessageBox.alert("Error", caught.getMessage(), null);
             }
             public void onSuccess(List<TagDTO> result)
             {
                 tags = result;
-                refreshTags();
+//                refreshTags();
             }
         };
         PasswordService.Util.getInstance().getAvailableTags(callback);
@@ -194,6 +258,7 @@ public class PasswordSearchPanel extends Composite
     /**
      * 
      */
+    /*
     private void refreshTags()
     {
         rootTreeItem.removeItems();
@@ -202,10 +267,11 @@ public class PasswordSearchPanel extends Composite
             rootTreeItem.addItem(tag.getName());
         }
     }
-
+*/
     /**
      * @param item
      */
+    /*
     protected void doTagClicked(TreeItem item)
     {
         if (item.equals(rootTreeItem) && (0 == item.getChildCount()))
@@ -213,7 +279,8 @@ public class PasswordSearchPanel extends Composite
             doLoadTags();
         }
     }
-
+*/
+    
     /**
      * 
      */
@@ -223,39 +290,46 @@ public class PasswordSearchPanel extends Composite
         {
             public void onFailure(Throwable caught)
             {
-                Window.alert("Error: "+caught.getMessage());
+                MessageBox.alert("Error", caught.getMessage(), null);
             }
             public void onSuccess(List<PasswordDTO> result)
             {
-                passwords = result;
-                refreshTable();
+                refreshTable(result);
             }
         };
-        PasswordService.Util.getInstance().searchPassword(searchTextBox.getText().trim(), callback);
+        PasswordService.Util.getInstance().searchPassword(searchTextBox.getValue().trim(), callback);
     }
 
     /**
      * @param data
      */
-    private void refreshTable()
+    private void refreshTable(List<PasswordDTO> passwords)
     {
-        for (int i = 0; i < passwords.size(); i++)
+    	store.removeAll();
+        for (PasswordDTO password : passwords)
         {
-            PasswordDTO passwordDTO = (PasswordDTO)passwords.get(i);
-            passwordTable.setWidget(i+1, 0, new PasswordEditLabel(passwordDTO));
-            passwordTable.setText(i+1, 1, passwordDTO.getUsername());
-            passwordTable.setWidget(i+1, 2, new Button("View", new ViewPasswordClickHandler(passwordDTO.getId()))); //password popup
-            passwordTable.setWidget(i+1, 3, new NotesLabel(passwordDTO.getNotes()));
-        }
-        for (int i = passwords.size(); i < VISIBLE_ROW_COUNT; i++)
-        {
-            passwordTable.setText(i + 1, 0, "");
-            passwordTable.setText(i + 1, 1, "");
-            passwordTable.setText(i + 1, 2, "");
-            passwordTable.setText(i + 1, 3, "");
+        	store.add(new PasswordSearchData(password.getId(), password.getName(), password.getUsername(), password.getNotes()));
+//            passwordTable.setWidget(i+1, 0, new PasswordEditLabel(passwordDTO));
+//            passwordTable.setText(i+1, 1, passwordDTO.getUsername());
+//            passwordTable.setWidget(i+1, 2, new Button("View", new ViewPasswordClickHandler(passwordDTO.getId()))); //password popup
+//            passwordTable.setWidget(i+1, 3, new NotesLabel(passwordDTO.getNotes()));
         }
     }
 
+    private class PasswordSearchData extends BaseModel
+    {
+		private static final long serialVersionUID = 1L;
+
+    	public PasswordSearchData(long id, String title, String username, String notes)
+    	{
+    		set("id", id);
+    		set("title", title);
+    		set("username", username);
+    		set("password", "******");
+    		set("notes", notes);
+    	}
+    }
+    /*
     private class PasswordEditLabel extends Label
     {
         public PasswordEditLabel(final PasswordDTO password)
@@ -292,7 +366,7 @@ public class PasswordSearchPanel extends Composite
             });
         }
     }
-    
+
     private class ViewPasswordClickHandler
         implements ClickHandler
     {
@@ -303,9 +377,6 @@ public class PasswordSearchPanel extends Composite
             this.passwordId = passwordId;
         }
 
-		/* (non-Javadoc)
-		 * @see com.google.gwt.event.dom.client.ClickHandler#onClick(com.google.gwt.event.dom.client.ClickEvent)
-		 */
 		public void onClick(ClickEvent event)
 		{
             showPasswordPopup(passwordId, event.getRelativeElement().getAbsoluteLeft(), event.getRelativeElement().getAbsoluteTop());
@@ -335,33 +406,5 @@ public class PasswordSearchPanel extends Composite
         };
         PasswordService.Util.getInstance().getCurrentPassword(passwordId, callback);
     }
-
-    /**
-     * 
-     */
-    private void initTable()
-    {
-            // Create the header row.
-        passwordTable.setText(0, 0, "Title");
-        passwordTable.setText(0, 1, "Username");
-        passwordTable.setText(0, 2, "Password");
-        passwordTable.setText(0, 3, "Notes");
-//        passwordTable.setWidget(0, 3, navBar);
-//        passwordTable.getRowFormatter().setStyleName(0, "mail-ListHeader");
-
-            // Initialize the rest of the rows.
-            for (int i = 0; i < VISIBLE_ROW_COUNT; ++i) {
-                passwordTable.setText(i + 1, 0, "");
-                passwordTable.setText(i + 1, 1, "");
-                passwordTable.setText(i + 1, 2, "");
-                passwordTable.setText(i + 1, 3, "");
-                passwordTable.getCellFormatter().setWordWrap(i + 1, 0, false);
-                passwordTable.getCellFormatter().setWordWrap(i + 1, 1, false);
-                passwordTable.getCellFormatter().setWordWrap(i + 1, 2, false);
-                passwordTable.getCellFormatter().setWordWrap(i + 1, 3, false);
-//                passwordTable.getFlexCellFormatter().setColSpan(i + 1, 2, 2);
-            }
-          
-    }
-
+*/
 }
