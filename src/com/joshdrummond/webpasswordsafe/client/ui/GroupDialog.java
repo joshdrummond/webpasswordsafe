@@ -21,16 +21,19 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.data.BaseModel;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreSorter;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.DualListField;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.ListField;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.joshdrummond.webpasswordsafe.client.model.common.GroupDTO;
 import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 
@@ -38,89 +41,66 @@ import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
  * @author Josh Drummond
  *
  */
-public class GroupDialog extends DialogBox implements UserListener
+public class GroupDialog extends Window
 {
     private GroupDTO group;
-    private TextBox nameTextBox;
-    private ListBox membersListBox;
-
+    private TextField<String> nameTextBox;
+    private DualListField<UserData> membersListBox;
+    private FormData formData = new FormData("-20"); 
+    
     public GroupDialog(GroupDTO pGroup)
     {
         this.group = pGroup;
-        setHTML("Group");
+        this.setHeading("Group");
+        this.setModal(true);
 
-        final FlexTable flexTable = new FlexTable();
-        setWidget(flexTable);
-        flexTable.setSize("100%", "100%");
+        FormPanel form = new FormPanel();
+        form.setHeaderVisible(false);
+        form.setFrame(true);
 
-        final Label label = new Label("New Label");
-        flexTable.setWidget(0, 0, label);
+        nameTextBox = new TextField<String>();
+        nameTextBox.setFieldLabel("Name");
+        form.add(nameTextBox, formData);
 
-        final Label nameLabel = new Label("Name");
-        flexTable.setWidget(0, 0, nameLabel);
-
-        nameTextBox = new TextBox();
-        flexTable.setWidget(0, 1, nameTextBox);
-        nameTextBox.setWidth("100%");
-
-        final Label membersLabel = new Label("Members");
-        flexTable.setWidget(1, 0, membersLabel);
-
-        membersListBox = new ListBox(true);
-        flexTable.setWidget(1, 1, membersListBox);
-        flexTable.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_CENTER);
-        membersListBox.setVisibleItemCount(5);
-
-        final FlowPanel flowPanel = new FlowPanel();
-        flexTable.setWidget(3, 0, flowPanel);
-        flexTable.getCellFormatter().setHorizontalAlignment(3, 0, HasHorizontalAlignment.ALIGN_CENTER);
-        flexTable.getFlexCellFormatter().setColSpan(3, 0, 3);
-
-        final Button saveButton = new Button();
-        flowPanel.add(saveButton);
-        saveButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event)
-			{
+        membersListBox = new DualListField<UserData>();
+        membersListBox.setFieldLabel("Members");
+        ListField<UserData> from = membersListBox.getFromList();
+        from.setSize(300, 100);
+        from.setDisplayField("fullname");
+        ListStore<UserData> store = new ListStore<UserData>();
+        store.setStoreSorter(new StoreSorter<UserData>());
+        from.setStore(store);
+        ListField<UserData> to = membersListBox.getToList();
+        to.setDisplayField("fullname");
+        to.setSize(300, 100);
+        store = new ListStore<UserData>();
+        store.setStoreSorter(new StoreSorter<UserData>());
+        to.setStore(store);
+        
+        form.add(membersListBox, formData);
+        
+        Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doSave();
 			}
-        });
-        saveButton.setText("Save");
+		});
 
-        final Button cancelButton = new Button();
-        flowPanel.add(cancelButton);
-        cancelButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
+        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doCancel();
-            }
-        });
-        cancelButton.setText("Cancel");
+			}
+		});
 
-        final FlowPanel flowPanel_1 = new FlowPanel();
-        flexTable.setWidget(2, 1, flowPanel_1);
-        flexTable.getCellFormatter().setHorizontalAlignment(2, 1, HasHorizontalAlignment.ALIGN_CENTER);
-
-        final Button addButton = new Button();
-        flowPanel_1.add(addButton);
-        addButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
-                doAddMembers();
-            }
-        });
-        addButton.setText("Add");
-
-        final Button removeButton = new Button();
-        flowPanel_1.add(removeButton);
-        removeButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
-                doRemoveMembers();
-            }
-        });
-        removeButton.setText("Remove");
+        form.setButtonAlign(HorizontalAlignment.CENTER);
+        form.addButton(saveButton);
+        form.addButton(cancelButton);
         
         setFields();
+        
+//        this.setSize(600, 200);
+        this.add(form);
     }
     
     /**
@@ -142,58 +122,48 @@ public class GroupDialog extends DialogBox implements UserListener
         return true;
     }
 
-    /**
-     * 
-     */
-    protected void doRemoveMembers()
-    {
-        while (membersListBox.getSelectedIndex() >= 0)
-        {
-            membersListBox.removeItem(membersListBox.getSelectedIndex());
-        }
-    }
 
-    /**
-     * 
-     */
-    protected void doAddMembers()
-    {
-        // fixme
-        List<UserDTO> users = new ArrayList<UserDTO>(2);
-        users.add(new UserDTO(5, "hillary", "Hillary Clinton", "h@clinton.net", true));
-        users.add(new UserDTO(6, "edwards", "John Edwards", "j@edwards.net", true));
-        new UserSelectionDialog(this, users, true).show();
-    }
-
-    /**
-     * 
-     */
     private void setFields()
     {
-        nameTextBox.setText(group.getName());
+        nameTextBox.setValue(group.getName());
+        
         for (UserDTO user : group.getUsers())
         {
-            membersListBox.addItem(user.getUsername(), String.valueOf(user.getId()));
+        	membersListBox.getToList().getStore().add(new UserData(user));
+        }
+        
+        List<UserDTO> allUsers = new ArrayList<UserDTO>();
+        allUsers.add(new UserDTO(5, "hillary", "Hillary Clinton", "h@clinton.net", true));
+        allUsers.add(new UserDTO(6, "edwards", "John Edwards", "j@edwards.net", true));
+        for (UserDTO user : allUsers)
+        {
+        	if (!group.getUsers().contains(user))
+        	{
+        		membersListBox.getFromList().getStore().add(new UserData(user));
+        	}
         }
     }
 
-    /**
-     * 
-     */
+    
     private void doCancel()
     {
         hide();
     }
 
-    /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.client.ui.UserListener#doUsersChosen(java.util.List)
-     */
-    public void doUsersChosen(List<UserDTO> users)
+    
+    private class UserData extends BaseModel
     {
-        for (UserDTO user : users)
-        {
-            group.addUser(user);
-            membersListBox.addItem(user.getFullname(), String.valueOf(user.getId()));
-        }
+    	private static final long serialVersionUID = 1L;
+    	public UserData(UserDTO user)
+    	{
+    		set("id", user.getId());
+    		set("fullname", user.getFullname());
+    		set("user", user);
+    	}
+    	
+    	public String toString()
+    	{
+    		return get("fullname");
+    	}
     }
 }

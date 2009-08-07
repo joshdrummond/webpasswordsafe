@@ -20,18 +20,12 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.List;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Text;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.button.Button;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO;
 
@@ -39,39 +33,29 @@ import com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO;
  * @author Josh Drummond
  *
  */
-public class PermissionDialog extends DialogBox
+public class PermissionDialog extends Window
 {
     private PasswordDTO password;
     private List<SubjectDTO> subjects;
-    private Label passwordNameLabel;
-    private Grid permissionsGrid;
-    private ListBox subjectListBox;
+    private Text passwordNameLabel;
+//    private Grid permissionsGrid;
+//    private ListBox subjectListBox;
     
     public PermissionDialog(PermissionListener permissionListener, PasswordDTO password, List<SubjectDTO> subjects)
     {
         this.password = password;
         this.subjects = subjects;
+        this.setHeading("Permissions");
+        this.setModal(true);
         
-        setHTML("Permissions");
-
-        final FlexTable flexTable = new FlexTable();
-        setWidget(flexTable);
-        flexTable.setSize("100%", "100%");
-
-        final Label passwordLabel = new Label("Password");
-        flexTable.setWidget(0, 0, passwordLabel);
-
-        passwordNameLabel = new Label("Password Name");
-        flexTable.setWidget(0, 1, passwordNameLabel);
-
-        final Label permissionsLabel = new Label("Permissions");
-        flexTable.setWidget(1, 0, permissionsLabel);
-
-        final HorizontalPanel horizontalPanel = new HorizontalPanel();
-        flexTable.setWidget(1, 1, horizontalPanel);
-        flexTable.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_RIGHT);
-        horizontalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-
+        ContentPanel panel = new ContentPanel();
+        panel.setHeaderVisible(false);
+        panel.setFrame(true);
+        
+        Text passwordLabel = new Text("Password");
+        passwordNameLabel = new Text("Password Name");
+        Text permissionsLabel = new Text("Permissions");
+/*
         subjectListBox = new ListBox();
         horizontalPanel.add(subjectListBox);
         horizontalPanel.setCellHorizontalAlignment(subjectListBox, HasHorizontalAlignment.ALIGN_LEFT);
@@ -101,28 +85,27 @@ public class PermissionDialog extends DialogBox
         flexTable.setWidget(3, 0, flowPanel);
         flexTable.getCellFormatter().setHorizontalAlignment(3, 0, HasHorizontalAlignment.ALIGN_CENTER);
         flexTable.getFlexCellFormatter().setColSpan(3, 0, 2);
-
-        final Button okayButton = new Button();
-        flowPanel.add(okayButton);
-        okayButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
+*/
+        Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doOkay();
-            }
-        });
-        okayButton.setText("Okay");
+			}
+		});
 
-        final Button cancelButton = new Button();
-        flowPanel.add(cancelButton);
-        cancelButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
+        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
                 doCancel();
-            }
-        });
-        cancelButton.setText("Cancel");
+			}
+		});
+        
+        panel.add(okayButton);
+        panel.add(cancelButton);
         
         setFields();
+        
+        this.add(panel);
     }
 
     /**
