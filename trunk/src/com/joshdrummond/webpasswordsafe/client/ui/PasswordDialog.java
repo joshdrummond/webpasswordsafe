@@ -21,20 +21,18 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.TextArea;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
 import com.joshdrummond.webpasswordsafe.client.model.common.PermissionDTO;
 import com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO;
@@ -44,118 +42,88 @@ import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
  * @author Josh Drummond
  *
  */
-public class PasswordDialog extends DialogBox implements PermissionListener
+public class PasswordDialog extends Window implements PermissionListener
 {
     private PasswordDTO password;
-    private TextBox nameTextBox;
-    private TextBox usernameTextBox;
-    private TextBox passwordTextBox;
-    private TextBox tagsTextBox;
+    private TextField<String> nameTextBox;
+    private TextField<String> usernameTextBox;
+    private TextField<String> passwordTextBox;
+    private TextField<String> tagsTextBox;
     private TextArea notesTextArea;
     private CheckBox activeCheckBox;
+    private FormData formData = new FormData("98%"); 
 
     public PasswordDialog(PasswordDTO password)
     {
         this.password = password;
-        setHTML("Password");
+        this.setHeading("Password");
+        this.setModal(true);
+        
+        FormPanel form = new FormPanel();
+        form.setHeaderVisible(false);
+        form.setFrame(true);
+        
+        nameTextBox = new TextField<String>();
+        nameTextBox.setFieldLabel("Name");
+        form.add(nameTextBox, formData);
+        
+        usernameTextBox = new TextField<String>();
+        usernameTextBox.setFieldLabel("Username");
+        form.add(usernameTextBox, formData);
 
-        final FlexTable flexTable = new FlexTable();
-        setWidget(flexTable);
-        flexTable.setSize("100%", "100%");
+        passwordTextBox = new TextField<String>();
+        passwordTextBox.setFieldLabel("Password");
+        form.add(passwordTextBox, formData);
 
-        final Label nameLabel = new Label("Name");
-        flexTable.setWidget(0, 0, nameLabel);
-
-        final Label usernameLabel = new Label("Username");
-        flexTable.setWidget(1, 0, usernameLabel);
-
-        final Label passwordLabel = new Label("Password");
-        flexTable.setWidget(2, 0, passwordLabel);
-
-        final Label tagsLabel = new Label("Tags");
-        flexTable.setWidget(3, 0, tagsLabel);
-
-        final Label notesLabel = new Label("Notes");
-        flexTable.setWidget(4, 0, notesLabel);
-
-        final Label permissionsLabel = new Label("Permissions");
-        flexTable.setWidget(5, 0, permissionsLabel);
-
-        nameTextBox = new TextBox();
-        flexTable.setWidget(0, 1, nameTextBox);
-        flexTable.getFlexCellFormatter().setColSpan(0, 1, 2);
-        nameTextBox.setWidth("100%");
-
-        usernameTextBox = new TextBox();
-        flexTable.setWidget(1, 1, usernameTextBox);
-        usernameTextBox.setWidth("100%");
-
-        passwordTextBox = new TextBox();
-        flexTable.setWidget(2, 1, passwordTextBox);
-        passwordTextBox.setWidth("100%");
-
-        tagsTextBox = new TextBox();
-        flexTable.setWidget(3, 1, tagsTextBox);
-        tagsTextBox.setWidth("100%");
+        Button generateButton = new Button("Generate Password", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+                doGeneratePassword();
+			}
+		});
+        form.add(generateButton, formData);
+        
+        tagsTextBox = new TextField<String>();
+        tagsTextBox.setFieldLabel("Tags");
+        form.add(tagsTextBox, formData);
 
         notesTextArea = new TextArea();
-        flexTable.setWidget(4, 1, notesTextArea);
-        flexTable.getFlexCellFormatter().setColSpan(4, 1, 2);
-        notesTextArea.setWidth("100%");
-
-        final Button editPermissionsButton = new Button();
-        flexTable.setWidget(5, 1, editPermissionsButton);
-        editPermissionsButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event)
-			{
-                doEditPermissions();
-			}
-        });
-        editPermissionsButton.setText("Edit Permissions");
-
-        final VerticalPanel verticalPanel = new VerticalPanel();
-        flexTable.setWidget(2, 2, verticalPanel);
-
-        final Button generateButton = new Button();
-        verticalPanel.add(generateButton);
-        generateButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
-                doGeneratePassword();
-            }
-        });
-        generateButton.setText("Generate");
-
-        final FlowPanel flowPanel = new FlowPanel();
-        flexTable.setWidget(6, 0, flowPanel);
-        flexTable.getCellFormatter().setHorizontalAlignment(6, 0, HasHorizontalAlignment.ALIGN_CENTER);
-        flexTable.getFlexCellFormatter().setColSpan(6, 0, 3);
-
-        final Button saveButton = new Button();
-        flowPanel.add(saveButton);
-        saveButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
-                doSave();
-            }
-        });
-        saveButton.setText("Save");
-
-        final Button cancelButton = new Button();
-        flowPanel.add(cancelButton);
-        cancelButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event)
-            {
-                doCancel();
-            }
-        });
-        cancelButton.setText("Cancel");
+        notesTextArea.setFieldLabel("Notes");
+        form.add(notesTextArea, formData);
 
         activeCheckBox = new CheckBox();
-        flexTable.setWidget(5, 2, activeCheckBox);
-        activeCheckBox.setText("Active");
+        activeCheckBox.setBoxLabel("Active");
+        form.add(activeCheckBox, formData);
+        
+        Button editPermissionsButton = new Button("Edit Permissions", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+                doEditPermissions();
+			}
+		});
+        form.add(editPermissionsButton, formData);
+
+        Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+                doSave();
+			}
+		});
+
+        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+                doCancel();
+			}
+		});
+        
+        form.setButtonAlign(HorizontalAlignment.CENTER);
+        form.addButton(saveButton);
+        form.addButton(cancelButton);
         
         setFields();
+        
+        this.add(form);
     }
 
     /**
@@ -168,12 +136,12 @@ public class PasswordDialog extends DialogBox implements PermissionListener
 
             public void onFailure(Throwable caught)
             {
-                Window.alert("Error: "+caught.getMessage());
+                MessageBox.alert("Error", caught.getMessage(), null);
             }
 
             public void onSuccess(String result)
             {
-                passwordTextBox.setText(result);
+                passwordTextBox.setValue(result);
             }
             
         };
@@ -187,11 +155,11 @@ public class PasswordDialog extends DialogBox implements PermissionListener
     {
         if (validateFields())
         {
-            password.setName(nameTextBox.getText().trim());
-            password.setUsername(usernameTextBox.getText().trim());
-            password.setCurrentPassword(passwordTextBox.getText().trim());
-            password.setTags(tagsTextBox.getText().trim());
-            password.setNotes(notesTextArea.getText().trim());
+            password.setName(nameTextBox.getValue().trim());
+            password.setUsername(usernameTextBox.getValue().trim());
+            password.setCurrentPassword(passwordTextBox.getValue().trim());
+            password.setTags(tagsTextBox.getValue().trim());
+            password.setNotes(notesTextArea.getValue().trim());
             password.setActive(activeCheckBox.getValue());
             
             AsyncCallback<Void> callback = new AsyncCallback<Void>()
@@ -199,7 +167,7 @@ public class PasswordDialog extends DialogBox implements PermissionListener
 
                 public void onFailure(Throwable caught)
                 {
-                    Window.alert("Error: "+caught.getMessage());
+                    MessageBox.alert("Error", caught.getMessage(), null);
                 }
 
                 public void onSuccess(Void result)
@@ -240,11 +208,11 @@ public class PasswordDialog extends DialogBox implements PermissionListener
      */
     private void setFields()
     {
-        nameTextBox.setText(password.getName());
-        usernameTextBox.setText(password.getUsername());
-        passwordTextBox.setText(password.getCurrentPassword());
-        tagsTextBox.setText(password.getTags());
-        notesTextArea.setText(password.getNotes());
+        nameTextBox.setValue(password.getName());
+        usernameTextBox.setValue(password.getUsername());
+        passwordTextBox.setValue(password.getCurrentPassword());
+        tagsTextBox.setValue(password.getTags());
+        notesTextArea.setValue(password.getNotes());
         activeCheckBox.setValue(password.isActive());
     }
 
