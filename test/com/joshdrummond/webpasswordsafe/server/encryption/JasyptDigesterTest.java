@@ -19,20 +19,22 @@
 */
 package com.joshdrummond.webpasswordsafe.server.encryption;
 
-import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.password.StrongPasswordEncryptor;
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 
 /**
  * @author Josh Drummond
  *
  */
-public class JasyptDigesterTest extends TestCase
+public class JasyptDigesterTest
 {
 
     /**
      * Test method for {@link com.joshdrummond.webpasswordsafe.server.encryption.JasyptDigester#check(java.lang.String, java.lang.String)}.
      */
+	@Test
     public void testCheck()
     {
         JasyptDigester digester = new JasyptDigester();

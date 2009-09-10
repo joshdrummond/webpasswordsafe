@@ -21,16 +21,17 @@ package com.joshdrummond.webpasswordsafe.server.encryption;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Josh Drummond
  *
  */
-public class JasyptBCAESEncryptionTest extends TestCase
+public class JasyptBCAESEncryptionTest
 {
 
+	@Test
     public void testEncrypt()
     {
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();

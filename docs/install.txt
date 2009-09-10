@@ -9,6 +9,7 @@ WebPasswordSafe Installation Instructions
 2. Additional 3rd Party library requirements:
 
 WEB-INF/lib/
+	activation.jar [?]
 	ant-antlr.jar [1]
 	antlr.jar [1]
 	asm-attrs.jar [1]
@@ -23,41 +24,43 @@ WEB-INF/lib/
 	commons-pool.jar [2]
 	dom4j.jar [1]
 	ejb3-persistence.jar [6]
-	gwt-incubator.jar ?
 	gwt-servlet.jar [5]
 	gwt-sl.jar [3]
+	gxt.jar [13]
 	hibernate-annotations.jar [6]
 	hibernate-commons-annotations.jar [6]
 	hibernate-tools.jar [7]
 	hibernate3.jar [1]
 	icu4j.jar [10]
 	jasypt.jar [9]
+	javassist.jar [1]
 	jaxan.jar [11]
 	jdom.jar [11]
 	jta.jar [1]
+	junit.jar [14]
 	log4j.jar [2] (v1.2.12+)
 	mysql-connector-java-3.1.13-bin.jar [4]
 	saaj-api.jar [11]
 	saaj-impl.jar [11]
 	slf4j-api.jar [8]
 	slf4j-log4j12.jar [8]
-	spring-orm.jar [2]
-	spring-tx.jar [2]
 	spring-webmvc.jar [2]
 	spring-ws.jar [11]
 	spring.jar [2]
 	stax-api.jar [11]
 	wsdl4j.jar [11]
 
-[1] Hibernate Core 3.2 distribution (http://www.hibernate.org/)
-[2] Spring 2.5 with dependencies distribution (http://www.springframework.org/)
-[3] GWT-SL 0.1.5 (http://gwt-widget.sourceforge.net/)
+[1] Hibernate Core 3.3.2 distribution (http://www.hibernate.org/)
+[2] Spring 2.5.6 with dependencies distribution (http://www.springframework.org/)
+[3] GWT-SL 0.1.5b (http://gwt-widget.sourceforge.net/)
 [4] MySQL Connector/J JDBC distribution (http://dev.mysql.com/downloads/connector/j/3.1.html)
 [5] GWT 1.7.0 (http://code.google.com/webtoolkit/)
-[6] Hibernate Annotations 3.3 distribution (http://www.hibernate.org/)
+[6] Hibernate Annotations 3.4.0 distribution (http://www.hibernate.org/)
 [7] Hibernate Tools 3.2 (http://www.hibernate.org)
 [8] Simple Logging Facade for Java 1.5.2 (http://www.slf4j.org/)
 [9] Jasypt 1.5 (http://www.jasypt.org/)
 [10] International Components for Unicode (ICU) 4.0 (http://www.icu-project.org/) for Java <= 5.0
 [11] Spring Web Services 1.5 with dependencies distribution (http://static.springframework.org/spring-ws/sites/1.5/)
 [12] Bouncy Castle JCE Provider (http://www.bouncycastle.org/java.html)
+[13] Ext GWT 2.0.1 (http://www.extjs.com/products/gxt/)
+[14] JUnit 4.5.0 (http://www.junit.org/)
