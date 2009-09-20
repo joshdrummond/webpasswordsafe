@@ -33,10 +33,12 @@ import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
-import com.joshdrummond.webpasswordsafe.client.model.common.PermissionDTO;
-import com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
+import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
+import com.joshdrummond.webpasswordsafe.common.model.Permission;
+import com.joshdrummond.webpasswordsafe.common.model.Subject;
+import com.joshdrummond.webpasswordsafe.common.model.Tag;
 
 /**
  * @author Josh Drummond
@@ -44,7 +46,7 @@ import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
  */
 public class PasswordDialog extends Window implements PermissionListener
 {
-    private PasswordDTO password;
+    private Password password;
     private TextField<String> nameTextBox;
     private TextField<String> usernameTextBox;
     private TextField<String> passwordTextBox;
@@ -53,7 +55,7 @@ public class PasswordDialog extends Window implements PermissionListener
     private CheckBox activeCheckBox;
     private FormData formData = new FormData("98%"); 
 
-    public PasswordDialog(PasswordDTO password)
+    public PasswordDialog(Password password)
     {
         this.password = password;
         this.setHeading("Password");
@@ -157,10 +159,25 @@ public class PasswordDialog extends Window implements PermissionListener
         {
             password.setName(nameTextBox.getValue().trim());
             password.setUsername(usernameTextBox.getValue().trim());
-            password.setCurrentPassword(passwordTextBox.getValue().trim());
-            password.setTags(tagsTextBox.getValue().trim());
+            PasswordData passwordDataItem = new PasswordData();
+            passwordDataItem.setPassword(passwordTextBox.getValue().trim());
+            password.addPasswordData(passwordDataItem);
+            String[] tagNames = tagsTextBox.getValue().trim().split(" ");
+            for (String tagName : tagNames)
+            {
+//                String tagName = st.nextToken();
+//                Tag tag = tagDAO.findTagByName(tagName);
+//                if (tag == null)
+//                {
+                    Tag tag = new Tag(tagName);
+//                }
+//                tag.getPasswords().add(password);
+                password.addTag(tag);
+            }
+//            password.addTags(tagsTextBox.getValue().trim());
             password.setNotes(notesTextArea.getValue().trim());
             password.setActive(activeCheckBox.getValue());
+//            password.addPermission(permission)
             
             AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
@@ -200,7 +217,7 @@ public class PasswordDialog extends Window implements PermissionListener
      */
     protected void doEditPermissions()
     {
-        new PermissionDialog(this, password, new ArrayList<SubjectDTO>()).show();
+        new PermissionDialog(this, password, new ArrayList<Subject>()).show();
     }
 
     /**
@@ -210,8 +227,8 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         nameTextBox.setValue(password.getName());
         usernameTextBox.setValue(password.getUsername());
-        passwordTextBox.setValue(password.getCurrentPassword());
-        tagsTextBox.setValue(password.getTags());
+//        passwordTextBox.setValue(password.getCurrentPassword());
+        tagsTextBox.setValue(password.getTagsAsString());
         notesTextArea.setValue(password.getNotes());
         activeCheckBox.setValue(password.isActive());
     }
@@ -227,7 +244,7 @@ public class PasswordDialog extends Window implements PermissionListener
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.ui.PermissionListener#doPermissionsChanged(java.util.List)
      */
-    public void doPermissionsChanged(List<PermissionDTO> permissions)
+    public void doPermissionsChanged(List<Permission> permissions)
     {
         // TODO Auto-generated method stub
         

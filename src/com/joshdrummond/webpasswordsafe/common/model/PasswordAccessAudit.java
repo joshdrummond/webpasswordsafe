@@ -17,8 +17,10 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.model;
+package com.joshdrummond.webpasswordsafe.common.model;
 
+import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,34 +29,39 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import net.sf.gilead.pojo.java5.LightEntity;
+
+
 /**
- * POJO model for a template_detail
+ * Domain model POJO for a password_access_audit
  * 
  * @author Josh Drummond
  *
  */
 @Entity
-@Table(name="template_details")
-public class TemplateDetail
+@Table(name="password_access_audit")
+public class PasswordAccessAudit extends LightEntity implements Serializable
 {
-    @Id
+
+	private static final long serialVersionUID = -8259517394743959516L;
+
+	@Id
     @GeneratedValue
     @Column(name="id")
     private long id;
     
     @ManyToOne
-    @JoinColumn(name="subject_id", nullable=false)
-    private Subject subject;
-    
-    @Column(name="access_level", nullable=false)
-    private int accessLevel;
+    @JoinColumn(name="password_id", nullable=false, updatable=false)
+    private Password password;
     
     @ManyToOne
-    @JoinColumn(name="template_id", nullable=false)
-    private Template parent;
+    @JoinColumn(name="user_id", nullable=false, updatable=false)
+    private User user;
     
-    
-    public TemplateDetail()
+    @Column(name="date_accessed", nullable=false, updatable=false)
+    private Date dateAccessed;
+
+    public PasswordAccessAudit()
     {
     }
 
@@ -62,33 +69,40 @@ public class TemplateDetail
     {
         return this.id;
     }
+
     public void setId(long id)
     {
         this.id = id;
     }
-    public Subject getSubject()
+
+    public Password getPassword()
     {
-        return this.subject;
+        return this.password;
     }
-    public void setSubject(Subject subject)
+
+    public void setPassword(Password password)
     {
-        this.subject = subject;
+        this.password = password;
     }
-    public int getAccessLevel()
+
+    public User getUser()
     {
-        return this.accessLevel;
+        return this.user;
     }
-    public void setAccessLevel(int accessLevel)
+
+    public void setUser(User user)
     {
-        this.accessLevel = accessLevel;
+        this.user = user;
     }
-    public Template getParent()
+
+    public Date getDateAccessed()
     {
-        return this.parent;
+        return this.dateAccessed;
     }
-    public void setParent(Template parent)
+
+    public void setDateAccessed(Date dateAccessed)
     {
-        this.parent = parent;
+        this.dateAccessed = dateAccessed;
     }
     
 }

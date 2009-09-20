@@ -51,9 +51,9 @@ import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
-import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
-import com.joshdrummond.webpasswordsafe.client.model.common.TagDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
+import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.Tag;
 
 /**
  * @author Josh Drummond
@@ -66,7 +66,7 @@ public class PasswordSearchPanel extends ContentPanel
 //    private Tree tagTree;
 //    private TreeItem rootTreeItem;
     private TextField<String> searchTextBox;
-    private List<TagDTO> tags;
+    private List<Tag> tags;
 //    private List<PasswordDTO> passwords;
     private MainWindow mainWindow;
 
@@ -240,13 +240,13 @@ public class PasswordSearchPanel extends ContentPanel
      */
     private void doLoadTags()
     {
-        AsyncCallback<List<TagDTO>> callback = new AsyncCallback<List<TagDTO>>()
+        AsyncCallback<List<Tag>> callback = new AsyncCallback<List<Tag>>()
         {
             public void onFailure(Throwable caught)
             {
                 MessageBox.alert("Error", caught.getMessage(), null);
             }
-            public void onSuccess(List<TagDTO> result)
+            public void onSuccess(List<Tag> result)
             {
                 tags = result;
 //                refreshTags();
@@ -286,27 +286,27 @@ public class PasswordSearchPanel extends ContentPanel
      */
     protected void doSearch()
     {
-        AsyncCallback<List<PasswordDTO>> callback = new AsyncCallback<List<PasswordDTO>>()
+        AsyncCallback<List<Password>> callback = new AsyncCallback<List<Password>>()
         {
             public void onFailure(Throwable caught)
             {
                 MessageBox.alert("Error", caught.getMessage(), null);
             }
-            public void onSuccess(List<PasswordDTO> result)
+            public void onSuccess(List<Password> result)
             {
                 refreshTable(result);
             }
         };
-        PasswordService.Util.getInstance().searchPassword(searchTextBox.getValue().trim(), callback);
+        PasswordService.Util.getInstance().searchPassword(searchTextBox.getValue(), callback);
     }
 
     /**
      * @param data
      */
-    private void refreshTable(List<PasswordDTO> passwords)
+    private void refreshTable(List<Password> passwords)
     {
     	store.removeAll();
-        for (PasswordDTO password : passwords)
+        for (Password password : passwords)
         {
         	store.add(new PasswordSearchData(password.getId(), password.getName(), password.getUsername(), password.getNotes()));
 //            passwordTable.setWidget(i+1, 0, new PasswordEditLabel(passwordDTO));

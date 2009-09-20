@@ -17,7 +17,7 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.model;
+package com.joshdrummond.webpasswordsafe.common.model;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,8 +28,9 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import org.hibernate.annotations.Index;
 
+
 /**
- * POJO model for a group
+ * Domain model POJO for a group
  * 
  * @author Josh Drummond
  *
@@ -38,7 +39,10 @@ import org.hibernate.annotations.Index;
 @Table(name = "groups")
 @PrimaryKeyJoinColumn(name = "id")
 public class Group extends Subject {
-    @Column(name = "name", nullable = false, length = 100, unique=true)
+
+	private static final long serialVersionUID = 5845591346545424763L;
+
+	@Column(name = "name", nullable = false, length = 100, unique=true)
     @Index(name = "idx_group_name")
     private String name;
 
@@ -75,6 +79,12 @@ public class Group extends Subject {
         this.users = users;
     }
 
+    public void addUser(User user)
+    {
+        users.add(user);
+    }
+
+    @Override
     public boolean equals( Object o ) {
         if ( this == o ) {
             return true;
@@ -95,6 +105,7 @@ public class Group extends Subject {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + name.hashCode();

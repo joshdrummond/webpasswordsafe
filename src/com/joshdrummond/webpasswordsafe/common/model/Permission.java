@@ -17,9 +17,10 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.model;
+package com.joshdrummond.webpasswordsafe.common.model;
 
-import java.util.Date;
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,74 +29,78 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import net.sf.gilead.pojo.java5.LightEntity;
+
 /**
- * POJO model for a password_access_audit
+ * Domain model POJO for a permission
  * 
  * @author Josh Drummond
  *
  */
 @Entity
-@Table(name="password_access_audit")
-public class PasswordAccessAudit
+@Table(name="permissions")
+public class Permission extends LightEntity implements Serializable
 {
-    @Id
+
+	private static final long serialVersionUID = 4513050098482215994L;
+
+	@Id
     @GeneratedValue
     @Column(name="id")
     private long id;
     
     @ManyToOne
-    @JoinColumn(name="password_id", nullable=false, updatable=false)
+    @JoinColumn(name="password_id", updatable=false, nullable=false)
     private Password password;
     
     @ManyToOne
-    @JoinColumn(name="user_id", nullable=false, updatable=false)
-    private User user;
+    @JoinColumn(name="subject_id", updatable=false, nullable=false)
+    private Subject subject;
     
-    @Column(name="date_accessed", nullable=false, updatable=false)
-    private Date dateAccessed;
-
-    public PasswordAccessAudit()
+    @Column(name="access_level", nullable=false)
+    private int accessLevel;
+    
+    public Permission()
     {
     }
-
+    
+    public Permission(Subject subject, AccessLevel accessLevel)
+    {
+    	this.subject = subject;
+    	this.accessLevel = accessLevel.getId();
+    }
+    
     public long getId()
     {
         return this.id;
     }
-
     public void setId(long id)
     {
         this.id = id;
     }
-
     public Password getPassword()
     {
         return this.password;
     }
-
     public void setPassword(Password password)
     {
         this.password = password;
     }
-
-    public User getUser()
+    public Subject getSubject()
     {
-        return this.user;
+        return this.subject;
     }
-
-    public void setUser(User user)
+    public void setSubject(Subject subject)
     {
-        this.user = user;
+        this.subject = subject;
     }
-
-    public Date getDateAccessed()
+    public AccessLevel getAccessLevel()
     {
-        return this.dateAccessed;
+        return AccessLevel.valueOf(this.accessLevel);
     }
-
-    public void setDateAccessed(Date dateAccessed)
+    public void setAccessLevel(int accessLevel)
     {
-        this.dateAccessed = dateAccessed;
+        this.accessLevel = accessLevel;
     }
     
 }

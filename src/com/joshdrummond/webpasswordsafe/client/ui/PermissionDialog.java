@@ -26,8 +26,8 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Text;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
-import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
-import com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO;
+import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.Subject;
 
 /**
  * @author Josh Drummond
@@ -35,13 +35,13 @@ import com.joshdrummond.webpasswordsafe.client.model.common.SubjectDTO;
  */
 public class PermissionDialog extends Window
 {
-    private PasswordDTO password;
-    private List<SubjectDTO> subjects;
+    private Password password;
+    private List<Subject> subjects;
     private Text passwordNameLabel;
 //    private Grid permissionsGrid;
 //    private ListBox subjectListBox;
     
-    public PermissionDialog(PermissionListener permissionListener, PasswordDTO password, List<SubjectDTO> subjects)
+    public PermissionDialog(PermissionListener permissionListener, Password password, List<Subject> subjects)
     {
         this.password = password;
         this.subjects = subjects;

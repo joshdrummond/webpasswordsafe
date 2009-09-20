@@ -34,8 +34,8 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * 
@@ -139,7 +139,7 @@ public class LoginDialog extends Window
     
     private void doGetLoggedInUser()
     {
-        AsyncCallback<UserDTO> callback = new AsyncCallback<UserDTO>()
+        AsyncCallback<User> callback = new AsyncCallback<User>()
         {
 
             public void onFailure(Throwable caught)
@@ -147,7 +147,7 @@ public class LoginDialog extends Window
             	MessageBox.alert("Error", caught.getMessage(), null);
             }
 
-            public void onSuccess(UserDTO result)
+            public void onSuccess(User result)
             {
                 if (null != result)
                 {

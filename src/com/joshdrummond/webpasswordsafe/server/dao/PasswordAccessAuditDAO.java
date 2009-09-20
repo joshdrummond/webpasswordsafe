@@ -19,7 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
-import com.joshdrummond.webpasswordsafe.server.model.PasswordAccessAudit;
+import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
 
 /**
  * DAO interface for PasswordAccessAudit

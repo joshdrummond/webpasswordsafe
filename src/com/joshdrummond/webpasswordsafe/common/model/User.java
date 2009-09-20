@@ -17,7 +17,7 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.model;
+package com.joshdrummond.webpasswordsafe.common.model;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -32,8 +32,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
+
 /**
- * POJO model for a user
+ * Domain model POJO for a user
  * 
  * @author Josh Drummond
  *
@@ -42,7 +43,10 @@ import org.hibernate.annotations.Type;
 @Table(name = "users")
 @PrimaryKeyJoinColumn(name = "id")
 public class User extends Subject {
-    @Column(name = "username", nullable = false, length = 64, updatable = false, unique = true)
+
+	private static final long serialVersionUID = 4024780603653185462L;
+
+	@Column(name = "username", nullable = false, length = 64, updatable = false, unique = true)
     @Index(name = "idx_user_username")
     private String username;
 
@@ -78,8 +82,19 @@ public class User extends Subject {
 
     public User( String username, String password ) {
         this();
-        this.username = username;
-        this.password = password;
+        setUsername(username);
+        setPassword(password);
+    }
+    
+    public User(long id, String username, String fullname, String email, boolean isActive)
+    {
+        this();
+        setId(id);
+        setEmail(email);
+        setFullname(fullname);
+        setActiveFlag(isActive);
+        setUsername(username);
+        setPassword("");
     }
 
     public Set<Group> getGroups()
@@ -160,6 +175,7 @@ public class User extends Subject {
                 '}';
     }
 
+    @Override
     public boolean equals( Object o ) {
         if ( this == o ) {
             return true;
@@ -192,6 +208,7 @@ public class User extends Subject {
         return true;
     }
 
+    @Override
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + username.hashCode();

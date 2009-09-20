@@ -21,13 +21,29 @@
 -->
 <beans>
 	<bean id="urlMapping"
-		class="org.gwtwidgets.server.spring.GWTHandler">
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<map>
-				<entry key="/LoginService" value-ref="LoginServiceBean" />
-				<entry key="/UserService" value-ref="UserServiceBean" />
-				<entry key="/PasswordService" value-ref="PasswordServiceBean" />
+				<entry key="/LoginService" value-ref="loginServiceExporter" />
+				<entry key="/UserService" value-ref="userServiceExporter" />
+				<entry key="/PasswordService" value-ref="passwordServiceExporter" />
 			</map>
 		</property>
 	</bean>
+	
+	<bean id="loginServiceExporter" class="org.gwtwidgets.server.spring.hb4gwt.HB4GWTRPCServiceExporter">
+		<property name="beanManager" ref="persistentBeanManager" />
+		<property name="service" ref="LoginServiceBean" />
+	</bean>
+	
+	<bean id="userServiceExporter" class="org.gwtwidgets.server.spring.hb4gwt.HB4GWTRPCServiceExporter">
+		<property name="beanManager" ref="persistentBeanManager" />
+		<property name="service" ref="UserServiceBean" />
+	</bean>
+	
+	<bean id="passwordServiceExporter" class="org.gwtwidgets.server.spring.hb4gwt.HB4GWTRPCServiceExporter">
+		<property name="beanManager" ref="persistentBeanManager" />
+		<property name="service" ref="PasswordServiceBean" />
+	</bean>
+	
 </beans>

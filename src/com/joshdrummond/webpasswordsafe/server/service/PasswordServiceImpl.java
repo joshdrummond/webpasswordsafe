@@ -19,26 +19,21 @@
 */
 package com.joshdrummond.webpasswordsafe.server.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
-import com.joshdrummond.webpasswordsafe.client.model.common.TagDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
-import com.joshdrummond.webpasswordsafe.server.assembler.PasswordAssembler;
-import com.joshdrummond.webpasswordsafe.server.assembler.TagAssembler;
+import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
+import com.joshdrummond.webpasswordsafe.common.model.Tag;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
-import com.joshdrummond.webpasswordsafe.server.model.Password;
-import com.joshdrummond.webpasswordsafe.server.model.PasswordAccessAudit;
-import com.joshdrummond.webpasswordsafe.server.model.Tag;
-import com.joshdrummond.webpasswordsafe.server.model.User;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -59,10 +54,9 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     private PasswordGenerator passwordGenerator;
 
     @Transactional(propagation=Propagation.REQUIRED)
-    public void addPassword(PasswordDTO passwordDTO)
+    public void addPassword(Password password)
     {
         Date now = new Date();
-        Password password = PasswordAssembler.createDO(passwordDTO, tagDAO);
         User loggedInUser = userDAO.findActiveUserByUsername((String)ServletUtils.getRequest().getSession().getAttribute("username"));
         password.setUserCreated(loggedInUser);
         password.setDateCreated(now);
@@ -71,26 +65,25 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
         password.getPasswordData().get(0).setUserCreated(loggedInUser);
         password.getPasswordData().get(0).setDateCreated(now);
         passwordDAO.makePersistent(password);
-        LOG.info(passwordDTO.getName() + " added");
+        LOG.info(password.getName() + " added");
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
-    public void updatePassword(PasswordDTO password)
+    public void updatePassword(Password password)
     {
         LOG.debug("updating password");
     }
 
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List<PasswordDTO> searchPassword(String query)
+    public List<Password> searchPassword(String query)
     {
-        List<Password> passwordsDO = passwordDAO.findPasswordByFuzzySearch(query);
-        List<PasswordDTO> passwordsDTO = new ArrayList<PasswordDTO>(passwordsDO.size());
-        for (Password passwordDO : passwordsDO)
-        {
-            passwordsDTO.add(PasswordAssembler.buildDTO(passwordDO));
-        }
-        LOG.debug("searching for password query ["+query+"] found "+passwordsDTO.size());
-        return passwordsDTO;
+    	if ((null == query) || ("".equals(query.trim())))
+    	{
+    		query = "%";
+    	}
+        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query);
+        LOG.debug("searching for password query ["+query+"] found "+passwords.size());
+        return passwords;
     }
  
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
@@ -124,17 +117,12 @@ public class PasswordServiceImpl extends RemoteServiceServlet implements Passwor
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List<TagDTO> getAvailableTags()
+    public List<Tag> getAvailableTags()
     {
         User loggedInUser = userDAO.findActiveUserByUsername((String)ServletUtils.getRequest().getSession().getAttribute("username"));
-        List<Tag> tagsDO = tagDAO.findTagsForUser(loggedInUser);
-        List<TagDTO> tagsDTO = new ArrayList<TagDTO>(tagsDO.size());
-        for (Tag tagDO : tagsDO)
-        {
-            tagsDTO.add(TagAssembler.buildDTO(tagDO));
-        }
-        LOG.debug("found "+tagsDTO.size() + " tags for "+loggedInUser.getUsername());
-        return tagsDTO;
+        List<Tag> tags = tagDAO.findTagsForUser(loggedInUser);
+        LOG.debug("found "+tags.size() + " tags for "+loggedInUser.getUsername());
+        return tags;
     }
     
     // Getters and Setters

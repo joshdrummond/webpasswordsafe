@@ -21,7 +21,8 @@ package com.joshdrummond.webpasswordsafe.server.dao;
 
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
-import com.joshdrummond.webpasswordsafe.server.model.User;
+
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * DAO implementation for User

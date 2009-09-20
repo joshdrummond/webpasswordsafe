@@ -17,8 +17,9 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.model;
+package com.joshdrummond.webpasswordsafe.common.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -35,20 +36,27 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import net.sf.gilead.pojo.java5.LightEntity;
+
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
 
+
 /**
- * POJO model for a password
+ * Domain model POJO for a password
  * 
  * @author Josh Drummond
  *
  */
 @Entity
 @Table(name="passwords")
-public class Password
+public class Password extends LightEntity implements Serializable
 {
-    @Id
+
+	private static final long serialVersionUID = 7174192307771387126L;
+
+	@Id
     @GeneratedValue
     @Column(name="id")
     private long id;
@@ -94,19 +102,47 @@ public class Password
             inverseJoinColumns={@JoinColumn(name="tag_id")})
     private Set<Tag> tags;
 
+    @OneToMany(cascade={CascadeType.ALL}, mappedBy="password")
+    private Set<Permission> permissions;
+    
     public Password()
     {
         maxHistory = -1;
         passwordData = new ArrayList<PasswordData>();
         tags = new HashSet<Tag>();
+        permissions = new HashSet<Permission>();
     }
     
+    public void addPermission(Permission permission)
+    {
+    	permission.setPassword(this);
+    	this.permissions.add(permission);
+    }
+    
+    public void clearPermissions()
+    {
+    	this.permissions.clear();
+    }
+    
+    public void removePermission(Permission permission)
+    {
+    	this.permissions.remove(permission);
+    }
+    
+    public Set<Permission> getPermissions() {
+		return this.permissions;
+	}
+
+	public void setPermissions(Set<Permission> permissions) {
+		this.permissions = permissions;
+	}
+	
     public Set<Tag> getTags()
     {
         return this.tags;
     }
 
-    public void setTags(Set<Tag> tags)
+	public void setTags(Set<Tag> tags)
     {
         this.tags = tags;
     }
@@ -201,6 +237,7 @@ public class Password
     }
     public void addPasswordData(PasswordData passwordDataItem)
     {
+    	passwordDataItem.setParent(this);
         this.passwordData.add(passwordDataItem);
     }
     public String getTagsAsString()
@@ -218,6 +255,7 @@ public class Password
      */
     public void addTag(Tag tag)
     {
+    	tag.getPasswords().add(this);
         tags.add(tag);
     }
 }

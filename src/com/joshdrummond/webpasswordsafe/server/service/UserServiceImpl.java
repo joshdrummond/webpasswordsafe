@@ -20,19 +20,16 @@
 
 package com.joshdrummond.webpasswordsafe.server.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
-import com.joshdrummond.webpasswordsafe.server.assembler.UserAssembler;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
-import com.joshdrummond.webpasswordsafe.server.model.User;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -64,39 +61,32 @@ public class UserServiceImpl extends RemoteServiceServlet implements UserService
     }
     
     @Transactional(propagation=Propagation.REQUIRED)
-    public void addUser(UserDTO userDTO)
+    public void addUser(User user)
     {
-        userDTO.setPassword(digester.digest(userDTO.getPassword()));
-        userDTO.setDateCreated(new Date());
-        User user = UserAssembler.createDO(userDTO);
+        user.setPassword(digester.digest(user.getPassword()));
+        user.setDateCreated(new Date());
         userDAO.makePersistent(user);
-        LOG.info(userDTO.getUsername() + " added");
+        LOG.info(user.getUsername() + " added");
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
-    public void updateUser(UserDTO userDTO)
+    public void updateUser(User user)
     {
-        User user = userDAO.findById(userDTO.getId(), false);
-        if (!userDTO.getPassword().equals(""))
+//        User user = userDAO.findById(userDTO.getId(), false);
+        if (!user.getPassword().equals(""))
         {
-            userDTO.setPassword(digester.digest(userDTO.getPassword()));
+            user.setPassword(digester.digest(user.getPassword()));
         }
-        UserAssembler.updateDO(user, userDTO);
         userDAO.makePersistent(user);
-        LOG.info(userDTO.getUsername() + " updated");
+        LOG.info(user.getUsername() + " updated");
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List<UserDTO> getUsers(boolean includeOnlyActive)
+    public List<User> getUsers(boolean includeOnlyActive)
     {
-        List<User> usersDO = userDAO.findAllUsers(includeOnlyActive);
-        List<UserDTO> usersDTO = new ArrayList<UserDTO>(usersDO.size());
-        for (User userDO : usersDO)
-        {
-            usersDTO.add(UserAssembler.buildDTO(userDO));
-        }
-        LOG.info("found "+usersDTO.size()+" users");
-        return usersDTO;
+        List<User> users = userDAO.findAllUsers(includeOnlyActive);
+        LOG.info("found "+users.size()+" users");
+        return users;
     }
     
     

@@ -24,14 +24,14 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 public interface UserService extends RemoteService {
     
     public void changePassword(String password);
-    public void addUser(UserDTO userDTO);
-    public void updateUser(UserDTO userDTO);
-    public List<UserDTO> getUsers(boolean includeOnlyActive);
+    public void addUser(User userDTO);
+    public void updateUser(User userDTO);
+    public List<User> getUsers(boolean includeOnlyActive);
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.
