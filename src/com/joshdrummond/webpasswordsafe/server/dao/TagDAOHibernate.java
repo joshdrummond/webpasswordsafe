@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -22,7 +22,7 @@ package com.joshdrummond.webpasswordsafe.server.dao;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-
+import org.springframework.stereotype.Repository;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
@@ -32,6 +32,7 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
  * @author Josh Drummond
  *
  */
+@Repository("tagDAO")
 public class TagDAOHibernate extends GenericHibernateDAO<Tag, Long> implements TagDAO
 {
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
+import org.springframework.stereotype.Repository;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
 
 /**
@@ -27,6 +28,7 @@ import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
  * @author Josh Drummond
  *
  */
+@Repository("passwordAccessAuditDAO")
 public class PasswordAccessAuditDAOHibernate 
     extends GenericHibernateDAO<PasswordAccessAudit, Long> 
     implements PasswordAccessAuditDAO

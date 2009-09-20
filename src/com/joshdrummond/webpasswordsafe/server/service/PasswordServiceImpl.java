@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
@@ -35,7 +37,6 @@ import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * Implementation of Password Service
@@ -43,14 +44,25 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * @author Josh Drummond
  *
  */
-public class PasswordServiceImpl extends RemoteServiceServlet implements PasswordService {
+@Service("passwordService")
+public class PasswordServiceImpl implements PasswordService {
 
     private static final long serialVersionUID = -9164403179286398287L;
     private static Logger LOG = Logger.getLogger(PasswordServiceImpl.class);
+    
+    @Autowired
     private PasswordDAO passwordDAO;
+    
+    @Autowired
     private UserDAO userDAO;
+    
+    @Autowired
     private TagDAO tagDAO;
+    
+    @Autowired
     private PasswordAccessAuditDAO passwordAccessAuditDAO;
+    
+    @Autowired
     private PasswordGenerator passwordGenerator;
 
     @Transactional(propagation=Propagation.REQUIRED)

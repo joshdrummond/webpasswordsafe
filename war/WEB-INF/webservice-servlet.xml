@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <!--
-	Copyright 2008 Josh Drummond
+	Copyright 2008-2009 Josh Drummond
 	
 	This file is part of WebPasswordSafe.
 	
@@ -54,6 +54,6 @@
 		
 	<bean id="addUserEndpoint"
 		class="com.joshdrummond.webpasswordsafe.server.webservice.AddUserJDomEndpoint">
-		<property name="userService" ref="UserServiceBean" />
+		<property name="userService" ref="userService" />
 	</bean>
 </beans>
