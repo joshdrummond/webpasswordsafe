@@ -17,8 +17,9 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.model;
+package com.joshdrummond.webpasswordsafe.common.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,25 +28,32 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import net.sf.gilead.pojo.java5.LightEntity;
+
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.Parameter;
 import org.jasypt.hibernate.type.EncryptedStringType;
 
+
 @TypeDef(name="encryptedString", typeClass=EncryptedStringType.class,
     parameters={@Parameter(name="encryptorRegisteredName", value="strongHibernateStringEncryptor")})
 
 /**
- * POJO model for password_data
+ * Domain model POJO for a password_data
  * 
  * @author Josh Drummond
  *
  */
 @Entity
 @Table(name="password_data")
-public class PasswordData
+public class PasswordData extends LightEntity implements Serializable
 {
-    @Id
+
+	private static final long serialVersionUID = -643822521564959563L;
+
+	@Id
     @GeneratedValue
     @Column(name="id")
     private long id;

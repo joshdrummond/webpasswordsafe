@@ -101,6 +101,13 @@
 			<classpath>
 				<pathelement location="${basedir}/src" />
 				<pathelement location="${web.home}/WEB-INF/lib/gxt.jar" />
+				<pathelement location="${web.home}/WEB-INF/lib/adapter-core.jar" />
+				<pathelement location="${web.home}/WEB-INF/lib/adapter4gwt.jar" />
+				<pathelement location="${web.home}/WEB-INF/lib/ejb3-persistence.jar" />
+				<pathelement location="${web.home}/WEB-INF/lib/hibernate-annotations.jar" />
+                <pathelement location="${web.home}/WEB-INF/lib/hibernate-commons-annotations.jar" />
+                <pathelement location="${web.home}/WEB-INF/lib/hibernate3.jar" />
+                <pathelement location="${web.home}/WEB-INF/lib/jasypt-1.5.jar" />
 				<pathelement location="${gwt.home}/gwt-user.jar" />
 				<pathelement location="${gwt.home}/${gwt.platform.jar}" />
 			</classpath>

@@ -22,8 +22,9 @@ package com.joshdrummond.webpasswordsafe.server.dao;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-import com.joshdrummond.webpasswordsafe.server.model.Tag;
-import com.joshdrummond.webpasswordsafe.server.model.User;
+
+import com.joshdrummond.webpasswordsafe.common.model.Tag;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * DAO implementation for Tag

@@ -17,8 +17,9 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.model;
+package com.joshdrummond.webpasswordsafe.common.model;
 
+import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,19 +30,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import net.sf.gilead.pojo.java5.LightEntity;
+
 import org.hibernate.annotations.Type;
 
+
 /**
- * POJO model for a template
+ * Domain model POJO for a template
  * 
  * @author Josh Drummond
  *
  */
 @Entity
 @Table(name="templates")
-public class Template
+public class Template extends LightEntity implements Serializable
 {
-    @Id
+
+	private static final long serialVersionUID = 4904231831095270401L;
+
+	@Id
     @GeneratedValue
     @Column(name="id")
     private long id;

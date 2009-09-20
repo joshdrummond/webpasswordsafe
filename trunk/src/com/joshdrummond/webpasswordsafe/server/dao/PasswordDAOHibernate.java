@@ -22,7 +22,8 @@ package com.joshdrummond.webpasswordsafe.server.dao;
 import java.util.List;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import com.joshdrummond.webpasswordsafe.server.model.Password;
+
+import com.joshdrummond.webpasswordsafe.common.model.Password;
 
 /**
  * DAO implementation for Password
@@ -38,7 +39,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
      */
     public List<Password> findPasswordByFuzzySearch(String query)
     {
-       return findByCriteria(Restrictions.or(
+        return findByCriteria(Restrictions.or(
                Restrictions.ilike("username", query, MatchMode.ANYWHERE), 
                Restrictions.ilike("name", query, MatchMode.ANYWHERE)));
     }

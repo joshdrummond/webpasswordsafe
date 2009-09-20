@@ -21,8 +21,9 @@
 package com.joshdrummond.webpasswordsafe.client.remote;
 
 import java.util.List;
-import com.joshdrummond.webpasswordsafe.client.model.common.PasswordDTO;
-import com.joshdrummond.webpasswordsafe.client.model.common.TagDTO;
+
+import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -32,10 +33,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface PasswordServiceAsync {
     
-    public void addPassword(PasswordDTO password, AsyncCallback<Void> callback);
-    public void updatePassword(PasswordDTO password, AsyncCallback<Void> callback);
-    public void searchPassword(String query, AsyncCallback<List<PasswordDTO>> callback);
+    public void addPassword(Password password, AsyncCallback<Void> callback);
+    public void updatePassword(Password password, AsyncCallback<Void> callback);
+    public void searchPassword(String query, AsyncCallback<List<Password>> callback);
     public void generatePassword(AsyncCallback<String> callback);
     public void getCurrentPassword(long passwordId, AsyncCallback<String> callback);
-    public void getAvailableTags(AsyncCallback<List<TagDTO>> callback);
+    public void getAvailableTags(AsyncCallback<List<Tag>> callback);
 }

@@ -17,16 +17,27 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.client.model.common;
+package com.joshdrummond.webpasswordsafe.common.model;
+
 
 /**
  * @author Josh Drummond
  *
  */
-public class PermissionConstant
+public enum AccessLevel
 {
-    public static int NONE = 0;
-    public static int READ = 1;
-    public static int WRITE = 2;
-    public static int GRANT = 3;
+	NONE(0), READ(1), WRITE(2), GRANT(3);
+	private int id;
+	private AccessLevel(int id) { this.id = id; }
+	public int getId() { return id; }
+	public static AccessLevel valueOf(int id)
+	{
+		switch (id)
+		{
+		case 1 : return READ;
+		case 2 : return WRITE;
+		case 3 : return GRANT;
+		default : return NONE;
+		}
+	}
 }

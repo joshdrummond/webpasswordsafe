@@ -20,7 +20,8 @@
 package com.joshdrummond.webpasswordsafe.server.dao;
 
 import java.util.List;
-import com.joshdrummond.webpasswordsafe.server.model.User;
+
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * DAO interface for User

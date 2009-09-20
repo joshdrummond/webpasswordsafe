@@ -21,13 +21,14 @@
 package com.joshdrummond.webpasswordsafe.client.remote;
 
 import java.util.List;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
+
+import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface UserServiceAsync {
     
     public void changePassword(String password, AsyncCallback<Void> callback);
-    public void addUser(UserDTO userDTO, AsyncCallback<Void> callback);
-    public void updateUser(UserDTO userDTO, AsyncCallback<Void> callback);
-    public void getUsers(boolean includeOnlyActive, AsyncCallback<List<UserDTO>> callback);
+    public void addUser(User userDTO, AsyncCallback<Void> callback);
+    public void updateUser(User userDTO, AsyncCallback<Void> callback);
+    public void getUsers(boolean includeOnlyActive, AsyncCallback<List<User>> callback);
 }

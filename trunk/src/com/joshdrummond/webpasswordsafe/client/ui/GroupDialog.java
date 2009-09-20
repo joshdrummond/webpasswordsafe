@@ -34,8 +34,8 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
-import com.joshdrummond.webpasswordsafe.client.model.common.GroupDTO;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
+import com.joshdrummond.webpasswordsafe.common.model.Group;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * @author Josh Drummond
@@ -43,12 +43,12 @@ import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
  */
 public class GroupDialog extends Window
 {
-    private GroupDTO group;
+    private Group group;
     private TextField<String> nameTextBox;
     private DualListField<UserData> membersListBox;
     private FormData formData = new FormData("-20"); 
     
-    public GroupDialog(GroupDTO pGroup)
+    public GroupDialog(Group pGroup)
     {
         this.group = pGroup;
         this.setHeading("Group");
@@ -127,15 +127,15 @@ public class GroupDialog extends Window
     {
         nameTextBox.setValue(group.getName());
         
-        for (UserDTO user : group.getUsers())
+        for (User user : group.getUsers())
         {
         	membersListBox.getToList().getStore().add(new UserData(user));
         }
         
-        List<UserDTO> allUsers = new ArrayList<UserDTO>();
-        allUsers.add(new UserDTO(5, "hillary", "Hillary Clinton", "h@clinton.net", true));
-        allUsers.add(new UserDTO(6, "edwards", "John Edwards", "j@edwards.net", true));
-        for (UserDTO user : allUsers)
+        List<User> allUsers = new ArrayList<User>();
+        allUsers.add(new User(5, "hillary", "Hillary Clinton", "h@clinton.net", true));
+        allUsers.add(new User(6, "edwards", "John Edwards", "j@edwards.net", true));
+        for (User user : allUsers)
         {
         	if (!group.getUsers().contains(user))
         	{
@@ -154,7 +154,7 @@ public class GroupDialog extends Window
     private class UserData extends BaseModel
     {
     	private static final long serialVersionUID = 1L;
-    	public UserData(UserDTO user)
+    	public UserData(User user)
     	{
     		set("id", user.getId());
     		set("fullname", user.getFullname());

@@ -25,11 +25,9 @@ import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
-import com.joshdrummond.webpasswordsafe.server.assembler.UserAssembler;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
-import com.joshdrummond.webpasswordsafe.server.model.User;
 import com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator;
 
 /**
@@ -73,11 +71,12 @@ public class LoginServiceImpl implements LoginService {
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#getLogin()
      */
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public UserDTO getLogin()
+    public User getLogin()
     {
         String username = (String)ServletUtils.getRequest().getSession().getAttribute("username");
-        UserDTO userDTO = UserAssembler.buildDTO(userDAO.findActiveUserByUsername(username));
-        return userDTO;
+//        UserDTO userDTO = UserAssembler.buildDTO(userDAO.findActiveUserByUsername(username));
+//        return userDTO;
+        return userDAO.findActiveUserByUsername(username);
     }
 
     /* (non-Javadoc)

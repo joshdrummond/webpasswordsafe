@@ -30,8 +30,8 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * @author Josh Drummond
@@ -39,7 +39,7 @@ import com.joshdrummond.webpasswordsafe.client.remote.UserService;
  */
 public class UserDialog extends Window
 {
-    private UserDTO user;
+    private User user;
     private TextField<String> usernameTextBox;
     private TextField<String> fullnameTextBox;
     private TextField<String> emailTextBox;
@@ -48,7 +48,7 @@ public class UserDialog extends Window
     private CheckBox enabledCheckBox;
     private FormData formData = new FormData("-20"); 
     
-    public UserDialog(UserDTO user)
+    public UserDialog(User user)
     {
         this.user = user;
         this.setHeading("User");
@@ -106,7 +106,7 @@ public class UserDialog extends Window
         usernameTextBox.setValue(user.getUsername());
         fullnameTextBox.setValue(user.getFullname());
         emailTextBox.setValue(user.getEmail());
-        enabledCheckBox.setValue(user.isActive());
+        enabledCheckBox.setValue(user.isActiveFlag());
     }
     
     private boolean validateFields()
@@ -121,7 +121,7 @@ public class UserDialog extends Window
             user.setUsername(usernameTextBox.getValue().trim());
             user.setFullname(fullnameTextBox.getValue().trim());
             user.setEmail(emailTextBox.getValue().trim());
-            user.setActive(enabledCheckBox.getValue());
+            user.setActiveFlag(enabledCheckBox.getValue());
             String pw1 = password1TextBox.getValue().trim();
             if (!pw1.equals(""))
             {

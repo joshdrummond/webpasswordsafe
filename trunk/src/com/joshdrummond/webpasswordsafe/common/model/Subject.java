@@ -17,8 +17,9 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package com.joshdrummond.webpasswordsafe.server.model;
+package com.joshdrummond.webpasswordsafe.common.model;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,9 +28,10 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import net.sf.gilead.pojo.java5.LightEntity;
 
 /**
- * POJO model for a subject
+ * Domain model POJO for a subject
  * 
  * @author Josh Drummond
  * 
@@ -37,10 +39,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "subjects")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Subject
+public abstract class Subject extends LightEntity implements Serializable
 {
+	
+	private static final long serialVersionUID = -4007345820647655599L;
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", insertable = false)
     private long id;
@@ -67,11 +71,17 @@ public abstract class Subject
         this.type = type;
     }
 
+    public void setId(long id)
+    {
+    	this.id = id;
+    }
+    
     public long getId()
     {
         return id;
     }
 
+    @Override
     public boolean equals(Object o)
     {
         if (this == o)
@@ -97,6 +107,7 @@ public abstract class Subject
         return true;
     }
 
+    @Override
     public int hashCode()
     {
         int result;
@@ -105,6 +116,7 @@ public abstract class Subject
         return result;
     }
 
+    @Override
     public String toString()
     {
         return "Subject{" + "id=" + id + ", type=" + type + '}';

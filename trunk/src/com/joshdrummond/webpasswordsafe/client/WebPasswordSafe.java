@@ -43,17 +43,18 @@ import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.joshdrummond.webpasswordsafe.client.model.ClientModel;
-import com.joshdrummond.webpasswordsafe.client.model.common.*;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.client.ui.*;
+import com.joshdrummond.webpasswordsafe.common.model.Group;
+import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class WebPasswordSafe implements EntryPoint, MainWindow {
-    private ClientModel clientModel = new ClientModel();
+    private ClientSessionUtil clientSessionUtil = ClientSessionUtil.getInstance();
     private final static String NOT_LOGGED_IN = "Not Logged In";
     private final static String LOGGED_IN = "Logged In As: ";
     private final static String VERSION = "0.1";
@@ -214,9 +215,9 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     	topPanel.removeAll();
         Text headerGwtLabel = new Text(TITLE);
         Text loggedInLabel = null;
-        if (clientModel.isLoggedIn())
+        if (clientSessionUtil.isLoggedIn())
         {
-            loggedInLabel = new Text(LOGGED_IN+clientModel.getLoggedInUser().getFullname());
+            loggedInLabel = new Text(LOGGED_IN+clientSessionUtil.getLoggedInUser().getFullname());
         }
         else
         {
@@ -250,7 +251,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
 
     private void refreshMenu()
     {
-        boolean isLoggedIn = clientModel.isLoggedIn();
+        boolean isLoggedIn = clientSessionUtil.isLoggedIn();
         adminMenu.setVisible(isLoggedIn);
     }
     
@@ -259,18 +260,18 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
      */
     protected void doNewPassword()
     {
-        if (clientModel.isAuthorized("NEW_PASSWORD"))
+        if (clientSessionUtil.isAuthorized("NEW_PASSWORD"))
         {
-            displayPasswordDialog(new PasswordDTO());
+            displayPasswordDialog(new Password());
         }
     }
 
     /**
      * @param passwordDTO
      */
-    public void displayPasswordDialog(PasswordDTO passwordDTO)
+    public void displayPasswordDialog(Password password)
     {
-        new PasswordDialog(passwordDTO).show();
+        new PasswordDialog(password).show();
     }
 
     /**
@@ -278,14 +279,14 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
      */
     protected void doEditGroup()
     {
-        if (clientModel.isAuthorized("EDIT_GROUP"))
+        if (clientSessionUtil.isAuthorized("EDIT_GROUP"))
         {
             // for testing...
-            GroupDTO group = new GroupDTO();
+            Group group = new Group();
             group.setId(1);
             group.setName("Everyone");
-            group.addUser(new UserDTO(1, "obama", "Barak Obama", "b@obama.net", true));
-            group.addUser(new UserDTO(2, "mccain", "John McCain", "j@mccain.net", true));
+            group.addUser(new User(1, "obama", "Barak Obama", "b@obama.net", true));
+            group.addUser(new User(2, "mccain", "John McCain", "j@mccain.net", true));
             displayGroupDialog(group);
         }
     }
@@ -295,16 +296,16 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
      */
     protected void doAddGroup()
     {
-        if (clientModel.isAuthorized("ADD_GROUP"))
+        if (clientSessionUtil.isAuthorized("ADD_GROUP"))
         {
-            displayGroupDialog(new GroupDTO());
+            displayGroupDialog(new Group());
         }
     }
 
     /**
      * @param groupDTO
      */
-    private void displayGroupDialog(GroupDTO group)
+    private void displayGroupDialog(Group group)
     {
         new GroupDialog(group).show();
     }
@@ -322,23 +323,23 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
 
     private void doAddUser()
     {
-        if (clientModel.isAuthorized("ADD_USER"))
+        if (clientSessionUtil.isAuthorized("ADD_USER"))
         {
-            displayUserDialog(new UserDTO());
+            displayUserDialog(new User());
         }
     }
 
     private void doEditUser()
     {
-        if (clientModel.isAuthorized("EDIT_USER"))
+        if (clientSessionUtil.isAuthorized("EDIT_USER"))
         {
-            AsyncCallback<List<UserDTO>> callback = new AsyncCallback<List<UserDTO>>()
+            AsyncCallback<List<User>> callback = new AsyncCallback<List<User>>()
             {
                 public void onFailure(Throwable caught)
                 {
                     MessageBox.alert("Error", caught.getMessage(), null);
                 }
-                public void onSuccess(List<UserDTO> result)
+                public void onSuccess(List<User> result)
                 {
                     new UserSelectionDialog(new EditUserListener(), result, false).show();
                 }
@@ -353,8 +354,8 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     
     private void doLogout()
     {
-        clientModel.getLoggedInUser().setUsername("");
-        clientModel.setLoggedIn(false);
+        clientSessionUtil.getLoggedInUser().setUsername("");
+        clientSessionUtil.setLoggedIn(false);
         refreshLoginStatus();
     }
     
@@ -363,19 +364,19 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         new LoginDialog(this).show();
     }
     
-    private void displayUserDialog(UserDTO user)
+    private void displayUserDialog(User user)
     {
         new UserDialog(user).show();
     }
     
-    public ClientModel getClientModel()
+    public ClientSessionUtil getClientModel()
     {
-        return clientModel;
+        return clientSessionUtil;
     }
     
     private class EditUserListener implements UserListener
     {
-        public void doUsersChosen(List<UserDTO> users)
+        public void doUsersChosen(List<User> users)
         {
             if (users.size() > 0)
             {

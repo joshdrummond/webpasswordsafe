@@ -17,49 +17,56 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.client.model.common;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+package com.joshdrummond.webpasswordsafe.client;
+
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * @author Josh Drummond
  *
  */
-public abstract class SubjectDTO
-    implements IsSerializable
+public class ClientSessionUtil
 {
-    protected long id;
-    protected char type;
-
-    /**
-     * @return the id
-     */
-    public long getId()
+	private static final ClientSessionUtil clientSessionUtil = new ClientSessionUtil();
+	
+    private User user;
+    private boolean isLoggedIn;
+    
+    public static ClientSessionUtil getInstance()
     {
-        return this.id;
+    	return clientSessionUtil;
+    }
+    
+    private ClientSessionUtil()
+    {
+        user = new User();
+        isLoggedIn = false;
     }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(long id)
+    public boolean isAuthorized(String permission)
     {
-        this.id = id;
+        return isLoggedIn();
+    }
+    
+    public boolean isLoggedIn()
+    {
+        return isLoggedIn;
+    }
+    
+    public void setLoggedIn(boolean isLoggedIn)
+    {
+        this.isLoggedIn = isLoggedIn;
     }
 
-    /**
-     * @return the type
-     */
-    public char getType()
+    public User getLoggedInUser()
     {
-        return this.type;
+        return user;
+    }
+    
+    public void setLoggedInUser(User user)
+    {
+        this.user = user;
     }
 
-    /**
-     * @param type the type to set
-     */
-    public void setType(char type)
-    {
-        this.type = type;
-    }
 }

@@ -32,7 +32,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * @author Josh Drummond
@@ -44,10 +44,10 @@ public class UserSelectionDialog extends Window
     private ListField<UserData> userListBox;
     private ListStore<UserData> store;
     private UserListener userListener;
-    private List<UserDTO> users;
+    private List<User> users;
 //    private FormData formData = new FormData("-20");
     
-    public UserSelectionDialog(UserListener userListener, List<UserDTO> users, boolean allowMultiple)
+    public UserSelectionDialog(UserListener userListener, List<User> users, boolean allowMultiple)
     {
         this.setHeading("Users");
         this.setModal(true);
@@ -97,7 +97,7 @@ public class UserSelectionDialog extends Window
     private void setFields()
     {
     	store.removeAll();
-        for (UserDTO user : users)
+        for (User user : users)
         {
             store.add(new UserData(user));
             Info.display("User", user.getFullname());
@@ -119,10 +119,10 @@ public class UserSelectionDialog extends Window
     protected void doOkay()
     {
     	List<UserData> dataSelected = userListBox.getSelection();
-        List<UserDTO> usersSelected = new ArrayList<UserDTO>(dataSelected.size());
+        List<User> usersSelected = new ArrayList<User>(dataSelected.size());
     	for (UserData ud : dataSelected)
     	{
-    		usersSelected.add((UserDTO)ud.get("user"));
+    		usersSelected.add((User)ud.get("user"));
     	}
         userListener.doUsersChosen(usersSelected);
         hide();
@@ -131,7 +131,7 @@ public class UserSelectionDialog extends Window
     private class UserData extends BaseModel
     {
     	private static final long serialVersionUID = 1L;
-    	public UserData(UserDTO user)
+    	public UserData(User user)
     	{
     		set("id", user.getId());
     		set("fullname", user.getFullname());

@@ -27,8 +27,8 @@ import org.jdom.Namespace;
 import org.jdom.xpath.XPath;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint;
-import com.joshdrummond.webpasswordsafe.client.model.common.UserDTO;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * 
@@ -52,7 +52,7 @@ public class AddUserJDomEndpoint extends AbstractJDomPayloadEndpoint
         Element returnDoc = null;
         try
         {
-            UserDTO user = extractUserFromRequest(element);
+            User user = extractUserFromRequest(element);
             boolean isSuccess = false;
             String message = "";
             try
@@ -93,15 +93,15 @@ public class AddUserJDomEndpoint extends AbstractJDomPayloadEndpoint
      * @param element
      * @return
      */
-    private UserDTO extractUserFromRequest(Element element)
+    private User extractUserFromRequest(Element element)
         throws JDOMException
     {
-        UserDTO user = new UserDTO();
+        User user = new User();
         user.setUsername(usernameXPath.valueOf(element));
         user.setPassword(passwordXPath.valueOf(element));
         user.setFullname(fullnameXPath.valueOf(element));
         user.setEmail(emailXPath.valueOf(element));
-        user.setActive(activeXPath.valueOf(element).equals("true"));
+        user.setActiveFlag(activeXPath.valueOf(element).equals("true"));
         return user;
     }
 

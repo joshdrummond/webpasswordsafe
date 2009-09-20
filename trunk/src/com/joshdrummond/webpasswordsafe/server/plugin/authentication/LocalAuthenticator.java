@@ -20,9 +20,9 @@
 
 package com.joshdrummond.webpasswordsafe.server.plugin.authentication;
 
+import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
-import com.joshdrummond.webpasswordsafe.server.model.User;
 
 /**
  * @author Josh Drummond
