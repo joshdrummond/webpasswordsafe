@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -28,6 +28,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Generic DAO implementation for Hibernate
@@ -37,6 +38,8 @@ import org.hibernate.criterion.Example;
  */
 public abstract class GenericHibernateDAO<T, ID extends Serializable> implements GenericDAO<T, ID> {
     private Class<T> persistenceClass;
+    
+    @Autowired
     private SessionFactory sessionFactory;
 
     @SuppressWarnings({"unchecked"})

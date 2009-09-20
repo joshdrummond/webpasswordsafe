@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <!--
-	Copyright 2008 Josh Drummond
+	Copyright 2008-2009 Josh Drummond
 	
 	This file is part of WebPasswordSafe.
 	
@@ -33,17 +33,17 @@
 	
 	<bean id="loginServiceExporter" class="org.gwtwidgets.server.spring.hb4gwt.HB4GWTRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
-		<property name="service" ref="LoginServiceBean" />
+		<property name="service" ref="loginService" />
 	</bean>
 	
 	<bean id="userServiceExporter" class="org.gwtwidgets.server.spring.hb4gwt.HB4GWTRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
-		<property name="service" ref="UserServiceBean" />
+		<property name="service" ref="userService" />
 	</bean>
 	
 	<bean id="passwordServiceExporter" class="org.gwtwidgets.server.spring.hb4gwt.HB4GWTRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
-		<property name="service" ref="PasswordServiceBean" />
+		<property name="service" ref="passwordService" />
 	</bean>
 	
 </beans>

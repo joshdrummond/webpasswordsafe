@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -24,23 +24,30 @@ import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * 
  * @author Josh Drummond
  *
  */
-public class UserServiceImpl extends RemoteServiceServlet implements UserService {
+@Service("userService")
+public class UserServiceImpl implements UserService {
+	
     private static Logger LOG = Logger.getLogger(UserServiceImpl.class);
     private static final long serialVersionUID = -8656307779047768662L;
+    
+    @Autowired
     private UserDAO userDAO;
+    
+    @Autowired
     private Digester digester;
 
     @Transactional(propagation=Propagation.REQUIRED)
