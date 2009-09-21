@@ -20,10 +20,11 @@
 package com.joshdrummond.webpasswordsafe.server.dao;
 
 import java.util.List;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
+import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
  * DAO implementation for Password
@@ -38,11 +39,18 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO#findPasswordByFuzzySearch(java.lang.String)
      */
-    public List<Password> findPasswordByFuzzySearch(String query)
+    @SuppressWarnings("unchecked")
+	public List<Password> findPasswordByFuzzySearch(String query, User user)
     {
-        return findByCriteria(Restrictions.or(
-               Restrictions.ilike("username", query, MatchMode.ANYWHERE), 
-               Restrictions.ilike("name", query, MatchMode.ANYWHERE)));
+    	Query hqlQuery = getSession().createQuery("select pw from Password pw join pw.permissions pm " +
+    			"where (pw.name like :query or pw.username like :query or pw.notes like :query) " +
+    			"and pw.active = :active and pm.accessLevel >= :accessLevel and " +
+    			"((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user))) order by pw.name asc");
+    	hqlQuery.setString("query", "%"+query+"%");
+    	hqlQuery.setEntity("user", user);
+    	hqlQuery.setString("active", "Y");
+    	hqlQuery.setInteger("accessLevel", AccessLevel.READ.getId());
+        return hqlQuery.list();
     }
 
 }
