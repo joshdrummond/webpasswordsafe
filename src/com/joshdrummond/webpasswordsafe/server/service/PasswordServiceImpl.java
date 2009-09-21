@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
@@ -64,12 +65,15 @@ public class PasswordServiceImpl implements PasswordService {
     
     @Autowired
     private PasswordGenerator passwordGenerator;
+    
+    @Autowired
+    private LoginService loginService;
 
     @Transactional(propagation=Propagation.REQUIRED)
     public void addPassword(Password password)
     {
         Date now = new Date();
-        User loggedInUser = userDAO.findActiveUserByUsername((String)ServletUtils.getRequest().getSession().getAttribute("username"));
+        User loggedInUser = loginService.getLogin();
         password.setUserCreated(loggedInUser);
         password.setDateCreated(now);
         password.setUserLastUpdate(loggedInUser);
@@ -89,12 +93,10 @@ public class PasswordServiceImpl implements PasswordService {
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Password> searchPassword(String query)
     {
-    	if ((null == query) || ("".equals(query.trim())))
-    	{
-    		query = "%";
-    	}
-        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query);
-        LOG.debug("searching for password query ["+query+"] found "+passwords.size());
+    	query = (null == query) ?  "" : query.trim();
+        User loggedInUser = loginService.getLogin();
+        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser);
+        LOG.debug("searching for password query ["+query+"] by ["+loggedInUser.getUsername()+"] found "+passwords.size());
         return passwords;
     }
  
@@ -110,7 +112,7 @@ public class PasswordServiceImpl implements PasswordService {
     {
         String currentPasswordValue = "";
         Password password = passwordDAO.findById(passwordId, false);
-        User loggedInUser = userDAO.findActiveUserByUsername((String)ServletUtils.getRequest().getSession().getAttribute("username"));
+        User loggedInUser = loginService.getLogin();
         if (password != null)
         {
             LOG.debug("returning current password value for ["+password.getName()+"]");
@@ -131,7 +133,7 @@ public class PasswordServiceImpl implements PasswordService {
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Tag> getAvailableTags()
     {
-        User loggedInUser = userDAO.findActiveUserByUsername((String)ServletUtils.getRequest().getSession().getAttribute("username"));
+        User loggedInUser = loginService.getLogin();
         List<Tag> tags = tagDAO.findTagsForUser(loggedInUser);
         LOG.debug("found "+tags.size() + " tags for "+loggedInUser.getUsername());
         return tags;

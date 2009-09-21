@@ -33,6 +33,7 @@ import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator;
 
 /**
+ * Implementation of Login Service
  * 
  * @author Josh Drummond
  *
@@ -82,8 +83,6 @@ public class LoginServiceImpl implements LoginService {
     public User getLogin()
     {
         String username = (String)ServletUtils.getRequest().getSession().getAttribute("username");
-//        UserDTO userDTO = UserAssembler.buildDTO(userDAO.findActiveUserByUsername(username));
-//        return userDTO;
         return userDAO.findActiveUserByUsername(username);
     }
 
