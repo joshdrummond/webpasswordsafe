@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -208,6 +208,8 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         passwordSearchPanel.setSize("100%", "100%");
 
         refreshMenu();
+        
+        verifyInitialization();
     }
 
     private void refreshTopPanel()
@@ -352,6 +354,38 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         }
     }
     
+    private void verifyInitialization()
+    {
+        AsyncCallback<Void> callback = new AsyncCallback<Void>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+            public void onSuccess(Void result)
+            {
+                getEveryoneGroup();
+            }
+        };
+        UserService.Util.getInstance().verifyInitialization(callback);
+    }
+
+    private void getEveryoneGroup()
+    {
+        AsyncCallback<Group> callback = new AsyncCallback<Group>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+            public void onSuccess(Group result)
+            {
+                ClientSessionUtil.getInstance().setEveryoneGroup(result);
+            }
+        };
+        UserService.Util.getInstance().getEveryoneGroup(callback);
+    }
+
     private void doLogout()
     {
         clientSessionUtil.getLoggedInUser().setUsername("");

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -80,10 +80,16 @@ public class User extends Subject {
         groups = new HashSet<Group>();
     }
 
-    public User( String username, String password ) {
-        this();
-        setUsername(username);
-        setPassword(password);
+    public static User newActiveUser(String username, String password, String fullname, String email)
+    {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setFullname(fullname);
+        user.setEmail(email);
+        user.setActiveFlag(true);
+        user.setDateCreated(new Date());
+        return user;
     }
     
     public User(long id, String username, String fullname, String email, boolean isActive)
@@ -105,6 +111,11 @@ public class User extends Subject {
     public void setGroups(Set<Group> groups)
     {
         this.groups = groups;
+    }
+    
+    public void addGroup(Group group)
+    {
+        groups.add(group);
     }
 
     public String getUsername() {

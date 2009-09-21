@@ -48,7 +48,8 @@ public class TagDAOHibernate extends GenericHibernateDAO<Tag, Long> implements T
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.dao.TagDAO#findTagsForUser(com.joshdrummond.webpasswordsafe.server.model.User)
      */
-    public List<Tag> findTagsForUser(User user)
+    @SuppressWarnings("unchecked")
+	public List<Tag> findTagsForUser(User user)
     {
         Query hqlQuery = getSession().createQuery("select distinct t from Tag t join t.passwords p where p.userCreated = :userCreated order by t.name asc").setEntity("userCreated", user);
         return hqlQuery.list();

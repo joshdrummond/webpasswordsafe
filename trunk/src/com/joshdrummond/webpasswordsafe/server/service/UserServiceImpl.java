@@ -29,11 +29,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.server.dao.GroupDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
 
 /**
+ * Implementation of User Service
  * 
  * @author Josh Drummond
  *
@@ -43,9 +46,14 @@ public class UserServiceImpl implements UserService {
 	
     private static Logger LOG = Logger.getLogger(UserServiceImpl.class);
     private static final long serialVersionUID = -8656307779047768662L;
+    private static final String ADMIN_USER_NAME = "admin";
+    private static final String EVERYONE_GROUP_NAME = "Everyone";
     
     @Autowired
     private UserDAO userDAO;
+    
+    @Autowired
+    private GroupDAO groupDAO;
     
     @Autowired
     private Digester digester;
@@ -73,19 +81,18 @@ public class UserServiceImpl implements UserService {
         user.setPassword(digester.digest(user.getPassword()));
         user.setDateCreated(new Date());
         userDAO.makePersistent(user);
-        LOG.info(user.getUsername() + " added");
+        LOG.info(user.getUsername() + " user added");
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
     public void updateUser(User user)
     {
-//        User user = userDAO.findById(userDTO.getId(), false);
         if (!user.getPassword().equals(""))
         {
             user.setPassword(digester.digest(user.getPassword()));
         }
         userDAO.makePersistent(user);
-        LOG.info(user.getUsername() + " updated");
+        LOG.info(user.getUsername() + " user updated");
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
@@ -95,8 +102,56 @@ public class UserServiceImpl implements UserService {
         LOG.info("found "+users.size()+" users");
         return users;
     }
+
+    @Transactional(propagation=Propagation.REQUIRED)
+	public void verifyInitialization()
+	{
+	    verifyEveryoneGroupExists();
+		verifyAdminUserExists();
+	}
+
+    @Transactional(propagation=Propagation.REQUIRED)
+	private void verifyAdminUserExists()
+	{
+	    User adminUser = getAdminUser();
+	    if (null == adminUser)
+	    {
+	        adminUser = User.newActiveUser(ADMIN_USER_NAME, ADMIN_USER_NAME, ADMIN_USER_NAME, ADMIN_USER_NAME);
+	        adminUser.addGroup(getEveryoneGroup());
+	        addUser(adminUser);
+	    }
+	}
+
+    @Transactional(propagation=Propagation.REQUIRED)
+	private void verifyEveryoneGroupExists()
+	{
+	    Group everyoneGroup = getEveryoneGroup();
+	    if (null == everyoneGroup)
+	    {
+	        everyoneGroup = new Group(EVERYONE_GROUP_NAME);
+	        addGroup(everyoneGroup);
+	    }
+	}
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void addGroup(Group group)
+    {
+        groupDAO.makePersistent(group);
+        LOG.info(group.getName() + " group added");
+    }
     
-    
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+	public Group getEveryoneGroup()
+	{
+        return groupDAO.findGroupByName(EVERYONE_GROUP_NAME);
+	}
+	
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+	public User getAdminUser()
+	{
+	    return userDAO.findActiveUserByUsername(ADMIN_USER_NAME);
+	}
+	
     // getters and setters
     
     public UserDAO getUserDAO()
