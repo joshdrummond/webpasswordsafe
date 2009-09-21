@@ -42,7 +42,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     @SuppressWarnings("unchecked")
 	public List<Password> findPasswordByFuzzySearch(String query, User user)
     {
-    	Query hqlQuery = getSession().createQuery("select pw from Password pw join pw.permissions pm " +
+    	Query hqlQuery = getSession().createQuery("select distinct pw from Password pw join pw.permissions pm " +
     			"where (pw.name like :query or pw.username like :query or pw.notes like :query) " +
     			"and pw.active = :active and pm.accessLevel >= :accessLevel and " +
     			"((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user))) order by pw.name asc");

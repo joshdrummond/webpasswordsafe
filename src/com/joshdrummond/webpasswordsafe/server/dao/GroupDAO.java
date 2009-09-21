@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -17,21 +17,18 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+package com.joshdrummond.webpasswordsafe.server.dao;
 
-package com.joshdrummond.webpasswordsafe.client.remote;
-
-import java.util.List;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
-import com.joshdrummond.webpasswordsafe.common.model.User;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface UserServiceAsync {
-    
-    public void changePassword(String password, AsyncCallback<Void> callback);
-    public void addUser(User userDTO, AsyncCallback<Void> callback);
-    public void updateUser(User userDTO, AsyncCallback<Void> callback);
-    public void getUsers(boolean includeOnlyActive, AsyncCallback<List<User>> callback);
-    public void verifyInitialization(AsyncCallback<Void> callback);
-    public void getEveryoneGroup(AsyncCallback<Group> callback);
+/**
+ * DAO interface for Group
+ * 
+ * @author Josh Drummond
+ *
+ */
+public interface GroupDAO extends GenericDAO<Group, Long> {
+
+    public Group findGroupByName(String name);
 
 }

@@ -22,7 +22,6 @@ package com.joshdrummond.webpasswordsafe.server.service;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

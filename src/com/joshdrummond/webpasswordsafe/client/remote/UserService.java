@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -24,6 +24,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
 public interface UserService extends RemoteService {
@@ -32,6 +33,8 @@ public interface UserService extends RemoteService {
     public void addUser(User userDTO);
     public void updateUser(User userDTO);
     public List<User> getUsers(boolean includeOnlyActive);
+    public void verifyInitialization();
+    public Group getEveryoneGroup();
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.

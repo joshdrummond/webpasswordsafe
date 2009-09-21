@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,9 +20,12 @@
 
 package com.joshdrummond.webpasswordsafe.client;
 
+import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
 /**
+ * Client-side session state and utilities
+ * 
  * @author Josh Drummond
  *
  */
@@ -31,6 +34,7 @@ public class ClientSessionUtil
 	private static final ClientSessionUtil clientSessionUtil = new ClientSessionUtil();
 	
     private User user;
+    private Group everyoneGroup;
     private boolean isLoggedIn;
     
     public static ClientSessionUtil getInstance()
@@ -67,6 +71,16 @@ public class ClientSessionUtil
     public void setLoggedInUser(User user)
     {
         this.user = user;
+    }
+    
+    public Group getEveryoneGroup()
+    {
+        return this.everyoneGroup;
+    }
+
+    public void setEveryoneGroup(Group everyoneGroup)
+    {
+        this.everyoneGroup = everyoneGroup;
     }
 
 }
