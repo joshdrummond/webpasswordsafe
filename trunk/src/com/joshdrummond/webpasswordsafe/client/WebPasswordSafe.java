@@ -41,6 +41,8 @@ import com.extjs.gxt.ui.client.widget.menu.MenuBar;
 import com.extjs.gxt.ui.client.widget.menu.MenuBarItem;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
@@ -107,8 +109,38 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         aboutMenu.add(new MenuItem("About"));
 
         Menu reportsMenu = new Menu();
-        reportsMenu.add(new MenuItem("User Audit"));
-        reportsMenu.add(new MenuItem("Permissions"));
+        reportsMenu.add(new MenuItem("Users", new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowReport("Users", "pdf");
+            }
+        }));
+        reportsMenu.add(new MenuItem("Groups", new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowReport("Groups", "pdf");
+            }
+        }));
+        reportsMenu.add(new MenuItem("Access Audit", new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowReport("PasswordAccessAudit", "pdf");
+            }
+        }));
+        reportsMenu.add(new MenuItem("Permissions", new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowReport("PasswordPermissions", "pdf");
+            }
+        }));
 
         Menu passwordMenu = new Menu();
         passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
@@ -233,6 +265,17 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         topPanel.layout();
     }
     
+    private void doShowReport(String reportName, String reportType)
+    {
+        Window.open(GWT.getHostPageBaseURL()+"report?name="+reportName+"&type="+reportType, "_blank", "");
+//        HtmlContainer reportContainer = new HtmlContainer(new RequestBuilder(RequestBuilder.GET, 
+//                GWT.getHostPageBaseURL()+"/report?name="+reportName));
+//        mainPanel.removeAll();
+//        mainPanel.add(reportContainer);
+//        mainPanel.layout();
+//        Info.display(reportName, "Done");
+    }
+
     /**
      * 
      */

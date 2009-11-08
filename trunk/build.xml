@@ -137,9 +137,12 @@
 				<include name="*.gif"/>
 			</fileset>
 		</copy>
-		<copy todir="${dist.war}/gxt">
-			<fileset dir="${web.home}/gxt"/>
-		</copy>
+        <copy todir="${dist.webinf}/reports">
+            <fileset dir="${web.home}/WEB-INF/reports"/>
+        </copy>
+        <copy todir="${dist.war}/gxt">
+            <fileset dir="${web.home}/gxt"/>
+        </copy>
 	</target>
 
 	<target name="war" depends="gwt-compile, jars, web">

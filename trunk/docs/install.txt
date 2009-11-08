@@ -20,14 +20,17 @@ WEB-INF/lib/
 	beanlib.jar [15]
 	beanlib-hibernate.jar [15]
 	cglib.jar [1]
+	commons-beanutils.jar [16]
 	commons-codec.jar [9]
 	commons-collections.jar [1]
 	commons-dbcp.jar [2]
+	commons-digester.jar [16]
 	commons-lang.jar [9]
 	commons-logging.jar [1]
 	commons-pool.jar [2]
 	dom4j.jar [1]
 	ejb3-persistence.jar [6]
+	groovy-all.jar [16]
 	gwt-servlet.jar [5]
 	gwt-sl.jar [3]
 	gxt.jar [13]
@@ -37,6 +40,8 @@ WEB-INF/lib/
 	hibernate-util.jar [15]
 	hibernate3.jar [1]
 	icu4j.jar [10]
+	iText.jar [16]
+	jasperreports.jar [16]
 	jasypt.jar [9]
 	javassist.jar [1]
 	jaxen.jar [11]
@@ -72,3 +77,4 @@ WEB-INF/lib/
 [13] Ext GWT 2.0.1 (http://www.extjs.com/products/gxt/)
 [14] JUnit 4.5.0 (http://www.junit.org/)
 [15] Gilead 1.2.3.823 (http://sourceforge.net/projects/gilead/)
+[16] JasperReports 3.6.1 (http://sourceforge.net/projects/jasperreports/)
