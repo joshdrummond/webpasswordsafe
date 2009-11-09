@@ -28,14 +28,17 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
+import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
+import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
+import com.joshdrummond.webpasswordsafe.server.encryption.Encryptor;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 
 /**
@@ -67,6 +70,9 @@ public class PasswordServiceImpl implements PasswordService {
     
     @Autowired
     private LoginService loginService;
+    
+    @Autowired
+    private Encryptor encryptor;
 
     @Transactional(propagation=Propagation.REQUIRED)
     public void addPassword(Password password)
@@ -79,6 +85,7 @@ public class PasswordServiceImpl implements PasswordService {
         password.setDateLastUpdate(now);
         password.getPasswordData().get(0).setUserCreated(loggedInUser);
         password.getPasswordData().get(0).setDateCreated(now);
+        password.getPasswordData().get(0).setPassword(encryptor.encrypt(password.getPasswordData().get(0).getPassword()));
         passwordDAO.makePersistent(password);
         LOG.info(password.getName() + " added");
     }
@@ -110,12 +117,12 @@ public class PasswordServiceImpl implements PasswordService {
     public String getCurrentPassword(long passwordId)
     {
         String currentPasswordValue = "";
-        Password password = passwordDAO.findById(passwordId, false);
         User loggedInUser = loginService.getLogin();
+        Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
             LOG.debug("returning current password value for ["+password.getName()+"]");
-            currentPasswordValue = password.getPasswordData().get(0).getPassword();
+            currentPasswordValue = encryptor.decrypt(password.getPasswordData().get(0).getPassword());
             PasswordAccessAudit passwordAccessAudit = new PasswordAccessAudit();
             passwordAccessAudit.setDateAccessed(new Date());
             passwordAccessAudit.setPassword(password);
@@ -127,6 +134,17 @@ public class PasswordServiceImpl implements PasswordService {
             LOG.debug("passwordId "+passwordId+" not found");
         }
         return currentPasswordValue;
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public Password getPassword(long passwordId)
+    {
+        User loggedInUser = loginService.getLogin();
+        Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
+        LOG.debug("permissions for "+passwordId+":");
+        for (Permission p : password.getPermissions())
+            LOG.debug(p.getSubject().getName()+"="+p.getAccessLevelObj().getName()+","+p.getAccessLevel());
+        return password;
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)

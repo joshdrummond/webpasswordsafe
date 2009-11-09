@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -28,17 +28,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 import net.sf.gilead.pojo.java5.LightEntity;
 
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.Parameter;
-import org.jasypt.hibernate.type.EncryptedStringType;
-
-
-@TypeDef(name="encryptedString", typeClass=EncryptedStringType.class,
-    parameters={@Parameter(name="encryptorRegisteredName", value="strongHibernateStringEncryptor")})
 
 /**
  * Domain model POJO for a password_data
@@ -59,7 +50,6 @@ public class PasswordData extends LightEntity implements Serializable
     private long id;
 
     @Column(name="password", length=128, updatable=false, nullable=false)
-    @Type(type="encryptedString")
     private String password;
     
     @Column(name="date_created", updatable=false, nullable=false)
