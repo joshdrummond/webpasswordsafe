@@ -22,6 +22,7 @@ package com.joshdrummond.webpasswordsafe.server.report;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -31,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -71,6 +71,7 @@ public class JasperReportServlet extends HttpServlet
     public void processRequest(HttpServletRequest req,HttpServletResponse res)
     {
         OutputStream outputStream = null;
+        Connection jdbcConnection = null;
         try
         {
             String reportName = req.getParameter("name");
@@ -78,10 +79,10 @@ public class JasperReportServlet extends HttpServlet
             JasperDesign jasperDesign = JRXmlLoader.load(getServletConfig().getServletContext().getResourceAsStream(
                     "/WEB-INF/reports/"+reportName+".jrxml"));
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-            DataSource dataSource = (DataSource)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("dataSource");
-            Connection jdbcConnection = dataSource.getConnection();
             Map<String, String> parameters = new HashMap<String, String>();
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jdbcConnection); 
+            DataSource dataSource = (DataSource)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("dataSource");
+            jdbcConnection = dataSource.getConnection();
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jdbcConnection);
             JRExporter exporter = null;
             
             if (type.equals("pdf"))
@@ -116,6 +117,7 @@ public class JasperReportServlet extends HttpServlet
         }
         finally
         {
+            // close the output stream
             if (outputStream != null)
             {
                 try
@@ -127,7 +129,22 @@ public class JasperReportServlet extends HttpServlet
                     LOG.error("JasperReportServlet Error " + io.getMessage(), io);
                 }
             }
+            // close the db connection
+            if (jdbcConnection != null)
+            {
+                try
+                {
+                    jdbcConnection.close();
+                }
+                catch (SQLException sql)
+                {
+                    LOG.error("JasperReportServlet Error "+sql.getMessage(), sql);
+                }
+                finally
+                {
+                    jdbcConnection = null;
+                }
+            }
         }
     }
-
 }
