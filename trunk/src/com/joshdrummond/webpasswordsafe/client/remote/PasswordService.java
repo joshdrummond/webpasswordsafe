@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -17,7 +17,6 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.client.remote;
 
 import java.util.List;
@@ -26,6 +25,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
+
 
 /**
  * 
@@ -40,6 +40,7 @@ public interface PasswordService extends RemoteService {
     public String generatePassword();
     public String getCurrentPassword(long passwordId);
     public List<Tag> getAvailableTags();
+    public Password getPassword(long passwordId);
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.

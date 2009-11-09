@@ -175,6 +175,12 @@ public class User extends Subject {
     }
 
     @Override
+    public String getName()
+    {
+        return getFullname();
+    }
+    
+    @Override
     public String toString() {
         return "User{" +
                 "id='" + getId() + '\'' +

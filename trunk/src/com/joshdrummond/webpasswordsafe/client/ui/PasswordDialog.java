@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,7 +19,6 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -34,11 +33,13 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
+import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
+
 
 /**
  * @author Josh Drummond
@@ -84,6 +85,19 @@ public class PasswordDialog extends Window implements PermissionListener
 			}
 		});
         form.add(generateButton, formData);
+        
+        if (password.getId() > 0)
+        {
+            Button currentButton = new Button("Current Password", new SelectionListener<ButtonEvent>()
+            {
+                @Override
+                public void componentSelected(ButtonEvent ce)
+                {
+                    doGetCurrentPassword();
+                }
+            });
+            form.add(currentButton, formData);
+        }
         
         tagsTextBox = new TextField<String>();
         tagsTextBox.setFieldLabel("Tags");
@@ -131,6 +145,26 @@ public class PasswordDialog extends Window implements PermissionListener
     /**
      * 
      */
+    protected void doGetCurrentPassword()
+    {
+        AsyncCallback<String> callback = new AsyncCallback<String>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+
+            public void onSuccess(String result)
+            {
+                passwordTextBox.setValue(result);
+            }
+        };
+        PasswordService.Util.getInstance().getCurrentPassword(password.getId(), callback);
+    }
+
+    /**
+     * 
+     */
     protected void doGeneratePassword()
     {
         AsyncCallback<String> callback = new AsyncCallback<String>()
@@ -157,31 +191,22 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         if (validateFields())
         {
-            password.setName(nameTextBox.getValue().trim());
-            password.setUsername(usernameTextBox.getValue().trim());
+            password.setName(safeString(nameTextBox.getValue()));
+            password.setUsername(safeString(usernameTextBox.getValue()));
             PasswordData passwordDataItem = new PasswordData();
-            passwordDataItem.setPassword(passwordTextBox.getValue().trim());
+            passwordDataItem.setPassword(safeString(passwordTextBox.getValue()));
             password.addPasswordData(passwordDataItem);
-            String[] tagNames = tagsTextBox.getValue().trim().split(" ");
+            String[] tagNames = safeString(tagsTextBox.getValue()).split(" ");
             for (String tagName : tagNames)
             {
-//                String tagName = st.nextToken();
-//                Tag tag = tagDAO.findTagByName(tagName);
-//                if (tag == null)
-//                {
-                    Tag tag = new Tag(tagName);
-//                }
-//                tag.getPasswords().add(password);
+                Tag tag = new Tag(tagName);
                 password.addTag(tag);
             }
-//            password.addTags(tagsTextBox.getValue().trim());
-            password.setNotes(notesTextArea.getValue().trim());
+            password.setNotes(safeString(notesTextArea.getValue()));
             password.setActive(activeCheckBox.getValue());
-//            password.addPermission(permission)
-            
+
             AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
-
                 public void onFailure(Throwable caught)
                 {
                     MessageBox.alert("Error", caught.getMessage(), null);
@@ -191,7 +216,6 @@ public class PasswordDialog extends Window implements PermissionListener
                 {
                     hide();
                 }
-                
             };
             if (password.getId() == 0)
             {
@@ -217,7 +241,24 @@ public class PasswordDialog extends Window implements PermissionListener
      */
     protected void doEditPermissions()
     {
-        new PermissionDialog(this, password, new ArrayList<Subject>()).show();
+        AsyncCallback<List<Subject>> callback = new AsyncCallback<List<Subject>>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+
+            public void onSuccess(List<Subject> result)
+            {
+                doShowPermissionDialog(result);
+            }
+        };
+        UserService.Util.getInstance().getSubjects(true, callback);
+    }
+    
+    private void doShowPermissionDialog(List<Subject> subjects)
+    {
+        new PermissionDialog(this, password, subjects).show();
     }
 
     /**
@@ -250,4 +291,8 @@ public class PasswordDialog extends Window implements PermissionListener
         
     }
 
+    public String safeString(String s)
+    {
+        return (null != s) ? s.trim() : "";
+    }
 }

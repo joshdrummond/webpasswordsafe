@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -17,23 +17,17 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.dao;
+package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.List;
-import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
-import com.joshdrummond.webpasswordsafe.common.model.Password;
-import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.model.Group;
 
 
 /**
- * DAO interface for Password
- *  
  * @author Josh Drummond
  *
  */
-public interface PasswordDAO extends GenericDAO<Password, Long> {
-
-    public List<Password> findPasswordByFuzzySearch(String query, User user);
-    public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel);
-    
+public interface GroupListener
+{
+    public void doGroupsChosen(List<Group> groups);
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,7 +20,6 @@
 package com.joshdrummond.webpasswordsafe.common.model;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,8 +27,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 import net.sf.gilead.pojo.java5.LightEntity;
+
 
 /**
  * Domain model POJO for a permission
@@ -94,7 +93,11 @@ public class Permission extends LightEntity implements Serializable
     {
         this.subject = subject;
     }
-    public AccessLevel getAccessLevel()
+    public int getAccessLevel()
+    {
+        return this.accessLevel;
+    }
+    public AccessLevel getAccessLevelObj()
     {
         return AccessLevel.valueOf(this.accessLevel);
     }

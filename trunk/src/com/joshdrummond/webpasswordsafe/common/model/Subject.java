@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -29,6 +29,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import net.sf.gilead.pojo.java5.LightEntity;
+
 
 /**
  * Domain model POJO for a subject
@@ -81,6 +82,8 @@ public abstract class Subject extends LightEntity implements Serializable
         return id;
     }
 
+    public abstract String getName();
+    
     @Override
     public boolean equals(Object o)
     {

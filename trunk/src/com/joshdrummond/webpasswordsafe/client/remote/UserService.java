@@ -17,7 +17,6 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.client.remote;
 
 import java.util.List;
@@ -25,8 +24,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
+import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
+
+/**
+ * 
+ * @author Josh Drummond
+ *
+ */
 public interface UserService extends RemoteService {
     
     public void changePassword(String password);
@@ -35,7 +41,9 @@ public interface UserService extends RemoteService {
     public List<User> getUsers(boolean includeOnlyActive);
     public void verifyInitialization();
     public Group getEveryoneGroup();
-    
+    public List<Group> getGroups();
+    public List<Subject> getSubjects(boolean includeOnlyActive);
+
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */

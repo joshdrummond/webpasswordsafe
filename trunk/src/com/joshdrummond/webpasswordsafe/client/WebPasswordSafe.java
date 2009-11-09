@@ -17,7 +17,6 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.client;
 
 import java.util.List;
@@ -47,13 +46,18 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.client.ui.*;
+import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
+ * 
+ * @author Josh Drummond
+ * 
  */
 public class WebPasswordSafe implements EntryPoint, MainWindow {
     private ClientSessionUtil clientSessionUtil = ClientSessionUtil.getInstance();
@@ -268,12 +272,6 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     private void doShowReport(String reportName, String reportType)
     {
         Window.open(GWT.getHostPageBaseURL()+"report?name="+reportName+"&type="+reportType, "_blank", "");
-//        HtmlContainer reportContainer = new HtmlContainer(new RequestBuilder(RequestBuilder.GET, 
-//                GWT.getHostPageBaseURL()+"/report?name="+reportName));
-//        mainPanel.removeAll();
-//        mainPanel.add(reportContainer);
-//        mainPanel.layout();
-//        Info.display(reportName, "Done");
     }
 
     /**
@@ -307,7 +305,9 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     {
         if (clientSessionUtil.isAuthorized("NEW_PASSWORD"))
         {
-            displayPasswordDialog(new Password());
+            Password newPassword = new Password();
+            newPassword.addPermission(new Permission(clientSessionUtil.getLoggedInUser(), AccessLevel.GRANT));
+            displayPasswordDialog(newPassword);
         }
     }
 
@@ -326,13 +326,22 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     {
         if (clientSessionUtil.isAuthorized("EDIT_GROUP"))
         {
-            // for testing...
-            Group group = new Group();
-            group.setId(1);
-            group.setName("Everyone");
-            group.addUser(new User(1, "obama", "Barak Obama", "b@obama.net", true));
-            group.addUser(new User(2, "mccain", "John McCain", "j@mccain.net", true));
-            displayGroupDialog(group);
+            AsyncCallback<List<Group>> callback = new AsyncCallback<List<Group>>()
+            {
+                public void onFailure(Throwable caught)
+                {
+                    MessageBox.alert("Error", caught.getMessage(), null);
+                }
+                public void onSuccess(List<Group> result)
+                {
+                    new GroupSelectionDialog(new EditGroupListener(), result, false).show();
+                }
+            };
+            UserService.Util.getInstance().getGroups(callback);
+        }
+        else
+        {
+            MessageBox.alert("Error", "Must be logged in first.", null);
         }
     }
 
@@ -458,6 +467,16 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
             if (users.size() > 0)
             {
                 displayUserDialog(users.get(0));
+            }
+        }
+    }
+    private class EditGroupListener implements GroupListener
+    {
+        public void doGroupsChosen(List<Group> groups)
+        {
+            if (groups.size() > 0)
+            {
+                displayGroupDialog(groups.get(0));
             }
         }
     }
