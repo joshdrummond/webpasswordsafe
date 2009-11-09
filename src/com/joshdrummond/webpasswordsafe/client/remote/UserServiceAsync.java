@@ -17,14 +17,20 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.client.remote;
 
 import java.util.List;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
+import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+
+/**
+ * 
+ * @author Josh Drummond
+ *
+ */
 public interface UserServiceAsync {
     
     public void changePassword(String password, AsyncCallback<Void> callback);
@@ -33,5 +39,7 @@ public interface UserServiceAsync {
     public void getUsers(boolean includeOnlyActive, AsyncCallback<List<User>> callback);
     public void verifyInitialization(AsyncCallback<Void> callback);
     public void getEveryoneGroup(AsyncCallback<Group> callback);
+    public void getGroups(AsyncCallback<List<Group>> callback);
+    public void getSubjects(boolean includeOnlyActive, AsyncCallback<List<Subject>> callback);
 
 }

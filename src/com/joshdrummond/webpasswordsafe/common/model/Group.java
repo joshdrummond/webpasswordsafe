@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -59,6 +59,7 @@ public class Group extends Subject {
         this.name = name;
     }
 
+    @Override
     public String getName()
     {
         return this.name;

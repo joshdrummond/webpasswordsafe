@@ -17,9 +17,9 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.server.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -30,10 +30,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
+import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.GroupDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
+
 
 /**
  * Implementation of User Service
@@ -140,6 +142,26 @@ public class UserServiceImpl implements UserService {
         LOG.info(group.getName() + " group added");
     }
     
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public List<Group> getGroups()
+    {
+        List<Group> groups = groupDAO.findAll();
+        LOG.info("found "+groups.size()+" groups");
+        return groups;
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public List<Subject> getSubjects(boolean includeOnlyActive)
+    {
+        List<User> users = getUsers(includeOnlyActive);
+        List<Group> groups = getGroups();
+        List<Subject> subjects = new ArrayList<Subject>(users.size()+groups.size());
+        subjects.addAll(users);
+        subjects.addAll(groups);
+        LOG.info("found "+subjects.size()+" subjects");
+        return subjects;
+    }
+
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	public Group getEveryoneGroup()
 	{

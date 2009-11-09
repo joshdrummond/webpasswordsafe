@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -27,7 +27,10 @@ import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.KeyListener;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.TreeStore;
@@ -54,6 +57,7 @@ import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
+
 
 /**
  * @author Josh Drummond
@@ -176,6 +180,14 @@ public class PasswordSearchPanel extends ContentPanel
         passwordGrid.setStyleAttribute("borderTop", "none");
         passwordGrid.setBorders(true);
         passwordGrid.setStripeRows(true);
+//        passwordGrid.addListener(Events.RowDoubleClick, new Listener<GridEvent<PasswordSearchData>>()
+        passwordGrid.addListener(Events.RowClick, new Listener<GridEvent<PasswordSearchData>>()
+        {
+            public void handleEvent(GridEvent<PasswordSearchData> be)
+            {
+                doLoadPasswordDialog((Long)be.getModel().get("id"));
+            }
+        });
         centerPanel.add(passwordGrid);
         
     	BorderLayoutData northData = new BorderLayoutData(LayoutRegion.NORTH, 100);  
@@ -253,6 +265,29 @@ public class PasswordSearchPanel extends ContentPanel
             }
         };
         PasswordService.Util.getInstance().getAvailableTags(callback);
+    }
+    
+    private void doLoadPasswordDialog(long passwordId)
+    {
+        AsyncCallback<Password> callback = new AsyncCallback<Password>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+            public void onSuccess(Password result)
+            {
+                if (null != result)
+                {
+                    new PasswordDialog(result).show();
+                }
+                else
+                {
+                    MessageBox.alert("Error", "You don't have access to read that password!", null);
+                }
+            }
+        };
+        PasswordService.Util.getInstance().getPassword(passwordId, callback);
     }
     
     /**

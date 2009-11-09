@@ -26,6 +26,7 @@ import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
+
 /**
  * DAO implementation for Password
  * 
@@ -51,6 +52,20 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     	hqlQuery.setString("active", "Y");
     	hqlQuery.setInteger("accessLevel", AccessLevel.READ.getId());
         return hqlQuery.list();
+    }
+
+    /* (non-Javadoc)
+     * @see com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO#findAllowedPasswordById(long, com.joshdrummond.webpasswordsafe.common.model.User, com.joshdrummond.webpasswordsafe.common.model.AccessLevel)
+     */
+    public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel)
+    {
+        Query hqlQuery = getSession().createQuery("select distinct pw from Password pw join pw.permissions pm left join fetch pw.permissions left join fetch pw.tags " +
+                "where pw.id = :passwordId and pm.accessLevel >= :accessLevel " +
+                "and ((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user)))");
+        hqlQuery.setLong("passwordId", passwordId);
+        hqlQuery.setEntity("user", user);
+        hqlQuery.setInteger("accessLevel", accessLevel.getId());
+        return (Password)hqlQuery.uniqueResult();
     }
 
 }
