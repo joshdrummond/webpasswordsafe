@@ -45,12 +45,14 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     {
     	Query hqlQuery = getSession().createQuery("select distinct pw from Password pw join pw.permissions pm " +
     			"where (pw.name like :query or pw.username like :query or pw.notes like :query) " +
-    			"and pw.active = :active and pm.accessLevel >= :accessLevel and " +
+    			"and pw.active = :active and pm.accessLevel in (:aclread, :aclwrite, :aclgrant) and " +
     			"((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user))) order by pw.name asc");
     	hqlQuery.setString("query", "%"+query+"%");
     	hqlQuery.setEntity("user", user);
     	hqlQuery.setString("active", "Y");
-    	hqlQuery.setInteger("accessLevel", AccessLevel.READ.getId());
+        hqlQuery.setString("aclread", AccessLevel.READ.getName());
+        hqlQuery.setString("aclwrite", AccessLevel.WRITE.getName());
+        hqlQuery.setString("aclgrant", AccessLevel.GRANT.getName());
         return hqlQuery.list();
     }
 
@@ -59,12 +61,29 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
      */
     public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel)
     {
+        String sqlAccessLevelIn = null;
+        switch (accessLevel) {
+            case GRANT : sqlAccessLevelIn = "(:aclgrant) "; break;
+            case WRITE : sqlAccessLevelIn = "(:aclwrite, :aclgrant) "; break;
+            case READ : sqlAccessLevelIn = "(:aclread, :aclwrite, :aclgrant) "; break;
+        }
         Query hqlQuery = getSession().createQuery("select distinct pw from Password pw join pw.permissions pm left join fetch pw.permissions left join fetch pw.tags " +
-                "where pw.id = :passwordId and pm.accessLevel >= :accessLevel " +
+                "where pw.id = :passwordId and pm.accessLevel in " + sqlAccessLevelIn +
                 "and ((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user)))");
         hqlQuery.setLong("passwordId", passwordId);
         hqlQuery.setEntity("user", user);
-        hqlQuery.setInteger("accessLevel", accessLevel.getId());
+        if (accessLevel.equals(AccessLevel.GRANT) || accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
+        {
+            hqlQuery.setString("aclgrant", AccessLevel.GRANT.getName());
+        }
+        if (accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
+        {
+            hqlQuery.setString("aclwrite", AccessLevel.WRITE.getName());
+        }
+        if (accessLevel.equals(AccessLevel.READ))
+        {
+            hqlQuery.setString("aclread", AccessLevel.READ.getName());
+        }
         return (Password)hqlQuery.uniqueResult();
     }
 
