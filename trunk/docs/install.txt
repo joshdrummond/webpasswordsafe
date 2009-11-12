@@ -25,11 +25,13 @@ WEB-INF/lib/
 	commons-collections.jar [1]
 	commons-dbcp.jar [2]
 	commons-digester.jar [16]
+	commons-fileupload.jar [17]
 	commons-lang.jar [9]
 	commons-logging.jar [1]
 	commons-pool.jar [2]
 	dom4j.jar [1]
 	ejb3-persistence.jar [6]
+	ESAPI.jar [17]
 	groovy-all.jar [16]
 	gwt-servlet.jar [5]
 	gwt-sl.jar [3]
@@ -70,11 +72,14 @@ WEB-INF/lib/
 [6] Hibernate Annotations 3.4.0 distribution (http://www.hibernate.org/)
 [7] Hibernate Tools 3.2 (http://www.hibernate.org)
 [8] Simple Logging Facade for Java 1.5.2 (http://www.slf4j.org/)
-[9] Jasypt 1.5 (http://www.jasypt.org/)
+[9] Jasypt 1.5 (http://www.jasypt.org/)*
 [10] International Components for Unicode (ICU) 4.0 (http://www.icu-project.org/) for Java <= 5.0
 [11] Spring Web Services 1.5 with dependencies distribution (http://static.springframework.org/spring-ws/sites/1.5/)
-[12] Bouncy Castle JCE Provider (http://www.bouncycastle.org/java.html)
+[12] Bouncy Castle JCE Provider (http://www.bouncycastle.org/java.html)*
 [13] Ext GWT 2.0.1 (http://www.extjs.com/products/gxt/)
 [14] JUnit 4.5.0 (http://www.junit.org/)
 [15] Gilead 1.2.3.823 (http://sourceforge.net/projects/gilead/)
 [16] JasperReports 3.6.1 (http://sourceforge.net/projects/jasperreports/)
+[17] OWASP ESAPI Java EE 2.0 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)*
+
+*Optional depending on choice of plugin

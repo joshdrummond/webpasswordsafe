@@ -50,7 +50,7 @@ public class User extends Subject {
     @Index(name = "idx_user_username")
     private String username;
 
-    @Column(name = "password", nullable = false, length = 64)
+    @Column(name = "password", nullable = false, length = 88)
     private String password;
 
     @Column(name = "fullname", length = 100, nullable=false)
