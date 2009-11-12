@@ -56,8 +56,8 @@ public class Permission extends LightEntity implements Serializable
     @JoinColumn(name="subject_id", updatable=false, nullable=false)
     private Subject subject;
     
-    @Column(name="access_level", nullable=false)
-    private int accessLevel;
+    @Column(name="access_level", length=5, nullable=false)
+    private String accessLevel;
     
     public Permission()
     {
@@ -66,7 +66,7 @@ public class Permission extends LightEntity implements Serializable
     public Permission(Subject subject, AccessLevel accessLevel)
     {
     	this.subject = subject;
-    	this.accessLevel = accessLevel.getId();
+    	this.accessLevel = accessLevel.getName();
     }
     
     public long getId()
@@ -93,7 +93,7 @@ public class Permission extends LightEntity implements Serializable
     {
         this.subject = subject;
     }
-    public int getAccessLevel()
+    public String getAccessLevel()
     {
         return this.accessLevel;
     }
@@ -101,7 +101,7 @@ public class Permission extends LightEntity implements Serializable
     {
         return AccessLevel.valueOf(this.accessLevel);
     }
-    public void setAccessLevel(int accessLevel)
+    public void setAccessLevel(String accessLevel)
     {
         this.accessLevel = accessLevel;
     }
