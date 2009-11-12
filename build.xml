@@ -158,7 +158,15 @@
 	<target name="clean">
 		<delete dir="${build.home}" />
 	</target>
-	
+
 	<target name="all" depends="clean, deploy" />
+
+    <target name="esapi-genkey" description="Generate ESAPI encryption keys">
+        <java classname="org.owasp.esapi.reference.JavaEncryptor" fork="yes" failonerror="true" maxmemory="512m">
+        	<classpath refid="compile.classpath"/>
+            <jvmarg value="-Dorg.owasp.esapi.resources=${web.home}/WEB-INF/esapi"/>
+            <arg value="-print"/>
+        </java>
+    </target>
 
 </project>
