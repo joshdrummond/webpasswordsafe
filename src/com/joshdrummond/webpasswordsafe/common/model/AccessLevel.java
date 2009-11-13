@@ -26,33 +26,5 @@ package com.joshdrummond.webpasswordsafe.common.model;
  */
 public enum AccessLevel 
 {
-	NONE(0), READ(1), WRITE(2), GRANT(3);
-	private int id;
-	private AccessLevel(int id) { this.id = id; }
-	public int getId() { return id; }
-	public String getName()
-	{
-	    switch (id)
-	    {
-	       case 1 : return "READ";
-	       case 2 : return "WRITE";
-	       case 3 : return "GRANT";
-	       default : return "NONE";
-	    }
-	}
-	@Override
-	public String toString()
-	{
-	    return getName();
-	}
-	public static AccessLevel valueOf(int id)
-	{
-		switch (id)
-		{
-		case 1 : return READ;
-		case 2 : return WRITE;
-		case 3 : return GRANT;
-		default : return NONE;
-		}
-	}
+	READ, WRITE, GRANT;
 }

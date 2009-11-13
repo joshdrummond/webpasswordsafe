@@ -71,7 +71,7 @@ public class PermissionDialog extends Window
         
         for (Permission permission : password.getPermissions())
         {
-            Info.display(permission.getId()+"", permission.getSubject().getName()+":"+permission.getAccessLevelObj().getName()+":"+permission.getAccessLevel());
+            Info.display(permission.getId()+"", permission.getSubject().getName()+":"+permission.getAccessLevelObj().name()+":"+permission.getAccessLevel());
         }
         
         ContentPanel panel = new ContentPanel();
@@ -100,7 +100,7 @@ public class PermissionDialog extends Window
                 if (v instanceof AccessLevel) {
                     return accessLevelCombo.findModel((AccessLevel)v);
                 }
-                return AccessLevel.NONE;
+                return null;
             }
             @SuppressWarnings("unchecked")
             public Object postProcessValue(Object v)
