@@ -26,20 +26,11 @@ order by g.name, u.fullname]]>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="70" splitType="Stretch">
-			<image>
-				<reportElement x="275" y="0" width="300" height="64"/>
-				<imageExpression class="java.lang.String"><![CDATA["/usr/local/tomcat/webapps/WebPasswordSafe/WEB-INF/reports/leaf_banner_green.png"]]></imageExpression>
-			</image>
+		<band height="33" splitType="Stretch">
 			<staticText>
-				<reportElement style="Title" x="0" y="13" width="263" height="33"/>
+				<reportElement style="Title" x="0" y="0" width="552" height="33"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Groups Report]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="SubTitle" x="100" y="46" width="174" height="22"/>
-				<textElement/>
-				<text><![CDATA[]]></text>
 			</staticText>
 		</band>
 	</title>
@@ -49,33 +40,33 @@ order by g.name, u.fullname]]>
 	<columnHeader>
 		<band height="55" splitType="Stretch">
 			<staticText>
-				<reportElement style="Column header" x="0" y="39" width="138" height="15"/>
+				<reportElement style="Column header" x="0" y="39" width="158" height="15"/>
 				<textElement/>
 				<text><![CDATA[Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="138" y="39" width="138" height="15"/>
+				<reportElement style="Column header" x="158" y="39" width="175" height="15"/>
 				<textElement/>
 				<text><![CDATA[Full Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="276" y="39" width="138" height="15"/>
+				<reportElement style="Column header" x="333" y="39" width="149" height="15"/>
 				<textElement/>
 				<text><![CDATA[Username]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="414" y="39" width="138" height="15"/>
+				<reportElement style="Column header" x="482" y="39" width="70" height="15"/>
 				<textElement/>
 				<text><![CDATA[Active]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="0" y="19" width="138" height="20"/>
-				<textElement/>
+				<reportElement style="Column header" x="0" y="19" width="158" height="20"/>
+				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Groups]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="138" y="19" width="414" height="20"/>
-				<textElement/>
+				<reportElement style="Column header" x="158" y="19" width="394" height="20"/>
+				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Users]]></text>
 			</staticText>
 			<line>
@@ -94,62 +85,33 @@ order by g.name, u.fullname]]>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
-			<textField>
-				<reportElement style="Detail" x="0" y="0" width="138" height="15"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" x="0" y="0" width="158" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="138" y="0" width="138" height="15"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" x="158" y="0" width="175" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{fullname}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement style="Detail" x="276" y="0" width="138" height="15"/>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{username}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="Detail" x="414" y="0" width="138" height="15"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" x="482" y="0" width="70" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{active}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement style="Detail" x="333" y="0" width="149" height="15"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{username}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="45" splitType="Stretch">
-			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="3" width="555" height="1"/>
-				<graphicElement>
-					<pen lineWidth="0.5" lineColor="#999999"/>
-				</graphicElement>
-			</line>
-		</band>
+		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="20" splitType="Stretch">
-			<textField>
-				<reportElement style="Column header" x="433" y="0" width="80" height="20"/>
-				<textElement textAlignment="Right">
-					<font size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement style="Column header" x="513" y="0" width="40" height="20"/>
-				<textElement>
-					<font size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement style="Column header" x="0" y="0" width="197" height="20"/>
-				<textElement>
-					<font size="10" isBold="false"/>
-				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
-		</band>
+		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
 		<band splitType="Stretch"/>
