@@ -50,9 +50,9 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     	hqlQuery.setString("query", "%"+query+"%");
     	hqlQuery.setEntity("user", user);
     	hqlQuery.setString("active", "Y");
-        hqlQuery.setString("aclread", AccessLevel.READ.getName());
-        hqlQuery.setString("aclwrite", AccessLevel.WRITE.getName());
-        hqlQuery.setString("aclgrant", AccessLevel.GRANT.getName());
+        hqlQuery.setString("aclread", AccessLevel.READ.name());
+        hqlQuery.setString("aclwrite", AccessLevel.WRITE.name());
+        hqlQuery.setString("aclgrant", AccessLevel.GRANT.name());
         return hqlQuery.list();
     }
 
@@ -74,15 +74,15 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         hqlQuery.setEntity("user", user);
         if (accessLevel.equals(AccessLevel.GRANT) || accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
         {
-            hqlQuery.setString("aclgrant", AccessLevel.GRANT.getName());
+            hqlQuery.setString("aclgrant", AccessLevel.GRANT.name());
         }
         if (accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
         {
-            hqlQuery.setString("aclwrite", AccessLevel.WRITE.getName());
+            hqlQuery.setString("aclwrite", AccessLevel.WRITE.name());
         }
         if (accessLevel.equals(AccessLevel.READ))
         {
-            hqlQuery.setString("aclread", AccessLevel.READ.getName());
+            hqlQuery.setString("aclread", AccessLevel.READ.name());
         }
         return (Password)hqlQuery.uniqueResult();
     }

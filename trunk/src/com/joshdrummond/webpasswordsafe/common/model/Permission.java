@@ -66,7 +66,7 @@ public class Permission extends LightEntity implements Serializable
     public Permission(Subject subject, AccessLevel accessLevel)
     {
     	this.subject = subject;
-    	this.accessLevel = accessLevel.getName();
+    	this.accessLevel = accessLevel.name();
     }
     
     public long getId()

@@ -143,7 +143,7 @@ public class PasswordServiceImpl implements PasswordService {
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         LOG.debug("permissions for "+passwordId+":");
         for (Permission p : password.getPermissions())
-            LOG.debug(p.getSubject().getName()+"="+p.getAccessLevelObj().getName()+","+p.getAccessLevel());
+            LOG.debug(p.getSubject().getName()+"="+p.getAccessLevelObj().name()+","+p.getAccessLevel());
         return password;
     }
     
