@@ -1,10 +1,13 @@
 WebPasswordSafe Installation Instructions
 
+To build and install from source:
+
 1. Requirements:
-	a. Java 5.0 +
+	a. Java SE JDK 5.0 +
 	b. Java Servlet Container (i.e. Apache Tomcat 5.5+)
 	c. JDBC compatible RDBMS (i.e. MySQL 5.x)
 	d. Google Web Toolkit 1.7+
+	e. Apache Ant 1.7+
 
 2. Additional 3rd Party library requirements:
 
@@ -83,3 +86,14 @@ WEB-INF/lib/
 [17] OWASP ESAPI Java EE 2.0 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)*
 
 *Optional depending on choice of plugin
+
+3. Download WebPasswordSafe project source via SVN (http://code.google.com/p/webpasswordsafe/source/checkout) to new directory "webpasswordsafe"
+4. Copy above referenced 3rd party JAR files into webpasswordsafe/war/WEB-INF/lib/
+5. Copy contents of Ext GWT GXT/resources directory into webpasswordsafe/war/gxt/
+6. Edit webpasswordsafe/build.properties changing values specific to your environment
+7. Edit webpasswordsafe/war/WEB-INF/jdbc.properties changing values specific to your environment
+8. Edit webpasswordsafe/war/WEB-INF/encryption.properties changing values specific to your environment
+9. If using ESAPI for encryption, edit ESAPI.properties and generate new MasterKey and MasterSalt values
+10. Run "ant" from the webpasswordsafe directory
+11. After WebPasswordSafe.war is deployed to Tomcat, connect to URL http://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
+12. Change default admin password, create new users and begin using, you are done!
