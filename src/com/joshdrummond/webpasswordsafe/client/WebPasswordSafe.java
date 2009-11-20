@@ -113,38 +113,10 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         aboutMenu.add(new MenuItem("About"));
 
         Menu reportsMenu = new Menu();
-        reportsMenu.add(new MenuItem("Users", new SelectionListener<MenuEvent>()
-        {
-            @Override
-            public void componentSelected(MenuEvent ce)
-            {
-                doShowReport("Users", "pdf");
-            }
-        }));
-        reportsMenu.add(new MenuItem("Groups", new SelectionListener<MenuEvent>()
-        {
-            @Override
-            public void componentSelected(MenuEvent ce)
-            {
-                doShowReport("Groups", "pdf");
-            }
-        }));
-        reportsMenu.add(new MenuItem("Access Audit", new SelectionListener<MenuEvent>()
-        {
-            @Override
-            public void componentSelected(MenuEvent ce)
-            {
-                doShowReport("PasswordAccessAudit", "pdf");
-            }
-        }));
-        reportsMenu.add(new MenuItem("Permissions", new SelectionListener<MenuEvent>()
-        {
-            @Override
-            public void componentSelected(MenuEvent ce)
-            {
-                doShowReport("PasswordPermissions", "pdf");
-            }
-        }));
+        reportsMenu.add(buildReportMenuItem("Users", "Users"));
+        reportsMenu.add(buildReportMenuItem("Groups", "Groups"));
+        reportsMenu.add(buildReportMenuItem("Access Audit", "PasswordAccessAudit"));
+        reportsMenu.add(buildReportMenuItem("Permissions", "PasswordPermissions"));
 
         Menu passwordMenu = new Menu();
         passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
@@ -246,6 +218,28 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         refreshMenu();
         
         verifyInitialization();
+    }
+
+    private MenuItem buildReportMenuItem(String menuName, String reportName)
+    {
+        MenuItem menuItem = new MenuItem(menuName);
+        Menu subMenu =  new Menu();
+        subMenu.add(buildReportMenuItemType(reportName, "pdf"));
+        subMenu.add(buildReportMenuItemType(reportName, "csv"));
+        menuItem.setSubMenu(subMenu);
+        return menuItem;
+    }
+
+    private MenuItem buildReportMenuItemType(final String name, final String type)
+    {
+        return new MenuItem(type.toUpperCase(), new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowReport(name, type.toLowerCase());
+            }
+        });
     }
 
     private void refreshTopPanel()
