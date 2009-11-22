@@ -20,6 +20,7 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.List;
+import java.util.Set;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -285,10 +286,13 @@ public class PasswordDialog extends Window implements PermissionListener
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.ui.PermissionListener#doPermissionsChanged(java.util.List)
      */
-    public void doPermissionsChanged(List<Permission> permissions)
+    public void doPermissionsChanged(Set<Permission> permissions)
     {
-        // TODO Auto-generated method stub
-        
+        password.clearPermissions();
+        for (Permission permission : permissions)
+        {
+            password.addPermission(permission);
+        }
     }
 
     public String safeString(String s)

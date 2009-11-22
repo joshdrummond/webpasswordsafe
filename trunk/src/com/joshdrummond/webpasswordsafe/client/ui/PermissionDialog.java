@@ -21,16 +21,18 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import com.extjs.gxt.ui.client.Style.Orientation;
+import java.util.Set;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.GridEvent;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
-import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
@@ -41,194 +43,162 @@ import com.extjs.gxt.ui.client.widget.grid.CellEditor;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
-import com.extjs.gxt.ui.client.widget.layout.RowData;
-import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Subject;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
+import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
 
 
 /**
  * @author Josh Drummond
- *
+ * 
  */
 public class PermissionDialog extends Window
 {
     private Password password;
-//    private List<Subject> subjects;
-//    private Text passwordNameLabel;
-    private ListStore<PermissionData> store;
-//    private Grid permissionsGrid;
-//    private ListBox subjectListBox;
-    
-    public PermissionDialog(PermissionListener permissionListener, Password password, List<Subject> subjects)
+    private ListStore<PermissionData> permissionStore;
+    private EditorGrid<PermissionData> permissionGrid;
+    private ComboBox<SubjectData> comboSubjects;
+    private PermissionData selectedPermission;
+    private PermissionListener permissionListener;
+
+    public PermissionDialog(PermissionListener permissionListener,
+            Password password, List<Subject> subjects)
     {
+        setSize("390", "330");
         this.password = password;
-//        this.subjects = subjects;
+        this.permissionListener = permissionListener;
         this.setHeading("Permissions");
         this.setModal(true);
-        
-        for (Permission permission : password.getPermissions())
-        {
-            Info.display(permission.getId()+"", permission.getSubject().getName()+":"+permission.getAccessLevelObj().name()+":"+permission.getAccessLevel());
-        }
-        
-        ContentPanel panel = new ContentPanel();
-        panel.setLayout(new RowLayout(Orientation.VERTICAL));
-        panel.setHeaderVisible(false);
-        panel.setFrame(true);
-        
-//        Text passwordLabel = new Text("Password");
-//        passwordNameLabel = new Text("Password Name");
-//        Text permissionsLabel = new Text("Permissions");
-        
-        store = new ListStore<PermissionData>();
-        List<ColumnConfig> config = new ArrayList<ColumnConfig>(2);
-        ColumnConfig column = new ColumnConfig();
-        column.setId("subject");
-        column.setHeader("User/Group");
-        column.setWidth(150);
-        config.add(column);
-        
+        permissionStore = new ListStore<PermissionData>();
+
         final SimpleComboBox<AccessLevel> accessLevelCombo = new SimpleComboBox<AccessLevel>();
         accessLevelCombo.setEditable(false);
         accessLevelCombo.add(Arrays.asList(AccessLevel.values()));
-        CellEditor accessLevelEditor = new CellEditor(accessLevelCombo) {
+        CellEditor accessLevelEditor = new CellEditor(accessLevelCombo)
+        {
             public Object preProcessValue(Object v)
             {
-                if (v instanceof AccessLevel) {
-                    return accessLevelCombo.findModel((AccessLevel)v);
+                if (v instanceof AccessLevel)
+                {
+                    return accessLevelCombo.findModel((AccessLevel) v);
                 }
                 return null;
             }
+
             @SuppressWarnings("unchecked")
             public Object postProcessValue(Object v)
             {
-                return ((SimpleComboValue<AccessLevel>)v).get("value");
+                return ((SimpleComboValue<AccessLevel>) v).get("value");
             }
         };
-        
+
+        ListStore<SubjectData> subjectStore = new ListStore<SubjectData>();
+        for (Subject subject : subjects)
+        {
+            subjectStore.add(new SubjectData(subject));
+        }
+        setLayout(new FitLayout());
+
+        ContentPanel panel = new ContentPanel();
+        List<ColumnConfig> config = new ArrayList<ColumnConfig>(2);
+        ColumnModel cm = new ColumnModel(config);
+        ColumnConfig column = new ColumnConfig();
+        column.setId("subject");
+        column.setHeader("User/Group");
+        column.setWidth(216);
+        config.add(column);
         column = new ColumnConfig();
         column.setId("accessLevel");
         column.setHeader("Access Level");
-        column.setWidth(75);
+        column.setWidth(113);
         column.setEditor(accessLevelEditor);
         config.add(column);
-        
-        ColumnModel cm = new ColumnModel(config);
-        EditorGrid<PermissionData> grid = new EditorGrid<PermissionData>(store, cm);
-        grid.setBorders(true);
-        grid.setStripeRows(true);
-        grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
-        grid.setSize(200, 200);
-        panel.add(grid, new RowData(1, .5, new Margins(4)));
-        
-
-        
-        
-//        passwordGrid.setStyleAttribute("borderTop", "none");
-        
-/*
-        subjectListBox = new ListBox();
-        horizontalPanel.add(subjectListBox);
-        horizontalPanel.setCellHorizontalAlignment(subjectListBox, HasHorizontalAlignment.ALIGN_LEFT);
-
-        final Button addButton = new Button();
-        horizontalPanel.add(addButton);
-        addButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event)
-			{
-                doAddSubject();
-			}
-        });
-        addButton.setText("Add");
-
-        final ScrollPanel scrollPanel = new ScrollPanel();
-        flexTable.setWidget(2, 0, scrollPanel);
-        flexTable.getCellFormatter().setHeight(2, 0, "200");
-        flexTable.getCellFormatter().setWidth(2, 0, "400");
-        flexTable.getFlexCellFormatter().setColSpan(2, 0, 2);
-
-        permissionsGrid = new Grid();
-        scrollPanel.setWidget(permissionsGrid);
-        permissionsGrid.resize(2, 3);
-        permissionsGrid.setSize("100%", "100%");
-
-        final FlowPanel flowPanel = new FlowPanel();
-        flexTable.setWidget(3, 0, flowPanel);
-        flexTable.getCellFormatter().setHorizontalAlignment(3, 0, HasHorizontalAlignment.ALIGN_CENTER);
-        flexTable.getFlexCellFormatter().setColSpan(3, 0, 2);
-*/
-        ListStore<SubjectData> store = new ListStore<SubjectData>();
-        for (Subject subject : subjects)
+        permissionGrid = new EditorGrid<PermissionData>(permissionStore, cm);
+        permissionGrid.setBorders(true);
+        permissionGrid.setStripeRows(true);
+        GridSelectionModel<PermissionData> gsm = permissionGrid.getSelectionModel();
+        gsm.setSelectionMode(SelectionMode.SINGLE);
+        permissionGrid.addListener(Events.CellClick, new Listener<GridEvent<PermissionData>>()
         {
-            store.add(new SubjectData(subject));
-        }
+            public void handleEvent(GridEvent<PermissionData> ge)
+            {
+                selectedPermission = ge.getModel();
+            }
+        });
+        panel.setLayout(new AbsoluteLayout());
+        permissionGrid.setSize(200, 200);
+        AbsoluteData absoluteData_1 = new AbsoluteData(-1, 6);
+        absoluteData_1.setAnchorSpec("-5");
+        panel.add(permissionGrid, absoluteData_1);
+        permissionGrid.setHeight("202px");
 
-        ComboBox<SubjectData> comboSubjects = new ComboBox<SubjectData>();
+        Button removeButton = new Button("Remove Selected",
+                new SelectionListener<ButtonEvent>()
+                {
+                    @Override
+                    public void componentSelected(ButtonEvent ce)
+                    {
+                        doRemove();
+                    }
+                });
+        panel.add(removeButton, new AbsoluteData(255, 216));
+        removeButton.setWidth("44px");
+
+        Button addUserButton = new Button("Add",
+                new SelectionListener<ButtonEvent>()
+                {
+                    @Override
+                    public void componentSelected(ButtonEvent ce)
+                    {
+                        doAdd();
+                    }
+                });
+        AbsoluteData absoluteData = new AbsoluteData(154, 216);
+        absoluteData.setAnchorSpec("-385");
+        panel.add(addUserButton, absoluteData);
+
+        comboSubjects = new ComboBox<SubjectData>();
+        panel.add(comboSubjects, new AbsoluteData(0, 216));
         comboSubjects.setEmptyText("Select a User/Group...");
         comboSubjects.setDisplayField("name");
-        comboSubjects.setStore(store);
+        comboSubjects.setStore(subjectStore);
         comboSubjects.setTypeAhead(true);
         comboSubjects.setTriggerAction(TriggerAction.ALL);
-        
-        Button addUserButton = new Button("Add", new SelectionListener<ButtonEvent>()
-        {
-            @Override
-            public void componentSelected(ButtonEvent ce)
-            {
-                doAddUser();
-            }
-        });
+        setTopComponent(panel);
+        panel.setSize("315", "300");
+        panel.setHeaderVisible(false);
+        panel.setFrame(true);
 
-//        Button addGroupButton = new Button("Add Group", new SelectionListener<ButtonEvent>()
-//        {
-//            @Override
-//            public void componentSelected(ButtonEvent ce)
-//            {
-//                doAddGroup();
-//            }
-//        });
+        Button okayButton = new Button("Okay",
+                new SelectionListener<ButtonEvent>()
+                {
+                    @Override
+                    public void componentSelected(ButtonEvent ce)
+                    {
+                        doOkay();
+                    }
+                });
 
-        Button removeButton = new Button("Remove", new SelectionListener<ButtonEvent>()
-        {
-            @Override
-            public void componentSelected(ButtonEvent ce)
-            {
-                doRemove();
-            }
-        });
+        Button cancelButton = new Button("Cancel",
+                new SelectionListener<ButtonEvent>()
+                {
+                    @Override
+                    public void componentSelected(ButtonEvent ce)
+                    {
+                        doCancel();
+                    }
+                });
+        cancelButton.setSize("66px", "22px");
+        panel.add(okayButton, new AbsoluteData(98, 259));
+        okayButton.setSize("66px", "22px");
+        panel.add(cancelButton, new AbsoluteData(193, 259));
 
-        Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-                doOkay();
-			}
-		});
-
-        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-                doCancel();
-			}
-		});
-        
-        ContentPanel addPanel = new ContentPanel();
-        addPanel.setLayout(new RowLayout(Orientation.VERTICAL));
-        addPanel.setHeaderVisible(false);
-        addPanel.setFrame(false);
-        addPanel.add(comboSubjects);
-        addPanel.add(addUserButton);
-        
-        panel.add(addPanel, new RowData(1, -1, new Margins(4)));
-        panel.add(removeButton, new RowData(1, -1, new Margins(4)));
-        panel.add(okayButton, new RowData(1, -1, new Margins(4)));
-        panel.add(cancelButton, new RowData(1, -1, new Margins(4)));
-        
         setFields();
-        
-        this.add(panel);
     }
 
     /**
@@ -236,35 +206,36 @@ public class PermissionDialog extends Window
      */
     protected void doRemove()
     {
-        
+        //PermissionData data = permissionGrid.getSelectionModel().getSelectedItem();
+        PermissionData data = selectedPermission;
+        if (null != data)
+        {
+            permissionStore.remove(data);
+            selectedPermission = null;
+        }
     }
 
     /**
      * 
      */
-    protected void doAddUser()
+    protected void doAdd()
     {
-        
+        SubjectData data = comboSubjects.getValue();
+        if (null != data)
+        {
+            permissionStore.add(new PermissionData(new Permission((Subject)data.get("subject"), AccessLevel.READ)));
+        }
     }
-    
-//    /**
-//     * 
-//     */
-//    protected void doAddGroup()
-//    {
-//        
-//    }
 
     /**
      * 
      */
     private void setFields()
     {
-//        passwordNameLabel.setText(password.getName());
-        store.removeAll();
+        permissionStore.removeAll();
         for (Permission permission : password.getPermissions())
         {
-            store.add(new PermissionData(permission));
+            permissionStore.add(new PermissionData(permission));
         }
     }
 
@@ -273,7 +244,7 @@ public class PermissionDialog extends Window
      */
     protected void doCancel()
     {
-//        store.rejectChanges();
+        permissionStore.rejectChanges();
         hide();
     }
 
@@ -282,34 +253,35 @@ public class PermissionDialog extends Window
      */
     protected void doOkay()
     {
-//        store.commitChanges();
-    }
-
-    /**
-     * 
-     */
-    protected void doAddSubject()
-    {
-        
+        permissionStore.commitChanges();
+        Set<Permission> permissions = new HashSet<Permission>(permissionStore.getCount());
+        for (PermissionData data : permissionStore.getModels())
+        {
+            Permission permission = (Permission)data.get("permission");
+            permission.setAccessLevel(((AccessLevel)data.get("accessLevel")).name());
+            permissions.add(permission);
+        }
+        permissionListener.doPermissionsChanged(permissions);
+        hide();
     }
 
     private class PermissionData extends BaseModel
     {
         private static final long serialVersionUID = 1L;
-        private Permission permission;
 
-        public Permission getPermission() { return permission; }
         public PermissionData(Permission permission)
         {
             set("id", permission.getId());
             set("subject", permission.getSubject().getName());
             set("accessLevel", permission.getAccessLevelObj());
+            set("permission", permission);
         }
     }
-    
+
     private class SubjectData extends BaseModel
     {
         private static final long serialVersionUID = 1L;
+
         public SubjectData(Subject subject)
         {
             set("id", subject.getId());
