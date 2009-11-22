@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,9 +19,9 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
-import java.util.List;
-
+import java.util.Set;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
+
 
 /**
  * @author Josh Drummond
@@ -29,5 +29,5 @@ import com.joshdrummond.webpasswordsafe.common.model.Permission;
  */
 public interface PermissionListener
 {
-    public void doPermissionsChanged(List<Permission> permissions);
+    public void doPermissionsChanged(Set<Permission> permissions);
 }
