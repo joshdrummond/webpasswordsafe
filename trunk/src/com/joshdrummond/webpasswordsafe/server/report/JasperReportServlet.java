@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -45,7 +47,10 @@ import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRXmlExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
+
 /**
+ * Servlet that handles generation of specified reports using Jasper Reports
+ * 
  * @author Josh Drummond
  *
  */
@@ -68,7 +73,7 @@ public class JasperReportServlet extends HttpServlet
     }
 
 
-    public void processRequest(HttpServletRequest req,HttpServletResponse res)
+    public void processRequest(HttpServletRequest req, HttpServletResponse res)
     {
         OutputStream outputStream = null;
         Connection jdbcConnection = null;
@@ -105,6 +110,9 @@ public class JasperReportServlet extends HttpServlet
                 res.setContentType("text/xml");
                 exporter = new JRXmlExporter();
             }
+            DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+            res.setHeader("Content-Disposition", "attachment; filename=" + reportName +
+                    dateFormat.format(System.currentTimeMillis())+"."+type);
             
             exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
             outputStream = res.getOutputStream();
