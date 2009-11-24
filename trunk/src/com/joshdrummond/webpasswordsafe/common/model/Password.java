@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -36,9 +36,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import net.sf.gilead.pojo.java5.LightEntity;
-
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
 
@@ -92,8 +91,10 @@ public class Password extends LightEntity implements Serializable
     @JoinColumn(name="user_last_update_id", nullable=false)
     private User userLastUpdate;
     
-    @OneToMany(cascade={CascadeType.ALL}, mappedBy="parent")
-    @IndexColumn(name="password_position", nullable=false)
+    @OneToMany(cascade={CascadeType.ALL})
+    @JoinColumn(name="password_id")
+    @IndexColumn(name="password_position")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
     private List<PasswordData> passwordData;
     
     @ManyToMany(cascade={CascadeType.ALL})
@@ -103,11 +104,13 @@ public class Password extends LightEntity implements Serializable
     private Set<Tag> tags;
 
     @OneToMany(cascade={CascadeType.ALL}, mappedBy="password")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
     private Set<Permission> permissions;
     
     public Password()
     {
         maxHistory = -1;
+        active = true;
         passwordData = new ArrayList<PasswordData>();
         tags = new HashSet<Tag>();
         permissions = new HashSet<Permission>();
@@ -133,7 +136,7 @@ public class Password extends LightEntity implements Serializable
 		return this.permissions;
 	}
 
-	public void setPermissions(Set<Permission> permissions) {
+	protected void setPermissions(Set<Permission> permissions) {
 		this.permissions = permissions;
 	}
 	
@@ -142,7 +145,7 @@ public class Password extends LightEntity implements Serializable
         return this.tags;
     }
 
-	public void setTags(Set<Tag> tags)
+	protected void setTags(Set<Tag> tags)
     {
         this.tags = tags;
     }
@@ -231,15 +234,33 @@ public class Password extends LightEntity implements Serializable
     {
         return this.passwordData;
     }
-    public void setPasswordData(List<PasswordData> passwordData)
+    public PasswordData getCurrentPasswordData()
+    {
+        return this.passwordData.get(0);
+    }
+    protected void setPasswordData(List<PasswordData> passwordData)
     {
         this.passwordData = passwordData;
     }
     public void addPasswordData(PasswordData passwordDataItem)
     {
     	passwordDataItem.setParent(this);
-        this.passwordData.add(passwordDataItem);
+        this.passwordData.add(0, passwordDataItem);
     }
+    
+    public void pruneDataHistory()
+    {
+        if ((maxHistory > -1) && ((passwordData.size()-1) > maxHistory))
+        {
+            int start = passwordData.size() - 1;
+            int end = maxHistory + 1;
+            for (int i = start; i >= end; i--)
+            {
+                passwordData.remove(i);
+            }
+        }
+    }
+    
     public String getTagsAsString()
     {
         StringBuilder tagString = new StringBuilder();
@@ -250,12 +271,18 @@ public class Password extends LightEntity implements Serializable
         return tagString.toString().trim();
     }
 
-    /**
-     * @param tag
-     */
     public void addTag(Tag tag)
     {
     	tag.getPasswords().add(this);
         tags.add(tag);
+    }
+    
+    public void removeTags()
+    {
+        for (Tag tag : tags)
+        {
+            tag.getPasswords().remove(this);
+        }
+        tags.clear();
     }
 }

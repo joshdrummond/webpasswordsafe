@@ -258,7 +258,12 @@ public class PermissionDialog extends Window
         for (PermissionData data : permissionStore.getModels())
         {
             Permission permission = (Permission)data.get("permission");
-            permission.setAccessLevel(((AccessLevel)data.get("accessLevel")).name());
+            String newAccessLevel = ((AccessLevel)data.get("accessLevel")).name();
+            if (!newAccessLevel.equals(permission.getAccessLevel()))
+            {
+                // if user changed the access level value in the GUI, treat it like a new permission
+                permission = new Permission(permission.getSubject(), AccessLevel.valueOf(newAccessLevel));
+            }
             permissions.add(permission);
         }
         permissionListener.doPermissionsChanged(permissions);

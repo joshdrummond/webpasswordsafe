@@ -60,10 +60,10 @@ public class PasswordData extends LightEntity implements Serializable
     private User userCreated;
     
     @ManyToOne
-    @JoinColumn(name="password_id", nullable=false)
+    @JoinColumn(name="password_id", updatable=false, insertable=false, nullable=true)
     private Password parent;
 
-    @Column(name="password_position", nullable=false)
+    @Column(name="password_position", nullable=true)
     private int passwordPosition;
 
     public PasswordData()
@@ -130,4 +130,41 @@ public class PasswordData extends LightEntity implements Serializable
         this.passwordPosition = passwordPosition;
     }
     
+    @Override
+    public String toString()
+    {
+        return "PasswordData [id=" + this.id + "]";
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (this.id ^ (this.id >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!(obj instanceof PasswordData))
+        {
+            return false;
+        }
+        PasswordData other = (PasswordData) obj;
+        if (this.id != other.id)
+        {
+            return false;
+        }
+        return true;
+    }
 }
