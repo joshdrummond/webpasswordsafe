@@ -197,11 +197,16 @@ public class PasswordDialog extends Window implements PermissionListener
             PasswordData passwordDataItem = new PasswordData();
             passwordDataItem.setPassword(safeString(passwordTextBox.getValue()));
             password.addPasswordData(passwordDataItem);
-            String[] tagNames = safeString(tagsTextBox.getValue()).split(" ");
+            String[] tagNames = safeString(tagsTextBox.getValue()).replaceAll(",", " ").split(" ");
+            password.removeTags();
             for (String tagName : tagNames)
             {
-                Tag tag = new Tag(tagName);
-                password.addTag(tag);
+                tagName = tagName.trim();
+                if (!"".equals(tagName))
+                {
+                    Tag tag = new Tag(tagName);
+                    password.addTag(tag);
+                }
             }
             password.setNotes(safeString(notesTextArea.getValue()));
             password.setActive(activeCheckBox.getValue());
@@ -269,7 +274,6 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         nameTextBox.setValue(password.getName());
         usernameTextBox.setValue(password.getUsername());
-//        passwordTextBox.setValue(password.getCurrentPassword());
         tagsTextBox.setValue(password.getTagsAsString());
         notesTextArea.setValue(password.getNotes());
         activeCheckBox.setValue(password.isActive());

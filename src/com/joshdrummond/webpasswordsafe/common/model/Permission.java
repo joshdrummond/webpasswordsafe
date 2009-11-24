@@ -105,5 +105,44 @@ public class Permission extends LightEntity implements Serializable
     {
         this.accessLevel = accessLevel;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Permission [accessLevel=" + this.accessLevel + ", id="
+                + this.id + ", subject=" + this.subject + "]";
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (this.id ^ (this.id >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!(obj instanceof Permission))
+        {
+            return false;
+        }
+        Permission other = (Permission) obj;
+        if (this.id != other.id)
+        {
+            return false;
+        }
+        return true;
+    }
     
 }

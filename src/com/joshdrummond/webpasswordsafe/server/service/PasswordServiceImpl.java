@@ -31,6 +31,7 @@ import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
+import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.User;
@@ -40,6 +41,7 @@ import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Encryptor;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
+
 
 /**
  * Implementation of Password Service
@@ -83,17 +85,88 @@ public class PasswordServiceImpl implements PasswordService {
         password.setDateCreated(now);
         password.setUserLastUpdate(loggedInUser);
         password.setDateLastUpdate(now);
-        password.getPasswordData().get(0).setUserCreated(loggedInUser);
-        password.getPasswordData().get(0).setDateCreated(now);
-        password.getPasswordData().get(0).setPassword(encryptor.encrypt(password.getPasswordData().get(0).getPassword()));
+        password.getCurrentPasswordData().setUserCreated(loggedInUser);
+        password.getCurrentPasswordData().setDateCreated(now);
+        password.getCurrentPasswordData().setPassword(encryptor.encrypt(password.getCurrentPasswordData().getPassword()));
         passwordDAO.makePersistent(password);
         LOG.info(password.getName() + " added");
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
-    public void updatePassword(Password password)
+    public void updatePassword(Password updatePassword)
     {
         LOG.debug("updating password");
+        User loggedInUser = loginService.getLogin();
+        Password password = passwordDAO.findAllowedPasswordById(updatePassword.getId(), loggedInUser, AccessLevel.WRITE);
+        if (password != null)
+        {
+            Date now = new Date();
+
+            // update simple fields
+            password.setName(updatePassword.getName());
+            password.setUsername(updatePassword.getUsername());
+            password.setNotes(updatePassword.getNotes());
+            password.setDateLastUpdate(now);
+            password.setUserLastUpdate(loggedInUser);
+            password.setActive(updatePassword.isActive());
+            
+            // update tags
+            password.removeTags();
+            for (Tag tag : updatePassword.getTags())
+            {
+                Tag pTag = tagDAO.findTagByName(tag.getName());
+                if (null != pTag)
+                {
+                    password.addTag(pTag);
+                }
+                else
+                {
+                    password.addTag(tag);
+                }
+            }
+            
+            // update password data, push others back in history if applicable
+            PasswordData updatePasswordData = updatePassword.getCurrentPasswordData();
+            String updatePasswordVal = updatePasswordData.getPassword();
+            // if user entered a password value and its not the same as the current one...
+            if (!"".equals(updatePasswordVal))
+            {
+                String currentPasswordVal = encryptor.decrypt(password.getCurrentPasswordData().getPassword());
+                if (!updatePasswordVal.equals(currentPasswordVal))
+                {
+                    updatePasswordData.setUserCreated(loggedInUser);
+                    updatePasswordData.setDateCreated(now);
+                    updatePasswordData.setPassword(encryptor.encrypt(updatePasswordVal));
+                    password.addPasswordData(updatePasswordData);
+                    // trim history if not infinite
+                    password.pruneDataHistory();
+                }
+            }
+
+            // update permissions if allowed to grant
+            if (passwordDAO.findAllowedPasswordById(updatePassword.getId(), loggedInUser, AccessLevel.GRANT) != null)
+            {
+                // keep the permissions that haven't changed
+                password.getPermissions().retainAll(updatePassword.getPermissions());
+                // add the permissions that have changed
+                for (Permission permission : updatePassword.getPermissions())
+                {
+                    if (permission.getId() == 0)
+                    {
+                        password.addPermission(permission);
+                    }
+                }
+            }
+            else
+            {
+            	LOG.debug("no access to grant permissions");
+            }
+            
+        }
+        else
+        {
+            LOG.debug("no access to update password");
+        }
     }
 
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
@@ -122,7 +195,7 @@ public class PasswordServiceImpl implements PasswordService {
         if (password != null)
         {
             LOG.debug("returning current password value for ["+password.getName()+"]");
-            currentPasswordValue = encryptor.decrypt(password.getPasswordData().get(0).getPassword());
+            currentPasswordValue = encryptor.decrypt(password.getCurrentPasswordData().getPassword());
             PasswordAccessAudit passwordAccessAudit = new PasswordAccessAudit();
             passwordAccessAudit.setDateAccessed(new Date());
             passwordAccessAudit.setPassword(password);
