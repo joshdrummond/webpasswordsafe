@@ -41,15 +41,19 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
      * @see com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO#findPasswordByFuzzySearch(java.lang.String)
      */
     @SuppressWarnings("unchecked")
-	public List<Password> findPasswordByFuzzySearch(String query, User user)
+	public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly)
     {
-    	Query hqlQuery = getSession().createQuery("select distinct pw from Password pw join pw.permissions pm " +
+    	Query hqlQuery = getSession().createQuery("select distinct pw from Password pw join pw.permissions pm left join fetch pw.tags " +
     			"where (pw.name like :query or pw.username like :query or pw.notes like :query) " +
-    			"and pw.active = :active and pm.accessLevel in (:aclread, :aclwrite, :aclgrant) and " +
+    			(activeOnly ? "and pw.active = :active " : "") + 
+    			"and pm.accessLevel in (:aclread, :aclwrite, :aclgrant) and " +
     			"((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user))) order by pw.name asc");
     	hqlQuery.setString("query", "%"+query+"%");
     	hqlQuery.setEntity("user", user);
-    	hqlQuery.setString("active", "Y");
+    	if (activeOnly)
+    	{
+    	    hqlQuery.setString("active", "Y");
+    	}
         hqlQuery.setString("aclread", AccessLevel.READ.name());
         hqlQuery.setString("aclwrite", AccessLevel.WRITE.name());
         hqlQuery.setString("aclgrant", AccessLevel.GRANT.name());

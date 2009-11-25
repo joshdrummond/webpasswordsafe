@@ -36,7 +36,7 @@ public interface PasswordService extends RemoteService {
     
     public void addPassword(Password password);
     public void updatePassword(Password password);
-    public List<Password> searchPassword(String query);
+    public List<Password> searchPassword(String query, boolean activeOnly);
     public String generatePassword();
     public String getCurrentPassword(long passwordId);
     public List<Tag> getAvailableTags();

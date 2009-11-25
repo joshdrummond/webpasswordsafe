@@ -170,12 +170,12 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List<Password> searchPassword(String query)
+    public List<Password> searchPassword(String query, boolean activeOnly)
     {
     	query = (null == query) ?  "" : query.trim();
         User loggedInUser = loginService.getLogin();
-        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser);
-        LOG.debug("searching for password query ["+query+"] by ["+loggedInUser.getUsername()+"] found "+passwords.size());
+        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly);
+        LOG.debug("searching for password query ["+query+"] activeOnly="+activeOnly+" by ["+loggedInUser.getUsername()+"] found "+passwords.size());
         return passwords;
     }
  
