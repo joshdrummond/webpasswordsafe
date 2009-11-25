@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -17,7 +17,6 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -37,6 +36,7 @@ import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
+
 /**
  * 
  * @author Josh Drummond
@@ -47,13 +47,14 @@ public class LoginDialog extends Window
 
     private TextField<String> usernameTextBox;
     private TextField<String> passwordTextBox;
-    private FormData formData = new FormData("-20"); 
     private MainWindow main;
     
     public LoginDialog(MainWindow main) {
         this.main = main;
         this.setHeading("Login");
         this.setModal(true);
+        this.setClosable(false);
+        this.setOnEsc(false);
         
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);
@@ -71,7 +72,7 @@ public class LoginDialog extends Window
         		}
         	}
         });
-        form.add(usernameTextBox, formData);
+        form.add(usernameTextBox, new FormData("-20"));
         passwordTextBox = new TextField<String>();
         passwordTextBox.setFieldLabel("Password");
         passwordTextBox.setPassword(true);
@@ -86,7 +87,7 @@ public class LoginDialog extends Window
         		}
         	}
         });
-        form.add(passwordTextBox, formData);
+        form.add(passwordTextBox, new FormData("-20"));
         
         Button enterButton = new Button("Submit", new SelectionListener<ButtonEvent>() {
 			@Override
@@ -94,15 +95,8 @@ public class LoginDialog extends Window
                 doSubmit();
 			}
 		});
-        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
-                doCancel();
-			}
-		});
         form.setButtonAlign(HorizontalAlignment.CENTER);
         form.addButton(enterButton);
-        form.addButton(cancelButton);
         this.add(form);
 
     }
@@ -165,8 +159,4 @@ public class LoginDialog extends Window
         LoginService.Util.getInstance().getLogin(callback);
     }
  
-    private void doCancel()
-    {
-        hide();
-    }
 }

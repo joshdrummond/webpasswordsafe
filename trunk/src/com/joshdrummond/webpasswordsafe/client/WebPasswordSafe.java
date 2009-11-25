@@ -44,6 +44,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.client.ui.*;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
@@ -69,18 +70,10 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     private ContentPanel mainPanel, topPanel;
     private Menu userMenu;
     private Menu adminMenu;
-    private PasswordSearchPanel passwordSearchPanel;
 
     public void onModuleLoad() {
     	
         userMenu = new Menu();
-        userMenu.add(new MenuItem("Login", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-                doLogin();
-			}
-		}));
-
         MenuItem userSettings = new MenuItem("Settings");
         Menu userSettingsMenu = new Menu();
         userSettingsMenu.add(new MenuItem("General"));
@@ -134,7 +127,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         passwordMenu.add(new MenuItem("Search", new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
-                doPasswordSearch();
+                refreshPasswordSearch();
             }
         }));
 
@@ -176,7 +169,6 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         adminMenu.add(adminGroup);
 
         MenuItem adminRole = new MenuItem("Roles");
-//        Menu adminRoleMenu = new Menu();
         adminMenu.add(adminRole);
 
         MenuBar mainMenu = new MenuBar();
@@ -212,12 +204,9 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         
         RootPanel.get().add(viewport);
 
-        passwordSearchPanel = new PasswordSearchPanel(this);
-        passwordSearchPanel.setSize("100%", "100%");
-
         refreshMenu();
         
-        verifyInitialization();
+        doGetLoggedInUser();
     }
 
     private MenuItem buildReportMenuItem(String menuName, String reportName)
@@ -279,10 +268,15 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     /**
      * 
      */
-    protected void doPasswordSearch()
+    protected void refreshPasswordSearch()
     {
         mainPanel.removeAll();
-        mainPanel.add(passwordSearchPanel);
+        if (clientSessionUtil.isLoggedIn())
+        {
+            PasswordSearchPanel passwordSearchPanel = new PasswordSearchPanel(this);
+            passwordSearchPanel.setSize("100%", "100%");
+            mainPanel.add(passwordSearchPanel);
+        }
         mainPanel.layout();
     }
 
@@ -362,11 +356,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
     {
         refreshTopPanel();
         refreshMenu();
-    }
-
-    private void doLogin()
-    {
-        displayLoginDialog();
+        refreshPasswordSearch();
     }
 
     private void doAddUser()
@@ -400,6 +390,33 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         }
     }
     
+    private void doGetLoggedInUser()
+    {
+        AsyncCallback<User> callback = new AsyncCallback<User>()
+        {
+
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+
+            public void onSuccess(User result)
+            {
+                if (null != result)
+                {
+                    getClientModel().setLoggedInUser(result);
+                    getClientModel().setLoggedIn(true);
+                    refreshLoginStatus();
+                }
+                else
+                {
+                    verifyInitialization();
+                }
+            }
+        };
+        LoginService.Util.getInstance().getLogin(callback);
+    }
+    
     private void verifyInitialization()
     {
         AsyncCallback<Void> callback = new AsyncCallback<Void>()
@@ -427,6 +444,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
             public void onSuccess(Group result)
             {
                 ClientSessionUtil.getInstance().setEveryoneGroup(result);
+                displayLoginDialog();
             }
         };
         UserService.Util.getInstance().getEveryoneGroup(callback);
@@ -434,9 +452,26 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
 
     private void doLogout()
     {
-        clientSessionUtil.getLoggedInUser().setUsername("");
-        clientSessionUtil.setLoggedIn(false);
-        refreshLoginStatus();
+        AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>()
+        {
+
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+
+            public void onSuccess(Boolean result)
+            {
+                if (result)
+                {
+                    clientSessionUtil.getLoggedInUser().setUsername("");
+                    clientSessionUtil.setLoggedIn(false);
+                    refreshLoginStatus();
+                    displayLoginDialog();
+                }
+            }
+        };
+        LoginService.Util.getInstance().logout(callback);
     }
     
     private void displayLoginDialog()

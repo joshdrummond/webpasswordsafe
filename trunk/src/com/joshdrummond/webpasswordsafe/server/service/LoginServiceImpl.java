@@ -83,7 +83,9 @@ public class LoginServiceImpl implements LoginService {
     public User getLogin()
     {
         String username = (String)ServletUtils.getRequest().getSession().getAttribute("username");
-        return userDAO.findActiveUserByUsername(username);
+        User user = userDAO.findActiveUserByUsername(username);
+        LOG.info("logged in user="+((null==user) ? "null":user.getUsername()));
+        return user;
     }
 
     /* (non-Javadoc)
@@ -113,6 +115,7 @@ public class LoginServiceImpl implements LoginService {
      */
     public boolean logout()
     {
+        LOG.info("logout user = "+ (String)ServletUtils.getRequest().getSession().getAttribute("username"));
         ServletUtils.getRequest().getSession().removeAttribute("username");
         return true;
     }
