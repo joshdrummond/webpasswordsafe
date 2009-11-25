@@ -34,10 +34,9 @@ public interface PasswordServiceAsync {
     
     public void addPassword(Password password, AsyncCallback<Void> callback);
     public void updatePassword(Password password, AsyncCallback<Void> callback);
-    public void searchPassword(String query, AsyncCallback<List<Password>> callback);
+    public void searchPassword(String query, boolean activeOnly, AsyncCallback<List<Password>> callback);
     public void generatePassword(AsyncCallback<String> callback);
     public void getCurrentPassword(long passwordId, AsyncCallback<String> callback);
     public void getAvailableTags(AsyncCallback<List<Tag>> callback);
     public void getPassword(long passwordId, AsyncCallback<Password> callback);
-    
 }

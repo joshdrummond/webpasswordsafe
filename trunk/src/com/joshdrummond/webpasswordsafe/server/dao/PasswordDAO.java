@@ -33,7 +33,7 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
  */
 public interface PasswordDAO extends GenericDAO<Password, Long> {
 
-    public List<Password> findPasswordByFuzzySearch(String query, User user);
+    public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly);
     public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel);
     
 }

@@ -273,7 +273,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         mainPanel.removeAll();
         if (clientSessionUtil.isLoggedIn())
         {
-            PasswordSearchPanel passwordSearchPanel = new PasswordSearchPanel(this);
+            PasswordSearchPanel passwordSearchPanel = new PasswordSearchPanel();
             passwordSearchPanel.setSize("100%", "100%");
             mainPanel.add(passwordSearchPanel);
         }
@@ -295,16 +295,8 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         {
             Password newPassword = new Password();
             newPassword.addPermission(new Permission(clientSessionUtil.getLoggedInUser(), AccessLevel.GRANT));
-            displayPasswordDialog(newPassword);
+            new PasswordDialog(newPassword).show();
         }
-    }
-
-    /**
-     * @param passwordDTO
-     */
-    public void displayPasswordDialog(Password password)
-    {
-        new PasswordDialog(password).show();
     }
 
     /**

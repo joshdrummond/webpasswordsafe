@@ -37,8 +37,10 @@ import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
@@ -53,7 +55,6 @@ import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
@@ -70,16 +71,9 @@ public class PasswordSearchPanel extends ContentPanel
 //    private Tree tagTree;
 //    private TreeItem rootTreeItem;
     private TextField<String> searchTextBox;
+    private CheckBox activeOnlyCheckBox;
     private List<Tag> tags;
-//    private List<PasswordDTO> passwords;
-    private MainWindow mainWindow;
 
-    public PasswordSearchPanel(MainWindow mainWindow)
-    {
-        this();
-        this.mainWindow = mainWindow;
-    }
-    
     public PasswordSearchPanel()
     {
     	setLayout(new BorderLayout());
@@ -88,7 +82,9 @@ public class PasswordSearchPanel extends ContentPanel
     	ContentPanel northPanel = new ContentPanel();
     	northPanel.setHeading("Password Search");
     	ContentPanel westPanel = new ContentPanel(new FillLayout());
+    	westPanel.setHeading("Tag(s)");
     	ContentPanel centerPanel = new ContentPanel(new FillLayout());
+    	centerPanel.setHeading("Password(s)");
     	
     	HBoxLayout northLayout = new HBoxLayout();  
     	northLayout.setPadding(new Padding(5));  
@@ -118,10 +114,12 @@ public class PasswordSearchPanel extends ContentPanel
                 doSearch();
 			}
 		});
-    	HBoxLayoutData northSearchData = new HBoxLayoutData(new Margins(0, 5, 0, 0));  
-//    	northPanel.add(passwordLabel, northSearchData);  
-    	northPanel.add(searchTextBox, northSearchData);  
-    	northPanel.add(searchButton, northSearchData);  
+        activeOnlyCheckBox = new CheckBox();
+        activeOnlyCheckBox.setBoxLabel("Active Only");
+        activeOnlyCheckBox.setValue(true);
+    	northPanel.add(searchTextBox, new HBoxLayoutData(new Margins(0, 5, 0, 0)));  
+        northPanel.add(searchButton, new HBoxLayoutData(new Margins(0, 5, 0, 0)));  
+        northPanel.add(activeOnlyCheckBox, new HBoxLayoutData(new Margins(0, 5, 0, 5)));  
         
         TreeStore<ModelData> treeStore = new TreeStore<ModelData>();  
 //        store.add(model.getChildren(), true);  
@@ -154,8 +152,8 @@ public class PasswordSearchPanel extends ContentPanel
         centerPanel.setScrollMode(Scroll.AUTOX);
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>(4);
         ColumnConfig column = new ColumnConfig();
-        column.setId("title");
-        column.setHeader("Title");
+        column.setId("name");
+        column.setHeader("Name");
         column.setWidth(200);
         configs.add(column);
         column = new ColumnConfig();
@@ -169,6 +167,11 @@ public class PasswordSearchPanel extends ContentPanel
         column.setWidth(100);
         configs.add(column);
         column = new ColumnConfig();
+        column.setId("tags");
+        column.setHeader("Tags");
+        column.setWidth(200);
+        configs.add(column);
+        column = new ColumnConfig();
         column.setId("notes");
         column.setHeader("Notes");
         column.setWidth(300);
@@ -180,12 +183,18 @@ public class PasswordSearchPanel extends ContentPanel
         passwordGrid.setStyleAttribute("borderTop", "none");
         passwordGrid.setBorders(true);
         passwordGrid.setStripeRows(true);
-//        passwordGrid.addListener(Events.RowDoubleClick, new Listener<GridEvent<PasswordSearchData>>()
-        passwordGrid.addListener(Events.RowClick, new Listener<GridEvent<PasswordSearchData>>()
+        passwordGrid.addListener(Events.CellClick, new Listener<GridEvent<PasswordSearchData>>()
         {
-            public void handleEvent(GridEvent<PasswordSearchData> be)
+            public void handleEvent(GridEvent<PasswordSearchData> ge)
             {
-                doLoadPasswordDialog((Long)be.getModel().get("id"));
+                if (2 == ge.getColIndex())
+                {
+                    doShowPasswordPopup((Long)ge.getModel().get("id"));
+                }
+                else
+                {
+                    doLoadPasswordDialog((Long)ge.getModel().get("id"));
+                }
             }
         });
         centerPanel.add(passwordGrid);
@@ -332,7 +341,7 @@ public class PasswordSearchPanel extends ContentPanel
                 refreshTable(result);
             }
         };
-        PasswordService.Util.getInstance().searchPassword(searchTextBox.getValue(), callback);
+        PasswordService.Util.getInstance().searchPassword(searchTextBox.getValue(), activeOnlyCheckBox.getValue(), callback);
     }
 
     /**
@@ -343,11 +352,7 @@ public class PasswordSearchPanel extends ContentPanel
     	store.removeAll();
         for (Password password : passwords)
         {
-        	store.add(new PasswordSearchData(password.getId(), password.getName(), password.getUsername(), password.getNotes()));
-//            passwordTable.setWidget(i+1, 0, new PasswordEditLabel(passwordDTO));
-//            passwordTable.setText(i+1, 1, passwordDTO.getUsername());
-//            passwordTable.setWidget(i+1, 2, new Button("View", new ViewPasswordClickHandler(passwordDTO.getId()))); //password popup
-//            passwordTable.setWidget(i+1, 3, new NotesLabel(passwordDTO.getNotes()));
+        	store.add(new PasswordSearchData(password.getId(), password.getName(), password.getUsername(), password.getTagsAsString(), password.getNotes()));
         }
     }
 
@@ -355,91 +360,36 @@ public class PasswordSearchPanel extends ContentPanel
     {
 		private static final long serialVersionUID = 1L;
 
-    	public PasswordSearchData(long id, String title, String username, String notes)
+    	public PasswordSearchData(long id, String name, String username, String tags, String notes)
     	{
     		set("id", id);
-    		set("title", title);
+    		set("name", name);
     		set("username", username);
     		set("password", "******");
-    		set("notes", notes);
+            set("tags", tags);
+            set("notes", notes);
     	}
     }
-    /*
-    private class PasswordEditLabel extends Label
-    {
-        public PasswordEditLabel(final PasswordDTO password)
-        {
-            super();
-            this.setText(password.getName());
-            this.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event)
-				{
-                    mainWindow.displayPasswordDialog(password);
-				}
-            });
-        }
-    }
-    private class NotesLabel extends Label
-    {
-        public NotesLabel(final String notes)
-        {
-            super();
-            String shortNotes = (notes.length() > 10) ? notes.substring(0, 7) + "..." : notes;
-            this.setText(shortNotes);
-            this.addClickHandler(new ClickHandler() {
-                public void onClick(ClickEvent event)
-                {
-                    PopupPanel p = new PopupPanel(true);
-                    VerticalPanel panel = new VerticalPanel();
-                    panel.add(new Label("Notes:"));
-                    panel.add(new Label(notes));
-                    p.setWidget(panel);
-                    p.setPopupPosition(event.getRelativeElement().getAbsoluteLeft(), event.getRelativeElement().getAbsoluteTop());
-                    p.setStyleName("wps-NotesPopup");
-                    p.show();
-                }
-            });
-        }
-    }
 
-    private class ViewPasswordClickHandler
-        implements ClickHandler
-    {
-        private long passwordId;
-        
-        public ViewPasswordClickHandler(long passwordId)
-        {
-            this.passwordId = passwordId;
-        }
-
-		public void onClick(ClickEvent event)
-		{
-            showPasswordPopup(passwordId, event.getRelativeElement().getAbsoluteLeft(), event.getRelativeElement().getAbsoluteTop());
-		}
-    }
-    
-    private void showPasswordPopup(long passwordId, final int x, final int y)
+    private void doShowPasswordPopup(long passwordId)
     {
         AsyncCallback<String> callback = new AsyncCallback<String>()
         {
             public void onFailure(Throwable caught)
             {
-                Window.alert("Error: "+caught.getMessage());
+                MessageBox.alert("Error", caught.getMessage(), null);
             }
             public void onSuccess(String result)
             {
-                String password = result;
-                PopupPanel p = new PopupPanel(true);
-                VerticalPanel panel = new VerticalPanel();
-                panel.add(new Label("Current Password:"));
-                panel.add(new Label(password));
-                p.setWidget(panel);
-                p.setPopupPosition(x, y);
-                p.setStyleName("wps-CurrentPasswordPopup");
-                p.show();
+                Dialog popup = new Dialog();
+                popup.setHeading("Current Password");
+                popup.setButtons(Dialog.CLOSE);
+                popup.addText(result);
+                popup.setScrollMode(Scroll.AUTO);
+                popup.setHideOnButtonClick(true);
+                popup.show();
             }
         };
         PasswordService.Util.getInstance().getCurrentPassword(passwordId, callback);
     }
-*/
 }
