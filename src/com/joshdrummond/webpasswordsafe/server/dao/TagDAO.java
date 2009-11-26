@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,9 +20,8 @@
 package com.joshdrummond.webpasswordsafe.server.dao;
 
 import java.util.List;
-
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
-import com.joshdrummond.webpasswordsafe.common.model.User;
+
 
 /**
  * DAO interface for Tag
@@ -33,5 +32,5 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
 public interface TagDAO extends GenericDAO<Tag, Long>
 {
     public Tag findTagByName(String name);
-    public List<Tag> findTagsForUser(User user);
+    public List<Tag> findTagsInUse();
 }

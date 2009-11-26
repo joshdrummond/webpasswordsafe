@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.server.service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -170,12 +171,12 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List<Password> searchPassword(String query, boolean activeOnly)
+    public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags)
     {
     	query = (null == query) ?  "" : query.trim();
         User loggedInUser = loginService.getLogin();
-        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly);
-        LOG.debug("searching for password query ["+query+"] activeOnly="+activeOnly+" by ["+loggedInUser.getUsername()+"] found "+passwords.size());
+        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly, tags);
+        LOG.debug("searching for password query ["+query+"] activeOnly="+activeOnly+" tags="+tags+" by ["+loggedInUser.getUsername()+"] found "+passwords.size());
         return passwords;
     }
  
@@ -223,9 +224,8 @@ public class PasswordServiceImpl implements PasswordService {
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Tag> getAvailableTags()
     {
-        User loggedInUser = loginService.getLogin();
-        List<Tag> tags = tagDAO.findTagsForUser(loggedInUser);
-        LOG.debug("found "+tags.size() + " tags for "+loggedInUser.getUsername());
+        List<Tag> tags = tagDAO.findTagsInUse();
+        LOG.debug("found "+tags.size() + " tags in use");
         return tags;
     }
     

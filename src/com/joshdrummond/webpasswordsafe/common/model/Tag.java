@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -28,7 +28,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
 import net.sf.gilead.pojo.java5.LightEntity;
 
 
@@ -40,7 +39,7 @@ import net.sf.gilead.pojo.java5.LightEntity;
  */
 @Entity
 @Table(name="tags")
-public class Tag extends LightEntity implements Serializable
+public class Tag extends LightEntity implements Serializable, Comparable<Tag>
 {
 
 	private static final long serialVersionUID = 2413955215022013023L;
@@ -129,5 +128,13 @@ public class Tag extends LightEntity implements Serializable
 	public String toString() {
 		return "Tag [name=" + this.name + "]";
 	}
+
+    /* (non-Javadoc)
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compareTo(Tag otherTag)
+    {
+        return getName().compareTo(otherTag.getName());
+    }
 
 }

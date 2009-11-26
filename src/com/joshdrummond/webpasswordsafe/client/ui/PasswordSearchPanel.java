@@ -20,11 +20,13 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.data.BaseModel;
-import com.extjs.gxt.ui.client.data.ModelData;
+import com.extjs.gxt.ui.client.data.BaseTreeModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
@@ -58,6 +60,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
+import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.CheckNodes;
+import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.CheckCascade;
 
 
 /**
@@ -67,12 +71,11 @@ import com.joshdrummond.webpasswordsafe.common.model.Tag;
 public class PasswordSearchPanel extends ContentPanel
 {
     private Grid<PasswordSearchData> passwordGrid;
-    private ListStore<PasswordSearchData> store;
-//    private Tree tagTree;
-//    private TreeItem rootTreeItem;
+    private ListStore<PasswordSearchData> gridStore;
+    private TreeStore<TagData> treeStore;
+    private TreePanel<TagData> tagTree;
     private TextField<String> searchTextBox;
     private CheckBox activeOnlyCheckBox;
-    private List<Tag> tags;
 
     public PasswordSearchPanel()
     {
@@ -92,7 +95,6 @@ public class PasswordSearchPanel extends ContentPanel
     	northLayout.setPack(BoxLayoutPack.CENTER);  
     	northPanel.setLayout(northLayout);  
 
-//    	Text passwordLabel = new Text("Password");
     	searchTextBox = new TextField<String>();
         searchTextBox.addKeyListener(new KeyListener() {
         	@Override
@@ -103,7 +105,6 @@ public class PasswordSearchPanel extends ContentPanel
         		}
         	}
         });
-//        searchTextBox.setVisibleLength(30);
         searchTextBox.setWidth(300);
         searchTextBox.setMaxLength(1000);
         searchTextBox.focus();
@@ -121,33 +122,14 @@ public class PasswordSearchPanel extends ContentPanel
         northPanel.add(searchButton, new HBoxLayoutData(new Margins(0, 5, 0, 0)));  
         northPanel.add(activeOnlyCheckBox, new HBoxLayoutData(new Margins(0, 5, 0, 5)));  
         
-        TreeStore<ModelData> treeStore = new TreeStore<ModelData>();  
-//        store.add(model.getChildren(), true);  
-        TreePanel<ModelData> tree = new TreePanel<ModelData>(treeStore);  
-        tree.setDisplayProperty("name");  
-//        tree.getStyle().setLeafIcon(Examples.ICONS.music());  
-        tree.setWidth(250);  
-        /*
-        tags = new ArrayList<TagDTO>();
-        tagTree = new Tree();
-        scrollPanel.setWidget(tagTree);
-        tagTree.addSelectionHandler(new SelectionHandler<TreeItem>() {
-			public void onSelection(SelectionEvent<TreeItem> event)
-			{
-                doTagClicked(event.getSelectedItem());
-			}
-        });
-        tagTree.addOpenHandler(new OpenHandler<TreeItem>() {
-			public void onOpen(OpenEvent<TreeItem> event)
-			{
-                doTagExpanded(event.getTarget());
-			}
-        });
-        tagTree.setSize("100%", "100%");
-        rootTreeItem = new TreeItem("<b>Tags</b>");
-        tagTree.addItem(rootTreeItem);
-        */
-        westPanel.add(tree);
+        treeStore = new TreeStore<TagData>();
+        tagTree = new TreePanel<TagData>(treeStore);
+        tagTree.setCheckStyle(CheckCascade.NONE);
+        tagTree.setCheckNodes(CheckNodes.LEAF);
+        tagTree.setCheckable(true);
+        tagTree.setDisplayProperty("name");
+        tagTree.setWidth(250);  
+        westPanel.add(tagTree);
         
         centerPanel.setScrollMode(Scroll.AUTOX);
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>(4);
@@ -177,9 +159,9 @@ public class PasswordSearchPanel extends ContentPanel
         column.setWidth(300);
         configs.add(column);
         
-        store = new ListStore<PasswordSearchData>();
+        gridStore = new ListStore<PasswordSearchData>();
         ColumnModel cm = new ColumnModel(configs);
-        passwordGrid = new Grid<PasswordSearchData>(store, cm);
+        passwordGrid = new Grid<PasswordSearchData>(gridStore, cm);
         passwordGrid.setStyleAttribute("borderTop", "none");
         passwordGrid.setBorders(true);
         passwordGrid.setStripeRows(true);
@@ -218,47 +200,9 @@ public class PasswordSearchPanel extends ContentPanel
     	add(westPanel, westData);
     	add(centerPanel, centerData);
     	
-    	
-        /*
-        passwordTable = new FlexTable();
-        flexTable.setWidget(1, 1, passwordTable);
-        passwordTable.setWidth("100%");
-        flexTable.getCellFormatter().setWordWrap(1, 1, false);
-        flexTable.getCellFormatter().setHorizontalAlignment(1, 1, HasHorizontalAlignment.ALIGN_CENTER);
-        flexTable.getCellFormatter().setVerticalAlignment(1, 1, HasVerticalAlignment.ALIGN_TOP);
-        */
-        
-
-//        initTable();
-//        initTags();
+    	doLoadTags();
     }
 
-    /**
-     * 
-     */
-    /*
-    private void initTags()
-    {
-        doLoadTags();
-        rootTreeItem.setState(true);
-    }*/
-
-    /**
-     * @param item
-     */
-    /*
-    protected void doTagExpanded(TreeItem item)
-    {
-        if (item.equals(rootTreeItem) && item.getState())
-        {
-            doLoadTags();
-        }
-    }
-    */
-
-    /**
-     * 
-     */
     private void doLoadTags()
     {
         AsyncCallback<List<Tag>> callback = new AsyncCallback<List<Tag>>()
@@ -269,8 +213,7 @@ public class PasswordSearchPanel extends ContentPanel
             }
             public void onSuccess(List<Tag> result)
             {
-                tags = result;
-//                refreshTags();
+                refreshTags(result);
             }
         };
         PasswordService.Util.getInstance().getAvailableTags(callback);
@@ -299,37 +242,23 @@ public class PasswordSearchPanel extends ContentPanel
         PasswordService.Util.getInstance().getPassword(passwordId, callback);
     }
     
-    /**
-     * 
-     */
-    /*
-    private void refreshTags()
+    private void refreshTags(List<Tag> tags)
     {
-        rootTreeItem.removeItems();
-        for (TagDTO tag : tags)
+        treeStore.removeAll();
+        for (Tag tag : tags)
         {
-            rootTreeItem.addItem(tag.getName());
+            treeStore.add(new TagData(tag), true);
         }
     }
-*/
-    /**
-     * @param item
-     */
-    /*
-    protected void doTagClicked(TreeItem item)
-    {
-        if (item.equals(rootTreeItem) && (0 == item.getChildCount()))
-        {
-            doLoadTags();
-        }
-    }
-*/
-    
-    /**
-     * 
-     */
+
     protected void doSearch()
     {
+        List<TagData> selectedTagData = tagTree.getCheckedSelection();
+        Set<Tag> selectedTags = new HashSet<Tag>(selectedTagData.size());
+        for (TagData selectedTag : selectedTagData)
+        {
+            selectedTags.add((Tag)selectedTag.get("tag"));
+        }
         AsyncCallback<List<Password>> callback = new AsyncCallback<List<Password>>()
         {
             public void onFailure(Throwable caught)
@@ -341,18 +270,15 @@ public class PasswordSearchPanel extends ContentPanel
                 refreshTable(result);
             }
         };
-        PasswordService.Util.getInstance().searchPassword(searchTextBox.getValue(), activeOnlyCheckBox.getValue(), callback);
+        PasswordService.Util.getInstance().searchPassword(searchTextBox.getValue(), activeOnlyCheckBox.getValue(), selectedTags, callback);
     }
 
-    /**
-     * @param data
-     */
     private void refreshTable(List<Password> passwords)
     {
-    	store.removeAll();
+    	gridStore.removeAll();
         for (Password password : passwords)
         {
-        	store.add(new PasswordSearchData(password.getId(), password.getName(), password.getUsername(), password.getTagsAsString(), password.getNotes()));
+        	gridStore.add(new PasswordSearchData(password.getId(), password.getName(), password.getUsername(), password.getTagsAsString(), password.getNotes()));
         }
     }
 
@@ -391,5 +317,27 @@ public class PasswordSearchPanel extends ContentPanel
             }
         };
         PasswordService.Util.getInstance().getCurrentPassword(passwordId, callback);
+    }
+    
+    private class TagData extends BaseTreeModel
+    {
+        private static final long serialVersionUID = 1L;
+        
+        public TagData(Tag tag)
+        {
+            set("id", tag.getId());
+            set("name", tag.getName());
+            set("tag", tag);
+        }
+        /*
+        public TagData(long id, String name, BaseTreeModel[] children)
+        {
+            this(id, name);
+            for (BaseTreeModel child : children)
+            {
+                add(child);
+            }
+        }
+        */
     }
 }

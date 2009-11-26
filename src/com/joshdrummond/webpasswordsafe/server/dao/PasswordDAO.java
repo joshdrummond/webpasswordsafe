@@ -19,9 +19,11 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
+import java.util.Collection;
 import java.util.List;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
 
@@ -33,7 +35,7 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
  */
 public interface PasswordDAO extends GenericDAO<Password, Long> {
 
-    public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly);
+    public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags);
     public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel);
     
 }

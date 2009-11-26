@@ -19,11 +19,13 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
+import java.util.Collection;
 import java.util.List;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
 
@@ -41,13 +43,22 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
      * @see com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO#findPasswordByFuzzySearch(java.lang.String)
      */
     @SuppressWarnings("unchecked")
-	public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly)
+	public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags)
     {
-    	Query hqlQuery = getSession().createQuery("select distinct pw from Password pw join pw.permissions pm left join fetch pw.tags " +
-    			"where (pw.name like :query or pw.username like :query or pw.notes like :query) " +
-    			(activeOnly ? "and pw.active = :active " : "") + 
-    			"and pm.accessLevel in (:aclread, :aclwrite, :aclgrant) and " +
-    			"((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user))) order by pw.name asc");
+        StringBuilder hqlString = new StringBuilder();
+        hqlString.append("select distinct pw from Password pw join pw.permissions pm left join fetch pw.tags ");
+        hqlString.append("where (pw.name like :query or pw.username like :query or pw.notes like :query) ");
+        hqlString.append(activeOnly ? "and pw.active = :active " : "");
+        for (int tagCounter = 0; tagCounter < tags.size(); tagCounter++)
+        {
+            hqlString.append("and :tag");
+            hqlString.append(tagCounter);
+            hqlString.append(" in elements(pw.tags) ");
+        }
+        hqlString.append("and pm.accessLevel in (:aclread, :aclwrite, :aclgrant) and ");
+        hqlString.append("((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user))) order by pw.name asc");
+        
+    	Query hqlQuery = getSession().createQuery(hqlString.toString());
     	hqlQuery.setString("query", "%"+query+"%");
     	hqlQuery.setEntity("user", user);
     	if (activeOnly)
@@ -57,6 +68,12 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         hqlQuery.setString("aclread", AccessLevel.READ.name());
         hqlQuery.setString("aclwrite", AccessLevel.WRITE.name());
         hqlQuery.setString("aclgrant", AccessLevel.GRANT.name());
+        int tagCounter = 0;
+        for (Tag tag : tags)
+        {
+            hqlQuery.setEntity("tag"+tagCounter, tag);
+            tagCounter++;
+        }
         return hqlQuery.list();
     }
 

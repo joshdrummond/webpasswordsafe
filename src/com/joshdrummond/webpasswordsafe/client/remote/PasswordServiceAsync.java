@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.client.remote;
 
+import java.util.Collection;
 import java.util.List;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
@@ -34,7 +35,7 @@ public interface PasswordServiceAsync {
     
     public void addPassword(Password password, AsyncCallback<Void> callback);
     public void updatePassword(Password password, AsyncCallback<Void> callback);
-    public void searchPassword(String query, boolean activeOnly, AsyncCallback<List<Password>> callback);
+    public void searchPassword(String query, boolean activeOnly, Collection<Tag> tags, AsyncCallback<List<Password>> callback);
     public void generatePassword(AsyncCallback<String> callback);
     public void getCurrentPassword(long passwordId, AsyncCallback<String> callback);
     public void getAvailableTags(AsyncCallback<List<Tag>> callback);
