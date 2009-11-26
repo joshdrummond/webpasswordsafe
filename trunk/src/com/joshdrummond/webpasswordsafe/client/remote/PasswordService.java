@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.client.remote;
 
+import java.util.Collection;
 import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -36,7 +37,7 @@ public interface PasswordService extends RemoteService {
     
     public void addPassword(Password password);
     public void updatePassword(Password password);
-    public List<Password> searchPassword(String query, boolean activeOnly);
+    public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags);
     public String generatePassword();
     public String getCurrentPassword(long passwordId);
     public List<Tag> getAvailableTags();
