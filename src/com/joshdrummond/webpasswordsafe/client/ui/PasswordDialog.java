@@ -53,6 +53,7 @@ public class PasswordDialog extends Window implements PermissionListener
     private TextField<String> usernameTextBox;
     private TextField<String> passwordTextBox;
     private TextField<String> tagsTextBox;
+    private TextField<String> maxHistoryTextBox;
     private TextArea notesTextArea;
     private CheckBox activeCheckBox;
     private FormData formData = new FormData("98%"); 
@@ -100,6 +101,19 @@ public class PasswordDialog extends Window implements PermissionListener
             form.add(currentButton, formData);
         }
         
+        if (password.getId() > 0)
+        {
+            Button historyButton = new Button("View Password History", new SelectionListener<ButtonEvent>()
+            {
+                @Override
+                public void componentSelected(ButtonEvent ce)
+                {
+                    doViewPasswordHistory();
+                }
+            });
+            form.add(historyButton, formData);
+        }
+        
         tagsTextBox = new TextField<String>();
         tagsTextBox.setFieldLabel("Tags");
         form.add(tagsTextBox, formData);
@@ -107,6 +121,10 @@ public class PasswordDialog extends Window implements PermissionListener
         notesTextArea = new TextArea();
         notesTextArea.setFieldLabel("Notes");
         form.add(notesTextArea, formData);
+
+        maxHistoryTextBox = new TextField<String>();
+        maxHistoryTextBox.setFieldLabel("Max History (-1 infinite)");
+        form.add(maxHistoryTextBox, formData);
 
         activeCheckBox = new CheckBox();
         activeCheckBox.setBoxLabel("Active");
@@ -119,6 +137,19 @@ public class PasswordDialog extends Window implements PermissionListener
 			}
 		});
         form.add(editPermissionsButton, formData);
+        
+        if (password.getId() > 0)
+        {
+            Button accessAuditButton = new Button("View Access Audit Log", new SelectionListener<ButtonEvent>()
+            {
+                @Override
+                public void componentSelected(ButtonEvent ce)
+                {
+                    doViewAccessAuditLog();
+                }
+            });
+            form.add(accessAuditButton, formData);
+        }
 
         Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
 			@Override
@@ -143,6 +174,19 @@ public class PasswordDialog extends Window implements PermissionListener
         this.add(form);
     }
 
+    
+    private void doViewPasswordHistory()
+    {
+        new PasswordHistoryDialog(password).show();
+    }
+    
+    
+    private void doViewAccessAuditLog()
+    {
+        new PasswordAccessAuditDialog(password).show();
+    }
+    
+    
     /**
      * 
      */
@@ -209,6 +253,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 }
             }
             password.setNotes(safeString(notesTextArea.getValue()));
+            password.setMaxHistory(safeInt(maxHistoryTextBox.getValue()));
             password.setActive(activeCheckBox.getValue());
 
             AsyncCallback<Void> callback = new AsyncCallback<Void>()
@@ -277,6 +322,7 @@ public class PasswordDialog extends Window implements PermissionListener
         tagsTextBox.setValue(password.getTagsAsString());
         notesTextArea.setValue(password.getNotes());
         activeCheckBox.setValue(password.isActive());
+        maxHistoryTextBox.setValue(String.valueOf(password.getMaxHistory()));
     }
 
     /**
@@ -302,5 +348,23 @@ public class PasswordDialog extends Window implements PermissionListener
     public String safeString(String s)
     {
         return (null != s) ? s.trim() : "";
+    }
+    
+    public int safeInt(String s)
+    {
+        int num = -1;
+        s = safeString(s);
+        try
+        {
+            if (!"".equals(s))
+            {
+                num = Integer.parseInt(s);
+            }
+        }
+        catch (NumberFormatException e)
+        {
+            num = -1;
+        }
+        return num;
     }
 }

@@ -77,7 +77,9 @@ public class PermissionDialog extends Window
         permissionStore = new ListStore<PermissionData>();
 
         final SimpleComboBox<AccessLevel> accessLevelCombo = new SimpleComboBox<AccessLevel>();
+        accessLevelCombo.setForceSelection(true);
         accessLevelCombo.setEditable(false);
+        accessLevelCombo.setTriggerAction(TriggerAction.ALL);
         accessLevelCombo.add(Arrays.asList(AccessLevel.values()));
         CellEditor accessLevelEditor = new CellEditor(accessLevelCombo)
         {
@@ -147,7 +149,6 @@ public class PermissionDialog extends Window
                     }
                 });
         panel.add(removeButton, new AbsoluteData(255, 216));
-        removeButton.setWidth("44px");
 
         Button addUserButton = new Button("Add",
                 new SelectionListener<ButtonEvent>()

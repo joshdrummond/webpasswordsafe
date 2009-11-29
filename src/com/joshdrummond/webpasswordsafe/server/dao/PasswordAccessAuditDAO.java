@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,7 +19,10 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
+import java.util.List;
+import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
+
 
 /**
  * DAO interface for PasswordAccessAudit
@@ -29,4 +32,6 @@ import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
  */
 public interface PasswordAccessAuditDAO extends GenericDAO<PasswordAccessAudit, Long> {
     
+    public List<PasswordAccessAudit> findAccessAuditByPassword(Password password);
+
 }

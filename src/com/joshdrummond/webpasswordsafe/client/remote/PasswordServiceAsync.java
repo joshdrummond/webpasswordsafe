@@ -22,6 +22,8 @@ package com.joshdrummond.webpasswordsafe.client.remote;
 import java.util.Collection;
 import java.util.List;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
+import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
+import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -40,4 +42,6 @@ public interface PasswordServiceAsync {
     public void getCurrentPassword(long passwordId, AsyncCallback<String> callback);
     public void getAvailableTags(AsyncCallback<List<Tag>> callback);
     public void getPassword(long passwordId, AsyncCallback<Password> callback);
+    public void getPasswordAccessAuditData(long passwordId, AsyncCallback<List<PasswordAccessAudit>> callback);
+    public void getPasswordHistoryData(long passwordId, AsyncCallback<List<PasswordData>> callback);
 }

@@ -19,8 +19,13 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
+import java.util.List;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
+
 
 /**
  * DAO implementation for PasswordAccessAudit
@@ -33,5 +38,13 @@ public class PasswordAccessAuditDAOHibernate
     extends GenericHibernateDAO<PasswordAccessAudit, Long> 
     implements PasswordAccessAuditDAO
 {
+
+    /* (non-Javadoc)
+     * @see com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO#findAccessAuditByPassword(com.joshdrummond.webpasswordsafe.common.model.Password)
+     */
+    public List<PasswordAccessAudit> findAccessAuditByPassword(Password password)
+    {
+        return findByCriteriaOrdered(Order.desc("dateAccessed"), Restrictions.eq("password", password));
+    }
 
 }
