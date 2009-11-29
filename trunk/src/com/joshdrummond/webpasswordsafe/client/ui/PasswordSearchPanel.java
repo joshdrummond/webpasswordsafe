@@ -76,6 +76,8 @@ public class PasswordSearchPanel extends ContentPanel
     private TreePanel<TagData> tagTree;
     private TextField<String> searchTextBox;
     private CheckBox activeOnlyCheckBox;
+//    private static final String TOOLTIP_VIEW_PASSWORD_VALUE = "Click to view current password value.";
+//    private static final String TOOLTIP_EDIT_PASSWORD = "Click to edit password and/or permissions.";
 
     public PasswordSearchPanel()
     {
@@ -134,26 +136,31 @@ public class PasswordSearchPanel extends ContentPanel
         centerPanel.setScrollMode(Scroll.AUTOX);
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>(4);
         ColumnConfig column = new ColumnConfig();
+//        column.setToolTip(TOOLTIP_EDIT_PASSWORD);
         column.setId("name");
         column.setHeader("Name");
         column.setWidth(200);
         configs.add(column);
         column = new ColumnConfig();
+//        column.setToolTip(TOOLTIP_EDIT_PASSWORD);
         column.setId("username");
         column.setHeader("Username");
         column.setWidth(100);
         configs.add(column);
         column = new ColumnConfig();
+//        column.setToolTip(TOOLTIP_VIEW_PASSWORD_VALUE);
         column.setId("password");
         column.setHeader("Password");
         column.setWidth(100);
         configs.add(column);
         column = new ColumnConfig();
+//        column.setToolTip(TOOLTIP_EDIT_PASSWORD);
         column.setId("tags");
         column.setHeader("Tags");
         column.setWidth(200);
         configs.add(column);
         column = new ColumnConfig();
+//        column.setToolTip(TOOLTIP_EDIT_PASSWORD);
         column.setId("notes");
         column.setHeader("Notes");
         column.setWidth(300);
@@ -165,7 +172,8 @@ public class PasswordSearchPanel extends ContentPanel
         passwordGrid.setStyleAttribute("borderTop", "none");
         passwordGrid.setBorders(true);
         passwordGrid.setStripeRows(true);
-        passwordGrid.addListener(Events.CellClick, new Listener<GridEvent<PasswordSearchData>>()
+//        passwordGrid.addListener(Events.CellClick, new Listener<GridEvent<PasswordSearchData>>()
+        passwordGrid.addListener(Events.CellDoubleClick, new Listener<GridEvent<PasswordSearchData>>()
         {
             public void handleEvent(GridEvent<PasswordSearchData> ge)
             {

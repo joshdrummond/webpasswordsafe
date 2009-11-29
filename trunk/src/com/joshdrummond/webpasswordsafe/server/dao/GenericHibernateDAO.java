@@ -28,7 +28,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
+import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+
 
 /**
  * Generic DAO implementation for Hibernate
@@ -110,11 +112,19 @@ public abstract class GenericHibernateDAO<T, ID extends Serializable> implements
         getSession().clear();
     }
 
-    @SuppressWarnings({"unchecked"})
     protected List<T> findByCriteria(Criterion... criterion) {
+        return findByCriteriaOrdered(null, criterion);
+    }
+    
+    @SuppressWarnings({"unchecked"})
+    protected List<T> findByCriteriaOrdered(Order order, Criterion... criterion) {
         Criteria crit = getSession().createCriteria(getPersistentClass());
         for (Criterion c : criterion) {
             crit.add(c);
+        }
+        if (null != order)
+        {
+            crit.addOrder(order);
         }
         return crit.list();
     }

@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.server.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -110,6 +111,7 @@ public class PasswordServiceImpl implements PasswordService {
             password.setDateLastUpdate(now);
             password.setUserLastUpdate(loggedInUser);
             password.setActive(updatePassword.isActive());
+            password.setMaxHistory(updatePassword.getMaxHistory());
             
             // update tags
             password.removeTags();
@@ -139,10 +141,10 @@ public class PasswordServiceImpl implements PasswordService {
                     updatePasswordData.setDateCreated(now);
                     updatePasswordData.setPassword(encryptor.encrypt(updatePasswordVal));
                     password.addPasswordData(updatePasswordData);
-                    // trim history if not infinite
-                    password.pruneDataHistory();
                 }
             }
+            // trim history if not infinite
+            password.pruneDataHistory();
 
             // update permissions if allowed to grant
             if (passwordDAO.findAllowedPasswordById(updatePassword.getId(), loggedInUser, AccessLevel.GRANT) != null)
@@ -197,17 +199,24 @@ public class PasswordServiceImpl implements PasswordService {
         {
             LOG.debug("returning current password value for ["+password.getName()+"]");
             currentPasswordValue = encryptor.decrypt(password.getCurrentPasswordData().getPassword());
-            PasswordAccessAudit passwordAccessAudit = new PasswordAccessAudit();
-            passwordAccessAudit.setDateAccessed(new Date());
-            passwordAccessAudit.setPassword(password);
-            passwordAccessAudit.setUser(loggedInUser);
-            passwordAccessAuditDAO.makePersistent(passwordAccessAudit);
+            createPasswordAccessAuditEntry(password, loggedInUser);
         }
         else
         {
             LOG.debug("passwordId "+passwordId+" not found");
         }
         return currentPasswordValue;
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
+    private void createPasswordAccessAuditEntry(Password password, User user)
+    {
+        LOG.debug("creating access audit entry for password=["+password.getName()+"] user=["+user.getName()+"]");
+        PasswordAccessAudit passwordAccessAudit = new PasswordAccessAudit();
+        passwordAccessAudit.setDateAccessed(new Date());
+        passwordAccessAudit.setPassword(password);
+        passwordAccessAudit.setUser(user);
+        passwordAccessAuditDAO.makePersistent(passwordAccessAudit);
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
@@ -219,6 +228,40 @@ public class PasswordServiceImpl implements PasswordService {
         for (Permission p : password.getPermissions())
             LOG.debug(p.getSubject().getName()+"="+p.getAccessLevelObj().name()+","+p.getAccessLevel());
         return password;
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId)
+    {
+        List<PasswordAccessAudit> accessAuditList = new ArrayList<PasswordAccessAudit>(0);
+        User loggedInUser = loginService.getLogin();
+        Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
+        if (null != password)
+        {
+            accessAuditList = passwordAccessAuditDAO.findAccessAuditByPassword(password);
+        }
+        LOG.debug("found "+accessAuditList.size() + " password access audit entries");
+        return accessAuditList;
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
+    public List<PasswordData> getPasswordHistoryData(long passwordId)
+    {
+        List<PasswordData> decryptedPasswordDataList = new ArrayList<PasswordData>(0);
+        User loggedInUser = loginService.getLogin();
+        Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
+        if (null != password)
+        {
+            decryptedPasswordDataList = new ArrayList<PasswordData>(password.getPasswordData().size());
+            for (PasswordData passwordData : password.getPasswordData())
+            {
+                decryptedPasswordDataList.add(new PasswordData(encryptor.decrypt(passwordData.getPassword()), 
+                        passwordData.getDateCreated(), passwordData.getUserCreated()));
+            }
+            createPasswordAccessAuditEntry(password, loggedInUser);
+        }
+        LOG.debug("found "+decryptedPasswordDataList.size() + " password history values");
+        return decryptedPasswordDataList;
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)

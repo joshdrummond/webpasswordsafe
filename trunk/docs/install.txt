@@ -79,7 +79,7 @@ WEB-INF/lib/
 [10] International Components for Unicode (ICU) 4.0 (http://www.icu-project.org/) for Java <= 5.0
 [11] Spring Web Services 1.5 with dependencies distribution (http://static.springframework.org/spring-ws/sites/1.5/)
 [12] Bouncy Castle JCE Provider (http://www.bouncycastle.org/java.html)*
-[13] Ext GWT 2.0.1 (http://www.extjs.com/products/gxt/)
+[13] Ext GWT 2.1.0 (http://www.extjs.com/products/gxt/)
 [14] JUnit 4.5.0 (http://www.junit.org/)
 [15] Gilead 1.2.3.823 (http://sourceforge.net/projects/gilead/)
 [16] JasperReports 3.6.1 (http://sourceforge.net/projects/jasperreports/)

@@ -70,6 +70,13 @@ public class PasswordData extends LightEntity implements Serializable
     {
     }
 
+    public PasswordData(String password, Date dateCreated, User userCreated)
+    {
+        this.password = password;
+        this.dateCreated = dateCreated;
+        this.userCreated = userCreated;
+    }
+    
     public long getId()
     {
         return this.id;
