@@ -36,13 +36,17 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
 public interface UserService extends RemoteService {
     
     public void changePassword(String password);
-    public void addUser(User userDTO);
-    public void updateUser(User userDTO);
+    public void addUser(User user);
+    public void updateUser(User user);
     public List<User> getUsers(boolean includeOnlyActive);
     public void verifyInitialization();
     public Group getEveryoneGroup();
-    public List<Group> getGroups();
+    public List<Group> getGroups(boolean includeEveryoneGroup);
     public List<Subject> getSubjects(boolean includeOnlyActive);
+    public Group getGroupWithUsers(long groupId);
+    public User getUserWithGroups(long userId);
+    public void addGroup(Group group);
+    public void updateGroup(Group group);
 
 	/**
 	 * Utility class for simplifying access to the instance of async service.

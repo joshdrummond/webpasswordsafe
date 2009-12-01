@@ -34,12 +34,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface UserServiceAsync {
     
     public void changePassword(String password, AsyncCallback<Void> callback);
-    public void addUser(User userDTO, AsyncCallback<Void> callback);
-    public void updateUser(User userDTO, AsyncCallback<Void> callback);
+    public void addUser(User user, AsyncCallback<Void> callback);
+    public void updateUser(User user, AsyncCallback<Void> callback);
     public void getUsers(boolean includeOnlyActive, AsyncCallback<List<User>> callback);
     public void verifyInitialization(AsyncCallback<Void> callback);
     public void getEveryoneGroup(AsyncCallback<Group> callback);
-    public void getGroups(AsyncCallback<List<Group>> callback);
+    public void getGroups(boolean includeEveryoneGroup, AsyncCallback<List<Group>> callback);
     public void getSubjects(boolean includeOnlyActive, AsyncCallback<List<Subject>> callback);
-
+    public void getGroupWithUsers(long groupId, AsyncCallback<Group> callback);
+    public void getUserWithGroups(long userId, AsyncCallback<User> callback);
+    public void addGroup(Group group, AsyncCallback<Void> callback);
+    public void updateGroup(Group group, AsyncCallback<Void> callback);
 }

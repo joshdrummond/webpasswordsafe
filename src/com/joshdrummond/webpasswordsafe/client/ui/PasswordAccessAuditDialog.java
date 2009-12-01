@@ -61,7 +61,7 @@ public class PasswordAccessAuditDialog extends Window
         gridStore = new ListStore<PasswordAccessAuditData>();
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
         ColumnConfig columnConfigDate = new ColumnConfig("date", "Date Accessed", 130);
-        columnConfigDate.setDateTimeFormat(DateTimeFormat.getFormat("yyyy/MM/dd HH:mm:ss"));
+        columnConfigDate.setDateTimeFormat(DateTimeFormat.getFormat("MM/dd/yyyy HH:mm:ss"));
         configs.add(columnConfigDate);
         ColumnConfig columnConfigUser = new ColumnConfig("user", "User Accessed", 160);
         configs.add(columnConfigUser);

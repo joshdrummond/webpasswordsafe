@@ -60,6 +60,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
+import com.joshdrummond.webpasswordsafe.common.util.Utils;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.CheckNodes;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.CheckCascade;
 
@@ -142,7 +143,6 @@ public class PasswordSearchPanel extends ContentPanel
         column.setWidth(200);
         configs.add(column);
         column = new ColumnConfig();
-//        column.setToolTip(TOOLTIP_EDIT_PASSWORD);
         column.setId("username");
         column.setHeader("Username");
         column.setWidth(100);
@@ -154,13 +154,11 @@ public class PasswordSearchPanel extends ContentPanel
         column.setWidth(100);
         configs.add(column);
         column = new ColumnConfig();
-//        column.setToolTip(TOOLTIP_EDIT_PASSWORD);
         column.setId("tags");
         column.setHeader("Tags");
         column.setWidth(200);
         configs.add(column);
         column = new ColumnConfig();
-//        column.setToolTip(TOOLTIP_EDIT_PASSWORD);
         column.setId("notes");
         column.setHeader("Notes");
         column.setWidth(300);
@@ -172,7 +170,6 @@ public class PasswordSearchPanel extends ContentPanel
         passwordGrid.setStyleAttribute("borderTop", "none");
         passwordGrid.setBorders(true);
         passwordGrid.setStripeRows(true);
-//        passwordGrid.addListener(Events.CellClick, new Listener<GridEvent<PasswordSearchData>>()
         passwordGrid.addListener(Events.CellDoubleClick, new Listener<GridEvent<PasswordSearchData>>()
         {
             public void handleEvent(GridEvent<PasswordSearchData> ge)
@@ -259,7 +256,7 @@ public class PasswordSearchPanel extends ContentPanel
         }
     }
 
-    protected void doSearch()
+    private void doSearch()
     {
         List<TagData> selectedTagData = tagTree.getCheckedSelection();
         Set<Tag> selectedTags = new HashSet<Tag>(selectedTagData.size());
@@ -278,7 +275,7 @@ public class PasswordSearchPanel extends ContentPanel
                 refreshTable(result);
             }
         };
-        PasswordService.Util.getInstance().searchPassword(searchTextBox.getValue(), activeOnlyCheckBox.getValue(), selectedTags, callback);
+        PasswordService.Util.getInstance().searchPassword(Utils.safeString(searchTextBox.getValue()), activeOnlyCheckBox.getValue(), selectedTags, callback);
     }
 
     private void refreshTable(List<Password> passwords)

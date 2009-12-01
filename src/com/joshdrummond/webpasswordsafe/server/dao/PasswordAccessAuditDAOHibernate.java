@@ -44,7 +44,7 @@ public class PasswordAccessAuditDAOHibernate
      */
     public List<PasswordAccessAudit> findAccessAuditByPassword(Password password)
     {
-        return findByCriteriaOrdered(Order.desc("dateAccessed"), Restrictions.eq("password", password));
+        return findByCriteria(Order.desc("dateAccessed"), Restrictions.eq("password", password));
     }
 
 }

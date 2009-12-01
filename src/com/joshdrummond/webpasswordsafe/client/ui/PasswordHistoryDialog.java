@@ -69,7 +69,7 @@ public class PasswordHistoryDialog extends Window
         columnConfigPassword.setEditor(new CellEditor(text));
         configs.add(columnConfigPassword);
         ColumnConfig columnConfigDate = new ColumnConfig("date", "Date Created", 120);
-        columnConfigDate.setDateTimeFormat(DateTimeFormat.getFormat("yyyy/MM/dd HH:mm:ss"));
+        columnConfigDate.setDateTimeFormat(DateTimeFormat.getFormat("MM/dd/yyyy HH:mm:ss"));
         configs.add(columnConfigDate);
         ColumnConfig columnConfigUser = new ColumnConfig("user", "User Created", 150);
         configs.add(columnConfigUser);

@@ -26,7 +26,6 @@ import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
-import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -41,7 +40,6 @@ import com.joshdrummond.webpasswordsafe.common.model.Group;
  */
 public class GroupSelectionDialog extends Window
 {
-
     private ListField<GroupData> groupListBox;
     private ListStore<GroupData> store;
     private GroupListener groupListener;
@@ -91,32 +89,22 @@ public class GroupSelectionDialog extends Window
         this.add(form);
     }
 
-    /**
-     * 
-     */
     private void setFields()
     {
         store.removeAll();
         for (Group group : groups)
         {
             store.add(new GroupData(group));
-            Info.display("Group", group.getName());
         }
         groupListBox.setStore(store);
     }
 
-    /**
-     * 
-     */
-    protected void doCancel()
+    private void doCancel()
     {
         hide();
     }
 
-    /**
-     * 
-     */
-    protected void doOkay()
+    private void doOkay()
     {
         List<GroupData> dataSelected = groupListBox.getSelection();
         List<Group> groupsSelected = new ArrayList<Group>(dataSelected.size());

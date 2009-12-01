@@ -21,8 +21,11 @@ package com.joshdrummond.webpasswordsafe.common.model;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -38,15 +41,18 @@ import org.hibernate.annotations.Index;
 @Entity
 @Table(name = "groups")
 @PrimaryKeyJoinColumn(name = "id")
-public class Group extends Subject {
-
+public class Group extends Subject
+{
 	private static final long serialVersionUID = 5845591346545424763L;
 
 	@Column(name = "name", nullable = false, length = 100, unique=true)
     @Index(name = "idx_group_name")
     private String name;
 
-    @ManyToMany(mappedBy="groups")
+    @ManyToMany(cascade={CascadeType.ALL})
+    @JoinTable(name="user_groups",
+            joinColumns={@JoinColumn(name="group_id")},
+            inverseJoinColumns={@JoinColumn(name="user_id")})
     private Set<User> users;
     
     public Group() {
@@ -82,7 +88,17 @@ public class Group extends Subject {
 
     public void addUser(User user)
     {
+        user.addGroup(this);
         users.add(user);
+    }
+    
+    public void removeUsers()
+    {
+        for (User user : users)
+        {
+            user.removeGroup(this);
+        }
+        users.clear();
     }
 
     @Override

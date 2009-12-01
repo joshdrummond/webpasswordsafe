@@ -24,8 +24,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -42,8 +40,8 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "users")
 @PrimaryKeyJoinColumn(name = "id")
-public class User extends Subject {
-
+public class User extends Subject
+{
 	private static final long serialVersionUID = 4024780603653185462L;
 
 	@Column(name = "username", nullable = false, length = 64, updatable = false, unique = true)
@@ -69,15 +67,13 @@ public class User extends Subject {
     @Column(name = "last_login")
     private Date lastLogin;
 
-    @ManyToMany
-    @JoinTable(name="user_groups",
-            joinColumns={@JoinColumn(name="user_id")},
-            inverseJoinColumns={@JoinColumn(name="group_id")})
+    @ManyToMany(mappedBy="users")
     private Set<Group> groups;
     
     public User() {
         super( 'U' );
         groups = new HashSet<Group>();
+        activeFlag = true;
     }
 
     public static User newActiveUser(String username, String password, String fullname, String email)
@@ -116,6 +112,11 @@ public class User extends Subject {
     public void addGroup(Group group)
     {
         groups.add(group);
+    }
+    
+    public void removeGroup(Group group)
+    {
+        groups.remove(group);
     }
 
     public String getUsername() {

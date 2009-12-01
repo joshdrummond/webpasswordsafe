@@ -35,6 +35,7 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.GroupDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
+import static com.joshdrummond.webpasswordsafe.common.util.Constants.*;
 
 
 /**
@@ -44,12 +45,10 @@ import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
  *
  */
 @Service("userService")
-public class UserServiceImpl implements UserService {
-	
+public class UserServiceImpl implements UserService
+{
     private static Logger LOG = Logger.getLogger(UserServiceImpl.class);
     private static final long serialVersionUID = -8656307779047768662L;
-    private static final String ADMIN_USER_NAME = "admin";
-    private static final String EVERYONE_GROUP_NAME = "Everyone";
     
     @Autowired
     private UserDAO userDAO;
@@ -82,18 +81,29 @@ public class UserServiceImpl implements UserService {
     {
         user.setPassword(digester.digest(user.getPassword()));
         user.setDateCreated(new Date());
+        Group everyoneGroup = getEveryoneGroup();
+        if (!user.getGroups().contains(everyoneGroup))
+        {
+            user.addGroup(everyoneGroup);
+            everyoneGroup.addUser(user);
+        }
         userDAO.makePersistent(user);
         LOG.info(user.getUsername() + " user added");
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
-    public void updateUser(User user)
+    public void updateUser(User updateUser)
     {
-        if (!user.getPassword().equals(""))
+        LOG.debug("incoming user password="+updateUser.getPassword());
+        User user = userDAO.findById(updateUser.getId(), false);
+        user.setFullname(updateUser.getFullname());
+        user.setEmail(updateUser.getEmail());
+        user.setActiveFlag(updateUser.isActiveFlag());
+        if (!updateUser.getPassword().equals(""))
         {
-            user.setPassword(digester.digest(user.getPassword()));
+            user.setPassword(digester.digest(updateUser.getPassword()));
+            LOG.debug("now it is="+user.getPassword());
         }
-        userDAO.makePersistent(user);
         LOG.info(user.getUsername() + " user updated");
     }
     
@@ -142,10 +152,29 @@ public class UserServiceImpl implements UserService {
         LOG.info(group.getName() + " group added");
     }
     
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void updateGroup(Group updateGroup)
+    {
+        Group group = groupDAO.findById(updateGroup.getId(), false);
+        group.setName(updateGroup.getName());
+        group.removeUsers();
+        for (User user : updateGroup.getUsers())
+        {
+            User pUser = userDAO.findById(user.getId(), false);
+            LOG.debug("trying to add user="+pUser.getId()+" to group="+group.getId());
+            group.addUser(pUser);
+        }
+        LOG.info(group.getName() + " group updated");
+    }
+    
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List<Group> getGroups()
+    public List<Group> getGroups(boolean includeEveryoneGroup)
     {
         List<Group> groups = groupDAO.findAll();
+        if (!includeEveryoneGroup)
+        {
+            groups.remove(new Group(EVERYONE_GROUP_NAME));
+        }
         LOG.info("found "+groups.size()+" groups");
         return groups;
     }
@@ -154,7 +183,7 @@ public class UserServiceImpl implements UserService {
     public List<Subject> getSubjects(boolean includeOnlyActive)
     {
         List<User> users = getUsers(includeOnlyActive);
-        List<Group> groups = getGroups();
+        List<Group> groups = getGroups(true);
         List<Subject> subjects = new ArrayList<Subject>(users.size()+groups.size());
         subjects.addAll(users);
         subjects.addAll(groups);
@@ -173,27 +202,25 @@ public class UserServiceImpl implements UserService {
 	{
 	    return userDAO.findActiveUserByUsername(ADMIN_USER_NAME);
 	}
-	
-    // getters and setters
+
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public Group getGroupWithUsers(long groupId)
+    {
+        Group group = groupDAO.findById(groupId, false);
+        // fetch users
+        int numUsers = group.getUsers().size();
+        LOG.info(group.getName()+" has "+numUsers+" users");
+        return group;
+    }
+
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public User getUserWithGroups(long userId)
+    {
+        User user = userDAO.findById(userId, false);
+        // fetch groups
+        int numGroups = user.getGroups().size();
+        LOG.info(user.getName()+" has "+numGroups+" groups");
+        return user;
+    }
     
-    public UserDAO getUserDAO()
-    {
-        return this.userDAO;
-    }
-
-    public void setUserDAO(UserDAO userDAO)
-    {
-        this.userDAO = userDAO;
-    }
-
-    public Digester getDigester()
-    {
-        return this.digester;
-    }
-
-    public void setDigester(Digester digester)
-    {
-        this.digester = digester;
-    }
-
 }

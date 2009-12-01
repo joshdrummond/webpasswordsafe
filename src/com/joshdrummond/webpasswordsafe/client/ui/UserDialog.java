@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -32,6 +32,8 @@ import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Utils;
+
 
 /**
  * @author Josh Drummond
@@ -46,7 +48,6 @@ public class UserDialog extends Window
     private TextField<String> password1TextBox;
     private TextField<String> password2TextBox;
     private CheckBox enabledCheckBox;
-    private FormData formData = new FormData("-20"); 
     
     public UserDialog(User user)
     {
@@ -60,23 +61,23 @@ public class UserDialog extends Window
 
         usernameTextBox = new TextField<String>();
         usernameTextBox.setFieldLabel("Username");
-        form.add(usernameTextBox, formData);
+        form.add(usernameTextBox, new FormData("-20"));
         fullnameTextBox = new TextField<String>();
         fullnameTextBox.setFieldLabel("Full Name");
-        form.add(fullnameTextBox, formData);
+        form.add(fullnameTextBox, new FormData("-20"));
         emailTextBox = new TextField<String>();
         emailTextBox.setFieldLabel("Email");
-        form.add(emailTextBox, formData);
+        form.add(emailTextBox, new FormData("-20"));
         password1TextBox = new TextField<String>();
         password1TextBox.setPassword(true);
         password1TextBox.setFieldLabel("Password");
-        form.add(password1TextBox, formData);
+        form.add(password1TextBox, new FormData("-20"));
         password2TextBox = new TextField<String>();
         password2TextBox.setPassword(true);
-        form.add(password2TextBox, formData);
+        form.add(password2TextBox, new FormData("-20"));
         enabledCheckBox = new CheckBox();
         enabledCheckBox.setFieldLabel("Enabled");
-        form.add(enabledCheckBox, formData);
+        form.add(enabledCheckBox, new FormData("-20"));
 
         Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
 			@Override
@@ -111,6 +112,11 @@ public class UserDialog extends Window
     
     private boolean validateFields()
     {
+        if (!(Utils.safeString(password2TextBox.getValue())).equals(Utils.safeString(password1TextBox.getValue())))
+        {
+            MessageBox.alert("Error", "Passwords don't match", null);
+            return false;
+        }
         return true;
     }
     
@@ -118,15 +124,11 @@ public class UserDialog extends Window
     {
         if (validateFields())
         {
-            user.setUsername(usernameTextBox.getValue().trim());
-            user.setFullname(fullnameTextBox.getValue().trim());
-            user.setEmail(emailTextBox.getValue().trim());
+            user.setUsername(Utils.safeString(usernameTextBox.getValue()));
+            user.setFullname(Utils.safeString(fullnameTextBox.getValue()));
+            user.setEmail(Utils.safeString(emailTextBox.getValue()));
             user.setActiveFlag(enabledCheckBox.getValue());
-            String pw1 = password1TextBox.getValue().trim();
-            if (!pw1.equals(""))
-            {
-                user.setPassword(pw1);
-            }
+            user.setPassword(Utils.safeString(password1TextBox.getValue()));
             
             AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
@@ -152,7 +154,7 @@ public class UserDialog extends Window
             }
         }
     }
-
+    
     private void doCancel()
     {
         hide();
