@@ -20,9 +20,11 @@
 package com.joshdrummond.webpasswordsafe.server.dao;
 
 import java.util.List;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+
 
 /**
  * DAO implementation for User
@@ -46,7 +48,7 @@ public class UserDAOHibernate extends GenericHibernateDAO<User, Long> implements
      */
     public List<User> findAllUsers(boolean includeOnlyActive)
     {
-        return includeOnlyActive ? findByCriteria(Restrictions.eq("activeFlag", true)) : findByCriteria();
+        return includeOnlyActive ? findByCriteria(Order.asc("fullname"), Restrictions.eq("activeFlag", true)) : findByCriteria(Order.asc("fullname"));
     }
 }
 

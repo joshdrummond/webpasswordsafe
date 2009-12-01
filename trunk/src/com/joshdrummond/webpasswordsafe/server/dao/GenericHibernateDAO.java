@@ -113,11 +113,11 @@ public abstract class GenericHibernateDAO<T, ID extends Serializable> implements
     }
 
     protected List<T> findByCriteria(Criterion... criterion) {
-        return findByCriteriaOrdered(null, criterion);
+        return findByCriteria(null, criterion);
     }
     
     @SuppressWarnings({"unchecked"})
-    protected List<T> findByCriteriaOrdered(Order order, Criterion... criterion) {
+    protected List<T> findByCriteria(Order order, Criterion... criterion) {
         Criteria crit = getSession().createCriteria(getPersistentClass());
         for (Criterion c : criterion) {
             crit.add(c);

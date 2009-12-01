@@ -29,6 +29,7 @@ import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
@@ -40,6 +41,7 @@ import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
+import com.joshdrummond.webpasswordsafe.common.util.Utils;
 
 
 /**
@@ -53,7 +55,7 @@ public class PasswordDialog extends Window implements PermissionListener
     private TextField<String> usernameTextBox;
     private TextField<String> passwordTextBox;
     private TextField<String> tagsTextBox;
-    private TextField<String> maxHistoryTextBox;
+    private NumberField maxHistoryTextBox;
     private TextArea notesTextArea;
     private CheckBox activeCheckBox;
     private FormData formData = new FormData("98%"); 
@@ -122,7 +124,8 @@ public class PasswordDialog extends Window implements PermissionListener
         notesTextArea.setFieldLabel("Notes");
         form.add(notesTextArea, formData);
 
-        maxHistoryTextBox = new TextField<String>();
+        maxHistoryTextBox = new NumberField();
+        maxHistoryTextBox.setPropertyEditorType(Integer.class);
         maxHistoryTextBox.setFieldLabel("Max History (-1 infinite)");
         form.add(maxHistoryTextBox, formData);
 
@@ -186,11 +189,7 @@ public class PasswordDialog extends Window implements PermissionListener
         new PasswordAccessAuditDialog(password).show();
     }
     
-    
-    /**
-     * 
-     */
-    protected void doGetCurrentPassword()
+    private void doGetCurrentPassword()
     {
         AsyncCallback<String> callback = new AsyncCallback<String>()
         {
@@ -207,10 +206,7 @@ public class PasswordDialog extends Window implements PermissionListener
         PasswordService.Util.getInstance().getCurrentPassword(password.getId(), callback);
     }
 
-    /**
-     * 
-     */
-    protected void doGeneratePassword()
+    private void doGeneratePassword()
     {
         AsyncCallback<String> callback = new AsyncCallback<String>()
         {
@@ -229,19 +225,16 @@ public class PasswordDialog extends Window implements PermissionListener
         PasswordService.Util.getInstance().generatePassword(callback);
     }
 
-    /**
-     * 
-     */
-    protected void doSave()
+    private void doSave()
     {
         if (validateFields())
         {
-            password.setName(safeString(nameTextBox.getValue()));
-            password.setUsername(safeString(usernameTextBox.getValue()));
+            password.setName(Utils.safeString(nameTextBox.getValue()));
+            password.setUsername(Utils.safeString(usernameTextBox.getValue()));
             PasswordData passwordDataItem = new PasswordData();
-            passwordDataItem.setPassword(safeString(passwordTextBox.getValue()));
+            passwordDataItem.setPassword(Utils.safeString(passwordTextBox.getValue()));
             password.addPasswordData(passwordDataItem);
-            String[] tagNames = safeString(tagsTextBox.getValue()).replaceAll(",", " ").split(" ");
+            String[] tagNames = Utils.safeString(tagsTextBox.getValue()).replaceAll(",", " ").split(" ");
             password.removeTags();
             for (String tagName : tagNames)
             {
@@ -252,8 +245,9 @@ public class PasswordDialog extends Window implements PermissionListener
                     password.addTag(tag);
                 }
             }
-            password.setNotes(safeString(notesTextArea.getValue()));
-            password.setMaxHistory(safeInt(maxHistoryTextBox.getValue()));
+            password.setNotes(Utils.safeString(notesTextArea.getValue()));
+            password.setMaxHistory(Utils.safeInt(String.valueOf(maxHistoryTextBox.getValue())));
+            password.setMaxHistory((password.getMaxHistory() < -1) ? -1 : password.getMaxHistory());
             password.setActive(activeCheckBox.getValue());
 
             AsyncCallback<Void> callback = new AsyncCallback<Void>()
@@ -279,18 +273,12 @@ public class PasswordDialog extends Window implements PermissionListener
         }
     }
 
-    /**
-     * @return
-     */
     private boolean validateFields()
     {
         return true;
     }
 
-    /**
-     * 
-     */
-    protected void doEditPermissions()
+    private void doEditPermissions()
     {
         AsyncCallback<List<Subject>> callback = new AsyncCallback<List<Subject>>()
         {
@@ -312,9 +300,6 @@ public class PasswordDialog extends Window implements PermissionListener
         new PermissionDialog(this, password, subjects).show();
     }
 
-    /**
-     * 
-     */
     private void setFields()
     {
         nameTextBox.setValue(password.getName());
@@ -322,13 +307,10 @@ public class PasswordDialog extends Window implements PermissionListener
         tagsTextBox.setValue(password.getTagsAsString());
         notesTextArea.setValue(password.getNotes());
         activeCheckBox.setValue(password.isActive());
-        maxHistoryTextBox.setValue(String.valueOf(password.getMaxHistory()));
+        maxHistoryTextBox.setValue(password.getMaxHistory());
     }
 
-    /**
-     * 
-     */
-    protected void doCancel()
+    private void doCancel()
     {
         hide();
     }
@@ -345,26 +327,4 @@ public class PasswordDialog extends Window implements PermissionListener
         }
     }
 
-    public String safeString(String s)
-    {
-        return (null != s) ? s.trim() : "";
-    }
-    
-    public int safeInt(String s)
-    {
-        int num = -1;
-        s = safeString(s);
-        try
-        {
-            if (!"".equals(s))
-            {
-                num = Integer.parseInt(s);
-            }
-        }
-        catch (NumberFormatException e)
-        {
-            num = -1;
-        }
-        return num;
-    }
 }

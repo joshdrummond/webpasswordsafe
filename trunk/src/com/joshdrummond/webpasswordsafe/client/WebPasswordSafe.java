@@ -52,6 +52,7 @@ import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 
 
 /**
@@ -60,19 +61,19 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
  * @author Josh Drummond
  * 
  */
-public class WebPasswordSafe implements EntryPoint, MainWindow {
+public class WebPasswordSafe implements EntryPoint, MainWindow
+{
     private ClientSessionUtil clientSessionUtil = ClientSessionUtil.getInstance();
     private final static String NOT_LOGGED_IN = "Not Logged In";
     private final static String LOGGED_IN = "Logged In As: ";
-    private final static String VERSION = "0.1";
-    private final static String TITLE = "WebPasswordSafe v"+VERSION;
+    private final static String TITLE = "WebPasswordSafe v"+Constants.VERSION;
     private Viewport viewport; 
     private ContentPanel mainPanel, topPanel;
     private Menu userMenu;
     private Menu adminMenu;
 
-    public void onModuleLoad() {
-    	
+    public void onModuleLoad()
+    {
         userMenu = new Menu();
         MenuItem userSettings = new MenuItem("Settings");
         Menu userSettingsMenu = new Menu();
@@ -257,18 +258,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         Window.open(GWT.getHostPageBaseURL()+"report?name="+reportName+"&type="+reportType, "_blank", "");
     }
 
-    /**
-     * 
-     */
-    protected void doChangePassword()
+    private void doChangePassword()
     {
         new ChangePasswordDialog().show();
     }
 
-    /**
-     * 
-     */
-    protected void refreshPasswordSearch()
+    private void refreshPasswordSearch()
     {
         mainPanel.removeAll();
         if (clientSessionUtil.isLoggedIn())
@@ -286,10 +281,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         adminMenu.setVisible(isLoggedIn);
     }
     
-    /**
-     * 
-     */
-    protected void doNewPassword()
+    private void doNewPassword()
     {
         if (clientSessionUtil.isAuthorized("NEW_PASSWORD"))
         {
@@ -299,10 +291,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         }
     }
 
-    /**
-     * 
-     */
-    protected void doEditGroup()
+    private void doEditGroup()
     {
         if (clientSessionUtil.isAuthorized("EDIT_GROUP"))
         {
@@ -317,7 +306,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
                     new GroupSelectionDialog(new EditGroupListener(), result, false).show();
                 }
             };
-            UserService.Util.getInstance().getGroups(callback);
+            UserService.Util.getInstance().getGroups(false, callback);
         }
         else
         {
@@ -325,10 +314,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         }
     }
 
-    /**
-     * 
-     */
-    protected void doAddGroup()
+    private void doAddGroup()
     {
         if (clientSessionUtil.isAuthorized("ADD_GROUP"))
         {
@@ -336,9 +322,6 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
         }
     }
 
-    /**
-     * @param groupDTO
-     */
     private void displayGroupDialog(Group group)
     {
         new GroupDialog(group).show();
@@ -374,7 +357,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
                     new UserSelectionDialog(new EditUserListener(), result, false).show();
                 }
             };
-            UserService.Util.getInstance().getUsers(true, callback);
+            UserService.Util.getInstance().getUsers(false, callback);
         }
         else
         {
@@ -491,13 +474,25 @@ public class WebPasswordSafe implements EntryPoint, MainWindow {
             }
         }
     }
+
     private class EditGroupListener implements GroupListener
     {
         public void doGroupsChosen(List<Group> groups)
         {
             if (groups.size() > 0)
             {
-                displayGroupDialog(groups.get(0));
+                AsyncCallback<Group> callback = new AsyncCallback<Group>()
+                {
+                    public void onFailure(Throwable caught)
+                    {
+                        MessageBox.alert("Error", caught.getMessage(), null);
+                    }
+                    public void onSuccess(Group result)
+                    {
+                        displayGroupDialog(result);
+                    }
+                };
+                UserService.Util.getInstance().getGroupWithUsers(groups.get(0).getId(), callback);
             }
         }
     }

@@ -35,6 +35,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Utils;
 
 
 /**
@@ -44,12 +45,12 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
  */
 public class LoginDialog extends Window
 {
-
     private TextField<String> usernameTextBox;
     private TextField<String> passwordTextBox;
     private MainWindow main;
     
-    public LoginDialog(MainWindow main) {
+    public LoginDialog(MainWindow main)
+    {
         this.main = main;
         this.setHeading("Login");
         this.setModal(true);
@@ -127,8 +128,8 @@ public class LoginDialog extends Window
                 }
             }
         };
-        LoginService.Util.getInstance().login(usernameTextBox.getValue(), 
-                passwordTextBox.getValue(), callback);
+        LoginService.Util.getInstance().login(Utils.safeString(usernameTextBox.getValue()), 
+                Utils.safeString(passwordTextBox.getValue()), callback);
     }
     
     private void doGetLoggedInUser()

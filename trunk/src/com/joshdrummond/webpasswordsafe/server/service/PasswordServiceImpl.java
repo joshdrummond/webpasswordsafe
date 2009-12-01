@@ -37,10 +37,10 @@ import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Utils;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
-import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Encryptor;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 
@@ -52,16 +52,13 @@ import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerato
  *
  */
 @Service("passwordService")
-public class PasswordServiceImpl implements PasswordService {
-
+public class PasswordServiceImpl implements PasswordService
+{
     private static final long serialVersionUID = -9164403179286398287L;
     private static Logger LOG = Logger.getLogger(PasswordServiceImpl.class);
     
     @Autowired
     private PasswordDAO passwordDAO;
-    
-    @Autowired
-    private UserDAO userDAO;
     
     @Autowired
     private TagDAO tagDAO;
@@ -175,7 +172,7 @@ public class PasswordServiceImpl implements PasswordService {
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags)
     {
-    	query = (null == query) ?  "" : query.trim();
+    	query = Utils.safeString(query);
         User loggedInUser = loginService.getLogin();
         List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly, tags);
         LOG.debug("searching for password query ["+query+"] activeOnly="+activeOnly+" tags="+tags+" by ["+loggedInUser.getUsername()+"] found "+passwords.size());
@@ -189,7 +186,7 @@ public class PasswordServiceImpl implements PasswordService {
         return passwordGenerator.generatePassword();
     }
 
-    @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
+    @Transactional(propagation=Propagation.REQUIRED)
     public String getCurrentPassword(long passwordId)
     {
         String currentPasswordValue = "";
@@ -208,7 +205,7 @@ public class PasswordServiceImpl implements PasswordService {
         return currentPasswordValue;
     }
     
-    @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
+    @Transactional(propagation=Propagation.REQUIRED)
     private void createPasswordAccessAuditEntry(Password password, User user)
     {
         LOG.debug("creating access audit entry for password=["+password.getName()+"] user=["+user.getName()+"]");
@@ -244,7 +241,7 @@ public class PasswordServiceImpl implements PasswordService {
         return accessAuditList;
     }
     
-    @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
+    @Transactional(propagation=Propagation.REQUIRED)
     public List<PasswordData> getPasswordHistoryData(long passwordId)
     {
         List<PasswordData> decryptedPasswordDataList = new ArrayList<PasswordData>(0);
@@ -272,56 +269,4 @@ public class PasswordServiceImpl implements PasswordService {
         return tags;
     }
     
-    // Getters and Setters
-    
-    public PasswordDAO getPasswordDAO()
-    {
-        return this.passwordDAO;
-    }
-
-    public void setPasswordDAO(PasswordDAO passwordDAO)
-    {
-        this.passwordDAO = passwordDAO;
-    }
-
-    public UserDAO getUserDAO()
-    {
-        return this.userDAO;
-    }
-
-    public void setUserDAO(UserDAO userDAO)
-    {
-        this.userDAO = userDAO;
-    }
-
-    public TagDAO getTagDAO()
-    {
-        return this.tagDAO;
-    }
-
-    public void setTagDAO(TagDAO tagDAO)
-    {
-        this.tagDAO = tagDAO;
-    }
-
-    public PasswordAccessAuditDAO getPasswordAccessAuditDAO()
-    {
-        return this.passwordAccessAuditDAO;
-    }
-
-    public void setPasswordAccessAuditDAO(PasswordAccessAuditDAO passwordAccessAuditDAO)
-    {
-        this.passwordAccessAuditDAO = passwordAccessAuditDAO;
-    }
-
-    public PasswordGenerator getPasswordGenerator()
-    {
-        return this.passwordGenerator;
-    }
-
-    public void setPasswordGenerator(PasswordGenerator passwordGenerator)
-    {
-        this.passwordGenerator = passwordGenerator;
-    }
-
 }

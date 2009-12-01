@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -26,7 +26,6 @@ import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
-import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
@@ -34,18 +33,17 @@ import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
+
 /**
  * @author Josh Drummond
  *
  */
 public class UserSelectionDialog extends Window
 {
-
     private ListField<UserData> userListBox;
     private ListStore<UserData> store;
     private UserListener userListener;
     private List<User> users;
-//    private FormData formData = new FormData("-20");
     
     public UserSelectionDialog(UserListener userListener, List<User> users, boolean allowMultiple)
     {
@@ -91,32 +89,22 @@ public class UserSelectionDialog extends Window
         this.add(form);
     }
 
-    /**
-     * 
-     */
     private void setFields()
     {
     	store.removeAll();
         for (User user : users)
         {
             store.add(new UserData(user));
-            Info.display("User", user.getFullname());
         }
         userListBox.setStore(store);
     }
 
-    /**
-     * 
-     */
-    protected void doCancel()
+    private void doCancel()
     {
         hide();
     }
 
-    /**
-     * 
-     */
-    protected void doOkay()
+    private void doOkay()
     {
     	List<UserData> dataSelected = userListBox.getSelection();
         List<User> usersSelected = new ArrayList<User>(dataSelected.size());
