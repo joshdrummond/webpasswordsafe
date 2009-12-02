@@ -19,20 +19,28 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
-import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import java.util.List;
+import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.store.StoreSorter;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
-import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.DualListField;
+import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
+import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
+import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
 
 
 /**
@@ -48,36 +56,69 @@ public class UserDialog extends Window
     private TextField<String> password1TextBox;
     private TextField<String> password2TextBox;
     private CheckBox enabledCheckBox;
+    private ListStore<GroupData> fromGroupStore;
+    private ListStore<GroupData> toGroupStore;
     
-    public UserDialog(User user)
+    public UserDialog(User pUser)
     {
-        this.user = user;
+        this.user = pUser;
         this.setHeading("User");
         this.setModal(true);
+        setLayout(new AbsoluteLayout());
+        setSize("455", "465");
         
-        FormPanel form = new FormPanel();
-        form.setHeaderVisible(false);
-        form.setFrame(true);
-
+        LabelField lblfldUsername = new LabelField("Username:");
+        add(lblfldUsername, new AbsoluteData(6, 6));
         usernameTextBox = new TextField<String>();
-        usernameTextBox.setFieldLabel("Username");
-        form.add(usernameTextBox, new FormData("-20"));
+        add(usernameTextBox, new AbsoluteData(144, 6));
+        usernameTextBox.setSize("271px", "22px");
+        LabelField lblfldFullName = new LabelField("Full Name:");
+        add(lblfldFullName, new AbsoluteData(6, 34));
         fullnameTextBox = new TextField<String>();
-        fullnameTextBox.setFieldLabel("Full Name");
-        form.add(fullnameTextBox, new FormData("-20"));
+        add(fullnameTextBox, new AbsoluteData(144, 34));
+        fullnameTextBox.setSize("271px", "22px");
+        LabelField lblfldEmail = new LabelField("Email:");
+        add(lblfldEmail, new AbsoluteData(6, 62));
         emailTextBox = new TextField<String>();
-        emailTextBox.setFieldLabel("Email");
-        form.add(emailTextBox, new FormData("-20"));
+        add(emailTextBox, new AbsoluteData(144, 62));
+        emailTextBox.setSize("271px", "22px");
+        LabelField lblfldPassword = new LabelField("Password:");
+        add(lblfldPassword, new AbsoluteData(6, 90));
         password1TextBox = new TextField<String>();
         password1TextBox.setPassword(true);
-        password1TextBox.setFieldLabel("Password");
-        form.add(password1TextBox, new FormData("-20"));
+        add(password1TextBox, new AbsoluteData(144, 90));
+        password1TextBox.setSize("271px", "22px");
         password2TextBox = new TextField<String>();
         password2TextBox.setPassword(true);
-        form.add(password2TextBox, new FormData("-20"));
+        add(password2TextBox, new AbsoluteData(144, 118));
+        password2TextBox.setSize("271px", "22px");
         enabledCheckBox = new CheckBox();
-        enabledCheckBox.setFieldLabel("Enabled");
-        form.add(enabledCheckBox, new FormData("-20"));
+        enabledCheckBox.setBoxLabel("Enabled");
+        add(enabledCheckBox, new AbsoluteData(144, 146));
+        enabledCheckBox.setSize("76px", "22px");
+
+        LabelField lblfldGroups = new LabelField("Groups:");
+        add(lblfldGroups, new AbsoluteData(6, 170));
+        LabelField lblfldAvailable = new LabelField("Available");
+        add(lblfldAvailable, new AbsoluteData(6, 195));
+        LabelField lblfldMembers = new LabelField("Member Of");
+        add(lblfldMembers, new AbsoluteData(233, 195));
+
+        DualListField<GroupData> membersListBox = new DualListField<GroupData>();
+        add(membersListBox, new AbsoluteData(6, 216));
+        membersListBox.setSize("424px", "183px");
+        ListField<GroupData> from = membersListBox.getFromList();
+        ListField<GroupData> to = membersListBox.getToList();
+        from.setSize(300, 100);
+        from.setDisplayField("name");
+        fromGroupStore = new ListStore<GroupData>();
+        fromGroupStore.setStoreSorter(new StoreSorter<GroupData>());
+        from.setStore(fromGroupStore);
+        to.setDisplayField("name");
+        to.setSize(300, 100);
+        toGroupStore = new ListStore<GroupData>();
+        toGroupStore.setStoreSorter(new StoreSorter<GroupData>());
+        to.setStore(toGroupStore);
 
         Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
 			@Override
@@ -93,13 +134,12 @@ public class UserDialog extends Window
 			}
 		});
 
-        form.setButtonAlign(HorizontalAlignment.CENTER);
-        form.addButton(saveButton);
-        form.addButton(cancelButton);
-
+        add(saveButton, new AbsoluteData(133, 405));
+        saveButton.setSize("70px", "22px");
+        add(cancelButton, new AbsoluteData(233, 405));
+        cancelButton.setSize("70px", "22px");
+        
         setFields();
-
-        this.add(form);
     }
     
     private void setFields()
@@ -108,6 +148,15 @@ public class UserDialog extends Window
         fullnameTextBox.setValue(user.getFullname());
         emailTextBox.setValue(user.getEmail());
         enabledCheckBox.setValue(user.isActiveFlag());
+        for (Group group: user.getGroups())
+        {
+            if (!group.getName().equals(Constants.EVERYONE_GROUP_NAME))
+            {
+                toGroupStore.add(new GroupData(group));
+            }
+        }
+
+        loadAvailableGroups();
     }
     
     private boolean validateFields()
@@ -129,6 +178,12 @@ public class UserDialog extends Window
             user.setEmail(Utils.safeString(emailTextBox.getValue()));
             user.setActiveFlag(enabledCheckBox.getValue());
             user.setPassword(Utils.safeString(password1TextBox.getValue()));
+            user.removeGroups();
+            for (GroupData groupData : toGroupStore.getModels())
+            {
+                Group group = (Group)groupData.get("group");
+                user.addGroup(group);
+            }
             
             AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
@@ -160,4 +215,47 @@ public class UserDialog extends Window
         hide();
     }
 
+    private void loadAvailableGroups()
+    {
+        AsyncCallback<List<Group>> callback = new AsyncCallback<List<Group>>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+            public void onSuccess(List<Group> result)
+            {
+                refreshAvailableGroups(result);
+            }
+        };
+        UserService.Util.getInstance().getGroups(false, callback);
+    }
+    
+    private void refreshAvailableGroups(List<Group> groups)
+    {
+        for (Group group: groups)
+        {
+            if (!user.getGroups().contains(group))
+            {
+                fromGroupStore.add(new GroupData(group));
+            }
+        }
+    }
+
+    private class GroupData extends BaseModel
+    {
+        private static final long serialVersionUID = 1L;
+
+        public GroupData(Group group)
+        {
+            set("id", group.getId());
+            set("name", group.getName());
+            set("group", group);
+        }
+
+        public String toString()
+        {
+            return get("name");
+        }
+    }
 }

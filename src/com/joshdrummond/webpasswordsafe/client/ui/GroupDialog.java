@@ -54,14 +54,13 @@ public class GroupDialog extends Window
 
     public GroupDialog(Group pGroup)
     {
-        setSize("455", "330");
         this.group = pGroup;
         this.setHeading("Group");
         this.setModal(true);
         setLayout(new AbsoluteLayout());
+        setSize("455", "350");
 
         LabelField lblfldName = new LabelField("Name:");
-        lblfldName.setFieldLabel("Name:");
         add(lblfldName, new AbsoluteData(6, 13));
         lblfldName.setSize("82px", "19px");
 
@@ -69,13 +68,21 @@ public class GroupDialog extends Window
         add(nameTextBox, new AbsoluteData(128, 13));
         nameTextBox.setSize("306px", "22px");
 
-        LabelField lblfldMembers = new LabelField("Members:");
-        add(lblfldMembers, new AbsoluteData(6, 55));
+        LabelField lblfldUsers = new LabelField("Users:");
+        add(lblfldUsers, new AbsoluteData(6, 49));
+        lblfldUsers.setSize("54px", "19px");
+        
+        LabelField lblfldAvailable = new LabelField("Available");
+        add(lblfldAvailable, new AbsoluteData(6, 74));
+        lblfldAvailable.setSize("67px", "19px");
+
+        LabelField lblfldMembers = new LabelField("Members");
+        add(lblfldMembers, new AbsoluteData(232, 74));
+        lblfldMembers.setSize("74px", "19px");
 
         DualListField<UserData> membersListBox = new DualListField<UserData>();
-        add(membersListBox, new AbsoluteData(6, 80));
+        add(membersListBox, new AbsoluteData(6, 96));
         membersListBox.setSize("428px", "183px");
-        membersListBox.setFieldLabel("Members");
         ListField<UserData> from = membersListBox.getFromList();
         ListField<UserData> to = membersListBox.getToList();
 
@@ -99,7 +106,7 @@ public class GroupDialog extends Window
                         doSave();
                     }
                 });
-        add(saveButton, new AbsoluteData(137, 269));
+        add(saveButton, new AbsoluteData(131, 285));
         saveButton.setSize("74px", "22px");
 
         Button cancelButton = new Button("Cancel",
@@ -111,11 +118,10 @@ public class GroupDialog extends Window
                         doCancel();
                     }
                 });
-        add(cancelButton, new AbsoluteData(232, 269));
+        add(cancelButton, new AbsoluteData(232, 285));
         cancelButton.setSize("82px", "22px");
-
+        
         setFields();
-
     }
 
     private void doSave()

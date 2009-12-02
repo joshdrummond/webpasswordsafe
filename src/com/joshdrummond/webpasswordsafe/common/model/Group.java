@@ -92,6 +92,11 @@ public class Group extends Subject
         users.add(user);
     }
     
+    public void removeUser(User user)
+    {
+        users.remove(user);
+    }
+    
     public void removeUsers()
     {
         for (User user : users)
@@ -107,9 +112,6 @@ public class Group extends Subject
             return true;
         }
         if ( !( o instanceof Group ) ) {
-            return false;
-        }
-        if ( !super.equals( o ) ) {
             return false;
         }
 

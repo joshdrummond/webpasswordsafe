@@ -118,6 +118,15 @@ public class User extends Subject
     {
         groups.remove(group);
     }
+    
+    public void removeGroups()
+    {
+        for (Group group : groups)
+        {
+            group.removeUser(this);
+        }
+        groups.clear();
+    }
 
     public String getUsername() {
         return username;
