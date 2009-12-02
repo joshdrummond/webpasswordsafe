@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.data.BaseModel;
+import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Window;
@@ -64,6 +67,13 @@ public class GroupSelectionDialog extends Window
         groupListBox.setSize(300, 150);
         groupListBox.setDisplayField("name");
         groupListBox.setFieldLabel(selectLabelText);
+        groupListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
+        {
+            public void handleEvent(BaseEvent be)
+            {
+                doOkay();
+            }
+        });
         form.add(groupListBox);
 
         Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {

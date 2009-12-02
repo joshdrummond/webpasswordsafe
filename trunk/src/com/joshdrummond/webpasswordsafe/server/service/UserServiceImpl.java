@@ -77,17 +77,28 @@ public class UserServiceImpl implements UserService
     }
     
     @Transactional(propagation=Propagation.REQUIRED)
-    public void addUser(User user)
+    public void addUser(User newUser)
     {
-        user.setPassword(digester.digest(user.getPassword()));
+        // create base user
+        User user = new User();
+        user.setUsername(newUser.getUsername());
+        user.setFullname(newUser.getFullname());
+        user.setEmail(newUser.getEmail());
+        user.setActiveFlag(newUser.isActiveFlag());
+        user.setPassword(digester.digest(newUser.getPassword()));
         user.setDateCreated(new Date());
-        Group everyoneGroup = getEveryoneGroup();
-        if (!user.getGroups().contains(everyoneGroup))
-        {
-            user.addGroup(everyoneGroup);
-            everyoneGroup.addUser(user);
-        }
         userDAO.makePersistent(user);
+        
+        // assign user to everyone group
+        Group everyoneGroup = getEveryoneGroup();
+        everyoneGroup.addUser(user);
+        
+        // assign user to other groups
+        for (Group newGroup : newUser.getGroups())
+        {
+            Group group = groupDAO.findGroupByName(newGroup.getName());
+            group.addUser(user);
+        }
         LOG.info(user.getUsername() + " user added");
     }
 
@@ -95,6 +106,7 @@ public class UserServiceImpl implements UserService
     public void updateUser(User updateUser)
     {
         LOG.debug("incoming user password="+updateUser.getPassword());
+        // update base user
         User user = userDAO.findById(updateUser.getId(), false);
         user.setFullname(updateUser.getFullname());
         user.setEmail(updateUser.getEmail());
@@ -104,6 +116,13 @@ public class UserServiceImpl implements UserService
             user.setPassword(digester.digest(updateUser.getPassword()));
             LOG.debug("now it is="+user.getPassword());
         }
+        
+        // assign everyone group if missing
+        
+        // remove groups removed
+        
+        // add groups added
+        
         LOG.info(user.getUsername() + " user updated");
     }
     

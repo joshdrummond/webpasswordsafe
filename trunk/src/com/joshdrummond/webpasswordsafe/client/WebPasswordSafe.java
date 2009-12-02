@@ -470,7 +470,18 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         {
             if (users.size() > 0)
             {
-                displayUserDialog(users.get(0));
+                AsyncCallback<User> callback = new AsyncCallback<User>()
+                {
+                    public void onFailure(Throwable caught)
+                    {
+                        MessageBox.alert("Error", caught.getMessage(), null);
+                    }
+                    public void onSuccess(User result)
+                    {
+                        displayUserDialog(result);
+                    }
+                };
+                UserService.Util.getInstance().getUserWithGroups(users.get(0).getId(), callback);
             }
         }
     }
