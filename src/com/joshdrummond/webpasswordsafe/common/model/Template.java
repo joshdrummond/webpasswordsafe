@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,6 +20,7 @@
 package com.joshdrummond.webpasswordsafe.common.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,9 +31,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import net.sf.gilead.pojo.java5.LightEntity;
-
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Type;
 
 
@@ -66,12 +66,16 @@ public class Template extends LightEntity implements Serializable
     private boolean share;
     
     @OneToMany(cascade={CascadeType.ALL}, mappedBy="parent")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
     private Set<TemplateDetail> templateDetails;
 
     public Template()
     {
+        name = "";
+        share = true;
+        templateDetails = new HashSet<TemplateDetail>();
     }
-
+    
     public long getId()
     {
         return this.id;
@@ -120,6 +124,17 @@ public class Template extends LightEntity implements Serializable
     public void setTemplateDetails(Set<TemplateDetail> templateDetails)
     {
         this.templateDetails = templateDetails;
+    }
+    
+    public void addDetail(TemplateDetail detail)
+    {
+        detail.setParent(this);
+        templateDetails.add(detail);
+    }
+    
+    public void clearDetails()
+    {
+        this.templateDetails.clear();
     }
     
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -34,26 +34,26 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
-import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.model.Template;
 
 
 /**
  * @author Josh Drummond
  *
  */
-public class UserSelectionDialog extends Window
+public class TemplateSelectionDialog extends Window
 {
-    private ListField<UserData> userListBox;
-    private ListStore<UserData> store;
-    private UserListener userListener;
-    private List<User> users;
+    private ListField<TemplateData> templateListBox;
+    private ListStore<TemplateData> store;
+    private TemplateListener templateListener;
+    private List<Template> templates;
     
-    public UserSelectionDialog(UserListener userListener, List<User> users, boolean allowMultiple)
+    public TemplateSelectionDialog(TemplateListener templateListener, List<Template> templates, boolean allowMultiple)
     {
-        this.setHeading("Users");
+        this.setHeading("Templates");
         this.setModal(true);
-        this.userListener = userListener;
-        this.users = users;
+        this.templateListener = templateListener;
+        this.templates = templates;
         this.setResizable(false);
 
         FormPanel form = new FormPanel();
@@ -62,34 +62,34 @@ public class UserSelectionDialog extends Window
         form.setLabelAlign(LabelAlign.TOP);
         form.setButtonAlign(HorizontalAlignment.CENTER);
         
-        String selectLabelText = allowMultiple ? "Please select user(s)" : "Please select a user";
-        store = new ListStore<UserData>();
-        userListBox = new ListField<UserData>();
-        userListBox.setSize(300, 150);
-        userListBox.setDisplayField("fullname");
-        userListBox.setFieldLabel(selectLabelText);
-        userListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
+        String selectLabelText = allowMultiple ? "Please select template(s)" : "Please select a template";
+        store = new ListStore<TemplateData>();
+        templateListBox = new ListField<TemplateData>();
+        templateListBox.setSize(300, 150);
+        templateListBox.setDisplayField("name");
+        templateListBox.setFieldLabel(selectLabelText);
+        templateListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
         {
             public void handleEvent(BaseEvent be)
             {
                 doOkay();
             }
         });
-        form.add(userListBox);
+        form.add(templateListBox);
 
         Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doOkay();
-			}
-		});
+            }
+        });
 
         Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doCancel();
-			}
-		});
+            }
+        });
         
         form.setButtonAlign(HorizontalAlignment.CENTER);
         form.addButton(okayButton);
@@ -102,12 +102,12 @@ public class UserSelectionDialog extends Window
 
     private void setFields()
     {
-    	store.removeAll();
-        for (User user : users)
+        store.removeAll();
+        for (Template template : templates)
         {
-            store.add(new UserData(user));
+            store.add(new TemplateData(template));
         }
-        userListBox.setStore(store);
+        templateListBox.setStore(store);
     }
 
     private void doCancel()
@@ -117,24 +117,24 @@ public class UserSelectionDialog extends Window
 
     private void doOkay()
     {
-    	List<UserData> dataSelected = userListBox.getSelection();
-        List<User> usersSelected = new ArrayList<User>(dataSelected.size());
-    	for (UserData ud : dataSelected)
-    	{
-    		usersSelected.add((User)ud.get("user"));
-    	}
-        userListener.doUsersChosen(usersSelected);
+        List<TemplateData> dataSelected = templateListBox.getSelection();
+        List<Template> templatesSelected = new ArrayList<Template>(dataSelected.size());
+        for (TemplateData td : dataSelected)
+        {
+            templatesSelected.add((Template)td.get("template"));
+        }
+        templateListener.doTemplatesChosen(templatesSelected);
         hide();
     }
 
-    private class UserData extends BaseModel
+    private class TemplateData extends BaseModel
     {
-    	private static final long serialVersionUID = 1L;
-    	public UserData(User user)
-    	{
-    		set("id", user.getId());
-    		set("fullname", user.getFullname());
-    		set("user", user);
-    	}
+        private static final long serialVersionUID = 1L;
+        public TemplateData(Template template)
+        {
+            set("id", template.getId());
+            set("name", template.getName());
+            set("template", template);
+        }
     }
 }

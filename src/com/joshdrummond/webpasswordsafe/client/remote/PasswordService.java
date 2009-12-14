@@ -28,6 +28,7 @@ import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
+import com.joshdrummond.webpasswordsafe.common.model.Template;
 
 
 /**
@@ -46,6 +47,10 @@ public interface PasswordService extends RemoteService {
     public Password getPassword(long passwordId);
     public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId);
     public List<PasswordData> getPasswordHistoryData(long passwordId);
+    public void addTemplate(Template template);
+    public void updateTemplate(Template template);
+    public List<Template> getTemplates(boolean includeShared);
+    public Template getTemplateWithDetails(long templateId);
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.

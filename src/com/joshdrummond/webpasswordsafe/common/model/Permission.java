@@ -118,7 +118,12 @@ public class Permission extends LightEntity implements Serializable
     {
         final int prime = 31;
         int result = 1;
+        result = prime
+                * result
+                + ((this.accessLevel == null) ? 0 : this.accessLevel.hashCode());
         result = prime * result + (int) (this.id ^ (this.id >>> 32));
+        result = prime * result
+                + ((this.subject == null) ? 0 : this.subject.hashCode());
         return result;
     }
 
@@ -138,11 +143,32 @@ public class Permission extends LightEntity implements Serializable
             return false;
         }
         Permission other = (Permission) obj;
+        if (this.accessLevel == null)
+        {
+            if (other.accessLevel != null)
+            {
+                return false;
+            }
+        } else if (!this.accessLevel.equals(other.accessLevel))
+        {
+            return false;
+        }
         if (this.id != other.id)
+        {
+            return false;
+        }
+        if (this.subject == null)
+        {
+            if (other.subject != null)
+            {
+                return false;
+            }
+        } else if (!this.subject.equals(other.subject))
         {
             return false;
         }
         return true;
     }
+
     
 }

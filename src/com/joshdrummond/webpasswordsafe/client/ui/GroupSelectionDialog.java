@@ -54,6 +54,7 @@ public class GroupSelectionDialog extends Window
         this.setModal(true);
         this.groupListener = groupListener;
         this.groups = groups;
+        this.setResizable(false);
 
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);
