@@ -1,6 +1,0 @@
-#summary WebPasswordSafe Administrator Guide
-#labels help
-
-=WebPasswordSafe Administrator Guide=
-
-This is a placeholder.
