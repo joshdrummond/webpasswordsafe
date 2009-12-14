@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,7 +20,6 @@
 package com.joshdrummond.webpasswordsafe.common.model;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +27,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
 import net.sf.gilead.pojo.java5.LightEntity;
 
 
@@ -54,8 +52,8 @@ public class TemplateDetail extends LightEntity implements Serializable
     @JoinColumn(name="subject_id", nullable=false)
     private Subject subject;
     
-    @Column(name="access_level", nullable=false)
-    private int accessLevel;
+    @Column(name="access_level", length=5, nullable=false)
+    private String accessLevel;
     
     @ManyToOne
     @JoinColumn(name="template_id", nullable=false)
@@ -66,6 +64,12 @@ public class TemplateDetail extends LightEntity implements Serializable
     {
     }
 
+    public TemplateDetail(Subject subject, AccessLevel accessLevel)
+    {
+        this.subject = subject;
+        this.accessLevel = accessLevel.name();
+    }
+    
     public long getId()
     {
         return this.id;
@@ -82,11 +86,15 @@ public class TemplateDetail extends LightEntity implements Serializable
     {
         this.subject = subject;
     }
-    public int getAccessLevel()
+    public String getAccessLevel()
     {
         return this.accessLevel;
     }
-    public void setAccessLevel(int accessLevel)
+    public AccessLevel getAccessLevelObj()
+    {
+        return AccessLevel.valueOf(this.accessLevel);
+    }
+    public void setAccessLevel(String accessLevel)
     {
         this.accessLevel = accessLevel;
     }
@@ -98,5 +106,71 @@ public class TemplateDetail extends LightEntity implements Serializable
     {
         this.parent = parent;
     }
+
+    @Override
+    public String toString()
+    {
+        return "TemplateDetail [accessLevel=" + this.accessLevel + ", id="
+                + this.id + ", parent=" + this.parent + ", subject="
+                + this.subject + "]";
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime
+                * result
+                + ((this.accessLevel == null) ? 0 : this.accessLevel.hashCode());
+        result = prime * result + (int) (this.id ^ (this.id >>> 32));
+        result = prime * result
+                + ((this.subject == null) ? 0 : this.subject.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!(obj instanceof TemplateDetail))
+        {
+            return false;
+        }
+        TemplateDetail other = (TemplateDetail) obj;
+        if (this.accessLevel == null)
+        {
+            if (other.accessLevel != null)
+            {
+                return false;
+            }
+        } else if (!this.accessLevel.equals(other.accessLevel))
+        {
+            return false;
+        }
+        if (this.id != other.id)
+        {
+            return false;
+        }
+        if (this.subject == null)
+        {
+            if (other.subject != null)
+            {
+                return false;
+            }
+        } else if (!this.subject.equals(other.subject))
+        {
+            return false;
+        }
+        return true;
+    }
+
     
 }

@@ -20,6 +20,7 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.List;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -64,8 +65,9 @@ public class UserDialog extends Window
         this.user = pUser;
         this.setHeading("User");
         this.setModal(true);
-        setLayout(new AbsoluteLayout());
-        setSize("455", "465");
+        this.setLayout(new AbsoluteLayout());
+        this.setSize("455", "475");
+        this.setResizable(false);
         
         LabelField lblfldUsername = new LabelField("Username:");
         add(lblfldUsername, new AbsoluteData(6, 6));
@@ -134,10 +136,9 @@ public class UserDialog extends Window
 			}
 		});
 
-        add(saveButton, new AbsoluteData(133, 405));
-        saveButton.setSize("70px", "22px");
-        add(cancelButton, new AbsoluteData(233, 405));
-        cancelButton.setSize("70px", "22px");
+        setButtonAlign(HorizontalAlignment.CENTER);
+        addButton(saveButton);
+        addButton(cancelButton);
         
         setFields();
     }

@@ -22,6 +22,7 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -35,7 +36,6 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import java.util.List;
 import java.util.ArrayList;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
-import com.extjs.gxt.ui.client.widget.layout.VBoxLayoutData;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
@@ -53,12 +53,13 @@ public class PasswordHistoryDialog extends Window
     
     public PasswordHistoryDialog(Password password)
     {
-        setSize("430", "460");
-        setHeading("Password History");
+        this.setSize("430", "460");
+        this.setHeading("Password History");
         VBoxLayout boxLayout = new VBoxLayout();
         boxLayout.setVBoxLayoutAlign(VBoxLayoutAlign.CENTER);
-        setLayout(boxLayout);
-        setModal(true);
+        this.setLayout(boxLayout);
+        this.setModal(true);
+        this.setResizable(false);
         
         gridStore = new ListStore<PasswordHistoryData>();
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
@@ -86,10 +87,10 @@ public class PasswordHistoryDialog extends Window
                 doClose();
             }
         });
-        closeButton.setAutoWidth(true);
-        closeButton.setAutoHeight(true);
-        add(closeButton, new VBoxLayoutData(5, 5, 5, 5));
         
+        setButtonAlign(HorizontalAlignment.CENTER);
+        addButton(closeButton);
+
         loadPasswordHistoryData(password.getId());
     }
 

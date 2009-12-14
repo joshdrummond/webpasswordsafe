@@ -25,6 +25,7 @@ import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
+import com.joshdrummond.webpasswordsafe.common.model.Template;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -44,4 +45,8 @@ public interface PasswordServiceAsync {
     public void getPassword(long passwordId, AsyncCallback<Password> callback);
     public void getPasswordAccessAuditData(long passwordId, AsyncCallback<List<PasswordAccessAudit>> callback);
     public void getPasswordHistoryData(long passwordId, AsyncCallback<List<PasswordData>> callback);
+    public void addTemplate(Template template, AsyncCallback<Void> callback);
+    public void updateTemplate(Template template, AsyncCallback<Void> callback);
+    public void getTemplates(boolean includeShared, AsyncCallback<List<Template>> callback);
+    public void getTemplateWithDetails(long templateId, AsyncCallback<Template> callback);
 }

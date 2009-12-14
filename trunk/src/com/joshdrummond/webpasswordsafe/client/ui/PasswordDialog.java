@@ -28,11 +28,9 @@ import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
-import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
@@ -42,6 +40,9 @@ import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
+import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
+import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
 
 
 /**
@@ -58,29 +59,36 @@ public class PasswordDialog extends Window implements PermissionListener
     private NumberField maxHistoryTextBox;
     private TextArea notesTextArea;
     private CheckBox activeCheckBox;
-    private FormData formData = new FormData("98%"); 
 
     public PasswordDialog(Password password)
     {
         this.password = password;
         this.setHeading("Password");
         this.setModal(true);
+        this.setLayout(new AbsoluteLayout());
+        this.setSize(430, 415);
+        this.setResizable(false);
         
-        FormPanel form = new FormPanel();
-        form.setHeaderVisible(false);
-        form.setFrame(true);
+        LabelField lblfldName = new LabelField("Title:");
+        add(lblfldName, new AbsoluteData(7, 6));
         
         nameTextBox = new TextField<String>();
-        nameTextBox.setFieldLabel("Name");
-        form.add(nameTextBox, formData);
+        add(nameTextBox, new AbsoluteData(82, 6));
+        nameTextBox.setSize("331px", "22px");
+
+        LabelField lblfldUsername = new LabelField("Username:");
+        add(lblfldUsername, new AbsoluteData(7, 34));
         
         usernameTextBox = new TextField<String>();
-        usernameTextBox.setFieldLabel("Username");
-        form.add(usernameTextBox, formData);
+        add(usernameTextBox, new AbsoluteData(82, 34));
+        usernameTextBox.setSize("331px", "22px");
 
+        LabelField lblfldPassword = new LabelField("Password:");
+        add(lblfldPassword, new AbsoluteData(7, 62));
+        
         passwordTextBox = new TextField<String>();
-        passwordTextBox.setFieldLabel("Password");
-        form.add(passwordTextBox, formData);
+        add(passwordTextBox, new AbsoluteData(82, 62));
+        passwordTextBox.setSize("331px", "22px");
 
         Button generateButton = new Button("Generate Password", new SelectionListener<ButtonEvent>() {
 			@Override
@@ -88,50 +96,61 @@ public class PasswordDialog extends Window implements PermissionListener
                 doGeneratePassword();
 			}
 		});
-        form.add(generateButton, formData);
+        add(generateButton, new AbsoluteData(82, 90));
+        generateButton.setSize("127px", "22px");
         
-        if (password.getId() > 0)
+        Button currentButton = new Button("Current Password", new SelectionListener<ButtonEvent>()
         {
-            Button currentButton = new Button("Current Password", new SelectionListener<ButtonEvent>()
+            @Override
+            public void componentSelected(ButtonEvent ce)
             {
-                @Override
-                public void componentSelected(ButtonEvent ce)
-                {
-                    doGetCurrentPassword();
-                }
-            });
-            form.add(currentButton, formData);
-        }
-        
-        if (password.getId() > 0)
+                doGetCurrentPassword();
+            }
+        });
+        add(currentButton, new AbsoluteData(215, 90));
+        currentButton.setSize("127px", "22px");
+        currentButton.setEnabled(password.getId() > 0);
+
+        Button historyButton = new Button("View Password History", new SelectionListener<ButtonEvent>()
         {
-            Button historyButton = new Button("View Password History", new SelectionListener<ButtonEvent>()
+            @Override
+            public void componentSelected(ButtonEvent ce)
             {
-                @Override
-                public void componentSelected(ButtonEvent ce)
-                {
-                    doViewPasswordHistory();
-                }
-            });
-            form.add(historyButton, formData);
-        }
-        
+                doViewPasswordHistory();
+            }
+        });
+        add(historyButton, new AbsoluteData(82, 311));
+        historyButton.setSize("127px", "22px");
+        historyButton.setEnabled(password.getId() > 0);
+
+        LabelField lblfldTags = new LabelField("Tags:");
+        add(lblfldTags, new AbsoluteData(6, 118));
+            
         tagsTextBox = new TextField<String>();
-        tagsTextBox.setFieldLabel("Tags");
-        form.add(tagsTextBox, formData);
+        add(tagsTextBox, new AbsoluteData(82, 118));
+        tagsTextBox.setSize("331px", "22px");
 
+        LabelField lblfldNotes = new LabelField("Notes:");
+        add(lblfldNotes, new AbsoluteData(6, 146));
+        
         notesTextArea = new TextArea();
-        notesTextArea.setFieldLabel("Notes");
-        form.add(notesTextArea, formData);
-
+        add(notesTextArea, new AbsoluteData(82, 146));
+        notesTextArea.setSize("331px", "75px");
+        
+        LabelField lblfldMaxHistory = new LabelField("Max History:");
+        add(lblfldMaxHistory, new AbsoluteData(6, 227));
+        
         maxHistoryTextBox = new NumberField();
         maxHistoryTextBox.setPropertyEditorType(Integer.class);
-        maxHistoryTextBox.setFieldLabel("Max History (-1 infinite)");
-        form.add(maxHistoryTextBox, formData);
+        add(maxHistoryTextBox, new AbsoluteData(82, 227));
+        maxHistoryTextBox.setSize("76px", "22px");
 
+        LabelField lblfldInfinite = new LabelField("(-1 infinite)");
+        add(lblfldInfinite, new AbsoluteData(164, 227));
+        
         activeCheckBox = new CheckBox();
         activeCheckBox.setBoxLabel("Active");
-        form.add(activeCheckBox, formData);
+        add(activeCheckBox, new AbsoluteData(82, 255));
         
         Button editPermissionsButton = new Button("Edit Permissions", new SelectionListener<ButtonEvent>() {
 			@Override
@@ -139,20 +158,20 @@ public class PasswordDialog extends Window implements PermissionListener
                 doEditPermissions();
 			}
 		});
-        form.add(editPermissionsButton, formData);
+        add(editPermissionsButton, new AbsoluteData(82, 283));
+        editPermissionsButton.setSize("260px", "22px");
         
-        if (password.getId() > 0)
+        Button accessAuditButton = new Button("View Access Audit Log", new SelectionListener<ButtonEvent>()
         {
-            Button accessAuditButton = new Button("View Access Audit Log", new SelectionListener<ButtonEvent>()
+            @Override
+            public void componentSelected(ButtonEvent ce)
             {
-                @Override
-                public void componentSelected(ButtonEvent ce)
-                {
-                    doViewAccessAuditLog();
-                }
-            });
-            form.add(accessAuditButton, formData);
-        }
+                doViewAccessAuditLog();
+            }
+        });
+        add(accessAuditButton, new AbsoluteData(215, 311));
+        accessAuditButton.setSize("127px", "22px");
+        accessAuditButton.setEnabled(password.getId() > 0);
 
         Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
 			@Override
@@ -168,13 +187,11 @@ public class PasswordDialog extends Window implements PermissionListener
 			}
 		});
         
-        form.setButtonAlign(HorizontalAlignment.CENTER);
-        form.addButton(saveButton);
-        form.addButton(cancelButton);
+        setButtonAlign(HorizontalAlignment.CENTER);
+        addButton(saveButton);
+        addButton(cancelButton);
         
         setFields();
-        
-        this.add(form);
     }
 
     
@@ -326,5 +343,4 @@ public class PasswordDialog extends Window implements PermissionListener
             password.addPermission(permission);
         }
     }
-
 }

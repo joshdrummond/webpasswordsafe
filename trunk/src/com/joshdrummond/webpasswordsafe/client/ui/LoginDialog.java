@@ -56,6 +56,7 @@ public class LoginDialog extends Window
         this.setModal(true);
         this.setClosable(false);
         this.setOnEsc(false);
+        this.setResizable(false);
         
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);
@@ -102,6 +103,7 @@ public class LoginDialog extends Window
 
     }
 
+    @Override
     public void show()
     {
         super.show();

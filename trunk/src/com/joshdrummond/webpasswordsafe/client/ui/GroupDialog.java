@@ -20,6 +20,7 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.List;
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -57,8 +58,9 @@ public class GroupDialog extends Window
         this.group = pGroup;
         this.setHeading("Group");
         this.setModal(true);
-        setLayout(new AbsoluteLayout());
-        setSize("455", "350");
+        this.setLayout(new AbsoluteLayout());
+        this.setSize("455", "355");
+        this.setResizable(false);
 
         LabelField lblfldName = new LabelField("Name:");
         add(lblfldName, new AbsoluteData(6, 13));
@@ -106,8 +108,6 @@ public class GroupDialog extends Window
                         doSave();
                     }
                 });
-        add(saveButton, new AbsoluteData(131, 285));
-        saveButton.setSize("74px", "22px");
 
         Button cancelButton = new Button("Cancel",
                 new SelectionListener<ButtonEvent>()
@@ -118,8 +118,10 @@ public class GroupDialog extends Window
                         doCancel();
                     }
                 });
-        add(cancelButton, new AbsoluteData(232, 285));
-        cancelButton.setSize("82px", "22px");
+
+        setButtonAlign(HorizontalAlignment.CENTER);
+        addButton(saveButton);
+        addButton(cancelButton);
         
         setFields();
     }

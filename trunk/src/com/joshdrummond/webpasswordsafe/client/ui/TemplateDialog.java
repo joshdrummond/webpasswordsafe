@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,9 +21,7 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
@@ -33,54 +31,58 @@ import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
+import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.extjs.gxt.ui.client.widget.grid.CellEditor;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
+import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
+import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
+import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
-import com.joshdrummond.webpasswordsafe.common.model.Password;
-import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.Template;
 import com.joshdrummond.webpasswordsafe.common.model.TemplateDetail;
-import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
-import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
+import com.joshdrummond.webpasswordsafe.common.util.Utils;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
 /**
  * @author Josh Drummond
- * 
+ *
  */
-public class PermissionDialog extends Window
+public class TemplateDialog extends Window
 {
-    private Password password;
-    private ListStore<PermissionData> permissionStore;
-    private EditorGrid<PermissionData> permissionGrid;
+    private Template template;
+    private TextField<String> templateNameTextBox;
+    private ListStore<TemplateData> permissionStore;
+    private EditorGrid<TemplateData> permissionGrid;
     private ComboBox<SubjectData> comboSubjects;
-    private PermissionData selectedPermission;
-    private PermissionListener permissionListener;
-
-    public PermissionDialog(PermissionListener permissionListener,
-            Password password, List<Subject> subjects)
+    private TemplateData selectedPermission;
+    private CheckBox chkbxShared;
+    private ListStore<SubjectData> subjectStore;
+    
+    public TemplateDialog(Template template)
     {
-        this.setSize("380", "350");
+        this.template = template;
+        setSize("380", "385");
         this.setResizable(false);
-        this.password = password;
-        this.permissionListener = permissionListener;
-        this.setHeading("Permissions");
+        this.setHeading("Template");
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
-        permissionStore = new ListStore<PermissionData>();
+        permissionStore = new ListStore<TemplateData>();
 
         final SimpleComboBox<AccessLevel> accessLevelCombo = new SimpleComboBox<AccessLevel>();
         accessLevelCombo.setForceSelection(true);
@@ -105,11 +107,13 @@ public class PermissionDialog extends Window
             }
         };
 
-        ListStore<SubjectData> subjectStore = new ListStore<SubjectData>();
-        for (Subject subject : subjects)
-        {
-            subjectStore.add(new SubjectData(subject));
-        }
+        subjectStore = new ListStore<SubjectData>();
+
+        LabelField lblfldTemplateName = new LabelField("Name:");
+        add(lblfldTemplateName, new AbsoluteData(6, 6));
+        templateNameTextBox = new TextField<String>();
+        add(templateNameTextBox, new AbsoluteData(87, 6));
+        templateNameTextBox.setSize("276px", "22px");
 
         List<ColumnConfig> config = new ArrayList<ColumnConfig>(2);
         ColumnModel cm = new ColumnModel(config);
@@ -124,20 +128,20 @@ public class PermissionDialog extends Window
         column.setWidth(113);
         column.setEditor(accessLevelEditor);
         config.add(column);
-        permissionGrid = new EditorGrid<PermissionData>(permissionStore, cm);
+        permissionGrid = new EditorGrid<TemplateData>(permissionStore, cm);
         permissionGrid.setBorders(true);
         permissionGrid.setStripeRows(true);
-        GridSelectionModel<PermissionData> gsm = permissionGrid.getSelectionModel();
+        GridSelectionModel<TemplateData> gsm = permissionGrid.getSelectionModel();
         gsm.setSelectionMode(SelectionMode.SINGLE);
-        permissionGrid.addListener(Events.CellClick, new Listener<GridEvent<PermissionData>>()
+        permissionGrid.addListener(Events.CellClick, new Listener<GridEvent<TemplateData>>()
         {
-            public void handleEvent(GridEvent<PermissionData> ge)
+            public void handleEvent(GridEvent<TemplateData> ge)
             {
                 selectedPermission = ge.getModel();
             }
         });
         permissionGrid.setSize(200, 200);
-        add(permissionGrid, new AbsoluteData(3, 3));
+        add(permissionGrid, new AbsoluteData(3, 33));
         permissionGrid.setSize("360px", "221px");
 
         Button removeButton = new Button("Remove Selected",
@@ -149,7 +153,7 @@ public class PermissionDialog extends Window
                         doRemove();
                     }
                 });
-        add(removeButton, new AbsoluteData(258, 230));
+        add(removeButton, new AbsoluteData(258, 260));
         removeButton.setSize("105px", "22px");
 
         Button addUserButton = new Button("Add",
@@ -161,11 +165,11 @@ public class PermissionDialog extends Window
                         doAdd();
                     }
                 });
-        add(addUserButton, new AbsoluteData(160, 230));
+        add(addUserButton, new AbsoluteData(160, 260));
         addUserButton.setSize("51px", "22px");
 
         comboSubjects = new ComboBox<SubjectData>();
-        add(comboSubjects, new AbsoluteData(3, 230));
+        add(comboSubjects, new AbsoluteData(3, 260));
         comboSubjects.setEmptyText("Select a User/Group...");
         comboSubjects.setDisplayField("name");
         comboSubjects.setStore(subjectStore);
@@ -181,28 +185,21 @@ public class PermissionDialog extends Window
                 doRemoveAll();
             }
         });
-        add(btnRemoveAll, new AbsoluteData(258, 254));
+        add(btnRemoveAll, new AbsoluteData(258, 284));
         btnRemoveAll.setSize("105px", "22px");
         
-        Button btnAddTemplate = new Button("Add Template",
+        chkbxShared = new CheckBox();
+        add(chkbxShared, new AbsoluteData(6, 284));
+        chkbxShared.setBoxLabel("Shared?");
+        chkbxShared.setHideLabel(true);
+        
+        Button saveButton = new Button("Save",
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
                     public void componentSelected(ButtonEvent ce)
                     {
-                        doAddTemplate();
-                    }
-                });
-        add(btnAddTemplate, new AbsoluteData(126, 254));
-        btnAddTemplate.setSize("85px", "22px");
-
-        Button okayButton = new Button("Okay",
-                new SelectionListener<ButtonEvent>()
-                {
-                    @Override
-                    public void componentSelected(ButtonEvent ce)
-                    {
-                        doOkay();
+                        doSave();
                     }
                 });
 
@@ -216,37 +213,12 @@ public class PermissionDialog extends Window
                     }
                 });
         setButtonAlign(HorizontalAlignment.CENTER);
-        addButton(okayButton);
+        addButton(saveButton);
         addButton(cancelButton);
         
         setFields();
     }
 
-    private void doAddTemplate()
-    {
-        AsyncCallback<List<Template>> callback = new AsyncCallback<List<Template>>()
-        {
-            public void onFailure(Throwable caught)
-            {
-                MessageBox.alert("Error", caught.getMessage(), null);
-            }
-            public void onSuccess(List<Template> result)
-            {
-                new TemplateSelectionDialog(new ApplyTemplateListener(), result, false).show();
-            }
-        };
-        PasswordService.Util.getInstance().getTemplates(true, callback);
-
-    }
-    
-    private void applyTemplateDetails(Template template)
-    {
-        for (TemplateDetail templateDetail : template.getTemplateDetails())
-        {
-            permissionStore.add(new PermissionData(new Permission(templateDetail.getSubject(), templateDetail.getAccessLevelObj())));
-        }
-    }
-    
     private void doRemoveAll()
     {
         permissionStore.removeAll();
@@ -254,8 +226,7 @@ public class PermissionDialog extends Window
 
     private void doRemove()
     {
-        //PermissionData data = permissionGrid.getSelectionModel().getSelectedItem();
-        PermissionData data = selectedPermission;
+        TemplateData data = selectedPermission;
         if (null != data)
         {
             permissionStore.remove(data);
@@ -268,17 +239,45 @@ public class PermissionDialog extends Window
         SubjectData data = comboSubjects.getValue();
         if (null != data)
         {
-            permissionStore.add(new PermissionData(new Permission((Subject)data.get("subject"), AccessLevel.READ)));
+            permissionStore.add(new TemplateData(new TemplateDetail((Subject)data.get("subject"), AccessLevel.READ)));
         }
     }
 
     private void setFields()
     {
+        templateNameTextBox.setValue(template.getName());
+        chkbxShared.setValue(template.isShare());
+        updateTemplateDetails();
+        updateSubjects();
+    }
+
+    private void updateTemplateDetails()
+    {
         permissionStore.removeAll();
-        for (Permission permission : password.getPermissions())
+        for (TemplateDetail templateDetail : template.getTemplateDetails())
         {
-            permissionStore.add(new PermissionData(permission));
-        }
+            permissionStore.add(new TemplateData(templateDetail));
+        }  
+    }
+    
+    private void updateSubjects()
+    {
+        AsyncCallback<List<Subject>> callback = new AsyncCallback<List<Subject>>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+
+            public void onSuccess(List<Subject> result)
+            {
+                for (Subject subject : result)
+                {
+                    subjectStore.add(new SubjectData(subject));
+                }
+            }
+        };
+        UserService.Util.getInstance().getSubjects(true, callback);
     }
 
     private void doCancel()
@@ -287,60 +286,74 @@ public class PermissionDialog extends Window
         hide();
     }
 
-    private void doOkay()
+    private boolean validateFields()
+    {
+        if ("".equals(Utils.safeString(templateNameTextBox.getValue())))
+        {
+            MessageBox.alert("Error", "Name cannot be empty", null);
+            return false;
+        }
+        return true;
+    }
+    
+    private void doSave()
     {
         permissionStore.commitChanges();
-        Set<Permission> permissions = new HashSet<Permission>(permissionStore.getCount());
-        for (PermissionData data : permissionStore.getModels())
+        if (validateFields())
         {
-            Permission permission = (Permission)data.get("permission");
-            String newAccessLevel = ((AccessLevel)data.get("accessLevel")).name();
-            if (!newAccessLevel.equals(permission.getAccessLevel()))
+            template.setName(Utils.safeString(templateNameTextBox.getValue()));
+            template.setShare(chkbxShared.getValue());
+            template.clearDetails();
+            for (TemplateData data : permissionStore.getModels())
             {
-                // if user changed the access level value in the GUI, treat it like a new permission
-                permission = new Permission(permission.getSubject(), AccessLevel.valueOf(newAccessLevel));
-            }
-            permissions.add(permission);
-        }
-        permissionListener.doPermissionsChanged(permissions);
-        hide();
-    }
-    
-    private class ApplyTemplateListener implements TemplateListener
-    {
-        public void doTemplatesChosen(List<Template> templates)
-        {
-            if (templates.size() > 0)
-            {
-                AsyncCallback<Template> callback = new AsyncCallback<Template>()
+                TemplateDetail templateDetail = (TemplateDetail)data.get("templateDetail");
+                String newAccessLevel = ((AccessLevel)data.get("accessLevel")).name();
+                if (!newAccessLevel.equals(templateDetail.getAccessLevel()))
                 {
-                    public void onFailure(Throwable caught)
-                    {
-                        MessageBox.alert("Error", caught.getMessage(), null);
-                    }
-                    public void onSuccess(Template result)
-                    {
-                        applyTemplateDetails(result);
-                    }
-                };
-                PasswordService.Util.getInstance().getTemplateWithDetails(templates.get(0).getId(), callback);
+                    // if user changed the access level value in the GUI, treat it like a new permission
+                    templateDetail = new TemplateDetail(templateDetail.getSubject(), AccessLevel.valueOf(newAccessLevel));
+                }
+                template.addDetail(templateDetail);
+                Info.display("adding template detail", templateDetail.toString());
+            }
+            Info.display("template detail size", ""+template.getTemplateDetails().size());
+
+            AsyncCallback<Void> callback = new AsyncCallback<Void>()
+            {
+                public void onFailure(Throwable caught)
+                {
+                    MessageBox.alert("Error", caught.getMessage(), null);
+                }
+
+                public void onSuccess(Void result)
+                {
+                    hide();
+                }
+            };
+            if (template.getId() == 0)
+            {
+                PasswordService.Util.getInstance().addTemplate(template, callback);
+            }
+            else
+            {
+                PasswordService.Util.getInstance().updateTemplate(template, callback);
             }
         }
     }
-    
-    private class PermissionData extends BaseModel
+
+    private class TemplateData extends BaseModel
     {
         private static final long serialVersionUID = 1L;
 
-        public PermissionData(Permission permission)
+        public TemplateData(TemplateDetail templateDetail)
         {
-            set("id", permission.getId());
-            set("subject", permission.getSubject().getName());
-            set("accessLevel", permission.getAccessLevelObj());
-            set("permission", permission);
+            set("id", templateDetail.getId());
+            set("subject", templateDetail.getSubject().getName());
+            set("accessLevel", templateDetail.getAccessLevelObj());
+            set("templateDetail", templateDetail);
         }
     }
-
+    
     private class SubjectData extends BaseModel
     {
         private static final long serialVersionUID = 1L;

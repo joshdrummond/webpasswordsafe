@@ -21,11 +21,13 @@ package com.joshdrummond.webpasswordsafe.client;
 
 import java.util.List;
 import com.extjs.gxt.ui.client.Style.Orientation;
+import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
+import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Text;
 import com.extjs.gxt.ui.client.widget.Viewport;
@@ -45,12 +47,14 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
+import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.client.ui.*;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
+import com.joshdrummond.webpasswordsafe.common.model.Template;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
 
@@ -77,7 +81,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         userMenu = new Menu();
         MenuItem userSettings = new MenuItem("Settings");
         Menu userSettingsMenu = new Menu();
-        userSettingsMenu.add(new MenuItem("General"));
+        //userSettingsMenu.add(new MenuItem("General"));
         userSettingsMenu.add(new MenuItem("Change Password", new SelectionListener<MenuEvent>() {
 			@Override
 			public void componentSelected(MenuEvent ce) {
@@ -87,12 +91,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         userSettings.setSubMenu(userSettingsMenu);
         userMenu.add(userSettings);
 
-        MenuItem userRole = new MenuItem("Role");
-        Menu userRoleMenu = new Menu();
-        userRoleMenu.add(new MenuItem("User"));
-        userRoleMenu.add(new MenuItem("Admin"));
-        userRole.setSubMenu(userRoleMenu);
-        userMenu.add(userRole);
+//        MenuItem userRole = new MenuItem("Role");
+//        Menu userRoleMenu = new Menu();
+//        userRoleMenu.add(new MenuItem("User"));
+//        userRoleMenu.add(new MenuItem("Admin"));
+//        userRole.setSubMenu(userRoleMenu);
+//        userMenu.add(userRole);
 
         userMenu.add(new MenuItem("Logout", new SelectionListener<MenuEvent>() {
 			@Override
@@ -103,8 +107,22 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
 
 
         Menu aboutMenu = new Menu();
-        aboutMenu.add(new MenuItem("Help"));
-        aboutMenu.add(new MenuItem("About"));
+        aboutMenu.add(new MenuItem("Help", new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowHelp();
+            }
+        }));
+        aboutMenu.add(new MenuItem("About", new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowAbout();
+            }
+        }));
 
         Menu reportsMenu = new Menu();
         reportsMenu.add(buildReportMenuItem("Users", "Users"));
@@ -119,21 +137,31 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
                 doNewPassword();
             }
         }));
-        MenuItem passwordTemplate = new MenuItem("Template");
-        Menu passwordTemplateMenu = new Menu();
-        passwordTemplateMenu.add(new MenuItem("New"));
-        passwordTemplateMenu.add(new MenuItem("Edit"));
-        passwordTemplate.setSubMenu(passwordTemplateMenu);
-        passwordMenu.add(passwordTemplate);
         passwordMenu.add(new MenuItem("Search", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
+            @Override
+            public void componentSelected(MenuEvent ce) {
                 refreshPasswordSearch();
             }
         }));
+        MenuItem passwordTemplate = new MenuItem("Template");
+        Menu passwordTemplateMenu = new Menu();
+        passwordTemplateMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
+            @Override
+            public void componentSelected(MenuEvent ce) {
+                doAddTemplate();
+            }
+        }));
+        passwordTemplateMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+            @Override
+            public void componentSelected(MenuEvent ce) {
+                doEditTemplate();
+            }
+        }));
+        passwordTemplate.setSubMenu(passwordTemplateMenu);
+        passwordMenu.add(passwordTemplate);
 
         adminMenu = new Menu();
-        adminMenu.add(new MenuItem("Settings"));
+        //adminMenu.add(new MenuItem("Settings"));
 
         MenuItem adminUser = new MenuItem("Users");
         Menu adminUserMenu = new Menu();
@@ -169,14 +197,14 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         adminGroup.setSubMenu(adminGroupMenu);
         adminMenu.add(adminGroup);
 
-        MenuItem adminRole = new MenuItem("Roles");
-        adminMenu.add(adminRole);
+//        MenuItem adminRole = new MenuItem("Roles");
+//        adminMenu.add(adminRole);
 
         MenuBar mainMenu = new MenuBar();
         mainMenu.add(new MenuBarItem("User", userMenu));
         mainMenu.add(new MenuBarItem("Password", passwordMenu));
-        mainMenu.add(new MenuBarItem("Reports", reportsMenu));
         mainMenu.add(new MenuBarItem("Admin", adminMenu));
+        mainMenu.add(new MenuBarItem("Reports", reportsMenu));
         mainMenu.add(new MenuBarItem("About", aboutMenu));
 
         viewport = new Viewport();
@@ -361,8 +389,44 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         }
         else
         {
-        	MessageBox.alert("Error", "Must be logged in first.", null);
+            MessageBox.alert("Error", "Must be logged in first.", null);
         }
+    }
+    
+    private void doAddTemplate()
+    {
+        if (clientSessionUtil.isAuthorized("ADD_TEMPLATE"))
+        {
+            displayTemplateDialog(new Template());
+        }
+    }
+
+    private void doEditTemplate()
+    {
+        if (clientSessionUtil.isAuthorized("EDIT_TEMPLATE"))
+        {
+            AsyncCallback<List<Template>> callback = new AsyncCallback<List<Template>>()
+            {
+                public void onFailure(Throwable caught)
+                {
+                    MessageBox.alert("Error", caught.getMessage(), null);
+                }
+                public void onSuccess(List<Template> result)
+                {
+                    new TemplateSelectionDialog(new EditTemplateListener(), result, false).show();
+                }
+            };
+            PasswordService.Util.getInstance().getTemplates(false, callback);
+        }
+        else
+        {
+            MessageBox.alert("Error", "Must be logged in first.", null);
+        }
+    }
+    
+    private void displayTemplateDialog(Template template)
+    {
+        new TemplateDialog(template).show();
     }
     
     private void doGetLoggedInUser()
@@ -464,6 +528,30 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         return clientSessionUtil;
     }
     
+    private void doShowAbout()
+    {
+        StringBuilder aboutText = new StringBuilder();
+        aboutText.append("<br><center><b>WebPasswordSafe</b><br><b>Version ");
+        aboutText.append(Constants.VERSION);
+        aboutText.append("</b><br><a target=\"_blank\" href=\"http://webpasswordsafe.googlecode.com\">http://webpasswordsafe.googlecode.com</a><br>");
+        aboutText.append("Copyright &#169; 2008-2010 Josh Drummond.");
+        aboutText.append("<br>All rights reserved. <a target=\"_blank\" href=\"http://webpasswordsafe.googlecode.com/svn/trunk/docs/license.txt\">");
+        aboutText.append("GNU General Public License v2</a></center><br><br>");
+        Dialog popup = new Dialog();
+        popup.setHeading("About");
+        popup.setButtons(Dialog.CLOSE);
+        popup.addText(aboutText.toString());
+        popup.setScrollMode(Scroll.AUTO);
+        popup.setHideOnButtonClick(true);
+        popup.setModal(true);
+        popup.show();
+    }
+    
+    private void doShowHelp()
+    {
+        Window.open("http://code.google.com/p/webpasswordsafe/w/list?q=label:help", "_blank", "");
+    }
+    
     private class EditUserListener implements UserListener
     {
         public void doUsersChosen(List<User> users)
@@ -507,4 +595,27 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
             }
         }
     }
+    
+    private class EditTemplateListener implements TemplateListener
+    {
+        public void doTemplatesChosen(List<Template> templates)
+        {
+            if (templates.size() > 0)
+            {
+                AsyncCallback<Template> callback = new AsyncCallback<Template>()
+                {
+                    public void onFailure(Throwable caught)
+                    {
+                        MessageBox.alert("Error", caught.getMessage(), null);
+                    }
+                    public void onSuccess(Template result)
+                    {
+                        displayTemplateDialog(result);
+                    }
+                };
+                PasswordService.Util.getInstance().getTemplateWithDetails(templates.get(0).getId(), callback);
+            }
+        }
+    }
+
 }

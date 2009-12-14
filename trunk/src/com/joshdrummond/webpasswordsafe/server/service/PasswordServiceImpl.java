@@ -36,11 +36,14 @@ import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
+import com.joshdrummond.webpasswordsafe.common.model.Template;
+import com.joshdrummond.webpasswordsafe.common.model.TemplateDetail;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
+import com.joshdrummond.webpasswordsafe.server.dao.TemplateDAO;
 import com.joshdrummond.webpasswordsafe.server.encryption.Encryptor;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 
@@ -65,6 +68,9 @@ public class PasswordServiceImpl implements PasswordService
     
     @Autowired
     private PasswordAccessAuditDAO passwordAccessAuditDAO;
+    
+    @Autowired
+    private TemplateDAO templateDAO;
     
     @Autowired
     private PasswordGenerator passwordGenerator;
@@ -267,6 +273,62 @@ public class PasswordServiceImpl implements PasswordService
         List<Tag> tags = tagDAO.findTagsInUse();
         LOG.debug("found "+tags.size() + " tags in use");
         return tags;
+    }
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void addTemplate(Template template)
+    {
+        User loggedInUser = loginService.getLogin();
+        template.setUser(loggedInUser);
+        templateDAO.makePersistent(template);
+        LOG.info(template.getName() + " added");
+    }
+
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void updateTemplate(Template updateTemplate)
+    {
+        LOG.debug("updating template");
+        Template template = templateDAO.findById(updateTemplate.getId(), false);
+        if (template != null)
+        {
+            // update simple fields
+            template.setName(updateTemplate.getName());
+            template.setShare(updateTemplate.isShare());
+            
+            // update details
+            // keep the permissions that haven't changed
+            template.getTemplateDetails().retainAll(updateTemplate.getTemplateDetails());
+            // add the permissions that have changed
+            for (TemplateDetail templateDetail : updateTemplate.getTemplateDetails())
+            {
+                if (templateDetail.getId() == 0)
+                {
+                    template.addDetail(templateDetail);
+                }
+            }
+        }
+        else
+        {
+            LOG.debug("template not found");
+        }
+    }
+
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public List<Template> getTemplates(boolean includeShared)
+    {
+        User loggedInUser = loginService.getLogin();
+        return templateDAO.findTemplatesByUser(loggedInUser, includeShared);
+    }
+
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public Template getTemplateWithDetails(long templateId)
+    {
+        Template template = templateDAO.findById(templateId, false);
+        if (template != null)
+        {
+            template.getTemplateDetails().size();
+        }
+        return template;
     }
     
 }

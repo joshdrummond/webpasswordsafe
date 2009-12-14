@@ -138,8 +138,8 @@ public class PasswordSearchPanel extends ContentPanel
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>(4);
         ColumnConfig column = new ColumnConfig();
 //        column.setToolTip(TOOLTIP_EDIT_PASSWORD);
-        column.setId("name");
-        column.setHeader("Name");
+        column.setId("title");
+        column.setHeader("Title");
         column.setWidth(200);
         configs.add(column);
         column = new ColumnConfig();
@@ -291,10 +291,10 @@ public class PasswordSearchPanel extends ContentPanel
     {
 		private static final long serialVersionUID = 1L;
 
-    	public PasswordSearchData(long id, String name, String username, String tags, String notes)
+    	public PasswordSearchData(long id, String title, String username, String tags, String notes)
     	{
     		set("id", id);
-    		set("name", name);
+    		set("title", title);
     		set("username", username);
     		set("password", "******");
             set("tags", tags);
