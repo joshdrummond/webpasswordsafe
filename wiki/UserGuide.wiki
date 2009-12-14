@@ -1,0 +1,6 @@
+#summary WebPasswordSafe User Guide
+#labels help
+
+= WebPasswordSafe User Guide =
+
+This is a placeholder.
