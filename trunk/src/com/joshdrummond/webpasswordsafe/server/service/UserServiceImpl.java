@@ -34,7 +34,7 @@ import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.GroupDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
-import com.joshdrummond.webpasswordsafe.server.encryption.Digester;
+import com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester;
 import static com.joshdrummond.webpasswordsafe.common.util.Constants.*;
 
 

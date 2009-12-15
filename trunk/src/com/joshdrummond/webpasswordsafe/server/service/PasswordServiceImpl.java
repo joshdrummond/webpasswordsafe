@@ -44,7 +44,7 @@ import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TemplateDAO;
-import com.joshdrummond.webpasswordsafe.server.encryption.Encryptor;
+import com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 
 
