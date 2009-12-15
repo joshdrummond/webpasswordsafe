@@ -44,6 +44,7 @@ import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TemplateDAO;
+import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 import com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 
@@ -80,6 +81,10 @@ public class PasswordServiceImpl implements PasswordService
     
     @Autowired
     private Encryptor encryptor;
+    
+    @Autowired
+    private AuditLogger auditLogger;
+    
 
     @Transactional(propagation=Propagation.REQUIRED)
     public void addPassword(Password password)
@@ -94,7 +99,7 @@ public class PasswordServiceImpl implements PasswordService
         password.getCurrentPasswordData().setDateCreated(now);
         password.getCurrentPasswordData().setPassword(encryptor.encrypt(password.getCurrentPasswordData().getPassword()));
         passwordDAO.makePersistent(password);
-        LOG.info(password.getName() + " added");
+        auditLogger.log("Password ["+password.getName() + "] added by "+loggedInUser.getUsername());
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
@@ -167,7 +172,7 @@ public class PasswordServiceImpl implements PasswordService
             {
             	LOG.debug("no access to grant permissions");
             }
-            
+            auditLogger.log("Password ["+password.getName() + "] updated by "+loggedInUser.getUsername());
         }
         else
         {
@@ -181,7 +186,7 @@ public class PasswordServiceImpl implements PasswordService
     	query = Utils.safeString(query);
         User loggedInUser = loginService.getLogin();
         List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly, tags);
-        LOG.debug("searching for password query ["+query+"] activeOnly="+activeOnly+" tags="+tags+" by ["+loggedInUser.getUsername()+"] found "+passwords.size());
+        auditLogger.log("searching for password query ["+query+"] activeOnly="+activeOnly+" tags="+tags+" by ["+loggedInUser.getUsername()+"] found "+passwords.size());
         return passwords;
     }
  
@@ -200,7 +205,7 @@ public class PasswordServiceImpl implements PasswordService
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
-            LOG.debug("returning current password value for ["+password.getName()+"]");
+            auditLogger.log("returning current password value for ["+password.getName()+"] for user "+loggedInUser.getUsername());
             currentPasswordValue = encryptor.decrypt(password.getCurrentPasswordData().getPassword());
             createPasswordAccessAuditEntry(password, loggedInUser);
         }
@@ -227,9 +232,7 @@ public class PasswordServiceImpl implements PasswordService
     {
         User loggedInUser = loginService.getLogin();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
-        LOG.debug("permissions for "+passwordId+":");
-        for (Permission p : password.getPermissions())
-            LOG.debug(p.getSubject().getName()+"="+p.getAccessLevelObj().name()+","+p.getAccessLevel());
+        auditLogger.log("get password ["+password.getName()+"] for user "+loggedInUser.getUsername());
         return password;
     }
     
@@ -242,6 +245,7 @@ public class PasswordServiceImpl implements PasswordService
         if (null != password)
         {
             accessAuditList = passwordAccessAuditDAO.findAccessAuditByPassword(password);
+            auditLogger.log("access audit data retrieved for password ["+password.getName()+"] by user "+loggedInUser.getUsername());
         }
         LOG.debug("found "+accessAuditList.size() + " password access audit entries");
         return accessAuditList;
@@ -262,6 +266,7 @@ public class PasswordServiceImpl implements PasswordService
                         passwordData.getDateCreated(), passwordData.getUserCreated()));
             }
             createPasswordAccessAuditEntry(password, loggedInUser);
+            auditLogger.log("password history data retrieved for ["+password.getName()+"] by user "+loggedInUser.getUsername());
         }
         LOG.debug("found "+decryptedPasswordDataList.size() + " password history values");
         return decryptedPasswordDataList;
@@ -281,13 +286,14 @@ public class PasswordServiceImpl implements PasswordService
         User loggedInUser = loginService.getLogin();
         template.setUser(loggedInUser);
         templateDAO.makePersistent(template);
-        LOG.info(template.getName() + " added");
+        auditLogger.log("Template ["+template.getName() + "] added by "+loggedInUser.getUsername());
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
     public void updateTemplate(Template updateTemplate)
     {
         LOG.debug("updating template");
+        User loggedInUser = loginService.getLogin();
         Template template = templateDAO.findById(updateTemplate.getId(), false);
         if (template != null)
         {
@@ -306,6 +312,7 @@ public class PasswordServiceImpl implements PasswordService
                     template.addDetail(templateDetail);
                 }
             }
+            auditLogger.log("Template ["+template.getName() + "] updated by "+loggedInUser.getUsername());
         }
         else
         {
