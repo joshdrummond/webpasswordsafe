@@ -31,7 +31,6 @@ import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
-import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -314,9 +313,7 @@ public class TemplateDialog extends Window
                     templateDetail = new TemplateDetail(templateDetail.getSubject(), AccessLevel.valueOf(newAccessLevel));
                 }
                 template.addDetail(templateDetail);
-                Info.display("adding template detail", templateDetail.toString());
             }
-            Info.display("template detail size", ""+template.getTemplateDetails().size());
 
             AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {

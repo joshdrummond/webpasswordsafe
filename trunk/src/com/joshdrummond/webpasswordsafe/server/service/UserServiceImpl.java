@@ -34,6 +34,7 @@ import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.GroupDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
+import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 import com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester;
 import static com.joshdrummond.webpasswordsafe.common.util.Constants.*;
 
@@ -59,6 +60,10 @@ public class UserServiceImpl implements UserService
     @Autowired
     private Digester digester;
 
+    @Autowired
+    private AuditLogger auditLogger;
+
+    
     @Transactional(propagation=Propagation.REQUIRED)
     public void changePassword(String password)
     {
@@ -68,7 +73,7 @@ public class UserServiceImpl implements UserService
             User user = userDAO.findActiveUserByUsername(loggedInUsername);
             user.setPassword(digester.digest(password));
             userDAO.makePersistent(user);
-            LOG.info(loggedInUsername + " changed password");
+            auditLogger.log(loggedInUsername + " changed password");
         }
         else
         {
@@ -99,13 +104,12 @@ public class UserServiceImpl implements UserService
             Group group = groupDAO.findGroupByName(newGroup.getName());
             group.addUser(user);
         }
-        LOG.info(user.getUsername() + " user added");
+        auditLogger.log(user.getUsername() + " user added");
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
     public void updateUser(User updateUser)
     {
-        LOG.debug("incoming user password="+updateUser.getPassword());
         // update base user
         User user = userDAO.findById(updateUser.getId(), false);
         user.setFullname(updateUser.getFullname());
@@ -114,7 +118,6 @@ public class UserServiceImpl implements UserService
         if (!updateUser.getPassword().equals(""))
         {
             user.setPassword(digester.digest(updateUser.getPassword()));
-            LOG.debug("now it is="+user.getPassword());
         }
         
         // assign everyone group if missing
@@ -123,7 +126,7 @@ public class UserServiceImpl implements UserService
         
         // add groups added
         
-        LOG.info(user.getUsername() + " user updated");
+        auditLogger.log(user.getUsername() + " user updated");
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
@@ -168,7 +171,7 @@ public class UserServiceImpl implements UserService
     public void addGroup(Group group)
     {
         groupDAO.makePersistent(group);
-        LOG.info(group.getName() + " group added");
+        auditLogger.log(group.getName() + " group added");
     }
     
     @Transactional(propagation=Propagation.REQUIRED)
@@ -180,10 +183,9 @@ public class UserServiceImpl implements UserService
         for (User user : updateGroup.getUsers())
         {
             User pUser = userDAO.findById(user.getId(), false);
-            LOG.debug("trying to add user="+pUser.getId()+" to group="+group.getId());
             group.addUser(pUser);
         }
-        LOG.info(group.getName() + " group updated");
+        auditLogger.log(group.getName() + " group updated");
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)

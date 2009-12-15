@@ -30,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
+import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 import com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator;
+
 
 /**
  * Implementation of Login Service
@@ -50,32 +52,10 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private UserDAO userDAO;
     
-    /**
-     * @return the authenticator
-     */
-    public Authenticator getAuthenticator()
-    {
-        return this.authenticator;
-    }
+    @Autowired
+    private AuditLogger auditLogger;
 
-    /**
-     * @param authenticator the authenticator to set
-     */
-    public void setAuthenticator(Authenticator authenticator)
-    {
-        this.authenticator = authenticator;
-    }
-
-    public UserDAO getUserDAO()
-    {
-        return this.userDAO;
-    }
-
-    public void setUserDAO(UserDAO userDAO)
-    {
-        this.userDAO = userDAO;
-    }
-
+    
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#getLogin()
      */
@@ -106,7 +86,7 @@ public class LoginServiceImpl implements LoginService {
                 ServletUtils.getRequest().getSession().setAttribute("username", username);
             }
         }
-        LOG.info(username+" login "+ (isValidLogin ? "success" : "failure"));
+        auditLogger.log(username+" login "+ (isValidLogin ? "success" : "failure"));
         return isValidLogin;
     }
 
@@ -115,7 +95,7 @@ public class LoginServiceImpl implements LoginService {
      */
     public boolean logout()
     {
-        LOG.info("logout user = "+ (String)ServletUtils.getRequest().getSession().getAttribute("username"));
+        auditLogger.log("logout user "+ (String)ServletUtils.getRequest().getSession().getAttribute("username"));
         ServletUtils.getRequest().getSession().removeAttribute("username");
         return true;
     }
