@@ -17,7 +17,7 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.encryption;
+package com.joshdrummond.webpasswordsafe.server.plugin.encryption;
 
 import org.apache.log4j.Logger;
 import org.owasp.esapi.ESAPI;
@@ -33,7 +33,7 @@ public class EsapiDigester implements Digester
     private static Logger LOG = Logger.getLogger(EsapiDigester.class);
 
     /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.encryption.Digester#check(java.lang.String, java.lang.String)
+     * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester#check(java.lang.String, java.lang.String)
      */
     public boolean check(String clearText, String cryptedText)
     {
@@ -41,7 +41,7 @@ public class EsapiDigester implements Digester
     }
 
     /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.encryption.Digester#digest(java.lang.String)
+     * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester#digest(java.lang.String)
      */
     public String digest(String clearText)
     {

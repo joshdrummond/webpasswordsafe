@@ -17,10 +17,11 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.encryption;
+package com.joshdrummond.webpasswordsafe.server.plugin.encryption;
 
 import org.jasypt.util.password.StrongPasswordEncryptor;
 import org.junit.Test;
+import com.joshdrummond.webpasswordsafe.server.plugin.encryption.JasyptDigester;
 import static org.junit.Assert.*;
 
 
@@ -32,7 +33,7 @@ public class JasyptDigesterTest
 {
 
     /**
-     * Test method for {@link com.joshdrummond.webpasswordsafe.server.encryption.JasyptDigester#check(java.lang.String, java.lang.String)}.
+     * Test method for {@link com.joshdrummond.webpasswordsafe.server.plugin.encryption.JasyptDigester#check(java.lang.String, java.lang.String)}.
      */
 	@Test
     public void testCheck()

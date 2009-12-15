@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2009 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -17,42 +17,42 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.encryption;
+package com.joshdrummond.webpasswordsafe.server.plugin.encryption;
 
-import org.jasypt.util.password.PasswordEncryptor;
+import org.jasypt.encryption.StringEncryptor;
 
 /**
  * @author Josh Drummond
  *
  */
-public class JasyptDigester implements Digester
+public class JasyptEncryptor implements Encryptor
 {
-    private PasswordEncryptor passwordEncryptor;
-    
-    /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.encryption.Digester#digest(java.lang.String)
-     */
-    public String digest(String clearText)
-    {
-        return passwordEncryptor.encryptPassword(clearText);
-    }
+    private StringEncryptor stringEncryptor;
 
     /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.encryption.Digester#check(java.lang.String, java.lang.String)
+     * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#decrypt(java.lang.String)
      */
-    public boolean check(String clearText, String cryptedText)
+    public String decrypt(String cryptedText)
     {
-        return passwordEncryptor.checkPassword(clearText, cryptedText);
+        return stringEncryptor.decrypt(cryptedText);
     }
 
-    public PasswordEncryptor getPasswordEncryptor()
+    /* (non-Javadoc)
+     * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#encrypt(java.lang.String)
+     */
+    public String encrypt(String clearText)
     {
-        return this.passwordEncryptor;
+        return stringEncryptor.encrypt(clearText);
     }
 
-    public void setPasswordEncryptor(PasswordEncryptor passwordEncryptor)
+    public StringEncryptor getStringEncryptor()
     {
-        this.passwordEncryptor = passwordEncryptor;
+        return this.stringEncryptor;
+    }
+
+    public void setStringEncryptor(StringEncryptor stringEncryptor)
+    {
+        this.stringEncryptor = stringEncryptor;
     }
 
 }

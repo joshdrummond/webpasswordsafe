@@ -17,7 +17,7 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.encryption;
+package com.joshdrummond.webpasswordsafe.server.plugin.encryption;
 
 import org.apache.log4j.Logger;
 import org.owasp.esapi.ESAPI;
@@ -33,7 +33,7 @@ public class EsapiEncryptor implements Encryptor
     private static Logger LOG = Logger.getLogger(EsapiEncryptor.class);
 
     /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.encryption.Encryptor#decrypt(java.lang.String)
+     * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#decrypt(java.lang.String)
      */
     @SuppressWarnings("deprecation")
     public String decrypt(String cryptedText)
@@ -51,7 +51,7 @@ public class EsapiEncryptor implements Encryptor
     }
 
     /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.encryption.Encryptor#encrypt(java.lang.String)
+     * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#encrypt(java.lang.String)
      */
     @SuppressWarnings("deprecation")
     public String encrypt(String clearText)
