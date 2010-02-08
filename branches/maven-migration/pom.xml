@@ -12,6 +12,15 @@
  <version>0.9-SNAPSHOT</version>
  <description>Web-based, multi-user, secure password safe with delegated access controls</description>
  <url>http://code.google.com/p/webpasswordsafe/</url>
+ <issueManagement>
+  <system>Google Code Issue Tracking</system>
+  <url>http://code.google.com/p/webpasswordsafe/issues/list</url>
+ </issueManagement>
+ <scm>
+  <connection>scm:svn:http://webpasswordsafe.googlecode.com/svn/trunk</connection>
+  <developerConnection>scm:svn:https://webpasswordsafe.googlecode.com/svn/trunk</developerConnection>
+  <url>http://code.google.com/p/webpasswordsafe/source/checkout</url>
+ </scm>
 
  <properties>
   <!-- convenience to define GWT version in one place -->
@@ -28,9 +37,72 @@
    <name>Codehaus repo</name>
    <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
   </repository>
+  <repository>
+   <id>gilead-maven-repo</id>
+   <name>Gilead repo</name>
+   <url>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo/</url>
+  </repository>
  </repositories>
+ 
  <dependencies>
-
+  <dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>3.3.2.GA</version>
+  </dependency>
+  <dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-annotations</artifactId>
+    <version>3.4.0.GA</version>
+  </dependency>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-core</artifactId>
+    <version>2.5.6</version>
+  </dependency>
+  <!--
+  <dependency>
+    <groupId>org.springframework.ws</groupId>
+    <artifactId>spring-ws</artifactId>
+    <version>1.5.8</version>
+  </dependency>
+  -->
+  <dependency>
+    <groupId>org.springframework.ws</groupId>
+    <artifactId>spring-ws-core</artifactId>
+    <version>1.5.8</version>
+  </dependency>
+  <dependency>
+    <groupId>org.jdom</groupId>
+    <artifactId>jdom</artifactId>
+    <version>1.1</version>
+  </dependency>
+  <dependency>
+    <groupId>net.sf.gwt-widget</groupId>
+    <artifactId>gwt-sl</artifactId>
+    <version>0.1.5</version>
+  </dependency>
+  <dependency>
+    <groupId>org.jasypt</groupId>
+    <artifactId>jasypt</artifactId>
+    <version>1.5</version>
+  </dependency>
+  <dependency>
+    <groupId>net.sf.gilead</groupId>
+    <artifactId>adapter-core</artifactId>
+    <version>1.2.3</version>
+  </dependency>
+  <dependency>
+    <groupId>jasperreports</groupId>
+    <artifactId>jasperreports</artifactId>
+    <version>3.5.3</version>
+  </dependency>
+  <dependency>
+    <groupId>org.owasp</groupId>
+    <artifactId>esapi</artifactId>
+    <version>2.0-rc4</version>
+  </dependency>
+  
   <!--  GWT dependencies (from central repo) -->
   <dependency>
    <groupId>com.google.gwt</groupId>
