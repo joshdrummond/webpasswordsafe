@@ -97,3 +97,5 @@ WEB-INF/lib/
 10. Run "ant" from the webpasswordsafe directory
 11. After WebPasswordSafe.war is deployed to Tomcat, connect to URL http://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
 12. Change default admin password, create new users and begin using, you are done!
+
+mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc4 -Dpackaging=jar -Dfile=ESAPI-2.0-rc4.jar
