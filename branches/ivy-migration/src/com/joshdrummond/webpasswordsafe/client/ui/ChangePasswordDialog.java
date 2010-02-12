@@ -1,0 +1,134 @@
+/*
+    Copyright 2008 Josh Drummond
+
+    This file is part of WebPasswordSafe.
+
+    WebPasswordSafe is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    WebPasswordSafe is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with WebPasswordSafe; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+package com.joshdrummond.webpasswordsafe.client.ui;
+
+import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.Info;
+import com.extjs.gxt.ui.client.widget.MessageBox;
+import com.extjs.gxt.ui.client.widget.Window;
+import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.FormPanel;
+import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+
+/**
+ * @author Josh Drummond
+ *
+ */
+public class ChangePasswordDialog extends Window
+{
+
+    private TextField<String> password1;
+    private TextField<String> password2;
+    private FormData formData = new FormData("-20"); 
+    
+    public ChangePasswordDialog()
+    {
+    	this.setHeading("Change Password");
+        this.setModal(true);
+        
+        FormPanel form = new FormPanel();
+        form.setHeaderVisible(false);
+        form.setFrame(true);
+        password1 = new TextField<String>();
+        password1.setFieldLabel("New Password");
+        password1.setPassword(true);
+        form.add(password1, formData);
+        password2 = new TextField<String>();
+        password2.setFieldLabel("Re-enter Password");
+        password2.setPassword(true);
+        form.add(password2, formData);
+        
+        Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+                doOkay();
+			}
+		});
+        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+                doCancel();
+			}
+		});
+        form.setButtonAlign(HorizontalAlignment.CENTER);
+        form.addButton(okayButton);
+        form.addButton(cancelButton);
+        this.add(form);
+    }
+
+    /**
+     * 
+     */
+    protected void doCancel()
+    {
+        hide();
+    }
+
+    /**
+     * 
+     */
+    protected void doOkay()
+    {
+        String pw1 = password1.getValue().trim();
+        String pw2 = password2.getValue().trim();
+        if (pw1.equals(pw2))
+        {
+            if (pw1.equals("") || pw2.equals(""))
+            {
+            	MessageBox.alert("Error", "Must enter a password", null);
+            }
+            else
+            {
+                doChangePassword(pw1);
+            }
+        }
+        else
+        {
+        	MessageBox.alert("Error", "Passwords must match", null);
+        }
+    }
+
+    /**
+     * @param password
+     */
+    private void doChangePassword(String password)
+    {
+        AsyncCallback<Void> callback = new AsyncCallback<Void>()
+        {
+            public void onFailure(Throwable caught)
+            {
+            	MessageBox.alert("Error", caught.getMessage(), null);
+            }
+
+            public void onSuccess(Void result)
+            {
+                hide();
+                Info.display("Status", "Password Changed");
+            }
+        };
+        UserService.Util.getInstance().changePassword(password, callback);
+    }
+
+}
