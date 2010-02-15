@@ -20,7 +20,6 @@
 package com.joshdrummond.webpasswordsafe.common.model;
 
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,119 +27,90 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import net.sf.gilead.pojo.java5.LightEntity;
+import net.sf.gilead.pojo.gwt.LightEntity;
 
 
 /**
- * Domain model POJO for a password_data
+ * Domain model POJO for a permission
  * 
  * @author Josh Drummond
  *
  */
 @Entity
-@Table(name="password_data")
-public class PasswordData extends LightEntity implements Serializable
+@Table(name="permissions")
+public class Permission extends LightEntity implements Serializable
 {
 
-	private static final long serialVersionUID = -643822521564959563L;
+	private static final long serialVersionUID = 4513050098482215994L;
 
 	@Id
     @GeneratedValue
     @Column(name="id")
     private long id;
-
-    @Column(name="password", length=128, updatable=false, nullable=false)
-    private String password;
-    
-    @Column(name="date_created", updatable=false, nullable=false)
-    private Date dateCreated;
     
     @ManyToOne
-    @JoinColumn(name="user_created_id", updatable=false, nullable=false)
-    private User userCreated;
+    @JoinColumn(name="password_id", updatable=false, nullable=false)
+    private Password password;
     
     @ManyToOne
-    @JoinColumn(name="password_id", updatable=false, insertable=false, nullable=true)
-    private Password parent;
-
-    @Column(name="password_position", nullable=true)
-    private int passwordPosition;
-
-    public PasswordData()
+    @JoinColumn(name="subject_id", updatable=false, nullable=false)
+    private Subject subject;
+    
+    @Column(name="access_level", length=5, nullable=false)
+    private String accessLevel;
+    
+    public Permission()
     {
     }
-
-    public PasswordData(String password, Date dateCreated, User userCreated)
+    
+    public Permission(Subject subject, AccessLevel accessLevel)
     {
-        this.password = password;
-        this.dateCreated = dateCreated;
-        this.userCreated = userCreated;
+    	this.subject = subject;
+    	this.accessLevel = accessLevel.name();
     }
     
     public long getId()
     {
         return this.id;
     }
-
     public void setId(long id)
     {
         this.id = id;
     }
-
-    public String getPassword()
+    public Password getPassword()
     {
         return this.password;
     }
-
-    public void setPassword(String password)
+    public void setPassword(Password password)
     {
         this.password = password;
     }
-
-    public Date getDateCreated()
+    public Subject getSubject()
     {
-        return this.dateCreated;
+        return this.subject;
+    }
+    public void setSubject(Subject subject)
+    {
+        this.subject = subject;
+    }
+    public String getAccessLevel()
+    {
+        return this.accessLevel;
+    }
+    public AccessLevel getAccessLevelObj()
+    {
+        return AccessLevel.valueOf(this.accessLevel);
+    }
+    public void setAccessLevel(String accessLevel)
+    {
+        this.accessLevel = accessLevel;
     }
 
-    public void setDateCreated(Date dateCreated)
-    {
-        this.dateCreated = dateCreated;
-    }
-
-    public User getUserCreated()
-    {
-        return this.userCreated;
-    }
-
-    public void setUserCreated(User userCreated)
-    {
-        this.userCreated = userCreated;
-    }
-
-    public Password getParent()
-    {
-        return this.parent;
-    }
-
-    public void setParent(Password parent)
-    {
-        this.parent = parent;
-    }
-
-    public int getPasswordPosition()
-    {
-        return this.passwordPosition;
-    }
-
-    public void setPasswordPosition(int passwordPosition)
-    {
-        this.passwordPosition = passwordPosition;
-    }
-    
     @Override
     public String toString()
     {
-        return "PasswordData [id=" + this.id + "]";
+        return "Permission [accessLevel=" + this.accessLevel + ", id="
+                + this.id + ", subject=" + this.subject + "]";
     }
 
     @Override
@@ -148,7 +118,12 @@ public class PasswordData extends LightEntity implements Serializable
     {
         final int prime = 31;
         int result = 1;
+        result = prime
+                * result
+                + ((this.accessLevel == null) ? 0 : this.accessLevel.hashCode());
         result = prime * result + (int) (this.id ^ (this.id >>> 32));
+        result = prime * result
+                + ((this.subject == null) ? 0 : this.subject.hashCode());
         return result;
     }
 
@@ -163,15 +138,37 @@ public class PasswordData extends LightEntity implements Serializable
         {
             return false;
         }
-        if (!(obj instanceof PasswordData))
+        if (!(obj instanceof Permission))
         {
             return false;
         }
-        PasswordData other = (PasswordData) obj;
+        Permission other = (Permission) obj;
+        if (this.accessLevel == null)
+        {
+            if (other.accessLevel != null)
+            {
+                return false;
+            }
+        } else if (!this.accessLevel.equals(other.accessLevel))
+        {
+            return false;
+        }
         if (this.id != other.id)
+        {
+            return false;
+        }
+        if (this.subject == null)
+        {
+            if (other.subject != null)
+            {
+                return false;
+            }
+        } else if (!this.subject.equals(other.subject))
         {
             return false;
         }
         return true;
     }
+
+    
 }
