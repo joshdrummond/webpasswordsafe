@@ -31,17 +31,17 @@
 		</property>
 	</bean>
 	
-	<bean id="loginServiceExporter" class="org.gwtwidgets.server.spring.hb4gwt.HB4GWTRPCServiceExporter">
+	<bean id="loginServiceExporter" class="org.gwtwidgets.server.spring.gilead.GileadRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
 		<property name="service" ref="loginService" />
 	</bean>
 	
-	<bean id="userServiceExporter" class="org.gwtwidgets.server.spring.hb4gwt.HB4GWTRPCServiceExporter">
+	<bean id="userServiceExporter" class="org.gwtwidgets.server.spring.gilead.GileadRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
 		<property name="service" ref="userService" />
 	</bean>
 	
-	<bean id="passwordServiceExporter" class="org.gwtwidgets.server.spring.hb4gwt.HB4GWTRPCServiceExporter">
+	<bean id="passwordServiceExporter" class="org.gwtwidgets.server.spring.gilead.GileadRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
 		<property name="service" ref="passwordService" />
 	</bean>
