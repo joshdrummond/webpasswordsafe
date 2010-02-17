@@ -6,99 +6,41 @@ To build and install from source:
 	a. Java SE JDK 6.0 +
 	b. Java Servlet Container (i.e. Apache Tomcat 5.5+)
 	c. JDBC compatible RDBMS (i.e. MySQL 5.x)
-	d. Google Web Toolkit 2.0+
-	e. Maven 2.2.x
+	d. Maven 2.2.x
 
-2. Additional 3rd Party library requirements:
+2. Download WebPasswordSafe project source via SVN (http://code.google.com/p/webpasswordsafe/source/checkout) to new directory "webpasswordsafe"
 
-WEB-INF/lib/
-	activation.jar [?]
-	adapter-core.jar [15]
-	adapter4gwt.jar [15]
-	ant-antlr.jar [1]
-	antlr.jar [1]
-	asm-attrs.jar [1]
-	asm.jar [1]
-	bcprov-jdk15-140.jar [12]
-	beanlib.jar [15]
-	beanlib-hibernate.jar [15]
-	cglib.jar [1]
-	commons-beanutils.jar [16]
-	commons-codec.jar [9]
-	commons-collections.jar [1]
-	commons-dbcp.jar [2]
-	commons-digester.jar [16]
-	commons-fileupload.jar [17]
-	commons-lang.jar [9]
-	commons-logging.jar [1]
-	commons-pool.jar [2]
-	dom4j.jar [1]
-	ejb3-persistence.jar [6]
-	ESAPI.jar [17]
-	groovy-all.jar [16]
-	gwt-servlet.jar [5]
-	gwt-sl.jar [3]
-	gxt.jar [13]
-	hibernate-annotations.jar [6]
-	hibernate-commons-annotations.jar [6]
-	hibernate-tools.jar [7]
-	hibernate-util.jar [15]
-	hibernate3.jar [1]
-	icu4j.jar [10]
-	iText.jar [16]
-	jasperreports.jar [16]
-	jasypt.jar [9]
-	javassist.jar [1]
-	jaxen.jar [11]
-	jboss-serialization.jar [15]
-	jdom.jar [11]
-	jta.jar [1]
-	junit.jar [14]
-	log4j.jar [2] (v1.2.12+)
-	mysql-connector-java-3.1.13-bin.jar [4]
-	saaj-api.jar [11]
-	saaj-impl.jar [11]
-	slf4j-api.jar [8]
-	slf4j-log4j12.jar [8]
-	spring-webmvc.jar [2]
-	spring-ws.jar [11]
-	spring.jar [2]
-	stax-api.jar [11]
-	trove.jar [15]
-	wsdl4j.jar [11]
+3. Install 3rd party JAR files locally that aren't in public Maven repositories (you'll need to download them yourself):
+    a. GWT 2.0.2 (http://code.google.com/webtoolkit/)
+        mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-user -Dversion=2.0.2 -Dpackaging=jar -Dfile=gwt-user.jar
+        mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-servlet -Dversion=2.0.2 -Dpackaging=jar -Dfile=gwt-servlet.jar
+        mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-dev -Dversion=2.0.2 -Dpackaging=jar -Dfile=gwt-dev.jar
+        mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-soyc-vis -Dversion=2.0.2 -Dpackaging=jar -Dfile=gwt-soyc-vis.jar
+    b. ExtGWT 2.1.1 (http://www.extjs.com/products/gxt/)
+        mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.1.1 -Dpackaging=jar -Dfile=gxt.jar
+    c. GWT-SL 1.0 (http://gwt-widget.sourceforge.net/) WAR file
+        mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.0 -Dpackaging=jar -Dfile=gwt-sl.jar
+        mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar
+    d. JasperReports 3.6.1 (http://sourceforge.net/projects/jasperreports/)
+        mvn install:install-file -DgroupId=jasperreports -DartifactId=jasperreports -Dversion=3.6.1 -Dpackaging=jar -Dfile=jasperreports-3.6.1.jar
+    e. OWASP ESAPI Java EE 2.0 rc5 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)
+        mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc5 -Dpackaging=jar -Dfile=ESAPI-2.0-rc5.jar
 
-[1] Hibernate Core 3.3.2 distribution (http://www.hibernate.org/)
-[2] Spring 2.5.6 with dependencies distribution (http://www.springframework.org/)
-[3] GWT-SL 0.1.5b (http://gwt-widget.sourceforge.net/)
-[4] MySQL Connector/J JDBC distribution (http://dev.mysql.com/downloads/connector/j/3.1.html)
-[5] GWT 1.7.0 (http://code.google.com/webtoolkit/)
-[6] Hibernate Annotations 3.4.0 distribution (http://www.hibernate.org/)
-[7] Hibernate Tools 3.2 (http://www.hibernate.org)
-[8] Simple Logging Facade for Java 1.5.2 (http://www.slf4j.org/)
-[9] Jasypt 1.5 (http://www.jasypt.org/)*
-[10] International Components for Unicode (ICU) 4.0 (http://www.icu-project.org/) for Java <= 5.0
-[11] Spring Web Services 1.5 with dependencies distribution (http://static.springframework.org/spring-ws/sites/1.5/)
-[12] Bouncy Castle JCE Provider (http://www.bouncycastle.org/java.html)*
-[13] Ext GWT 2.1.0 (http://www.extjs.com/products/gxt/)
-[14] JUnit 4.5.0 (http://www.junit.org/)
-[15] Gilead 1.2.3.823 (http://sourceforge.net/projects/gilead/)
-[16] JasperReports 3.6.1 (http://sourceforge.net/projects/jasperreports/)
-[17] OWASP ESAPI Java EE 2.0 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)*
+4. Copy contents of ExtGWT's GXT/resources directory into webpasswordsafe/war/gxt/
 
-*Optional depending on choice of plugin
+5. Edit webpasswordsafe/war/WEB-INF/jdbc.properties changing values specific to your environment
 
-3. Download WebPasswordSafe project source via SVN (http://code.google.com/p/webpasswordsafe/source/checkout) to new directory "webpasswordsafe"
-4. Install 3rd party JAR files locally that aren't in public Maven repositories (you'll need to download them yourself, see above):
- mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc4 -Dpackaging=jar -Dfile=ESAPI-2.0-rc4.jar
- mvn install:install-file -DgroupId=jasperreports -DartifactId=jasperreports -Dversion=3.6.1 -Dpackaging=jar -Dfile=jasperreports-3.6.1.jar
- mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.1.0 -Dpackaging=jar -Dfile=gxt.jar
- mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.0 -Dpackaging=jar -Dfile=gwt-sl.jar
- mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar
-5. Copy contents of Ext GWT GXT/resources directory into webpasswordsafe/war/gxt/
-6. Edit webpasswordsafe/war/WEB-INF/jdbc.properties changing values specific to your environment
-7. Edit webpasswordsafe/war/WEB-INF/encryption.properties changing values specific to your environment
-8. If using ESAPI for encryption, FIXME (copy esapi directory, blah blah) edit ESAPI.properties and generate new MasterKey and MasterSalt values
-9. Run "mvn package -DskipTests" from the webpasswordsafe directory
-10. Deploy the WAR file generated in webpasswordsafe/target to your J2EE server (Tomcat)
-11. Connect to URL http://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
-12. Change default admin password, create new users and begin using, you are done!
+6. Edit webpasswordsafe/war/WEB-INF/encryption.properties changing values specific to your environment
+    a. If using ESAPI for encryption... FIXME (copy esapi directory, blah blah) edit ESAPI.properties and generate new MasterKey and MasterSalt values
+    b. If using Jasypt for encryption...
+
+7. Run "mvn clean package -DskipTests" from the webpasswordsafe directory
+
+8. Verify your specific JDBC JAR file is in your J2EE server's appropriate shared classpath directory.
+
+9. Deploy the WAR file generated in webpasswordsafe/target to your J2EE server (Tomcat) as WebPasswordSafe.war
+    a. It is recommended you configure your web server to only accept SSL connections for this application
+
+10. Connect to URL http(s)://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
+
+11. Change default admin password, create new users and begin using, you are done!
