@@ -25,9 +25,10 @@ import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional; 
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
@@ -85,7 +86,7 @@ public class PasswordServiceImpl implements PasswordService
     @Autowired
     private AuditLogger auditLogger;
     
-
+    
     @Transactional(propagation=Propagation.REQUIRED)
     public void addPassword(Password password)
     {
@@ -197,6 +198,7 @@ public class PasswordServiceImpl implements PasswordService
         return passwordGenerator.generatePassword();
     }
 
+    @Secured({"ROLE_USER"})
     @Transactional(propagation=Propagation.REQUIRED)
     public String getCurrentPassword(long passwordId)
     {

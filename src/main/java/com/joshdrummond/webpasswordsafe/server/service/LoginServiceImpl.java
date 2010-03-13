@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -24,6 +24,13 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.Authentication;
+import org.springframework.security.GrantedAuthority;
+import org.springframework.security.GrantedAuthorityImpl;
+import org.springframework.security.context.HttpSessionContextIntegrationFilter;
+import org.springframework.security.context.SecurityContext;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +69,7 @@ public class LoginServiceImpl implements LoginService {
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public User getLogin()
     {
-        String username = (String)ServletUtils.getRequest().getSession().getAttribute("username");
+        String username = getUsername();
         User user = userDAO.findActiveUserByUsername(username);
         LOG.info("logged in user="+((null==user) ? "null":user.getUsername()));
         return user;
@@ -83,7 +90,17 @@ public class LoginServiceImpl implements LoginService {
                 isValidLogin = true;
                 user.setLastLogin(new Date());
                 userDAO.makePersistent(user);
-                ServletUtils.getRequest().getSession().setAttribute("username", username);
+                try
+                {
+                    GrantedAuthority[] roles = new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") };
+                    Authentication authUser = new UsernamePasswordAuthenticationToken(username, null, roles);
+                    SecurityContextHolder.getContext().setAuthentication(authUser);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                ServletUtils.getRequest().getSession().setAttribute(HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
             }
         }
         auditLogger.log(username+" login "+ (isValidLogin ? "success" : "failure"));
@@ -95,8 +112,28 @@ public class LoginServiceImpl implements LoginService {
      */
     public boolean logout()
     {
-        auditLogger.log("logout user "+ (String)ServletUtils.getRequest().getSession().getAttribute("username"));
-        ServletUtils.getRequest().getSession().removeAttribute("username");
+        auditLogger.log("logout user "+ getUsername());
+        SecurityContextHolder.getContext().setAuthentication(null);
+        ServletUtils.getRequest().getSession().removeAttribute(HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY);
         return true;
+    }
+    
+    /**
+     * Grabs the username from the current security session, or null if doesn't exist
+     * 
+     */
+    private String getUsername()
+    {
+        String username = null;
+        SecurityContext securityContext = (SecurityContext)ServletUtils.getRequest().getSession().getAttribute(HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY);
+        if (null != securityContext)
+        {
+            Authentication authUser = securityContext.getAuthentication();
+            if (null != authUser)
+            {
+                username = authUser.getPrincipal().toString();
+            }
+        }
+        return username;
     }
 }
