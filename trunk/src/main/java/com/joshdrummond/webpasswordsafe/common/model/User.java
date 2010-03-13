@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -27,6 +27,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
@@ -70,9 +71,13 @@ public class User extends Subject
     @ManyToMany(mappedBy="users")
     private Set<Group> groups;
     
+    @Transient
+    private Set<String> roles;
+    
     public User() {
         super( 'U' );
         groups = new HashSet<Group>();
+        roles = new HashSet<String>();
         activeFlag = true;
     }
 
@@ -97,6 +102,17 @@ public class User extends Subject
         setActiveFlag(isActive);
         setUsername(username);
         setPassword("");
+    }
+
+    public Set<String> getRoles()
+    {
+        return this.roles;
+    }
+
+    public void setRoles(Set<String> roles)
+    {
+        this.roles.clear();
+        this.roles.addAll(roles);
     }
 
     public Set<Group> getGroups()

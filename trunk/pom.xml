@@ -60,35 +60,6 @@
     <version>2.5.6</version>
   </dependency>
   <dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-core</artifactId>
-    <version>2.0.4</version>
-    <exclusions>
-      <exclusion>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-aop</artifactId>
-      </exclusion>
-      <exclusion>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-context</artifactId>
-      </exclusion>
-      <exclusion>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-support</artifactId>
-      </exclusion>
-    </exclusions> 
-  </dependency>
-  <dependency>
-    <groupId>org.springframework.security</groupId>
-    <artifactId>spring-security-core-tiger</artifactId>
-    <version>2.0.4</version>
-  </dependency>
-  <dependency>
-    <groupId>org.aspectj</groupId>
-    <artifactId>aspectjweaver</artifactId>
-    <version>1.6.8</version>
-  </dependency>
-  <dependency>
     <groupId>org.springframework</groupId>
     <artifactId>spring-orm</artifactId>
     <version>2.5.6</version>
