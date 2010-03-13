@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional; 
@@ -46,6 +45,7 @@ import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TemplateDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
+import com.joshdrummond.webpasswordsafe.server.plugin.authorization.Authorizer;
 import com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor;
 import com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator;
 
@@ -86,21 +86,31 @@ public class PasswordServiceImpl implements PasswordService
     @Autowired
     private AuditLogger auditLogger;
     
+    @Autowired
+    private Authorizer authorizer;
+    
     
     @Transactional(propagation=Propagation.REQUIRED)
     public void addPassword(Password password)
     {
         Date now = new Date();
         User loggedInUser = loginService.getLogin();
-        password.setUserCreated(loggedInUser);
-        password.setDateCreated(now);
-        password.setUserLastUpdate(loggedInUser);
-        password.setDateLastUpdate(now);
-        password.getCurrentPasswordData().setUserCreated(loggedInUser);
-        password.getCurrentPasswordData().setDateCreated(now);
-        password.getCurrentPasswordData().setPassword(encryptor.encrypt(password.getCurrentPasswordData().getPassword()));
-        passwordDAO.makePersistent(password);
-        auditLogger.log("Password ["+password.getName() + "] added by "+loggedInUser.getUsername());
+        if (authorizer.isAuthorized(loggedInUser, "ADD_PASSWORD"))
+        {
+            password.setUserCreated(loggedInUser);
+            password.setDateCreated(now);
+            password.setUserLastUpdate(loggedInUser);
+            password.setDateLastUpdate(now);
+            password.getCurrentPasswordData().setUserCreated(loggedInUser);
+            password.getCurrentPasswordData().setDateCreated(now);
+            password.getCurrentPasswordData().setPassword(encryptor.encrypt(password.getCurrentPasswordData().getPassword()));
+            passwordDAO.makePersistent(password);
+            auditLogger.log("Password ["+password.getName() + "] added by "+loggedInUser.getUsername());
+        }
+        else
+        {
+            auditLogger.log("Not Authorized! Password ["+password.getName() + "] by "+loggedInUser.getUsername());
+        }
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
@@ -198,7 +208,6 @@ public class PasswordServiceImpl implements PasswordService
         return passwordGenerator.generatePassword();
     }
 
-    @Secured({"ROLE_USER"})
     @Transactional(propagation=Propagation.REQUIRED)
     public String getCurrentPassword(long passwordId)
     {

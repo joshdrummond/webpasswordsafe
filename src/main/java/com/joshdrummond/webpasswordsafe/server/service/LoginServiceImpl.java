@@ -17,20 +17,13 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.server.service;
 
 import java.util.Date;
+import java.util.Set;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.context.HttpSessionContextIntegrationFilter;
-import org.springframework.security.context.SecurityContext;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +32,7 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 import com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator;
+import com.joshdrummond.webpasswordsafe.server.plugin.authentication.RoleRetriever;
 
 
 /**
@@ -61,6 +55,9 @@ public class LoginServiceImpl implements LoginService {
     
     @Autowired
     private AuditLogger auditLogger;
+    
+    @Autowired
+    private RoleRetriever roleRetriever;
 
     
     /* (non-Javadoc)
@@ -71,6 +68,10 @@ public class LoginServiceImpl implements LoginService {
     {
         String username = getUsername();
         User user = userDAO.findActiveUserByUsername(username);
+        if (null != user)
+        {
+            user.setRoles((Set<String>)ServletUtils.getRequest().getSession().getAttribute("roles"));
+        }
         LOG.info("logged in user="+((null==user) ? "null":user.getUsername()));
         return user;
     }
@@ -90,17 +91,8 @@ public class LoginServiceImpl implements LoginService {
                 isValidLogin = true;
                 user.setLastLogin(new Date());
                 userDAO.makePersistent(user);
-                try
-                {
-                    GrantedAuthority[] roles = new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") };
-                    Authentication authUser = new UsernamePasswordAuthenticationToken(username, null, roles);
-                    SecurityContextHolder.getContext().setAuthentication(authUser);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-                ServletUtils.getRequest().getSession().setAttribute(HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+                ServletUtils.getRequest().getSession().setAttribute("username", username);
+                ServletUtils.getRequest().getSession().setAttribute("roles", roleRetriever.retrieveRoles(user));
             }
         }
         auditLogger.log(username+" login "+ (isValidLogin ? "success" : "failure"));
@@ -113,8 +105,8 @@ public class LoginServiceImpl implements LoginService {
     public boolean logout()
     {
         auditLogger.log("logout user "+ getUsername());
-        SecurityContextHolder.getContext().setAuthentication(null);
-        ServletUtils.getRequest().getSession().removeAttribute(HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY);
+        ServletUtils.getRequest().getSession().removeAttribute("username");
+        ServletUtils.getRequest().getSession().removeAttribute("roles");
         return true;
     }
     
@@ -124,16 +116,6 @@ public class LoginServiceImpl implements LoginService {
      */
     private String getUsername()
     {
-        String username = null;
-        SecurityContext securityContext = (SecurityContext)ServletUtils.getRequest().getSession().getAttribute(HttpSessionContextIntegrationFilter.SPRING_SECURITY_CONTEXT_KEY);
-        if (null != securityContext)
-        {
-            Authentication authUser = securityContext.getAuthentication();
-            if (null != authUser)
-            {
-                username = authUser.getPrincipal().toString();
-            }
-        }
-        return username;
+        return (String)ServletUtils.getRequest().getSession().getAttribute("username");
     }
 }
