@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -27,6 +27,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -81,43 +82,46 @@ public class JasperReportServlet extends HttpServlet
         {
             String reportName = req.getParameter("name");
             String type = req.getParameter("type").trim().toLowerCase();
-            JasperDesign jasperDesign = JRXmlLoader.load(getServletConfig().getServletContext().getResourceAsStream(
-                    "/WEB-INF/reports/"+reportName+".jrxml"));
-            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-            Map<String, String> parameters = new HashMap<String, String>();
-            DataSource dataSource = (DataSource)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("dataSource");
-            jdbcConnection = dataSource.getConnection();
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jdbcConnection);
-            JRExporter exporter = null;
-            
-            if (type.equals("pdf"))
+            if (isAuthorized(req, reportName))
             {
-                res.setContentType("application/pdf");
-                exporter = new JRPdfExporter();
+                JasperDesign jasperDesign = JRXmlLoader.load(getServletConfig().getServletContext().getResourceAsStream(
+                        "/WEB-INF/reports/"+reportName+".jrxml"));
+                JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+                Map<String, String> parameters = new HashMap<String, String>();
+                DataSource dataSource = (DataSource)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("dataSource");
+                jdbcConnection = dataSource.getConnection();
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jdbcConnection);
+                JRExporter exporter = null;
+                
+                if (type.equals("pdf"))
+                {
+                    res.setContentType("application/pdf");
+                    exporter = new JRPdfExporter();
+                }
+                else if (type.equals("rtf"))
+                {
+                    res.setContentType("application/rtf");
+                    exporter = new JRRtfExporter();
+                }
+                else if (type.equals("csv"))
+                {
+                    res.setContentType("text/csv");
+                    exporter = new JRCsvExporter();
+                }
+                else if (type.equals("xml"))
+                {
+                    res.setContentType("text/xml");
+                    exporter = new JRXmlExporter();
+                }
+                DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                res.setHeader("Content-Disposition", "attachment; filename=" + reportName +
+                        dateFormat.format(System.currentTimeMillis())+"."+type);
+                
+                exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+                outputStream = res.getOutputStream();
+                exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
+                exporter.exportReport();
             }
-            else if (type.equals("rtf"))
-            {
-                res.setContentType("application/rtf");
-                exporter = new JRRtfExporter();
-            }
-            else if (type.equals("csv"))
-            {
-                res.setContentType("text/csv");
-                exporter = new JRCsvExporter();
-            }
-            else if (type.equals("xml"))
-            {
-                res.setContentType("text/xml");
-                exporter = new JRXmlExporter();
-            }
-            DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-            res.setHeader("Content-Disposition", "attachment; filename=" + reportName +
-                    dateFormat.format(System.currentTimeMillis())+"."+type);
-            
-            exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-            outputStream = res.getOutputStream();
-            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
-            exporter.exportReport();
         }
         catch(Exception e)
         {
@@ -154,5 +158,22 @@ public class JasperReportServlet extends HttpServlet
                 }
             }
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private boolean isAuthorized(HttpServletRequest req, String reportName)
+    {
+        boolean isAuthorized = false;
+        ReportAccessControl reportAccessControl = (ReportAccessControl)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("reportAccessControl");
+        String username = (String)req.getSession().getAttribute("username");
+
+        if (reportAccessControl.isReportExist(reportName))
+        {
+            Set<String> userRoles = (Set<String>)req.getSession().getAttribute("roles");
+            isAuthorized = userRoles.contains(reportAccessControl.getReportRole(reportName));
+        }
+
+        LOG.debug(username+" authorized to view "+reportName+" report? "+isAuthorized);
+        return isAuthorized;
     }
 }

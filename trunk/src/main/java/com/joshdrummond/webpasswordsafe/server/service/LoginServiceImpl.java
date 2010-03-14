@@ -63,6 +63,7 @@ public class LoginServiceImpl implements LoginService {
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#getLogin()
      */
+    @SuppressWarnings("unchecked")
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public User getLogin()
     {
