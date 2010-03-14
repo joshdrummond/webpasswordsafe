@@ -3,4 +3,4 @@
 
 =WebPasswordSafe Administrator Guide=
 
-This is a placeholder.
+[http://webpasswordsafe.googlecode.com/svn/trunk/docs/install.txt Installation Instructions]
