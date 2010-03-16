@@ -20,6 +20,7 @@
 package com.joshdrummond.webpasswordsafe.server.plugin.authorization;
 
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 
 
 /**
@@ -28,5 +29,5 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
  */
 public interface Authorizer
 {
-    public boolean isAuthorized(User user, String function);
+    public boolean isAuthorized(User user, Constants.Function function);
 }

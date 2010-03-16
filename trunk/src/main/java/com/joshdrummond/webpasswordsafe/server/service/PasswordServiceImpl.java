@@ -39,6 +39,7 @@ import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.Template;
 import com.joshdrummond.webpasswordsafe.common.model.TemplateDetail;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
@@ -95,7 +96,7 @@ public class PasswordServiceImpl implements PasswordService
     {
         Date now = new Date();
         User loggedInUser = loginService.getLogin();
-        if (authorizer.isAuthorized(loggedInUser, "ADD_PASSWORD"))
+        if (authorizer.isAuthorized(loggedInUser, Constants.Function.ADD_PASSWORD))
         {
             password.setUserCreated(loggedInUser);
             password.setDateCreated(now);
@@ -109,7 +110,7 @@ public class PasswordServiceImpl implements PasswordService
         }
         else
         {
-            auditLogger.log("Not Authorized! Password ["+password.getName() + "] by "+loggedInUser.getUsername());
+            throw new RuntimeException("Not Authorized!");
         }
     }
 

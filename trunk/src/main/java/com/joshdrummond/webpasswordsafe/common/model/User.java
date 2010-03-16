@@ -30,6 +30,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 
 
 /**
@@ -72,12 +73,12 @@ public class User extends Subject
     private Set<Group> groups;
     
     @Transient
-    private Set<String> roles;
+    private Set<Constants.Role> roles;
     
     public User() {
         super( 'U' );
         groups = new HashSet<Group>();
-        roles = new HashSet<String>();
+        roles = new HashSet<Constants.Role>();
         activeFlag = true;
     }
 
@@ -104,12 +105,12 @@ public class User extends Subject
         setPassword("");
     }
 
-    public Set<String> getRoles()
+    public Set<Constants.Role> getRoles()
     {
         return this.roles;
     }
 
-    public void setRoles(Set<String> roles)
+    public void setRoles(Set<Constants.Role> roles)
     {
         this.roles.clear();
         this.roles.addAll(roles);

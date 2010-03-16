@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,18 +23,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 import com.joshdrummond.webpasswordsafe.server.dao.GroupDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
+import com.joshdrummond.webpasswordsafe.server.plugin.authorization.Authorizer;
 import com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester;
 import static com.joshdrummond.webpasswordsafe.common.util.Constants.*;
 
@@ -62,18 +64,23 @@ public class UserServiceImpl implements UserService
 
     @Autowired
     private AuditLogger auditLogger;
+    
+    @Autowired
+    private Authorizer authorizer;
+    
+    @Autowired
+    private LoginService loginService;
 
     
     @Transactional(propagation=Propagation.REQUIRED)
     public void changePassword(String password)
     {
-        String loggedInUsername = (String)ServletUtils.getRequest().getSession().getAttribute("username");
-        if (null != loggedInUsername)
+        User loggedInUser = loginService.getLogin();
+        if (null != loggedInUser)
         {
-            User user = userDAO.findActiveUserByUsername(loggedInUsername);
-            user.setPassword(digester.digest(password));
-            userDAO.makePersistent(user);
-            auditLogger.log(loggedInUsername + " changed password");
+            loggedInUser.setPassword(digester.digest(password));
+            userDAO.makePersistent(loggedInUser);
+            auditLogger.log(loggedInUser.getUsername() + " changed password");
         }
         else
         {
@@ -83,6 +90,20 @@ public class UserServiceImpl implements UserService
     
     @Transactional(propagation=Propagation.REQUIRED)
     public void addUser(User newUser)
+    {
+        User loggedInUser = loginService.getLogin();
+        if (authorizer.isAuthorized(loggedInUser, Constants.Function.ADD_USER))
+        {
+            addUserInternal(newUser);
+        }
+        else
+        {
+            throw new RuntimeException("Not Authorized!");
+        }
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED)
+    private void addUserInternal(User newUser)
     {
         // create base user
         User user = new User();
@@ -110,23 +131,31 @@ public class UserServiceImpl implements UserService
     @Transactional(propagation=Propagation.REQUIRED)
     public void updateUser(User updateUser)
     {
-        // update base user
-        User user = userDAO.findById(updateUser.getId(), false);
-        user.setFullname(updateUser.getFullname());
-        user.setEmail(updateUser.getEmail());
-        user.setActiveFlag(updateUser.isActiveFlag());
-        if (!updateUser.getPassword().equals(""))
+        User loggedInUser = loginService.getLogin();
+        if (authorizer.isAuthorized(loggedInUser, Constants.Function.UPDATE_USER))
         {
-            user.setPassword(digester.digest(updateUser.getPassword()));
+            // update base user
+            User user = userDAO.findById(updateUser.getId(), false);
+            user.setFullname(updateUser.getFullname());
+            user.setEmail(updateUser.getEmail());
+            user.setActiveFlag(updateUser.isActiveFlag());
+            if (!updateUser.getPassword().equals(""))
+            {
+                user.setPassword(digester.digest(updateUser.getPassword()));
+            }
+            
+            // assign everyone group if missing
+            
+            // remove groups removed
+            
+            // add groups added
+            
+            auditLogger.log(user.getUsername() + " user updated");
         }
-        
-        // assign everyone group if missing
-        
-        // remove groups removed
-        
-        // add groups added
-        
-        auditLogger.log(user.getUsername() + " user updated");
+        else
+        {
+            throw new RuntimeException("Not Authorized!");
+        }
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
@@ -152,7 +181,7 @@ public class UserServiceImpl implements UserService
 	    {
 	        adminUser = User.newActiveUser(ADMIN_USER_NAME, ADMIN_USER_NAME, ADMIN_USER_NAME, ADMIN_USER_NAME);
 	        adminUser.addGroup(getEveryoneGroup());
-	        addUser(adminUser);
+	        addUserInternal(adminUser);
 	    }
 	}
 
@@ -163,12 +192,26 @@ public class UserServiceImpl implements UserService
 	    if (null == everyoneGroup)
 	    {
 	        everyoneGroup = new Group(EVERYONE_GROUP_NAME);
-	        addGroup(everyoneGroup);
+	        addGroupInternal(everyoneGroup);
 	    }
 	}
 
     @Transactional(propagation=Propagation.REQUIRED)
     public void addGroup(Group group)
+    {
+        User loggedInUser = loginService.getLogin();
+        if (authorizer.isAuthorized(loggedInUser, Constants.Function.ADD_GROUP))
+        {
+            addGroupInternal(group);
+        }
+        else
+        {
+            throw new RuntimeException("Not Authorized!");
+        }
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void addGroupInternal(Group group)
     {
         groupDAO.makePersistent(group);
         auditLogger.log(group.getName() + " group added");
@@ -177,15 +220,23 @@ public class UserServiceImpl implements UserService
     @Transactional(propagation=Propagation.REQUIRED)
     public void updateGroup(Group updateGroup)
     {
-        Group group = groupDAO.findById(updateGroup.getId(), false);
-        group.setName(updateGroup.getName());
-        group.removeUsers();
-        for (User user : updateGroup.getUsers())
+        User loggedInUser = loginService.getLogin();
+        if (authorizer.isAuthorized(loggedInUser, Constants.Function.UPDATE_GROUP))
         {
-            User pUser = userDAO.findById(user.getId(), false);
-            group.addUser(pUser);
+            Group group = groupDAO.findById(updateGroup.getId(), false);
+            group.setName(updateGroup.getName());
+            group.removeUsers();
+            for (User user : updateGroup.getUsers())
+            {
+                User pUser = userDAO.findById(user.getId(), false);
+                group.addUser(pUser);
+            }
+            auditLogger.log(group.getName() + " group updated");
         }
-        auditLogger.log(group.getName() + " group updated");
+        else
+        {
+            throw new RuntimeException("Not Authorized!");
+        }
     }
     
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)

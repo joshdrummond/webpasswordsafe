@@ -21,6 +21,7 @@ package com.joshdrummond.webpasswordsafe.server.plugin.authentication;
 
 import java.util.Set;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 
 
 /**
@@ -29,5 +30,5 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
  */
 public interface RoleRetriever
 {
-    public Set<String> retrieveRoles(User user);
+    public Set<Constants.Role> retrieveRoles(User user);
 }

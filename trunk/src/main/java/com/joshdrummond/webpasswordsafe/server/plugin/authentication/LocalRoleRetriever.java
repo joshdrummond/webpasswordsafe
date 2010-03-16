@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 
 
 /**
@@ -33,15 +34,20 @@ public class LocalRoleRetriever implements RoleRetriever
 {
     private static Logger LOG = Logger.getLogger(LocalRoleRetriever.class);
 
-    public Set<String> retrieveRoles(User user)
+    public Set<Constants.Role> retrieveRoles(User user)
     {
-        Set<String> roles = new HashSet<String>();
+        Set<Constants.Role> roles = new HashSet<Constants.Role>();
         
         if (null != user)
         {
-            roles.add("ROLE_USER");
+            roles.add(Constants.Role.ROLE_USER);
+            if (user.getUsername().equals(Constants.ADMIN_USER_NAME))
+            {
+                roles.add(Constants.Role.ROLE_ADMIN);
+            }
         }
         
+        LOG.debug(user.getUsername() + " has roles="+roles.toString());
         return roles;
     }
 }
