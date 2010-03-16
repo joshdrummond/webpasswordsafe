@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 import com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator;
@@ -71,7 +72,7 @@ public class LoginServiceImpl implements LoginService {
         User user = userDAO.findActiveUserByUsername(username);
         if (null != user)
         {
-            user.setRoles((Set<String>)ServletUtils.getRequest().getSession().getAttribute("roles"));
+            user.setRoles((Set<Constants.Role>)ServletUtils.getRequest().getSession().getAttribute("roles"));
         }
         LOG.info("logged in user="+((null==user) ? "null":user.getUsername()));
         return user;

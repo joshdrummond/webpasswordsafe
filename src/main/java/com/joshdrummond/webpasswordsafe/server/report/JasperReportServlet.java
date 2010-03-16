@@ -35,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
+import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -165,15 +167,16 @@ public class JasperReportServlet extends HttpServlet
     {
         boolean isAuthorized = false;
         ReportAccessControl reportAccessControl = (ReportAccessControl)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("reportAccessControl");
+        AuditLogger auditLogger = (AuditLogger)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("auditLogger");
         String username = (String)req.getSession().getAttribute("username");
 
         if (reportAccessControl.isReportExist(reportName))
         {
-            Set<String> userRoles = (Set<String>)req.getSession().getAttribute("roles");
-            isAuthorized = userRoles.contains(reportAccessControl.getReportRole(reportName));
+            Set<Constants.Role> userRoles = (Set<Constants.Role>)req.getSession().getAttribute("roles");
+            isAuthorized = userRoles.contains(Constants.Role.valueOf(reportAccessControl.getReportRole(reportName)));
         }
 
-        LOG.debug(username+" authorized to view "+reportName+" report? "+isAuthorized);
+        auditLogger.log(username+" authorized to view "+reportName+" report? "+isAuthorized);
         return isAuthorized;
     }
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -27,8 +27,10 @@ package com.joshdrummond.webpasswordsafe.common.util;
  */
 public class Constants
 {
-    public final static String VERSION = "0.1";
+    public static final String VERSION = "0.9";
     public static final String ADMIN_USER_NAME = "admin";
     public static final String EVERYONE_GROUP_NAME = "Everyone";
+    public enum Role { ROLE_USER, ROLE_ADMIN };
+    public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, ADD_PASSWORD };
 
 }

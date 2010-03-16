@@ -19,8 +19,10 @@
 */
 package com.joshdrummond.webpasswordsafe.server.plugin.authorization;
 
-import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
+import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 
 
 /**
@@ -29,27 +31,40 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
  */
 public class DefaultAuthorizer implements Authorizer
 {
-    private static Logger LOG = Logger.getLogger(DefaultAuthorizer.class);
+    @Autowired
+    private AuditLogger auditLogger;
+    
 
-    public boolean isAuthorized(User user, String function)
+    public boolean isAuthorized(User user, Constants.Function function)
     {
         boolean isAuthorized = false;
         
-        if ("ADD_GROUP".equals(function))
+        if (user != null)
         {
-            isAuthorized = user.getRoles().contains("ROLE_ADMIN");
+            if (function.equals(Constants.Function.ADD_GROUP))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
+            }
+            else if (function.equals(Constants.Function.UPDATE_GROUP))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
+            }
+            else if (function.equals(Constants.Function.ADD_USER))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
+            }
+            else if (function.equals(Constants.Function.UPDATE_USER))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
+            }
+            else if (function.equals(Constants.Function.ADD_PASSWORD))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_USER);
+            }
         }
-        else if ("ADD_USER".equals(function))
-        {
-            isAuthorized = user.getRoles().contains("ROLE_ADMIN");
-        }
-        else if ("ADD_PASSWORD".equals(function))
-        {
-            isAuthorized = user.getRoles().contains("ROLE_USER");
-        }
-        LOG.debug("user=["+user.getName()+"] function=["+function+"] authorized? "+isAuthorized);
 
+        auditLogger.log("user=["+((user==null)?"":user.getUsername())+"] function=["+function+"] authorized? "+isAuthorized);
+        
         return isAuthorized;
     }
-
 }
