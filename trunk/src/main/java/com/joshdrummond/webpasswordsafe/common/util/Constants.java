@@ -30,7 +30,13 @@ public class Constants
     public static final String VERSION = "0.9";
     public static final String ADMIN_USER_NAME = "admin";
     public static final String EVERYONE_GROUP_NAME = "Everyone";
+    public static final String SESSION_KEY_USERNAME = "wps-username";
+    public static final String SESSION_KEY_ROLES = "wps-roles";
+    public static final String VIEW_REPORT_PREFIX = "VIEW_REPORT_";
     public enum Role { ROLE_USER, ROLE_ADMIN };
-    public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, ADD_PASSWORD };
+    public enum Report { CurrentPasswordExport, Groups, PasswordAccessAudit, PasswordPermissions, Users };
+    public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, ADD_PASSWORD, 
+        VIEW_REPORT_CurrentPasswordExport, VIEW_REPORT_Groups, VIEW_REPORT_PasswordAccessAudit, 
+        VIEW_REPORT_PasswordPermissions, VIEW_REPORT_Users };
 
 }

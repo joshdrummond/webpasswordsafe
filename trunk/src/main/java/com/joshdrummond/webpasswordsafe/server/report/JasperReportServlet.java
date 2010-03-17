@@ -35,8 +35,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
+import com.joshdrummond.webpasswordsafe.server.plugin.authorization.Authorizer;
+import com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -61,6 +64,7 @@ public class JasperReportServlet extends HttpServlet
 {
     private static Logger LOG = Logger.getLogger(JasperReportServlet.class);
     private static final long serialVersionUID = 2493946517487023931L;
+    public static ThreadLocal<Encryptor> encryptorRef = new ThreadLocal<Encryptor>();
 
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -90,6 +94,7 @@ public class JasperReportServlet extends HttpServlet
                         "/WEB-INF/reports/"+reportName+".jrxml"));
                 JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
                 Map<String, String> parameters = new HashMap<String, String>();
+                encryptorRef.set((Encryptor)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("encryptor"));
                 DataSource dataSource = (DataSource)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("dataSource");
                 jdbcConnection = dataSource.getConnection();
                 JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jdbcConnection);
@@ -115,14 +120,22 @@ public class JasperReportServlet extends HttpServlet
                     res.setContentType("text/xml");
                     exporter = new JRXmlExporter();
                 }
-                DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-                res.setHeader("Content-Disposition", "attachment; filename=" + reportName +
-                        dateFormat.format(System.currentTimeMillis())+"."+type);
                 
-                exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-                outputStream = res.getOutputStream();
-                exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
-                exporter.exportReport();
+                if (exporter != null)
+                {
+                    DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+                    res.setHeader("Content-Disposition", "attachment; filename=" + reportName +
+                            dateFormat.format(System.currentTimeMillis())+"."+type);
+                    
+                    exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+                    outputStream = res.getOutputStream();
+                    exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
+                    exporter.exportReport();
+                }
+                else
+                {
+                    throw new RuntimeException("Invalid report type: "+type);
+                }
             }
         }
         catch(Exception e)
@@ -166,17 +179,21 @@ public class JasperReportServlet extends HttpServlet
     private boolean isAuthorized(HttpServletRequest req, String reportName)
     {
         boolean isAuthorized = false;
-        ReportAccessControl reportAccessControl = (ReportAccessControl)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("reportAccessControl");
         AuditLogger auditLogger = (AuditLogger)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("auditLogger");
-        String username = (String)req.getSession().getAttribute("username");
-
-        if (reportAccessControl.isReportExist(reportName))
+        Authorizer authorizer = (Authorizer)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("authorizer");
+        User user = new User();
+        user.setUsername((String)req.getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
+        user.setRoles((Set<Constants.Role>)req.getSession().getAttribute(Constants.SESSION_KEY_ROLES));
+        
+        try
         {
-            Set<Constants.Role> userRoles = (Set<Constants.Role>)req.getSession().getAttribute("roles");
-            isAuthorized = userRoles.contains(Constants.Role.valueOf(reportAccessControl.getReportRole(reportName)));
+            isAuthorized = authorizer.isAuthorized(user, Constants.Function.valueOf(Constants.VIEW_REPORT_PREFIX+reportName));
         }
-
-        auditLogger.log(username+" authorized to view "+reportName+" report? "+isAuthorized);
+        catch (Exception e)
+        {
+            isAuthorized = false;
+        }
+        auditLogger.log(user.getUsername()+" authorized to view "+reportName+" report? "+isAuthorized);
         return isAuthorized;
     }
 }

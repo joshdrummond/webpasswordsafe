@@ -72,7 +72,7 @@ public class LoginServiceImpl implements LoginService {
         User user = userDAO.findActiveUserByUsername(username);
         if (null != user)
         {
-            user.setRoles((Set<Constants.Role>)ServletUtils.getRequest().getSession().getAttribute("roles"));
+            user.setRoles((Set<Constants.Role>)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_ROLES));
         }
         LOG.info("logged in user="+((null==user) ? "null":user.getUsername()));
         return user;
@@ -93,8 +93,8 @@ public class LoginServiceImpl implements LoginService {
                 isValidLogin = true;
                 user.setLastLogin(new Date());
                 userDAO.makePersistent(user);
-                ServletUtils.getRequest().getSession().setAttribute("username", username);
-                ServletUtils.getRequest().getSession().setAttribute("roles", roleRetriever.retrieveRoles(user));
+                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_USERNAME, username);
+                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_ROLES, roleRetriever.retrieveRoles(user));
             }
         }
         auditLogger.log(username+" login "+ (isValidLogin ? "success" : "failure"));
@@ -107,8 +107,8 @@ public class LoginServiceImpl implements LoginService {
     public boolean logout()
     {
         auditLogger.log("logout user "+ getUsername());
-        ServletUtils.getRequest().getSession().removeAttribute("username");
-        ServletUtils.getRequest().getSession().removeAttribute("roles");
+        ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_USERNAME);
+        ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_ROLES);
         return true;
     }
     
@@ -118,6 +118,6 @@ public class LoginServiceImpl implements LoginService {
      */
     private String getUsername()
     {
-        return (String)ServletUtils.getRequest().getSession().getAttribute("username");
+        return (String)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_USERNAME);
     }
 }
