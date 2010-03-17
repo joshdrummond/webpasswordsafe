@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -125,10 +125,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         }));
 
         Menu reportsMenu = new Menu();
-        reportsMenu.add(buildReportMenuItem("Users", "Users"));
-        reportsMenu.add(buildReportMenuItem("Groups", "Groups"));
-        reportsMenu.add(buildReportMenuItem("Access Audit", "PasswordAccessAudit"));
-        reportsMenu.add(buildReportMenuItem("Permissions", "PasswordPermissions"));
+        reportsMenu.add(buildReportMenuItem("Users", Constants.Report.Users));
+        reportsMenu.add(buildReportMenuItem("Groups", Constants.Report.Groups));
+        reportsMenu.add(buildReportMenuItem("Access Audit", Constants.Report.PasswordAccessAudit));
+        reportsMenu.add(buildReportMenuItem("Permissions", Constants.Report.PasswordPermissions));
+        reportsMenu.add(buildReportMenuItem("Password Export", Constants.Report.CurrentPasswordExport));
 
         Menu passwordMenu = new Menu();
         passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
@@ -238,12 +239,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         doGetLoggedInUser();
     }
 
-    private MenuItem buildReportMenuItem(String menuName, String reportName)
+    private MenuItem buildReportMenuItem(String menuName, Constants.Report reportName)
     {
         MenuItem menuItem = new MenuItem(menuName);
         Menu subMenu =  new Menu();
-        subMenu.add(buildReportMenuItemType(reportName, "pdf"));
-        subMenu.add(buildReportMenuItemType(reportName, "csv"));
+        subMenu.add(buildReportMenuItemType(reportName.name(), "pdf"));
+        subMenu.add(buildReportMenuItemType(reportName.name(), "csv"));
         menuItem.setSubMenu(subMenu);
         return menuItem;
     }

@@ -61,6 +61,26 @@ public class DefaultAuthorizer implements Authorizer
             {
                 isAuthorized = user.getRoles().contains(Constants.Role.ROLE_USER);
             }
+            else if (function.equals(Constants.Function.VIEW_REPORT_CurrentPasswordExport))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
+            }
+            else if (function.equals(Constants.Function.VIEW_REPORT_Groups))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_USER);
+            }
+            else if (function.equals(Constants.Function.VIEW_REPORT_PasswordAccessAudit))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
+            }
+            else if (function.equals(Constants.Function.VIEW_REPORT_PasswordPermissions))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_USER);
+            }
+            else if (function.equals(Constants.Function.VIEW_REPORT_Users))
+            {
+                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_USER);
+            }
         }
 
         auditLogger.log("user=["+((user==null)?"":user.getUsername())+"] function=["+function+"] authorized? "+isAuthorized);
