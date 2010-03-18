@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,8 +20,12 @@
 
 package com.joshdrummond.webpasswordsafe.client;
 
+import java.util.HashMap;
+import java.util.Map;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
+
 
 /**
  * Client-side session state and utilities
@@ -36,6 +40,7 @@ public class ClientSessionUtil
     private User user;
     private Group everyoneGroup;
     private boolean isLoggedIn;
+    private Map<Function, Boolean> authorizations;
     
     public static ClientSessionUtil getInstance()
     {
@@ -46,11 +51,25 @@ public class ClientSessionUtil
     {
         user = new User();
         isLoggedIn = false;
+        authorizations = new HashMap<Function, Boolean>();
     }
 
-    public boolean isAuthorized(String permission)
+    public boolean isAuthorized(Function function)
     {
-        return isLoggedIn();
+    	boolean isAuthorized = false;
+    	if (isLoggedIn())
+    	{
+    		if (authorizations.containsKey(function))
+    		{
+    			isAuthorized = authorizations.get(function);
+    		}
+    	}
+    	return isAuthorized;
+    }
+    
+    public void setAuthorizations(Map<Function, Boolean> authorizations)
+    {
+    	this.authorizations = authorizations;
     }
     
     public boolean isLoggedIn()

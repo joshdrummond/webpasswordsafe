@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -34,7 +34,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
-import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
 
 
@@ -44,6 +43,7 @@ import com.joshdrummond.webpasswordsafe.common.util.Utils;
  *
  */
 public class LoginDialog extends Window
+	implements LoginWindow
 {
     private TextField<String> usernameTextBox;
     private TextField<String> passwordTextBox;
@@ -122,7 +122,7 @@ public class LoginDialog extends Window
             public void onSuccess(Boolean result) {
                 if (result.booleanValue())
                 {
-                    doGetLoggedInUser();
+                	doLoginSuccess();
                 }
                 else
                 {
@@ -134,32 +134,21 @@ public class LoginDialog extends Window
                 Utils.safeString(passwordTextBox.getValue()), callback);
     }
     
-    private void doGetLoggedInUser()
+    private void doLoginSuccess()
     {
-        AsyncCallback<User> callback = new AsyncCallback<User>()
-        {
-
-            public void onFailure(Throwable caught)
-            {
-            	MessageBox.alert("Error", caught.getMessage(), null);
-            }
-
-            public void onSuccess(User result)
-            {
-                if (null != result)
-                {
-                    main.getClientModel().setLoggedInUser(result);
-                    main.getClientModel().setLoggedIn(true);
-                    main.refreshLoginStatus();
-                    hide();
-                }
-                else
-                {
-                	MessageBox.alert("Error", "Invalid User!", null);
-                }
-            }
-        };
-        LoginService.Util.getInstance().getLogin(callback);
+    	main.doGetLoggedInUser(this);
     }
- 
+    
+    @Override
+    public void doGetLoginSuccess()
+    {
+        hide();
+    }
+    
+    @Override
+    public void doGetLoginFailure()
+    {
+    	MessageBox.alert("Error", "Invalid User!", null);
+    }
+    
 }

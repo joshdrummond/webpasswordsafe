@@ -32,7 +32,7 @@ import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.User;
-import com.joshdrummond.webpasswordsafe.common.util.Constants;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
 import com.joshdrummond.webpasswordsafe.server.dao.GroupDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
@@ -72,6 +72,7 @@ public class UserServiceImpl implements UserService
     private LoginService loginService;
 
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public void changePassword(String password)
     {
@@ -88,11 +89,12 @@ public class UserServiceImpl implements UserService
         }
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public void addUser(User newUser)
     {
         User loggedInUser = loginService.getLogin();
-        if (authorizer.isAuthorized(loggedInUser, Constants.Function.ADD_USER))
+        if (authorizer.isAuthorized(loggedInUser, Function.ADD_USER))
         {
             addUserInternal(newUser);
         }
@@ -128,11 +130,12 @@ public class UserServiceImpl implements UserService
         auditLogger.log(user.getUsername() + " user added");
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public void updateUser(User updateUser)
     {
         User loggedInUser = loginService.getLogin();
-        if (authorizer.isAuthorized(loggedInUser, Constants.Function.UPDATE_USER))
+        if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_USER))
         {
             // update base user
             User user = userDAO.findById(updateUser.getId(), false);
@@ -158,6 +161,7 @@ public class UserServiceImpl implements UserService
         }
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<User> getUsers(boolean includeOnlyActive)
     {
@@ -166,6 +170,7 @@ public class UserServiceImpl implements UserService
         return users;
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
 	public void verifyInitialization()
 	{
@@ -196,11 +201,12 @@ public class UserServiceImpl implements UserService
 	    }
 	}
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public void addGroup(Group group)
     {
         User loggedInUser = loginService.getLogin();
-        if (authorizer.isAuthorized(loggedInUser, Constants.Function.ADD_GROUP))
+        if (authorizer.isAuthorized(loggedInUser, Function.ADD_GROUP))
         {
             addGroupInternal(group);
         }
@@ -211,17 +217,18 @@ public class UserServiceImpl implements UserService
     }
     
     @Transactional(propagation=Propagation.REQUIRED)
-    public void addGroupInternal(Group group)
+    private void addGroupInternal(Group group)
     {
         groupDAO.makePersistent(group);
         auditLogger.log(group.getName() + " group added");
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public void updateGroup(Group updateGroup)
     {
         User loggedInUser = loginService.getLogin();
-        if (authorizer.isAuthorized(loggedInUser, Constants.Function.UPDATE_GROUP))
+        if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_GROUP))
         {
             Group group = groupDAO.findById(updateGroup.getId(), false);
             group.setName(updateGroup.getName());
@@ -239,6 +246,7 @@ public class UserServiceImpl implements UserService
         }
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Group> getGroups(boolean includeEveryoneGroup)
     {
@@ -251,6 +259,7 @@ public class UserServiceImpl implements UserService
         return groups;
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Subject> getSubjects(boolean includeOnlyActive)
     {
@@ -263,6 +272,7 @@ public class UserServiceImpl implements UserService
         return subjects;
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	public Group getEveryoneGroup()
 	{
@@ -270,11 +280,12 @@ public class UserServiceImpl implements UserService
 	}
 	
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-	public User getAdminUser()
+	private  User getAdminUser()
 	{
 	    return userDAO.findActiveUserByUsername(ADMIN_USER_NAME);
 	}
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public Group getGroupWithUsers(long groupId)
     {
@@ -285,6 +296,7 @@ public class UserServiceImpl implements UserService
         return group;
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public User getUserWithGroups(long userId)
     {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,10 +19,13 @@
 */
 package com.joshdrummond.webpasswordsafe.client;
 
+import com.joshdrummond.webpasswordsafe.client.ui.LoginWindow;
+
 
 public interface MainWindow {
 
     public ClientSessionUtil getClientModel();
     public void refreshLoginStatus();
+    public void doGetLoggedInUser(LoginWindow loginWindow);
 
 }

@@ -39,7 +39,7 @@ import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.Template;
 import com.joshdrummond.webpasswordsafe.common.model.TemplateDetail;
 import com.joshdrummond.webpasswordsafe.common.model.User;
-import com.joshdrummond.webpasswordsafe.common.util.Constants;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
@@ -91,12 +91,13 @@ public class PasswordServiceImpl implements PasswordService
     private Authorizer authorizer;
     
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public void addPassword(Password password)
     {
         Date now = new Date();
         User loggedInUser = loginService.getLogin();
-        if (authorizer.isAuthorized(loggedInUser, Constants.Function.ADD_PASSWORD))
+        if (authorizer.isAuthorized(loggedInUser, Function.ADD_PASSWORD))
         {
             password.setUserCreated(loggedInUser);
             password.setDateCreated(now);
@@ -114,6 +115,7 @@ public class PasswordServiceImpl implements PasswordService
         }
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public void updatePassword(Password updatePassword)
     {
@@ -192,6 +194,7 @@ public class PasswordServiceImpl implements PasswordService
         }
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags)
     {
@@ -202,6 +205,7 @@ public class PasswordServiceImpl implements PasswordService
         return passwords;
     }
  
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public String generatePassword()
     {
@@ -209,6 +213,7 @@ public class PasswordServiceImpl implements PasswordService
         return passwordGenerator.generatePassword();
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public String getCurrentPassword(long passwordId)
     {
@@ -239,6 +244,7 @@ public class PasswordServiceImpl implements PasswordService
         passwordAccessAuditDAO.makePersistent(passwordAccessAudit);
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public Password getPassword(long passwordId)
     {
@@ -248,6 +254,7 @@ public class PasswordServiceImpl implements PasswordService
         return password;
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId)
     {
@@ -263,6 +270,7 @@ public class PasswordServiceImpl implements PasswordService
         return accessAuditList;
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public List<PasswordData> getPasswordHistoryData(long passwordId)
     {
@@ -284,6 +292,7 @@ public class PasswordServiceImpl implements PasswordService
         return decryptedPasswordDataList;
     }
     
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Tag> getAvailableTags()
     {
@@ -292,6 +301,7 @@ public class PasswordServiceImpl implements PasswordService
         return tags;
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public void addTemplate(Template template)
     {
@@ -301,6 +311,7 @@ public class PasswordServiceImpl implements PasswordService
         auditLogger.log("Template ["+template.getName() + "] added by "+loggedInUser.getUsername());
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public void updateTemplate(Template updateTemplate)
     {
@@ -332,6 +343,7 @@ public class PasswordServiceImpl implements PasswordService
         }
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Template> getTemplates(boolean includeShared)
     {
@@ -339,6 +351,7 @@ public class PasswordServiceImpl implements PasswordService
         return templateDAO.findTemplatesByUser(loggedInUser, includeShared);
     }
 
+    @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public Template getTemplateWithDetails(long templateId)
     {

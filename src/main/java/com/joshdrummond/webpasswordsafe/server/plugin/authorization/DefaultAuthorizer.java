@@ -21,7 +21,8 @@ package com.joshdrummond.webpasswordsafe.server.plugin.authorization;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.joshdrummond.webpasswordsafe.common.model.User;
-import com.joshdrummond.webpasswordsafe.common.util.Constants;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Role;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 
 
@@ -35,52 +36,31 @@ public class DefaultAuthorizer implements Authorizer
     private AuditLogger auditLogger;
     
 
-    public boolean isAuthorized(User user, Constants.Function function)
+    public boolean isAuthorized(User user, Function function)
     {
         boolean isAuthorized = false;
         
         if (user != null)
         {
-            if (function.equals(Constants.Function.ADD_GROUP))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
-            }
-            else if (function.equals(Constants.Function.UPDATE_GROUP))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
-            }
-            else if (function.equals(Constants.Function.ADD_USER))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
-            }
-            else if (function.equals(Constants.Function.UPDATE_USER))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
-            }
-            else if (function.equals(Constants.Function.ADD_PASSWORD))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_USER);
-            }
-            else if (function.equals(Constants.Function.VIEW_REPORT_CurrentPasswordExport))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
-            }
-            else if (function.equals(Constants.Function.VIEW_REPORT_Groups))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_USER);
-            }
-            else if (function.equals(Constants.Function.VIEW_REPORT_PasswordAccessAudit))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_ADMIN);
-            }
-            else if (function.equals(Constants.Function.VIEW_REPORT_PasswordPermissions))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_USER);
-            }
-            else if (function.equals(Constants.Function.VIEW_REPORT_Users))
-            {
-                isAuthorized = user.getRoles().contains(Constants.Role.ROLE_USER);
-            }
+        	switch (function)
+        	{
+	        	case ADD_GROUP:
+	        	case UPDATE_GROUP:
+	        	case ADD_USER:
+	        	case UPDATE_USER:
+	        	case VIEW_REPORT_CurrentPasswordExport:
+	        	case VIEW_REPORT_PasswordAccessAudit:
+	        		isAuthorized = user.getRoles().contains(Role.ROLE_ADMIN);
+	        		break;
+	        	case ADD_PASSWORD:
+	        	case ADD_TEMPLATE:
+	        	case UPDATE_TEMPLATE:
+	        	case VIEW_REPORT_Groups:
+	        	case VIEW_REPORT_PasswordPermissions:
+	        	case VIEW_REPORT_Users:
+	        		isAuthorized = user.getRoles().contains(Role.ROLE_USER);
+	        		break;
+        	}
         }
 
         auditLogger.log("user=["+((user==null)?"":user.getUsername())+"] function=["+function+"] authorized? "+isAuthorized);
