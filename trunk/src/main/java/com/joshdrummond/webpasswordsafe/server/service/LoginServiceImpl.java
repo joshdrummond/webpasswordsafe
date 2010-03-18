@@ -19,7 +19,11 @@
 */
 package com.joshdrummond.webpasswordsafe.server.service;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.ServletUtils;
@@ -30,10 +34,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 import com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator;
 import com.joshdrummond.webpasswordsafe.server.plugin.authentication.RoleRetriever;
+import com.joshdrummond.webpasswordsafe.server.plugin.authorization.Authorizer;
 
 
 /**
@@ -59,11 +65,15 @@ public class LoginServiceImpl implements LoginService {
     
     @Autowired
     private RoleRetriever roleRetriever;
+    
+    @Autowired
+    private Authorizer authorizer;
 
     
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#getLogin()
      */
+    @Override
     @SuppressWarnings("unchecked")
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public User getLogin()
@@ -81,6 +91,7 @@ public class LoginServiceImpl implements LoginService {
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#login(java.lang.String, java.lang.String)
      */
+    @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public boolean login(String username, String password)
     {
@@ -104,6 +115,7 @@ public class LoginServiceImpl implements LoginService {
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#logout()
      */
+    @Override
     public boolean logout()
     {
         auditLogger.log("logout user "+ getUsername());
@@ -119,5 +131,30 @@ public class LoginServiceImpl implements LoginService {
     private String getUsername()
     {
         return (String)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_USERNAME);
+    }
+
+    /* (non-Javadoc)
+     * @see com.joshdrummond.webpasswordsafe.client.remote.LoginService#getLoginAuthorizations(java.util.Set)
+     */
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public Map<Function, Boolean> getLoginAuthorizations(Set<Function> functions)
+    {
+    	LOG.debug("inside getLoginAuthorizations");
+        User loggedInUser = getLogin();
+        // if passed null, load everything
+        if (null==functions)
+        {
+        	LOG.debug("functions was passed null");
+        	functions = new HashSet<Function>(Arrays.asList(Function.values()));
+        }
+        LOG.debug("functions="+functions.toString());
+        Map<Function, Boolean> authzMap = new HashMap<Function, Boolean>(functions.size());
+        for (Function function : functions)
+        {
+            authzMap.put(function, authorizer.isAuthorized(loggedInUser, function));
+        }
+        LOG.debug("authzMap="+authzMap.toString());
+        return authzMap;
     }
 }

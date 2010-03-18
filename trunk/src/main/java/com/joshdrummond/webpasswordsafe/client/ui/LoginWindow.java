@@ -17,17 +17,10 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.plugin.authorization;
 
-import com.joshdrummond.webpasswordsafe.common.model.User;
-import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
+package com.joshdrummond.webpasswordsafe.client.ui;
 
-
-/**
- * @author Josh Drummond
- *
- */
-public interface Authorizer
-{
-    public boolean isAuthorized(User user, Function function);
+public interface LoginWindow {
+	public void doGetLoginSuccess();
+	public void doGetLoginFailure();
 }

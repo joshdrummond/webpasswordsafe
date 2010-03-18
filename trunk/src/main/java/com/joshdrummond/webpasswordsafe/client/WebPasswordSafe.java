@@ -20,6 +20,7 @@
 package com.joshdrummond.webpasswordsafe.client;
 
 import java.util.List;
+import java.util.Map;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.MenuEvent;
@@ -28,6 +29,7 @@ import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.Dialog;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Text;
 import com.extjs.gxt.ui.client.widget.Viewport;
@@ -57,6 +59,8 @@ import com.joshdrummond.webpasswordsafe.common.model.Permission;
 import com.joshdrummond.webpasswordsafe.common.model.Template;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Report;
 
 
 /**
@@ -65,7 +69,7 @@ import com.joshdrummond.webpasswordsafe.common.util.Constants;
  * @author Josh Drummond
  * 
  */
-public class WebPasswordSafe implements EntryPoint, MainWindow
+public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 {
     private ClientSessionUtil clientSessionUtil = ClientSessionUtil.getInstance();
     private final static String NOT_LOGGED_IN = "Not Logged In";
@@ -125,11 +129,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         }));
 
         Menu reportsMenu = new Menu();
-        reportsMenu.add(buildReportMenuItem("Users", Constants.Report.Users));
-        reportsMenu.add(buildReportMenuItem("Groups", Constants.Report.Groups));
-        reportsMenu.add(buildReportMenuItem("Access Audit", Constants.Report.PasswordAccessAudit));
-        reportsMenu.add(buildReportMenuItem("Permissions", Constants.Report.PasswordPermissions));
-        reportsMenu.add(buildReportMenuItem("Password Export", Constants.Report.CurrentPasswordExport));
+        buildReportMenu(reportsMenu);
 
         Menu passwordMenu = new Menu();
         passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
@@ -236,9 +236,33 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
 
         refreshMenu();
         
-        doGetLoggedInUser();
+        doGetLoggedInUser(this);
     }
 
+    private void buildReportMenu(Menu reportsMenu)
+    {
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Users))
+        {
+            reportsMenu.add(buildReportMenuItem("Users", Report.Users));
+        }
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Groups))
+        {
+        	reportsMenu.add(buildReportMenuItem("Groups", Report.Groups));
+        }
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordAccessAudit))
+        {
+        	reportsMenu.add(buildReportMenuItem("Access Audit", Report.PasswordAccessAudit));
+        }
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordPermissions))
+        {
+        	reportsMenu.add(buildReportMenuItem("Permissions", Report.PasswordPermissions));
+        }
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_CurrentPasswordExport))
+        {
+        	reportsMenu.add(buildReportMenuItem("Password Export", Report.CurrentPasswordExport));
+        }
+    }
+    
     private MenuItem buildReportMenuItem(String menuName, Constants.Report reportName)
     {
         MenuItem menuItem = new MenuItem(menuName);
@@ -312,17 +336,21 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
     
     private void doNewPassword()
     {
-        if (clientSessionUtil.isAuthorized("NEW_PASSWORD"))
+        if (clientSessionUtil.isAuthorized(Function.ADD_PASSWORD))
         {
             Password newPassword = new Password();
             newPassword.addPermission(new Permission(clientSessionUtil.getLoggedInUser(), AccessLevel.GRANT));
             new PasswordDialog(newPassword).show();
         }
+        else
+        {
+            MessageBox.alert("Error", "Not Authorized!", null);
+        }
     }
 
     private void doEditGroup()
     {
-        if (clientSessionUtil.isAuthorized("EDIT_GROUP"))
+        if (clientSessionUtil.isAuthorized(Function.UPDATE_GROUP))
         {
             AsyncCallback<List<Group>> callback = new AsyncCallback<List<Group>>()
             {
@@ -339,15 +367,19 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         }
         else
         {
-            MessageBox.alert("Error", "Must be logged in first.", null);
+            MessageBox.alert("Error", "Not Authorized!", null);
         }
     }
 
     private void doAddGroup()
     {
-        if (clientSessionUtil.isAuthorized("ADD_GROUP"))
+        if (clientSessionUtil.isAuthorized(Function.ADD_GROUP))
         {
             displayGroupDialog(new Group());
+        }
+        else
+        {
+            MessageBox.alert("Error", "Not Authorized!", null);
         }
     }
 
@@ -356,6 +388,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         new GroupDialog(group).show();
     }
 
+    @Override
     public void refreshLoginStatus()
     {
         refreshTopPanel();
@@ -365,15 +398,19 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
 
     private void doAddUser()
     {
-        if (clientSessionUtil.isAuthorized("ADD_USER"))
+        if (clientSessionUtil.isAuthorized(Function.ADD_USER))
         {
             displayUserDialog(new User());
+        }
+        else
+        {
+            MessageBox.alert("Error", "Not Authorized!", null);
         }
     }
 
     private void doEditUser()
     {
-        if (clientSessionUtil.isAuthorized("EDIT_USER"))
+        if (clientSessionUtil.isAuthorized(Function.UPDATE_USER))
         {
             AsyncCallback<List<User>> callback = new AsyncCallback<List<User>>()
             {
@@ -390,21 +427,25 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         }
         else
         {
-            MessageBox.alert("Error", "Must be logged in first.", null);
+            MessageBox.alert("Error", "Not Authorized!", null);
         }
     }
     
     private void doAddTemplate()
     {
-        if (clientSessionUtil.isAuthorized("ADD_TEMPLATE"))
+        if (clientSessionUtil.isAuthorized(Function.ADD_TEMPLATE))
         {
             displayTemplateDialog(new Template());
+        }
+        else
+        {
+            MessageBox.alert("Error", "Not Authorized!", null);
         }
     }
 
     private void doEditTemplate()
     {
-        if (clientSessionUtil.isAuthorized("EDIT_TEMPLATE"))
+        if (clientSessionUtil.isAuthorized(Function.UPDATE_TEMPLATE))
         {
             AsyncCallback<List<Template>> callback = new AsyncCallback<List<Template>>()
             {
@@ -421,7 +462,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         }
         else
         {
-            MessageBox.alert("Error", "Must be logged in first.", null);
+            MessageBox.alert("Error", "Not Authorized!", null);
         }
     }
     
@@ -430,11 +471,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         new TemplateDialog(template).show();
     }
     
-    private void doGetLoggedInUser()
+    @Override
+    public void doGetLoggedInUser(final LoginWindow loginWindow)
     {
         AsyncCallback<User> callback = new AsyncCallback<User>()
         {
-
             public void onFailure(Throwable caught)
             {
                 MessageBox.alert("Error", caught.getMessage(), null);
@@ -446,17 +487,36 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
                 {
                     getClientModel().setLoggedInUser(result);
                     getClientModel().setLoggedIn(true);
-                    refreshLoginStatus();
+                    getLoginAuthorizations(loginWindow);
                 }
                 else
                 {
-                    verifyInitialization();
+                	loginWindow.doGetLoginFailure();
                 }
             }
         };
         LoginService.Util.getInstance().getLogin(callback);
     }
     
+    private void getLoginAuthorizations(final LoginWindow loginWindow)
+    {
+        AsyncCallback<Map<Function, Boolean>> callback = new AsyncCallback<Map<Function, Boolean>>()
+        {
+            public void onFailure(Throwable caught)
+            {
+                MessageBox.alert("Error", caught.getMessage(), null);
+            }
+
+            public void onSuccess(Map<Function, Boolean> result)
+            {
+                getClientModel().setAuthorizations(result);
+                refreshLoginStatus();
+            	loginWindow.doGetLoginSuccess();
+            }
+        };
+        LoginService.Util.getInstance().getLoginAuthorizations(null, callback);
+    }
+
     private void verifyInitialization()
     {
         AsyncCallback<Void> callback = new AsyncCallback<Void>()
@@ -524,9 +584,22 @@ public class WebPasswordSafe implements EntryPoint, MainWindow
         new UserDialog(user).show();
     }
     
+    @Override
     public ClientSessionUtil getClientModel()
     {
         return clientSessionUtil;
+    }
+    
+    @Override
+    public void doGetLoginSuccess()
+    {
+    	Info.display("Login", getClientModel().getLoggedInUser().getUsername()+" logged in");
+    }
+    
+    @Override
+    public void doGetLoginFailure()
+    {
+        verifyInitialization();
     }
     
     private void doShowAbout()

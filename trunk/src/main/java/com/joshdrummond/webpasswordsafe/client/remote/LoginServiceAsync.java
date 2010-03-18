@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,12 +20,17 @@
 
 package com.joshdrummond.webpasswordsafe.client.remote;
 
+import java.util.Map;
+import java.util.Set;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
 
 public interface LoginServiceAsync {
     
     public void login(String username, String password, AsyncCallback<Boolean> callback);
     public void logout(AsyncCallback<Boolean> callback);
     public void getLogin(AsyncCallback<User> callback);
+    public void getLoginAuthorizations(Set<Function> functions, AsyncCallback<Map<Function, Boolean>> callback);
+
 }

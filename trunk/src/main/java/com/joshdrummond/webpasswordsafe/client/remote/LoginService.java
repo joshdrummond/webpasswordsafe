@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,16 +20,20 @@
 
 package com.joshdrummond.webpasswordsafe.client.remote;
 
+import java.util.Map;
+import java.util.Set;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
 
 public interface LoginService extends RemoteService {
     
     public boolean login(String username, String password);
     public boolean logout();
     public User getLogin();
+    public Map<Function, Boolean> getLoginAuthorizations(Set<Function> functions);
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.
