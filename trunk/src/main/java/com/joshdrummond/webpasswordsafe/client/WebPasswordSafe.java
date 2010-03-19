@@ -76,137 +76,16 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     private final static String LOGGED_IN = "Logged In As: ";
     private final static String TITLE = "WebPasswordSafe v"+Constants.VERSION;
     private Viewport viewport; 
-    private ContentPanel mainPanel, topPanel;
-    private Menu userMenu;
-    private Menu adminMenu;
+    private ContentPanel mainPanel, topPanel, menuPanel;
 
     public void onModuleLoad()
     {
-        userMenu = new Menu();
-        MenuItem userSettings = new MenuItem("Settings");
-        Menu userSettingsMenu = new Menu();
-        //userSettingsMenu.add(new MenuItem("General"));
-        userSettingsMenu.add(new MenuItem("Change Password", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-                doChangePassword();
-            }
-        }));
-        userSettings.setSubMenu(userSettingsMenu);
-        userMenu.add(userSettings);
+    	// menu panel
+        menuPanel = new ContentPanel(new FillLayout());
+        menuPanel.setHeaderVisible(false);
+        menuPanel.setBorders(false);
 
-//        MenuItem userRole = new MenuItem("Role");
-//        Menu userRoleMenu = new Menu();
-//        userRoleMenu.add(new MenuItem("User"));
-//        userRoleMenu.add(new MenuItem("Admin"));
-//        userRole.setSubMenu(userRoleMenu);
-//        userMenu.add(userRole);
-
-        userMenu.add(new MenuItem("Logout", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-                doLogout();
-            }
-        }));
-
-
-        Menu aboutMenu = new Menu();
-        aboutMenu.add(new MenuItem("Help", new SelectionListener<MenuEvent>()
-        {
-            @Override
-            public void componentSelected(MenuEvent ce)
-            {
-                doShowHelp();
-            }
-        }));
-        aboutMenu.add(new MenuItem("About", new SelectionListener<MenuEvent>()
-        {
-            @Override
-            public void componentSelected(MenuEvent ce)
-            {
-                doShowAbout();
-            }
-        }));
-
-        Menu reportsMenu = new Menu();
-        buildReportMenu(reportsMenu);
-
-        Menu passwordMenu = new Menu();
-        passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-                doNewPassword();
-            }
-        }));
-        passwordMenu.add(new MenuItem("Search", new SelectionListener<MenuEvent>() {
-            @Override
-            public void componentSelected(MenuEvent ce) {
-                refreshPasswordSearch();
-            }
-        }));
-        MenuItem passwordTemplate = new MenuItem("Template");
-        Menu passwordTemplateMenu = new Menu();
-        passwordTemplateMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
-            @Override
-            public void componentSelected(MenuEvent ce) {
-                doAddTemplate();
-            }
-        }));
-        passwordTemplateMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
-            @Override
-            public void componentSelected(MenuEvent ce) {
-                doEditTemplate();
-            }
-        }));
-        passwordTemplate.setSubMenu(passwordTemplateMenu);
-        passwordMenu.add(passwordTemplate);
-
-        adminMenu = new Menu();
-        //adminMenu.add(new MenuItem("Settings"));
-
-        MenuItem adminUser = new MenuItem("Users");
-        Menu adminUserMenu = new Menu();
-        adminUserMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-                doAddUser();
-            }
-        }));
-        adminUserMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-                doEditUser();
-            }
-        }));
-        adminUser.setSubMenu(adminUserMenu);
-        adminMenu.add(adminUser);
-        
-        MenuItem adminGroup = new MenuItem("Groups");
-        Menu adminGroupMenu = new Menu();
-        adminGroupMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-                doAddGroup();
-            }
-        }));
-        adminGroupMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
-                doEditGroup();
-            }
-        }));
-        adminGroup.setSubMenu(adminGroupMenu);
-        adminMenu.add(adminGroup);
-
-//        MenuItem adminRole = new MenuItem("Roles");
-//        adminMenu.add(adminRole);
-
-        MenuBar mainMenu = new MenuBar();
-        mainMenu.add(new MenuBarItem("User", userMenu));
-        mainMenu.add(new MenuBarItem("Password", passwordMenu));
-        mainMenu.add(new MenuBarItem("Admin", adminMenu));
-        mainMenu.add(new MenuBarItem("Reports", reportsMenu));
-        mainMenu.add(new MenuBarItem("About", aboutMenu));
+        refreshMenu();
 
         viewport = new Viewport();
         viewport.setLayout(new RowLayout(Orientation.VERTICAL));
@@ -222,10 +101,6 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         refreshTopPanel();
         viewport.add(topPanel, new RowData(1, -1));
         //menu panel
-        ContentPanel menuPanel = new ContentPanel(new FillLayout());
-        menuPanel.add(mainMenu);
-        menuPanel.setHeaderVisible(false);
-        menuPanel.setBorders(false);
         viewport.add(menuPanel, new RowData(1, -1));
         //main panel
         mainPanel = new ContentPanel(new FillLayout());
@@ -234,55 +109,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         
         RootPanel.get().add(viewport);
 
-        refreshMenu();
-        
         doGetLoggedInUser(this);
-    }
-
-    private void buildReportMenu(Menu reportsMenu)
-    {
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Users))
-        {
-            reportsMenu.add(buildReportMenuItem("Users", Report.Users));
-        }
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Groups))
-        {
-        	reportsMenu.add(buildReportMenuItem("Groups", Report.Groups));
-        }
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordAccessAudit))
-        {
-        	reportsMenu.add(buildReportMenuItem("Access Audit", Report.PasswordAccessAudit));
-        }
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordPermissions))
-        {
-        	reportsMenu.add(buildReportMenuItem("Permissions", Report.PasswordPermissions));
-        }
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_CurrentPasswordExport))
-        {
-        	reportsMenu.add(buildReportMenuItem("Password Export", Report.CurrentPasswordExport));
-        }
-    }
-    
-    private MenuItem buildReportMenuItem(String menuName, Constants.Report reportName)
-    {
-        MenuItem menuItem = new MenuItem(menuName);
-        Menu subMenu =  new Menu();
-        subMenu.add(buildReportMenuItemType(reportName.name(), "pdf"));
-        subMenu.add(buildReportMenuItemType(reportName.name(), "csv"));
-        menuItem.setSubMenu(subMenu);
-        return menuItem;
-    }
-
-    private MenuItem buildReportMenuItemType(final String name, final String type)
-    {
-        return new MenuItem(type.toUpperCase(), new SelectionListener<MenuEvent>()
-        {
-            @Override
-            public void componentSelected(MenuEvent ce)
-            {
-                doShowReport(name, type.toLowerCase());
-            }
-        });
     }
 
     private void refreshTopPanel()
@@ -330,10 +157,230 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 
     private void refreshMenu()
     {
-        boolean isLoggedIn = clientSessionUtil.isLoggedIn();
-        adminMenu.setVisible(isLoggedIn);
+        MenuBar mainMenu = new MenuBar();
+
+        buildUserMenu(mainMenu);
+        buildPasswordMenu(mainMenu);
+        buildAdminMenu(mainMenu);
+        buildReportsMenu(mainMenu);
+        buildAboutMenu(mainMenu);
+
+        menuPanel.removeAll();
+        menuPanel.add(mainMenu);
+        menuPanel.layout();
     }
     
+    private void buildUserMenu(MenuBar mainMenu)
+    {
+        Menu userMenu = new Menu();
+        MenuItem userSettings = new MenuItem("Settings");
+        Menu userSettingsMenu = new Menu();
+        //userSettingsMenu.add(new MenuItem("General"));
+        userSettingsMenu.add(new MenuItem("Change Password", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doChangePassword();
+            }
+        }));
+        userSettings.setSubMenu(userSettingsMenu);
+        userMenu.add(userSettings);
+
+//        MenuItem userRole = new MenuItem("Role");
+//        Menu userRoleMenu = new Menu();
+//        userRoleMenu.add(new MenuItem("User"));
+//        userRoleMenu.add(new MenuItem("Admin"));
+//        userRole.setSubMenu(userRoleMenu);
+//        userMenu.add(userRole);
+
+        userMenu.add(new MenuItem("Logout", new SelectionListener<MenuEvent>() {
+			@Override
+			public void componentSelected(MenuEvent ce) {
+                doLogout();
+            }
+        }));
+
+        mainMenu.add(new MenuBarItem("User", userMenu));
+    }
+    
+    private void buildPasswordMenu(MenuBar mainMenu)
+    {
+        Menu passwordMenu = new Menu();
+        if (clientSessionUtil.isAuthorized(Function.ADD_PASSWORD))
+        {
+	        passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
+				@Override
+				public void componentSelected(MenuEvent ce) {
+	                doNewPassword();
+	            }
+	        }));
+        }
+        passwordMenu.add(new MenuItem("Search", new SelectionListener<MenuEvent>() {
+            @Override
+            public void componentSelected(MenuEvent ce) {
+                refreshPasswordSearch();
+            }
+        }));
+        MenuItem passwordTemplate = new MenuItem("Template");
+        Menu passwordTemplateMenu = new Menu();
+        if (clientSessionUtil.isAuthorized(Function.ADD_TEMPLATE))
+        {
+	        passwordTemplateMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
+	            @Override
+	            public void componentSelected(MenuEvent ce) {
+	                doAddTemplate();
+	            }
+	        }));
+        }
+        if (clientSessionUtil.isAuthorized(Function.UPDATE_TEMPLATE))
+        {
+	        passwordTemplateMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+	            @Override
+	            public void componentSelected(MenuEvent ce) {
+	                doEditTemplate();
+	            }
+	        }));
+        }
+        passwordTemplate.setSubMenu(passwordTemplateMenu);
+        passwordMenu.add(passwordTemplate);
+
+        mainMenu.add(new MenuBarItem("Password", passwordMenu));
+    }
+    
+    private void buildAdminMenu(MenuBar mainMenu)
+    {
+        // only create admin menu item if submenus allowed
+        if (clientSessionUtil.isAuthorized(Function.ADD_USER) ||
+        	clientSessionUtil.isAuthorized(Function.UPDATE_USER) ||
+        	clientSessionUtil.isAuthorized(Function.ADD_GROUP) ||
+        	clientSessionUtil.isAuthorized(Function.UPDATE_GROUP))
+        {
+	        Menu adminMenu = new Menu();
+	        //adminMenu.add(new MenuItem("Settings"));
+	
+	        MenuItem adminUser = new MenuItem("Users");
+	        Menu adminUserMenu = new Menu();
+	        if (clientSessionUtil.isAuthorized(Function.ADD_USER))
+	        {
+		        adminUserMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
+					@Override
+					public void componentSelected(MenuEvent ce) {
+		                doAddUser();
+		            }
+		        }));
+	        }
+	        if (clientSessionUtil.isAuthorized(Function.UPDATE_USER))
+	        {
+		        adminUserMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+					@Override
+					public void componentSelected(MenuEvent ce) {
+		                doEditUser();
+		            }
+		        }));
+	        }
+	        adminUser.setSubMenu(adminUserMenu);
+	        adminMenu.add(adminUser);
+	        
+	        MenuItem adminGroup = new MenuItem("Groups");
+	        Menu adminGroupMenu = new Menu();
+	        if (clientSessionUtil.isAuthorized(Function.ADD_GROUP))
+	        {
+		        adminGroupMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
+					@Override
+					public void componentSelected(MenuEvent ce) {
+		                doAddGroup();
+		            }
+		        }));
+	        }
+	        if (clientSessionUtil.isAuthorized(Function.UPDATE_GROUP))
+	        {
+		        adminGroupMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+					@Override
+					public void componentSelected(MenuEvent ce) {
+		                doEditGroup();
+		            }
+		        }));
+	        }
+	        adminGroup.setSubMenu(adminGroupMenu);
+	        adminMenu.add(adminGroup);
+
+	        mainMenu.add(new MenuBarItem("Admin", adminMenu));
+        }
+//        MenuItem adminRole = new MenuItem("Roles");
+//        adminMenu.add(adminRole);
+    }
+    
+    private void buildReportsMenu(MenuBar mainMenu)
+    {
+        Menu reportsMenu = new Menu();
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Users))
+        {
+            reportsMenu.add(buildReportMenuItem("Users", Report.Users));
+        }
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Groups))
+        {
+        	reportsMenu.add(buildReportMenuItem("Groups", Report.Groups));
+        }
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordAccessAudit))
+        {
+        	reportsMenu.add(buildReportMenuItem("Access Audit", Report.PasswordAccessAudit));
+        }
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordPermissions))
+        {
+        	reportsMenu.add(buildReportMenuItem("Permissions", Report.PasswordPermissions));
+        }
+        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_CurrentPasswordExport))
+        {
+        	reportsMenu.add(buildReportMenuItem("Password Export", Report.CurrentPasswordExport));
+        }
+        mainMenu.add(new MenuBarItem("Reports", reportsMenu));
+
+    }
+    
+    private void buildAboutMenu(MenuBar mainMenu)
+    {
+        Menu aboutMenu = new Menu();
+        aboutMenu.add(new MenuItem("Help", new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowHelp();
+            }
+        }));
+        aboutMenu.add(new MenuItem("About", new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowAbout();
+            }
+        }));
+        
+        mainMenu.add(new MenuBarItem("About", aboutMenu));
+    }
+    
+    private MenuItem buildReportMenuItem(String menuName, Constants.Report reportName)
+    {
+        MenuItem menuItem = new MenuItem(menuName);
+        Menu subMenu =  new Menu();
+        subMenu.add(buildReportMenuItemType(reportName.name(), "pdf"));
+        subMenu.add(buildReportMenuItemType(reportName.name(), "csv"));
+        menuItem.setSubMenu(subMenu);
+        return menuItem;
+    }
+
+    private MenuItem buildReportMenuItemType(final String name, final String type)
+    {
+        return new MenuItem(type.toUpperCase(), new SelectionListener<MenuEvent>()
+        {
+            @Override
+            public void componentSelected(MenuEvent ce)
+            {
+                doShowReport(name, type.toLowerCase());
+            }
+        });
+    }
+
     private void doNewPassword()
     {
         if (clientSessionUtil.isAuthorized(Function.ADD_PASSWORD))
