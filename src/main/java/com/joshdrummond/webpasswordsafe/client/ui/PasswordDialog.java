@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -119,7 +119,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 doViewPasswordHistory();
             }
         });
-        add(historyButton, new AbsoluteData(82, 311));
+        add(historyButton, new AbsoluteData(215, 311));
         historyButton.setSize("127px", "22px");
         historyButton.setEnabled(password.getId() > 0);
 
@@ -169,7 +169,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 doViewAccessAuditLog();
             }
         });
-        add(accessAuditButton, new AbsoluteData(215, 311));
+        add(accessAuditButton, new AbsoluteData(82, 311));
         accessAuditButton.setSize("127px", "22px");
         accessAuditButton.setEnabled(password.getId() > 0);
 

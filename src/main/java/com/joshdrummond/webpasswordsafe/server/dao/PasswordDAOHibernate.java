@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -27,6 +27,7 @@ import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Role;
 
 
 /**
@@ -55,12 +56,20 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
             hqlString.append(tagCounter);
             hqlString.append(" in elements(pw.tags) ");
         }
-        hqlString.append("and pm.accessLevel in (:aclread, :aclwrite, :aclgrant) and ");
-        hqlString.append("((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user))) order by pw.name asc");
+        hqlString.append("and pm.accessLevel in (:aclread, :aclwrite, :aclgrant)");
+        // allow admin role to bypass password permissions
+        if (!user.getRoles().contains(Role.ROLE_ADMIN))
+        {
+        	hqlString.append(" and ((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user)))");
+        }
+        hqlString.append(" order by pw.name asc");
         
     	Query hqlQuery = getSession().createQuery(hqlString.toString());
     	hqlQuery.setString("query", "%"+query+"%");
-    	hqlQuery.setEntity("user", user);
+        if (!user.getRoles().contains(Role.ROLE_ADMIN))
+        {
+        	hqlQuery.setEntity("user", user);
+        }
     	if (activeOnly)
     	{
     	    hqlQuery.setString("active", "Y");
@@ -88,22 +97,32 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
             case WRITE : sqlAccessLevelIn = "(:aclwrite, :aclgrant) "; break;
             case READ : sqlAccessLevelIn = "(:aclread, :aclwrite, :aclgrant) "; break;
         }
-        Query hqlQuery = getSession().createQuery("select distinct pw from Password pw join pw.permissions pm left join fetch pw.permissions left join fetch pw.tags " +
-                "where pw.id = :passwordId and pm.accessLevel in " + sqlAccessLevelIn +
-                "and ((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user)))");
+        StringBuilder hqlString = new StringBuilder();
+        hqlString.append("select distinct pw from Password pw join pw.permissions pm left join fetch pw.permissions left join fetch pw.tags where pw.id = :passwordId ");
+        // allow admin role to bypass password permissions
+        if (!user.getRoles().contains(Role.ROLE_ADMIN))
+        {
+            hqlString.append(" and pm.accessLevel in ");
+            hqlString.append(sqlAccessLevelIn);
+            hqlString.append("and ((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user)))");
+        }
+        Query hqlQuery = getSession().createQuery(hqlString.toString());
         hqlQuery.setLong("passwordId", passwordId);
-        hqlQuery.setEntity("user", user);
-        if (accessLevel.equals(AccessLevel.GRANT) || accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
+        if (!user.getRoles().contains(Role.ROLE_ADMIN))
         {
-            hqlQuery.setString("aclgrant", AccessLevel.GRANT.name());
-        }
-        if (accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
-        {
-            hqlQuery.setString("aclwrite", AccessLevel.WRITE.name());
-        }
-        if (accessLevel.equals(AccessLevel.READ))
-        {
-            hqlQuery.setString("aclread", AccessLevel.READ.name());
+	        hqlQuery.setEntity("user", user);
+	        if (accessLevel.equals(AccessLevel.GRANT) || accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
+	        {
+	            hqlQuery.setString("aclgrant", AccessLevel.GRANT.name());
+	        }
+	        if (accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
+	        {
+	            hqlQuery.setString("aclwrite", AccessLevel.WRITE.name());
+	        }
+	        if (accessLevel.equals(AccessLevel.READ))
+	        {
+	            hqlQuery.setString("aclread", AccessLevel.READ.name());
+	        }
         }
         return (Password)hqlQuery.uniqueResult();
     }
