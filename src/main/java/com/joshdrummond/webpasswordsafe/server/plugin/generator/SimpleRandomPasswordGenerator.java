@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,6 +20,8 @@
 package com.joshdrummond.webpasswordsafe.server.plugin.generator;
 
 import java.util.Random;
+import org.apache.log4j.Logger;
+
 
 /**
  * Default implementation of PasswordGenerator
@@ -30,7 +32,12 @@ import java.util.Random;
 public class SimpleRandomPasswordGenerator implements PasswordGenerator
 {
     private int passwordLength;
-    
+    private boolean allowLowercase;
+    private boolean allowUppercase;
+    private boolean allowNumeric;
+    private String specialChars;
+    private static Logger LOG = Logger.getLogger(SimpleRandomPasswordGenerator.class);
+
     /**
      * Constructor creating default length of 10
      */
@@ -42,17 +49,70 @@ public class SimpleRandomPasswordGenerator implements PasswordGenerator
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator#generatePassword()
      */
+    @Override
     public String generatePassword()
     {
         Random random = new Random();
         StringBuilder password = new StringBuilder(passwordLength);
+        char[] allowedChars = getAllowedChars();
         for (int i = 0; i < passwordLength; i++)
         {
-            password.append((char)(random.nextInt(92) + 33));
+            password.append(allowedChars[random.nextInt(allowedChars.length)]);
         }
         return password.toString();
     }
 
+    private char[] getAllowedChars()
+    {
+    	int allowedCharSize = 0;
+    	if (allowLowercase)
+    	{
+    		allowedCharSize += 26;
+    	}
+    	if (allowUppercase)
+    	{
+    		allowedCharSize += 26;
+    	}
+    	if (allowNumeric)
+    	{
+    		allowedCharSize += 10;
+    	}
+    	allowedCharSize += specialChars.length();
+    	char[] allowedChars = new char[allowedCharSize];
+    	int i = 0;
+    	if (allowLowercase)
+    	{
+    		for (int c = 97; c <= 122; c++)
+    		{
+    			allowedChars[i] = (char)c;
+    			i++;
+    		}
+    	}
+    	if (allowUppercase)
+    	{
+    		for (int c = 65; c <= 90; c++)
+    		{
+    			allowedChars[i] = (char)c;
+    			i++;
+    		}
+    	}
+    	if (allowNumeric)
+    	{
+    		for (int c = 48; c <= 57; c++)
+    		{
+    			allowedChars[i] = (char)c;
+    			i++;
+    		}
+    	}
+    	for (int c = 0; c < specialChars.length(); c++)
+    	{
+    		allowedChars[i] = specialChars.charAt(c);
+    		i++;
+    	}
+        LOG.debug("allowedChars="+String.valueOf(allowedChars));
+    	return allowedChars;
+    }
+    
     public int getPasswordLength()
     {
         return this.passwordLength;
@@ -62,5 +122,37 @@ public class SimpleRandomPasswordGenerator implements PasswordGenerator
     {
         this.passwordLength = passwordLength;
     }
+
+	public boolean isAllowLowercase() {
+		return allowLowercase;
+	}
+
+	public void setAllowLowercase(boolean allowLowercase) {
+		this.allowLowercase = allowLowercase;
+	}
+
+	public boolean isAllowUppercase() {
+		return allowUppercase;
+	}
+
+	public void setAllowUppercase(boolean allowUppercase) {
+		this.allowUppercase = allowUppercase;
+	}
+
+	public boolean isAllowNumeric() {
+		return allowNumeric;
+	}
+
+	public void setAllowNumeric(boolean allowNumeric) {
+		this.allowNumeric = allowNumeric;
+	}
+
+	public String getSpecialChars() {
+		return specialChars;
+	}
+
+	public void setSpecialChars(String specialChars) {
+		this.specialChars = specialChars;
+	}
 
 }
