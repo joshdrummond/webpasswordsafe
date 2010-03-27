@@ -24,7 +24,7 @@
 
  <properties>
   <!-- convenience to define GWT version in one place -->
-  <gwt.version>2.0.2</gwt.version>
+  <gwt.version>2.0.3</gwt.version>
   <gxt.version>2.1.1</gxt.version>
   <maven.compiler.source>1.6</maven.compiler.source>
   <maven.compiler.target>1.6</maven.compiler.target>
@@ -173,7 +173,7 @@
   <dependency>
     <groupId>jasperreports</groupId>
     <artifactId>jasperreports</artifactId>
-    <version>3.6.1</version>
+    <version>3.7.1</version>
   </dependency>
   <dependency>
     <groupId>org.owasp</groupId>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <!--
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -39,6 +39,17 @@
       <param name="ConversionPattern" value="%d %-5p [%t]: %m%n"/>
     </layout>
   </appender>
+  
+  <!--
+  <appender name="auditSyslog" class="org.apache.log4j.net.SyslogAppender">
+    <param name="SyslogHost" value="192.168.1.110"/>
+    <param name="Facility" value="LOCAL6"/>
+    <param name="Threshold" value="INFO"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="WebPasswordSafe: [%p] %d\{ISO8601\} [%t] - %m\n"/>
+    </layout>
+  </appender>
+  -->
 
   <appender name="console" class="org.apache.log4j.ConsoleAppender">
     <layout class="org.apache.log4j.PatternLayout">
