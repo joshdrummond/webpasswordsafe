@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <!--
-	Copyright 2008-2009 Josh Drummond
+	Copyright 2008-2010 Josh Drummond
 	
 	This file is part of WebPasswordSafe.
 	
@@ -24,8 +24,10 @@
 		class="org.springframework.ws.server.endpoint.mapping.PayloadRootQNameEndpointMapping">
 		<property name="endpointMap">
 			<map>
-				<entry key="{http://www.joshdrummond.com/webpasswordsafe/schemas}AddUserRequest"
-					value-ref="addUserEndpoint" />
+                <entry key="{http://www.joshdrummond.com/webpasswordsafe/schemas}AddUserRequest"
+                    value-ref="addUserEndpoint" />
+                <entry key="{http://www.joshdrummond.com/webpasswordsafe/schemas}GetCurrentPasswordRequest"
+                    value-ref="getCurrentPasswordEndpoint" />
 			</map>
 		</property>
 	</bean>
@@ -56,4 +58,11 @@
 		class="com.joshdrummond.webpasswordsafe.server.webservice.AddUserJDomEndpoint">
 		<property name="userService" ref="userService" />
 	</bean>
+	
+    <bean id="getCurrentPasswordEndpoint"
+        class="com.joshdrummond.webpasswordsafe.server.webservice.GetCurrentPasswordJDomEndpoint">
+        <property name="loginService" ref="loginService" />
+        <property name="passwordService" ref="passwordService" />
+    </bean>
+    
 </beans>

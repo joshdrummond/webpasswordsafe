@@ -35,6 +35,7 @@ import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
 import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Role;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 import com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator;
@@ -69,6 +70,8 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private Authorizer authorizer;
 
+    private static ThreadLocal<String> usernameRef = new ThreadLocal<String>();
+    private static ThreadLocal<Set<Role>> rolesRef = new ThreadLocal<Set<Role>>();
     
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#getLogin()
@@ -82,7 +85,11 @@ public class LoginServiceImpl implements LoginService {
         User user = userDAO.findActiveUserByUsername(username);
         if (null != user)
         {
-            user.setRoles((Set<Constants.Role>)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_ROLES));
+        	if (ServletUtils.getRequest() != null)
+        	{
+        		rolesRef.set((Set<Constants.Role>)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_ROLES));
+        	}
+            user.setRoles(rolesRef.get());
         }
         LOG.info("logged in user="+((null==user) ? "null":user.getUsername()));
         return user;
@@ -104,8 +111,13 @@ public class LoginServiceImpl implements LoginService {
                 isValidLogin = true;
                 user.setLastLogin(new Date());
                 userDAO.makePersistent(user);
-                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_USERNAME, username);
-                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_ROLES, roleRetriever.retrieveRoles(user));
+                usernameRef.set(username);
+                rolesRef.set(roleRetriever.retrieveRoles(user));
+                if (ServletUtils.getRequest() != null)
+                {
+	                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_USERNAME, usernameRef.get());
+	                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_ROLES, rolesRef.get());
+                }
             }
         }
         auditLogger.log(username+" login "+ (isValidLogin ? "success" : "failure"));
@@ -119,8 +131,13 @@ public class LoginServiceImpl implements LoginService {
     public boolean logout()
     {
         auditLogger.log("logout user "+ getUsername());
-        ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_USERNAME);
-        ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_ROLES);
+        if (ServletUtils.getRequest() != null)
+        {
+	        ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_USERNAME);
+	        ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_ROLES);
+        }
+        usernameRef.set(null);
+        rolesRef.set(null);
         return true;
     }
     
@@ -130,7 +147,11 @@ public class LoginServiceImpl implements LoginService {
      */
     private String getUsername()
     {
-        return (String)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_USERNAME);
+    	if (ServletUtils.getRequest() != null)
+    	{
+    		usernameRef.set((String)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
+    	}
+        return usernameRef.get();
     }
 
     /* (non-Javadoc)
