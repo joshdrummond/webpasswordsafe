@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,24 +19,18 @@
 */
 package com.joshdrummond.webpasswordsafe.server.dao;
 
-import java.util.Collection;
-import java.util.List;
-import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
-import com.joshdrummond.webpasswordsafe.common.model.Password;
-import com.joshdrummond.webpasswordsafe.common.model.Tag;
-import com.joshdrummond.webpasswordsafe.common.model.User;
+import org.springframework.stereotype.Repository;
+import com.joshdrummond.webpasswordsafe.common.model.AuditLog;
 
 
 /**
- * DAO interface for Password
- *  
+ * DAO implementation for AuditLog
+ * 
  * @author Josh Drummond
  *
  */
-public interface PasswordDAO extends GenericDAO<Password, Long> {
+@Repository("auditLogDAO")
+public class AuditLogDAOHibernate extends GenericHibernateDAO<AuditLog, Long> implements AuditLogDAO {
 
-    public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags);
-    public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel);
-    public Password findAllowedPasswordByName(String passwordName, User user, AccessLevel accessLevel);
-    
 }
+

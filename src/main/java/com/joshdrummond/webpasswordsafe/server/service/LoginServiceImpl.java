@@ -25,17 +25,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Resource;
 import org.apache.log4j.Logger;
-import org.gwtwidgets.server.spring.ServletUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
-import com.joshdrummond.webpasswordsafe.common.util.Constants;
 import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
-import com.joshdrummond.webpasswordsafe.common.util.Constants.Role;
+import com.joshdrummond.webpasswordsafe.server.ServerSessionUtil;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 import com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator;
@@ -61,7 +60,7 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private UserDAO userDAO;
     
-    @Autowired
+    @Resource
     private AuditLogger auditLogger;
     
     @Autowired
@@ -70,26 +69,19 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private Authorizer authorizer;
 
-    private static ThreadLocal<String> usernameRef = new ThreadLocal<String>();
-    private static ThreadLocal<Set<Role>> rolesRef = new ThreadLocal<Set<Role>>();
     
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.LoginService#getLogin()
      */
     @Override
-    @SuppressWarnings("unchecked")
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public User getLogin()
     {
-        String username = getUsername();
+        String username = ServerSessionUtil.getUsername();
         User user = userDAO.findActiveUserByUsername(username);
         if (null != user)
         {
-        	if (ServletUtils.getRequest() != null)
-        	{
-        		rolesRef.set((Set<Constants.Role>)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_ROLES));
-        	}
-            user.setRoles(rolesRef.get());
+            user.setRoles(ServerSessionUtil.getRoles());
         }
         LOG.info("logged in user="+((null==user) ? "null":user.getUsername()));
         return user;
@@ -103,24 +95,29 @@ public class LoginServiceImpl implements LoginService {
     public boolean login(String username, String password)
     {
         boolean isValidLogin = false;
+        Date now = new Date();
+        String message = "";
         if (authenticator.authenticate(username, password))
         {
             User user = userDAO.findActiveUserByUsername(username);
             if (null != user)
             {
                 isValidLogin = true;
-                user.setLastLogin(new Date());
+                user.setLastLogin(now);
                 userDAO.makePersistent(user);
-                usernameRef.set(username);
-                rolesRef.set(roleRetriever.retrieveRoles(user));
-                if (ServletUtils.getRequest() != null)
-                {
-	                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_USERNAME, usernameRef.get());
-	                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_ROLES, rolesRef.get());
-                }
+                ServerSessionUtil.setUsername(username);
+                ServerSessionUtil.setRoles(roleRetriever.retrieveRoles(user));
+            }
+            else
+            {
+                message = "user not found";
             }
         }
-        auditLogger.log(username+" login "+ (isValidLogin ? "success" : "failure"));
+        else
+        {
+            message = "authentication failed";
+        }
+        auditLogger.log(now, username, ServerSessionUtil.getIP(), "login", "", isValidLogin, message);
         return isValidLogin;
     }
 
@@ -130,28 +127,10 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public boolean logout()
     {
-        auditLogger.log("logout user "+ getUsername());
-        if (ServletUtils.getRequest() != null)
-        {
-	        ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_USERNAME);
-	        ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_ROLES);
-        }
-        usernameRef.set(null);
-        rolesRef.set(null);
+        auditLogger.log(new Date(), ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "logout", "", true, "");
+        ServerSessionUtil.setUsername(null);
+        ServerSessionUtil.setRoles(null);
         return true;
-    }
-    
-    /**
-     * Grabs the username from the current security session, or null if doesn't exist
-     * 
-     */
-    private String getUsername()
-    {
-    	if (ServletUtils.getRequest() != null)
-    	{
-    		usernameRef.set((String)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
-    	}
-        return usernameRef.get();
     }
 
     /* (non-Javadoc)

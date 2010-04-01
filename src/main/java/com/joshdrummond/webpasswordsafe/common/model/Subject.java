@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -38,19 +38,18 @@ import net.sf.gilead.pojo.gwt.LightEntity;
  * 
  */
 @Entity
-@Table(name = "subjects")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name="subjects")
+@Inheritance(strategy=InheritanceType.JOINED)
 public abstract class Subject extends LightEntity implements Serializable
 {
-	
 	private static final long serialVersionUID = -4007345820647655599L;
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", insertable = false)
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name="id", insertable=false)
     private long id;
 
-    @Column(name = "type", nullable = false, length = 1, updatable = false)
+    @Column(name="type", length=1, nullable=false, updatable=false)
     private char type;
 
     public Subject()

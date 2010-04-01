@@ -73,6 +73,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldName, new AbsoluteData(7, 6));
         
         nameTextBox = new TextField<String>();
+        nameTextBox.setEnabled(password.getId() < 1);
         add(nameTextBox, new AbsoluteData(82, 6));
         nameTextBox.setSize("331px", "22px");
 
@@ -80,6 +81,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldUsername, new AbsoluteData(7, 34));
         
         usernameTextBox = new TextField<String>();
+        usernameTextBox.setEnabled(password.getId() < 1);
         add(usernameTextBox, new AbsoluteData(82, 34));
         usernameTextBox.setSize("331px", "22px");
 

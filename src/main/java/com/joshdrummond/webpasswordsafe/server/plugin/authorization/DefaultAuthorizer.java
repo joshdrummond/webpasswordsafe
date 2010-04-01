@@ -19,11 +19,10 @@
 */
 package com.joshdrummond.webpasswordsafe.server.plugin.authorization;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.log4j.Logger;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
 import com.joshdrummond.webpasswordsafe.common.util.Constants.Role;
-import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 
 
 /**
@@ -32,9 +31,7 @@ import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
  */
 public class DefaultAuthorizer implements Authorizer
 {
-    @Autowired
-    private AuditLogger auditLogger;
-    
+    private static Logger LOG = Logger.getLogger(DefaultAuthorizer.class);
 
     public boolean isAuthorized(User user, Function function)
     {
@@ -63,8 +60,7 @@ public class DefaultAuthorizer implements Authorizer
         	}
         }
 
-        auditLogger.log("user=["+((user==null)?"":user.getUsername())+"] function=["+function+"] authorized? "+isAuthorized);
-        
+        LOG.debug("user=["+((user==null)?"":user.getUsername())+"] function=["+function+"] authorized? "+isAuthorized);
         return isAuthorized;
     }
 }

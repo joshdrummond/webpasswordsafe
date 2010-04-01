@@ -28,6 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
+import com.joshdrummond.webpasswordsafe.common.model.Password;
 
 
 /**
@@ -42,7 +43,7 @@ public class GetCurrentPasswordJDomEndpoint extends AbstractJDomPayloadEndpoint
     private LoginService loginService;
     private PasswordService passwordService;
     private Namespace namespace; 
-    private XPath authnUsernameXPath, authnPasswordXPath, passwordIdXPath; 
+    private XPath authnUsernameXPath, authnPasswordXPath, passwordNameXPath; 
 
     /* (non-Javadoc)
      * @see org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint#invokeInternal(org.jdom.Element)
@@ -55,16 +56,31 @@ public class GetCurrentPasswordJDomEndpoint extends AbstractJDomPayloadEndpoint
         {
             String authnUsername = extractAuthnUsernameFromRequest(element);
             String authnPassword = extractAuthnPasswordFromRequest(element);
-            Integer passwordId = extractPasswordIdFromRequest(element);
+            String passwordName = extractPasswordNameFromRequest(element);
             boolean isSuccess = false;
             String message = "";
             String currentPassword = "";
             try
             {
-                loginService.login(authnUsername, authnPassword);
-                currentPassword = passwordService.getCurrentPassword(passwordId);
+                boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
+                if (isAuthnValid)
+                {
+                    Password password = passwordService.getPassword(passwordName);
+                    if (password != null)
+                    {
+                        currentPassword = passwordService.getCurrentPassword(password.getId());
+                        isSuccess = true;
+                    }
+                    else
+                    {
+                        message = "Password not found";
+                    }
+                }
+                else
+                {
+                    message = "Invalid authentication";
+                }
                 loginService.logout();
-                isSuccess = true;
             }
             catch (Exception e)
             {
@@ -108,10 +124,10 @@ public class GetCurrentPasswordJDomEndpoint extends AbstractJDomPayloadEndpoint
         return authnPasswordXPath.valueOf(element);
     }
 
-    private Integer extractPasswordIdFromRequest(Element element)
+    private String extractPasswordNameFromRequest(Element element)
         throws JDOMException
     {
-        return Integer.parseInt(passwordIdXPath.valueOf(element));
+        return passwordNameXPath.valueOf(element);
     }
 
     public void setLoginService(LoginService loginService) {
@@ -133,8 +149,8 @@ public class GetCurrentPasswordJDomEndpoint extends AbstractJDomPayloadEndpoint
         authnUsernameXPath.addNamespace(namespace);
         authnPasswordXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:authnPassword");
         authnPasswordXPath.addNamespace(namespace);
-        passwordIdXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:passwordId");
-        passwordIdXPath.addNamespace(namespace);
+        passwordNameXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:passwordName");
+        passwordNameXPath.addNamespace(namespace);
     }
 
 }

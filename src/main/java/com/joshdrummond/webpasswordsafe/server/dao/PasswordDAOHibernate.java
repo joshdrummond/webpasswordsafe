@@ -43,6 +43,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO#findPasswordByFuzzySearch(java.lang.String)
      */
+    @Override
     @SuppressWarnings("unchecked")
 	public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags)
     {
@@ -89,6 +90,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO#findAllowedPasswordById(long, com.joshdrummond.webpasswordsafe.common.model.User, com.joshdrummond.webpasswordsafe.common.model.AccessLevel)
      */
+    @Override
     public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel)
     {
         String sqlAccessLevelIn = null;
@@ -123,6 +125,45 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
 	        {
 	            hqlQuery.setString("aclread", AccessLevel.READ.name());
 	        }
+        }
+        return (Password)hqlQuery.uniqueResult();
+    }
+
+    @Override
+    public Password findAllowedPasswordByName(String passwordName, User user, AccessLevel accessLevel)
+    {
+        String sqlAccessLevelIn = null;
+        switch (accessLevel) {
+            case GRANT : sqlAccessLevelIn = "(:aclgrant) "; break;
+            case WRITE : sqlAccessLevelIn = "(:aclwrite, :aclgrant) "; break;
+            case READ : sqlAccessLevelIn = "(:aclread, :aclwrite, :aclgrant) "; break;
+        }
+        StringBuilder hqlString = new StringBuilder();
+        hqlString.append("select distinct pw from Password pw join pw.permissions pm left join fetch pw.permissions left join fetch pw.tags where pw.name = :passwordName ");
+        // allow admin role to bypass password permissions
+        if (!user.getRoles().contains(Role.ROLE_ADMIN))
+        {
+            hqlString.append(" and pm.accessLevel in ");
+            hqlString.append(sqlAccessLevelIn);
+            hqlString.append("and ((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user)))");
+        }
+        Query hqlQuery = getSession().createQuery(hqlString.toString());
+        hqlQuery.setString("passwordName", passwordName);
+        if (!user.getRoles().contains(Role.ROLE_ADMIN))
+        {
+            hqlQuery.setEntity("user", user);
+            if (accessLevel.equals(AccessLevel.GRANT) || accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
+            {
+                hqlQuery.setString("aclgrant", AccessLevel.GRANT.name());
+            }
+            if (accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
+            {
+                hqlQuery.setString("aclwrite", AccessLevel.WRITE.name());
+            }
+            if (accessLevel.equals(AccessLevel.READ))
+            {
+                hqlQuery.setString("aclread", AccessLevel.READ.name());
+            }
         }
         return (Password)hqlQuery.uniqueResult();
     }

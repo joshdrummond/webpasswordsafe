@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2010 Josh Drummond
+    Copyright 2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,25 +19,29 @@
 */
 package com.joshdrummond.webpasswordsafe.server.plugin.audit;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import com.joshdrummond.webpasswordsafe.common.model.AuditLog;
+import com.joshdrummond.webpasswordsafe.server.dao.AuditLogDAO;
 
 
 /**
  * @author Josh Drummond
  *
  */
-public class Log4jAuditLogger implements AuditLogger
+public class DatabaseAuditLogger implements AuditLogger
 {
-    private static Logger LOG = Logger.getLogger(Log4jAuditLogger.class);
-    private static String DELIM = " || ";
+    @Autowired
+    private AuditLogDAO auditLogDAO;
 
     @Override
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
     public void log(Date date, String user, String ip, String action, String target, boolean status, String message)
     {
-        LOG.info(DELIM + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")).format(date) + DELIM + user + DELIM + 
-                ip + DELIM + action + DELIM + target + DELIM + (status ? "success":"fail") + DELIM + message + DELIM);
+        AuditLog auditLog = new AuditLog(date, user, ip, action, target, status, message);
+        auditLogDAO.makePersistent(auditLog);
     }
 
 }

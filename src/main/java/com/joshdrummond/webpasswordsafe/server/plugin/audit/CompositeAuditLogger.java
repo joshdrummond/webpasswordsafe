@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -17,26 +17,40 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package com.joshdrummond.webpasswordsafe.server.dao;
+package com.joshdrummond.webpasswordsafe.server.plugin.audit;
 
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
-import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
-import com.joshdrummond.webpasswordsafe.common.model.Password;
-import com.joshdrummond.webpasswordsafe.common.model.Tag;
-import com.joshdrummond.webpasswordsafe.common.model.User;
 
 
 /**
- * DAO interface for Password
- *  
  * @author Josh Drummond
  *
  */
-public interface PasswordDAO extends GenericDAO<Password, Long> {
-
-    public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags);
-    public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel);
-    public Password findAllowedPasswordByName(String passwordName, User user, AccessLevel accessLevel);
+public class CompositeAuditLogger implements AuditLogger
+{
+    private List<AuditLogger> auditLoggers;
     
+    @Override
+    public void log(Date date, String user, String ip, String action, String target, boolean status, String message)
+    {
+        if (auditLoggers != null)
+        {
+            for (AuditLogger auditLogger : auditLoggers)
+            {
+                auditLogger.log(date, user, ip, action, target, status, message);
+            }
+        }
+    }
+
+    public List<AuditLogger> getAuditLoggers()
+    {
+        return auditLoggers;
+    }
+
+    public void setAuditLoggers(List<AuditLogger> auditLoggers)
+    {
+        this.auditLoggers = auditLoggers;
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -72,6 +72,7 @@ public class UserDialog extends Window
         LabelField lblfldUsername = new LabelField("Username:");
         add(lblfldUsername, new AbsoluteData(6, 6));
         usernameTextBox = new TextField<String>();
+        usernameTextBox.setEnabled(user.getId() < 1);
         add(usernameTextBox, new AbsoluteData(144, 6));
         usernameTextBox.setSize("271px", "22px");
         LabelField lblfldFullName = new LabelField("Full Name:");
