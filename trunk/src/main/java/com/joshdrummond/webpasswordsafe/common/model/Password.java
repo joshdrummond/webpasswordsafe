@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -39,6 +39,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import net.sf.gilead.pojo.gwt.LightEntity;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
 
@@ -53,7 +54,6 @@ import org.hibernate.annotations.Type;
 @Table(name="passwords")
 public class Password extends LightEntity implements Serializable
 {
-
 	private static final long serialVersionUID = 7174192307771387126L;
 
 	@Id
@@ -61,12 +61,16 @@ public class Password extends LightEntity implements Serializable
     @Column(name="id")
     private long id;
     
-    @Column(name="name", length=100, nullable=false)
+    @Column(name="name", length=100, nullable=false, updatable=false, unique=true)
+    @Index(name = "idx_password_name")
     private String name;
     
     @Column(name="username", length=64, nullable=false, updatable=false)
     private String username;
     
+    @Column(name="target", length=64, nullable=false)
+    private String target;
+
     @Column(name="notes")
     @Type(type="text")
     private String notes;
@@ -112,6 +116,7 @@ public class Password extends LightEntity implements Serializable
     {
         maxHistory = -1;
         active = true;
+        target = "";
         passwordData = new ArrayList<PasswordData>();
         tags = new HashSet<Tag>();
         permissions = new HashSet<Permission>();
@@ -174,6 +179,14 @@ public class Password extends LightEntity implements Serializable
     public void setUsername(String username)
     {
         this.username = username;
+    }
+    public String getTarget()
+    {
+        return this.target;
+    }
+    public void setTarget(String target)
+    {
+        this.target = target;
     }
     public String getNotes()
     {

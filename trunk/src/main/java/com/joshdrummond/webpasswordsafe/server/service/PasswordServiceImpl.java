@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ import com.joshdrummond.webpasswordsafe.common.model.TemplateDetail;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
+import com.joshdrummond.webpasswordsafe.server.ServerSessionUtil;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordAccessAuditDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.PasswordDAO;
 import com.joshdrummond.webpasswordsafe.server.dao.TagDAO;
@@ -84,7 +86,7 @@ public class PasswordServiceImpl implements PasswordService
     @Autowired
     private Encryptor encryptor;
     
-    @Autowired
+    @Resource
     private AuditLogger auditLogger;
     
     @Autowired
@@ -107,10 +109,11 @@ public class PasswordServiceImpl implements PasswordService
             password.getCurrentPasswordData().setDateCreated(now);
             password.getCurrentPasswordData().setPassword(encryptor.encrypt(password.getCurrentPasswordData().getPassword()));
             passwordDAO.makePersistent(password);
-            auditLogger.log("Password ["+password.getName() + "] added by "+loggedInUser.getUsername());
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "add password", password.getName(), true, "");
         }
         else
         {
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add password", password.getName(), false, "not authorized");
             throw new RuntimeException("Not Authorized!");
         }
     }
@@ -120,12 +123,11 @@ public class PasswordServiceImpl implements PasswordService
     public void updatePassword(Password updatePassword)
     {
         LOG.debug("updating password");
+        Date now = new Date();
         User loggedInUser = loginService.getLogin();
         Password password = passwordDAO.findAllowedPasswordById(updatePassword.getId(), loggedInUser, AccessLevel.WRITE);
         if (password != null)
         {
-            Date now = new Date();
-
             // update simple fields
             password.setName(updatePassword.getName());
             password.setUsername(updatePassword.getUsername());
@@ -186,11 +188,11 @@ public class PasswordServiceImpl implements PasswordService
             {
             	LOG.debug("no access to grant permissions");
             }
-            auditLogger.log("Password ["+password.getName() + "] updated by "+loggedInUser.getUsername());
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update password", updatePassword.getName(), true, "");
         }
         else
         {
-            LOG.debug("no access to update password");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update password", updatePassword.getName(), false, "write access denied");
         }
     }
 
@@ -199,9 +201,10 @@ public class PasswordServiceImpl implements PasswordService
     public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags)
     {
     	query = Utils.safeString(query);
+    	Date now = new Date();
         User loggedInUser = loginService.getLogin();
         List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly, tags);
-        auditLogger.log("searching for password query ["+query+"] activeOnly="+activeOnly+" tags="+tags+" by ["+loggedInUser.getUsername()+"] found "+passwords.size());
+        auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "search password", "query=["+query+"] activeOnly=["+activeOnly+"] tags=["+tags+"]", true, "found "+passwords.size());
         return passwords;
     }
  
@@ -218,17 +221,18 @@ public class PasswordServiceImpl implements PasswordService
     public String getCurrentPassword(long passwordId)
     {
         String currentPasswordValue = "";
+        Date now = new Date();
         User loggedInUser = loginService.getLogin();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
-            auditLogger.log("returning current password value for ["+password.getName()+"] for user "+loggedInUser.getUsername());
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get current password value", password.getName(), true, "");
             currentPasswordValue = encryptor.decrypt(password.getCurrentPasswordData().getPassword());
             createPasswordAccessAuditEntry(password, loggedInUser);
         }
         else
         {
-            LOG.debug("passwordId "+passwordId+" not found");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get current password value", String.valueOf(passwordId), false, "invalid id or no access");
         }
         return currentPasswordValue;
     }
@@ -248,23 +252,54 @@ public class PasswordServiceImpl implements PasswordService
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public Password getPassword(long passwordId)
     {
+        Date now = new Date();
         User loggedInUser = loginService.getLogin();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
-        auditLogger.log("get password ["+password.getName()+"] for user "+loggedInUser.getUsername());
+        if (password != null)
+        {
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password", password.getName(), true, "");
+        }
+        else
+        {
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password", String.valueOf(passwordId), false, "invalid id or no access");
+        }
         return password;
     }
     
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public Password getPassword(String passwordName)
+    {
+        Date now = new Date();
+        User loggedInUser = loginService.getLogin();
+        Password password = passwordDAO.findAllowedPasswordByName(passwordName, loggedInUser, AccessLevel.READ);
+        if (password != null)
+        {
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password", passwordName, true, "");
+        }
+        else
+        {
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password", passwordName, false, "invalid name or no access");
+        }
+        return password;
+    }
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId)
     {
+        Date now = new Date();
         List<PasswordAccessAudit> accessAuditList = new ArrayList<PasswordAccessAudit>(0);
         User loggedInUser = loginService.getLogin();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (null != password)
         {
             accessAuditList = passwordAccessAuditDAO.findAccessAuditByPassword(password);
-            auditLogger.log("access audit data retrieved for password ["+password.getName()+"] by user "+loggedInUser.getUsername());
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password access audit data", password.getName(), true, "");
+        }
+        else
+        {
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password access audit data", String.valueOf(passwordId), false, "invalid id or no access");
         }
         LOG.debug("found "+accessAuditList.size() + " password access audit entries");
         return accessAuditList;
@@ -274,6 +309,7 @@ public class PasswordServiceImpl implements PasswordService
     @Transactional(propagation=Propagation.REQUIRED)
     public List<PasswordData> getPasswordHistoryData(long passwordId)
     {
+        Date now = new Date();
         List<PasswordData> decryptedPasswordDataList = new ArrayList<PasswordData>(0);
         User loggedInUser = loginService.getLogin();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
@@ -286,7 +322,11 @@ public class PasswordServiceImpl implements PasswordService
                         passwordData.getDateCreated(), passwordData.getUserCreated()));
             }
             createPasswordAccessAuditEntry(password, loggedInUser);
-            auditLogger.log("password history data retrieved for ["+password.getName()+"] by user "+loggedInUser.getUsername());
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password history data", password.getName(), true, "");
+        }
+        else
+        {
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password history data", String.valueOf(passwordId), false, "invalid id or no access");
         }
         LOG.debug("found "+decryptedPasswordDataList.size() + " password history values");
         return decryptedPasswordDataList;
@@ -305,10 +345,11 @@ public class PasswordServiceImpl implements PasswordService
     @Transactional(propagation=Propagation.REQUIRED)
     public void addTemplate(Template template)
     {
+        Date now = new Date();
         User loggedInUser = loginService.getLogin();
         template.setUser(loggedInUser);
         templateDAO.makePersistent(template);
-        auditLogger.log("Template ["+template.getName() + "] added by "+loggedInUser.getUsername());
+        auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "add template", template.getName(), true, "");
     }
 
     @Override
@@ -316,6 +357,7 @@ public class PasswordServiceImpl implements PasswordService
     public void updateTemplate(Template updateTemplate)
     {
         LOG.debug("updating template");
+        Date now = new Date();
         User loggedInUser = loginService.getLogin();
         Template template = templateDAO.findById(updateTemplate.getId(), false);
         if (template != null)
@@ -335,7 +377,7 @@ public class PasswordServiceImpl implements PasswordService
                     template.addDetail(templateDetail);
                 }
             }
-            auditLogger.log("Template ["+template.getName() + "] updated by "+loggedInUser.getUsername());
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update template", updateTemplate.getName(), true, "");
         }
         else
         {
@@ -362,5 +404,5 @@ public class PasswordServiceImpl implements PasswordService
         }
         return template;
     }
-    
+
 }

@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -193,7 +194,7 @@ public class JasperReportServlet extends HttpServlet
         {
             isAuthorized = false;
         }
-        auditLogger.log(user.getUsername()+" authorized to view "+reportName+" report? "+isAuthorized);
+        auditLogger.log(new Date(), user.getUsername(), req.getRemoteAddr(), "view report", reportName, isAuthorized, (isAuthorized ? "" : "not authorized"));
         return isAuthorized;
     }
 }

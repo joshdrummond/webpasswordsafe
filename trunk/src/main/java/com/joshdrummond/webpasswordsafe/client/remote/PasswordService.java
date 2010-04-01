@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -45,6 +45,7 @@ public interface PasswordService extends RemoteService {
     public String getCurrentPassword(long passwordId);
     public List<Tag> getAvailableTags();
     public Password getPassword(long passwordId);
+    public Password getPassword(String passwordName);
     public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId);
     public List<PasswordData> getPasswordHistoryData(long passwordId);
     public void addTemplate(Template template);

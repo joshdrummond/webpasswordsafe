@@ -40,33 +40,33 @@ import com.joshdrummond.webpasswordsafe.common.util.Constants;
  *
  */
 @Entity
-@Table(name = "users")
-@PrimaryKeyJoinColumn(name = "id")
+@Table(name="users")
+@PrimaryKeyJoinColumn(name="id")
 public class User extends Subject
 {
 	private static final long serialVersionUID = 4024780603653185462L;
 
-	@Column(name = "username", nullable = false, length = 64, updatable = false, unique = true)
-    @Index(name = "idx_user_username")
+	@Column(name="username", length=64, nullable=false, updatable=false, unique=true)
+    @Index(name="idx_user_username")
     private String username;
 
-    @Column(name = "password", nullable = false, length = 88)
+    @Column(name="password", length=88, nullable=false)
     private String password;
 
-    @Column(name = "fullname", length = 100, nullable=false)
+    @Column(name="fullname", length=100, nullable=false)
     private String fullname;
 
-    @Column(name = "email", length = 100, nullable=false)
+    @Column(name="email", length=100, nullable=false)
     private String email;
 
-    @Column(name = "active", nullable = false)
+    @Column(name="active", nullable=false)
     @Type(type = "yes_no")
     private boolean activeFlag;
 
-    @Column(name = "date_created", nullable = false)
+    @Column(name="date_created", nullable=false)
     private Date dateCreated;
 
-    @Column(name = "last_login")
+    @Column(name="last_login")
     private Date lastLogin;
 
     @ManyToMany(mappedBy="users")
@@ -76,7 +76,7 @@ public class User extends Subject
     private Set<Constants.Role> roles;
     
     public User() {
-        super( 'U' );
+        super('U');
         groups = new HashSet<Group>();
         roles = new HashSet<Constants.Role>();
         activeFlag = true;

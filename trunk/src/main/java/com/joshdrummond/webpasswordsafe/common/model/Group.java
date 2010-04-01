@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -39,14 +39,14 @@ import org.hibernate.annotations.Index;
  *
  */
 @Entity
-@Table(name = "groups")
-@PrimaryKeyJoinColumn(name = "id")
+@Table(name="groups")
+@PrimaryKeyJoinColumn(name="id")
 public class Group extends Subject
 {
 	private static final long serialVersionUID = 5845591346545424763L;
 
-	@Column(name = "name", nullable = false, length = 100, unique=true)
-    @Index(name = "idx_group_name")
+	@Column(name="name", length=100, nullable=false, unique=true)
+    @Index(name="idx_group_name")
     private String name;
 
     @ManyToMany(cascade={CascadeType.ALL})
@@ -56,7 +56,7 @@ public class Group extends Subject
     private Set<User> users;
     
     public Group() {
-        super( 'G' );
+        super('G');
         users = new HashSet<User>();
     }
 

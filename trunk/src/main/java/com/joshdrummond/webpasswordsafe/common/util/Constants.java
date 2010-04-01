@@ -27,7 +27,7 @@ package com.joshdrummond.webpasswordsafe.common.util;
  */
 public class Constants
 {
-    public static final String VERSION = "0.9";
+    public static final String VERSION = "0.9.0";
     public static final String ADMIN_USER_NAME = "admin";
     public static final String EVERYONE_GROUP_NAME = "Everyone";
     public static final String SESSION_KEY_USERNAME = "wps-username";

@@ -36,7 +36,7 @@
       <param name="Append" value="true" />
       <param name="DatePattern" value="'.'yyyy-MM-dd" />
     <layout class="org.apache.log4j.PatternLayout"> 
-      <param name="ConversionPattern" value="%d %-5p [%t]: %m%n"/>
+      <param name="ConversionPattern" value="%d\{ISO8601\}%m%n"/>
     </layout>
   </appender>
   
@@ -46,7 +46,7 @@
     <param name="Facility" value="LOCAL6"/>
     <param name="Threshold" value="INFO"/>
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="WebPasswordSafe: [%p] %d\{ISO8601\} [%t] - %m\n"/>
+      <param name="ConversionPattern" value="WebPasswordSafe: %d\{ISO8601\}%m\n"/>
     </layout>
   </appender>
   -->

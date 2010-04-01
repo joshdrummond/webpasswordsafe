@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,11 +19,14 @@
 */
 package com.joshdrummond.webpasswordsafe.server.plugin.audit;
 
+import java.util.Date;
+
+
 /**
  * @author Josh Drummond
  *
  */
 public interface AuditLogger
 {
-    public void log(String message);
+    public void log(Date date, String user, String ip, String action, String target, boolean status, String message);
 }
