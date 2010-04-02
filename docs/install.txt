@@ -19,7 +19,7 @@ To build and install from source:
     b. ExtGWT 2.1.1 (http://www.extjs.com/products/gxt/)
         mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.1.1 -Dpackaging=jar -Dfile=gxt.jar
     c. GWT-SL 1.0 (http://gwt-widget.sourceforge.net/) WAR file
-        mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.0 -Dpackaging=jar -Dfile=gwt-sl.jar
+        mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.0 -Dpackaging=jar -Dfile=gwt-sl-1.0.jar
         mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar
     d. JasperReports 3.7.1 (http://sourceforge.net/projects/jasperreports/)
         mvn install:install-file -DgroupId=jasperreports -DartifactId=jasperreports -Dversion=3.7.1 -Dpackaging=jar -Dfile=jasperreports-3.7.1.jar
