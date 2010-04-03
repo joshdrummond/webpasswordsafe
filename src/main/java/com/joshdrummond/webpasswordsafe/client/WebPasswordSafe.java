@@ -654,7 +654,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         StringBuilder aboutText = new StringBuilder();
         aboutText.append("<br><center><b>WebPasswordSafe</b><br><b>Version ");
         aboutText.append(Constants.VERSION);
-        aboutText.append("</b><br><a target=\"_blank\" href=\"http://www.webpasswordsafe.net\">http://www.webpasswordsafe.net</a><br>");
+        aboutText.append("</b><br><a target=\"_blank\" href=\"http://www.webpasswordsafe.net\">http://www.webpasswordsafe.net</a><br><br>");
         aboutText.append("Copyright &#169; 2008-2010 Josh Drummond.");
         aboutText.append("<br>All rights reserved. <a target=\"_blank\" href=\"http://webpasswordsafe.googlecode.com/svn/trunk/docs/license.txt\">");
         aboutText.append("GNU General Public License v2</a></center><br><br>");

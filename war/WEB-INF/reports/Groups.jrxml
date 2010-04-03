@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Groups" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Groups" language="groovy" pageWidth="612" pageHeight="792" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<style name="Title" isDefault="false" fontName="SansSerif" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
 	<style name="SubTitle" isDefault="false" forecolor="#666666" fontName="SansSerif" fontSize="18"/>
 	<style name="Column header" isDefault="false" forecolor="#666666" fontName="SansSerif" fontSize="12" isBold="true"/>
@@ -28,7 +31,7 @@ order by g.name, u.fullname]]>
 	<title>
 		<band height="33" splitType="Stretch">
 			<staticText>
-				<reportElement style="Title" x="0" y="0" width="552" height="33"/>
+				<reportElement style="Title" x="0" y="0" width="572" height="33"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Groups Report]]></text>
 			</staticText>
@@ -40,37 +43,37 @@ order by g.name, u.fullname]]>
 	<columnHeader>
 		<band height="55" splitType="Stretch">
 			<staticText>
-				<reportElement style="Column header" x="0" y="39" width="158" height="15"/>
+				<reportElement style="Column header" x="0" y="39" width="177" height="15"/>
 				<textElement/>
 				<text><![CDATA[Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="158" y="39" width="175" height="15"/>
+				<reportElement style="Column header" x="177" y="39" width="176" height="15"/>
 				<textElement/>
 				<text><![CDATA[Full Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="333" y="39" width="149" height="15"/>
+				<reportElement style="Column header" x="353" y="39" width="149" height="15"/>
 				<textElement/>
 				<text><![CDATA[Username]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="482" y="39" width="70" height="15"/>
+				<reportElement style="Column header" x="502" y="39" width="70" height="15"/>
 				<textElement/>
 				<text><![CDATA[Active]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="0" y="19" width="158" height="20"/>
+				<reportElement style="Column header" x="0" y="19" width="177" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Groups]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="158" y="19" width="394" height="20"/>
+				<reportElement style="Column header" x="177" y="19" width="395" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Users]]></text>
 			</staticText>
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="53" width="555" height="1"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="53" width="572" height="1"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
@@ -80,28 +83,28 @@ order by g.name, u.fullname]]>
 	<detail>
 		<band height="16" splitType="Stretch">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="555" height="1"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="572" height="1"/>
 				<graphicElement>
 					<pen lineWidth="0.5" lineColor="#999999"/>
 				</graphicElement>
 			</line>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" x="0" y="0" width="158" height="15"/>
+				<reportElement style="Detail" x="0" y="0" width="177" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" x="158" y="0" width="175" height="15"/>
+				<reportElement style="Detail" x="177" y="0" width="176" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{fullname}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" x="482" y="0" width="70" height="15"/>
+				<reportElement style="Detail" x="502" y="0" width="70" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{active}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="Detail" x="333" y="0" width="149" height="15"/>
+				<reportElement style="Detail" x="353" y="0" width="149" height="15"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{username}]]></textFieldExpression>
 			</textField>
