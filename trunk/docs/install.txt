@@ -24,7 +24,7 @@ To build and install from source:
     d. JasperReports 3.7.1 (http://sourceforge.net/projects/jasperreports/)
         mvn install:install-file -DgroupId=jasperreports -DartifactId=jasperreports -Dversion=3.7.1 -Dpackaging=jar -Dfile=jasperreports-3.7.1.jar
     e. OWASP ESAPI Java EE 2.0 rc5 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)
-        mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc5 -Dpackaging=jar -Dfile=ESAPI-2.0-rc5.jar
+        mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc6 -Dpackaging=jar -Dfile=ESAPI-2.0_rc6.jar
 
 4. Copy contents of ExtGWT's GXT/resources directory into webpasswordsafe/war/gxt/
 
@@ -41,6 +41,6 @@ To build and install from source:
 9. Deploy the WAR file generated in webpasswordsafe/target to your J2EE server (Tomcat) as WebPasswordSafe.war
     a. It is recommended you configure your web server to only accept SSL connections for this application
 
-10. Connect to URL http(s)://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
+10. Connect to URL https://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
 
 11. Change default admin password, create new users and begin using, you are done!
