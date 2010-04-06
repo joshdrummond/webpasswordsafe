@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	Copyright 2008 Josh Drummond
+	Copyright 2008-2010 Josh Drummond
 	
 	This file is part of WebPasswordSafe.
 	
@@ -19,6 +19,8 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
 <AddUserRequest xmlns="http://www.joshdrummond.com/webpasswordsafe/schemas">
+    <authnUsername>admin</authnUsername>
+    <authnPassword>admin</authnPassword>
 	<user>
 		<username>josh</username>
 		<password>josh</password>

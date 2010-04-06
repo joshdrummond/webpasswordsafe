@@ -22,28 +22,22 @@ package com.joshdrummond.webpasswordsafe.server.webservice;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.Namespace;
 import org.jdom.xpath.XPath;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint;
-import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 
 
 /**
+ * GetCurrentPassword web service
  * 
  * @author Josh Drummond
  *
  */
-public class GetCurrentPasswordJDomEndpoint extends AbstractJDomPayloadEndpoint
-    implements InitializingBean
+public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
 {
     private static Logger LOG = Logger.getLogger(GetCurrentPasswordJDomEndpoint.class);
-    private LoginService loginService;
     private PasswordService passwordService;
-    private Namespace namespace; 
-    private XPath authnUsernameXPath, authnPasswordXPath, passwordNameXPath; 
+    private XPath passwordNameXPath; 
 
     /* (non-Javadoc)
      * @see org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint#invokeInternal(org.jdom.Element)
@@ -62,6 +56,7 @@ public class GetCurrentPasswordJDomEndpoint extends AbstractJDomPayloadEndpoint
             String currentPassword = "";
             try
             {
+                setIPAddress();
                 boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
                 if (isAuthnValid)
                 {
@@ -105,23 +100,9 @@ public class GetCurrentPasswordJDomEndpoint extends AbstractJDomPayloadEndpoint
      */
     private Element createResponse(boolean isSuccess, String message, String currentPassword)
     {
-        Element responseElement = new Element("GetCurrentPasswordResponse", namespace);
-        responseElement.addContent(new Element("success", namespace).setText(String.valueOf(isSuccess))); 
-        responseElement.addContent(new Element("message", namespace).setText(message));
+        Element responseElement = createBaseResponse("GetCurrentPasswordResponse", isSuccess, message);
         responseElement.addContent(new Element("password", namespace).setText(currentPassword));
         return responseElement;  
-    }
-
-    private String extractAuthnUsernameFromRequest(Element element)
-        throws JDOMException
-    {
-        return authnUsernameXPath.valueOf(element);
-    }
-
-    private String extractAuthnPasswordFromRequest(Element element)
-        throws JDOMException
-    {
-        return authnPasswordXPath.valueOf(element);
     }
 
     private String extractPasswordNameFromRequest(Element element)
@@ -130,12 +111,9 @@ public class GetCurrentPasswordJDomEndpoint extends AbstractJDomPayloadEndpoint
         return passwordNameXPath.valueOf(element);
     }
 
-    public void setLoginService(LoginService loginService) {
-		this.loginService = loginService;
-	}
-
-	public void setPasswordService(PasswordService passwordService) {
-		this.passwordService = passwordService;
+	public void setPasswordService(PasswordService passwordService)
+	{
+	    this.passwordService = passwordService;
 	}
 
 	/* (non-Javadoc)
@@ -144,11 +122,7 @@ public class GetCurrentPasswordJDomEndpoint extends AbstractJDomPayloadEndpoint
     @Override
     public void afterPropertiesSet() throws Exception
     {
-        namespace = Namespace.getNamespace("wps", "http://www.joshdrummond.com/webpasswordsafe/schemas"); 
-        authnUsernameXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:authnUsername"); 
-        authnUsernameXPath.addNamespace(namespace);
-        authnPasswordXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:authnPassword");
-        authnPasswordXPath.addNamespace(namespace);
+        afterPropertiesSetBase("GetCurrentPasswordRequest");
         passwordNameXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:passwordName");
         passwordNameXPath.addNamespace(namespace);
     }
