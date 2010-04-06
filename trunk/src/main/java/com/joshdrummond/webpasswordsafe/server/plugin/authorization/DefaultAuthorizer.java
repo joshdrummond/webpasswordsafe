@@ -39,25 +39,26 @@ public class DefaultAuthorizer implements Authorizer
         
         if (user != null)
         {
-        	switch (function)
-        	{
-	        	case ADD_GROUP:
-	        	case UPDATE_GROUP:
-	        	case ADD_USER:
-	        	case UPDATE_USER:
-	        	case VIEW_REPORT_CurrentPasswordExport:
-	        	case VIEW_REPORT_PasswordAccessAudit:
-	        		isAuthorized = user.getRoles().contains(Role.ROLE_ADMIN);
-	        		break;
-	        	case ADD_PASSWORD:
-	        	case ADD_TEMPLATE:
-	        	case UPDATE_TEMPLATE:
-	        	case VIEW_REPORT_Groups:
-	        	case VIEW_REPORT_PasswordPermissions:
-	        	case VIEW_REPORT_Users:
-	        		isAuthorized = user.getRoles().contains(Role.ROLE_USER);
-	        		break;
-        	}
+            switch (function)
+            {
+                case ADD_GROUP:
+                case UPDATE_GROUP:
+                case ADD_USER:
+                case UPDATE_USER:
+                case BYPASS_PASSWORD_PERMISSIONS:
+                case VIEW_REPORT_CurrentPasswordExport:
+                case VIEW_REPORT_PasswordAccessAudit:
+                    isAuthorized = user.getRoles().contains(Role.ROLE_ADMIN);
+                    break;
+                case ADD_PASSWORD:
+                case ADD_TEMPLATE:
+                case UPDATE_TEMPLATE:
+                case VIEW_REPORT_Groups:
+                case VIEW_REPORT_PasswordPermissions:
+                case VIEW_REPORT_Users:
+                    isAuthorized = user.getRoles().contains(Role.ROLE_USER);
+                    break;
+            }
         }
 
         LOG.debug("user=["+((user==null)?"":user.getUsername())+"] function=["+function+"] authorized? "+isAuthorized);

@@ -35,7 +35,8 @@ public class Constants
     public static final String VIEW_REPORT_PREFIX = "VIEW_REPORT_";
     public enum Role { ROLE_USER, ROLE_ADMIN };
     public enum Report { CurrentPasswordExport, Groups, PasswordAccessAudit, PasswordPermissions, Users };
-    public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, ADD_PASSWORD, ADD_TEMPLATE, UPDATE_TEMPLATE,
+    public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, ADD_PASSWORD,
+        BYPASS_PASSWORD_PERMISSIONS, ADD_TEMPLATE, UPDATE_TEMPLATE,
         VIEW_REPORT_CurrentPasswordExport, VIEW_REPORT_Groups, VIEW_REPORT_PasswordAccessAudit, 
         VIEW_REPORT_PasswordPermissions, VIEW_REPORT_Users };
 

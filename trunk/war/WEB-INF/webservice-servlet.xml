@@ -56,6 +56,7 @@
 		
 	<bean id="addUserEndpoint"
 		class="com.joshdrummond.webpasswordsafe.server.webservice.AddUserJDomEndpoint">
+        <property name="loginService" ref="loginService" />
 		<property name="userService" ref="userService" />
 	</bean>
 	

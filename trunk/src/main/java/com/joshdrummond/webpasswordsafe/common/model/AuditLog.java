@@ -74,12 +74,12 @@ public class AuditLog extends LightEntity implements Serializable
     {
         super();
         this.date = date;
-        this.username = username;
-        this.ipaddress = ipaddress;
-        this.action = action;
-        this.target = target;
+        this.username = (null==username) ? "" : username;
+        this.ipaddress = (null==ipaddress) ? "" : ipaddress;
+        this.action = (null==action) ? "" : action;
+        this.target = (null==target) ? "" : target;
         this.success = success;
-        this.message = message;
+        this.message = (null==message) ? "" : message;
     }
 
     public long getId()

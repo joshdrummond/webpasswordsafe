@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -17,31 +17,27 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.server.webservice;
 
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.Namespace;
 import org.jdom.xpath.XPath;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
+
 /**
+ * AddUser web service
  * 
  * @author Josh Drummond
  *
  */
-public class AddUserJDomEndpoint extends AbstractJDomPayloadEndpoint
-    implements InitializingBean
+public class AddUserJDomEndpoint extends BaseJDomEndpoint
 {
     private static Logger LOG = Logger.getLogger(AddUserJDomEndpoint.class);
     private UserService userService;
-    private Namespace namespace; 
-    private XPath usernameXPath, passwordXPath, fullnameXPath, emailXPath, activeXPath; 
+    private XPath usernameXPath, passwordXPath, fullnameXPath, emailXPath, activeXPath;
 
     /* (non-Javadoc)
      * @see org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint#invokeInternal(org.jdom.Element)
@@ -52,13 +48,25 @@ public class AddUserJDomEndpoint extends AbstractJDomPayloadEndpoint
         Element returnDoc = null;
         try
         {
+            String authnUsername = extractAuthnUsernameFromRequest(element);
+            String authnPassword = extractAuthnPasswordFromRequest(element);
             User user = extractUserFromRequest(element);
             boolean isSuccess = false;
             String message = "";
             try
             {
-                userService.addUser(user);
-                isSuccess = true;
+                setIPAddress();
+                boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
+                if (isAuthnValid)
+                {
+                    userService.addUser(user);
+                    isSuccess = true;
+                }
+                else
+                {
+                    message = "Invalid authentication";
+                }
+                loginService.logout();
             }
             catch (Exception e)
             {
@@ -83,10 +91,12 @@ public class AddUserJDomEndpoint extends AbstractJDomPayloadEndpoint
      */
     private Element createResponse(boolean isSuccess, String message)
     {
-        Element responseElement = new Element("AddUserResponse", namespace);
-        responseElement.addContent(new Element("success", namespace).setText(String.valueOf(isSuccess))); 
-        responseElement.addContent(new Element("message", namespace).setText(message)); 
-        return responseElement;  
+        return createBaseResponse("AddUserResponse", isSuccess, message);
+    }
+
+    public void setUserService(UserService userService)
+    {
+        this.userService = userService;
     }
 
     /**
@@ -101,21 +111,18 @@ public class AddUserJDomEndpoint extends AbstractJDomPayloadEndpoint
         user.setPassword(passwordXPath.valueOf(element));
         user.setFullname(fullnameXPath.valueOf(element));
         user.setEmail(emailXPath.valueOf(element));
-        user.setActiveFlag(activeXPath.valueOf(element).equals("true"));
+        String activeFlag = activeXPath.valueOf(element).trim().toLowerCase();
+        user.setActiveFlag(activeFlag.equals("true") || activeFlag.equals("yes") || activeFlag.equals("y"));
         return user;
-    }
-
-    public void setUserService(UserService userService)
-    {
-        this.userService = userService;
     }
 
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
+    @Override
     public void afterPropertiesSet() throws Exception
     {
-        namespace = Namespace.getNamespace("wps", "http://www.joshdrummond.com/webpasswordsafe/schemas"); 
+        afterPropertiesSetBase("AddUserRequest");
         usernameXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:username"); 
         usernameXPath.addNamespace(namespace);
         passwordXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:password");
