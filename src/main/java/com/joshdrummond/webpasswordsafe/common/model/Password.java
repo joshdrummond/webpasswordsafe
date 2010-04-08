@@ -37,6 +37,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import net.sf.gilead.pojo.gwt.LightEntity;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
@@ -112,6 +113,9 @@ public class Password extends LightEntity implements Serializable
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
     private Set<Permission> permissions;
     
+    @Transient
+    private AccessLevel maxEffectiveAccessLevel;
+
     public Password()
     {
         maxHistory = -1;
@@ -300,4 +304,15 @@ public class Password extends LightEntity implements Serializable
         }
         tags.clear();
     }
+
+    public AccessLevel getMaxEffectiveAccessLevel()
+    {
+        return maxEffectiveAccessLevel;
+    }
+
+    public void setMaxEffectiveAccessLevel(AccessLevel maxEffectiveAccessLevel)
+    {
+        this.maxEffectiveAccessLevel = maxEffectiveAccessLevel;
+    }
+
 }

@@ -34,6 +34,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordData;
 import com.joshdrummond.webpasswordsafe.common.model.Permission;
@@ -154,7 +155,8 @@ public class PasswordDialog extends Window implements PermissionListener
         activeCheckBox.setBoxLabel("Active");
         add(activeCheckBox, new AbsoluteData(82, 255));
         
-        Button editPermissionsButton = new Button("Edit Permissions", new SelectionListener<ButtonEvent>() {
+        Button editPermissionsButton = new Button(password.getMaxEffectiveAccessLevel().equals(AccessLevel.GRANT) ? 
+                "Edit Permissions" : "View Permissions", new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
                 doEditPermissions();
@@ -181,6 +183,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 doSave();
 			}
 		});
+        saveButton.setEnabled(!password.getMaxEffectiveAccessLevel().equals(AccessLevel.READ));
 
         Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
 			@Override
