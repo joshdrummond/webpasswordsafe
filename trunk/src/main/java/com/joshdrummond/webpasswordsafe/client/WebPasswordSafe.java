@@ -386,6 +386,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         if (clientSessionUtil.isAuthorized(Function.ADD_PASSWORD))
         {
             Password newPassword = new Password();
+            newPassword.setMaxEffectiveAccessLevel(AccessLevel.GRANT);
             newPassword.addPermission(new Permission(clientSessionUtil.getLoggedInUser(), AccessLevel.GRANT));
             new PasswordDialog(newPassword).show();
         }

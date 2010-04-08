@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -205,6 +205,7 @@ public class PermissionDialog extends Window
                         doOkay();
                     }
                 });
+        okayButton.setEnabled(password.getMaxEffectiveAccessLevel().equals(AccessLevel.GRANT));
 
         Button cancelButton = new Button("Cancel",
                 new SelectionListener<ButtonEvent>()

@@ -257,6 +257,7 @@ public class PasswordServiceImpl implements PasswordService
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
+            password.setMaxEffectiveAccessLevel(passwordDAO.getMaxEffectiveAccessLevel(password, loggedInUser));
             auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password", password.getName(), true, "");
         }
         else
