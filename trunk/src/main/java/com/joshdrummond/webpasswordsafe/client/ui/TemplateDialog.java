@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -289,7 +289,7 @@ public class TemplateDialog extends Window
     {
         if ("".equals(Utils.safeString(templateNameTextBox.getValue())))
         {
-            MessageBox.alert("Error", "Name cannot be empty", null);
+            MessageBox.alert("Error", "Must enter Name", null);
             return false;
         }
         return true;

@@ -168,6 +168,21 @@ public class UserDialog extends Window
             MessageBox.alert("Error", "Passwords don't match", null);
             return false;
         }
+        if (Utils.safeString(usernameTextBox.getValue()).equals(""))
+        {
+            MessageBox.alert("Error", "Must enter Username", null);
+            return false;
+        }
+        if (Utils.safeString(fullnameTextBox.getValue()).equals(""))
+        {
+            MessageBox.alert("Error", "Must enter Full Name", null);
+            return false;
+        }
+        if (Utils.safeString(emailTextBox.getValue()).equals(""))
+        {
+            MessageBox.alert("Error", "Must enter Email", null);
+            return false;
+        }
         return true;
     }
     

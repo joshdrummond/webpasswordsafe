@@ -297,6 +297,21 @@ public class PasswordDialog extends Window implements PermissionListener
 
     private boolean validateFields()
     {
+        if (Utils.safeString(nameTextBox.getValue()).equals(""))
+        {
+            MessageBox.alert("Error", "Must enter Title", null);
+            return false;
+        }
+        if (Utils.safeString(usernameTextBox.getValue()).equals(""))
+        {
+            MessageBox.alert("Error", "Must enter Username", null);
+            return false;
+        }
+        if ((password.getId() < 1) && (Utils.safeString(passwordTextBox.getValue()).equals("")))
+        {
+            MessageBox.alert("Error", "Must enter Password", null);
+            return false;
+        }
         return true;
     }
 

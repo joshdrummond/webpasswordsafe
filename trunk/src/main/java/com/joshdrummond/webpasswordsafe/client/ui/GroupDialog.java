@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -164,6 +164,11 @@ public class GroupDialog extends Window
 
     private boolean validateFields()
     {
+        if (Utils.safeString(nameTextBox.getValue()).equals(""))
+        {
+            MessageBox.alert("Error", "Must enter Name", null);
+            return false;
+        }
         return true;
     }
 
