@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -33,8 +33,7 @@ public class EsapiEncryptionTest
     @Test
     public void testEncrypt()
     {
-        EsapiEncryptor encryptor = new EsapiEncryptor();
-        encryptor.setEsapiResources("/Users/josh/Documents/workspace/webpasswordsafe/war/WEB-INF/esapi");
+        EsapiEncryptor encryptor = new EsapiEncryptor(true, "esapi");
         String clearText = "1234567890123456789012345678901234567890123456789012345678901234";
         System.out.println("clearText.length="+clearText.length());
         System.out.println("clearText="+clearText);

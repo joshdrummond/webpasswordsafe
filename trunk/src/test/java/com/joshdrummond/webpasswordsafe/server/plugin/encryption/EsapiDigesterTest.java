@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -37,8 +37,7 @@ public class EsapiDigesterTest
     @Test
     public void testCheck()
     {
-        EsapiDigester digester = new EsapiDigester();
-        digester.setEsapiResources("/Users/josh/Documents/workspace/webpasswordsafe/war/WEB-INF/esapi");
+        EsapiDigester digester = new EsapiDigester(true, "esapi");
         String password1 = digester.digest("1234567890123456789012345678901234567890123456789012345678901234");
         System.out.println("length="+password1.length());
         System.out.println("password1="+password1);

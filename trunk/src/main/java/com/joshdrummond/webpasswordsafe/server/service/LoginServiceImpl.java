@@ -83,7 +83,7 @@ public class LoginServiceImpl implements LoginService {
         {
             user.setRoles(ServerSessionUtil.getRoles());
         }
-        LOG.info("logged in user="+((null==user) ? "null":user.getUsername()));
+        LOG.debug("logged in user="+((null==user) ? "null":user.getUsername()));
         return user;
     }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -32,9 +32,29 @@ public class EsapiDigester implements Digester
 {
     private static Logger LOG = Logger.getLogger(EsapiDigester.class);
 
+    public EsapiDigester(boolean useClasspath, String esapiResourceDir)
+    {
+        try
+        {
+            if (useClasspath)
+            {
+                ESAPI.securityConfiguration().setResourceDirectory(esapiResourceDir); 
+            }
+            else
+            {
+                System.setProperty("org.owasp.esapi.resources", esapiResourceDir);
+            }
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
+        }
+    }
+
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester#check(java.lang.String, java.lang.String)
      */
+    @Override
     public boolean check(String clearText, String cryptedText)
     {
         return cryptedText.equals(digest(clearText));
@@ -43,12 +63,13 @@ public class EsapiDigester implements Digester
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester#digest(java.lang.String)
      */
+    @Override
     public String digest(String clearText)
     {
         String cryptedText = null;
         try
         {
-            cryptedText = ESAPI.encryptor().hash(clearText, "");
+            cryptedText = ESAPI.encryptor().hash(clearText, clearText);
         }
         catch (EncryptionException e)
         {
@@ -57,9 +78,4 @@ public class EsapiDigester implements Digester
         return cryptedText;
     }
     
-    public void setEsapiResources(String esapiResources)
-    {
-        System.setProperty("org.owasp.esapi.resources", esapiResources);
-    }
-
 }

@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService
     public List<User> getUsers(boolean includeOnlyActive)
     {
         List<User> users = userDAO.findAllUsers(includeOnlyActive);
-        LOG.info("found "+users.size()+" users");
+        LOG.debug("found "+users.size()+" users");
         return users;
     }
 
@@ -269,7 +269,7 @@ public class UserServiceImpl implements UserService
         {
             groups.remove(new Group(EVERYONE_GROUP_NAME));
         }
-        LOG.info("found "+groups.size()+" groups");
+        LOG.debug("found "+groups.size()+" groups");
         return groups;
     }
     
@@ -282,7 +282,7 @@ public class UserServiceImpl implements UserService
         List<Subject> subjects = new ArrayList<Subject>(users.size()+groups.size());
         subjects.addAll(users);
         subjects.addAll(groups);
-        LOG.info("found "+subjects.size()+" subjects");
+        LOG.debug("found "+subjects.size()+" subjects");
         return subjects;
     }
 
@@ -306,7 +306,7 @@ public class UserServiceImpl implements UserService
         Group group = groupDAO.findById(groupId, false);
         // fetch users
         int numUsers = group.getUsers().size();
-        LOG.info(group.getName()+" has "+numUsers+" users");
+        LOG.debug(group.getName()+" has "+numUsers+" users");
         return group;
     }
 
@@ -317,7 +317,7 @@ public class UserServiceImpl implements UserService
         User user = userDAO.findById(userId, false);
         // fetch groups
         int numGroups = user.getGroups().size();
-        LOG.info(user.getName()+" has "+numGroups+" groups");
+        LOG.debug(user.getName()+" has "+numGroups+" groups");
         return user;
     }
     

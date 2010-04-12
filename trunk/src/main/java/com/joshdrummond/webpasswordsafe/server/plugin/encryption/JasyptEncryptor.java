@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,6 +21,7 @@ package com.joshdrummond.webpasswordsafe.server.plugin.encryption;
 
 import org.jasypt.encryption.StringEncryptor;
 
+
 /**
  * @author Josh Drummond
  *
@@ -32,6 +33,7 @@ public class JasyptEncryptor implements Encryptor
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#decrypt(java.lang.String)
      */
+    @Override
     public String decrypt(String cryptedText)
     {
         return stringEncryptor.decrypt(cryptedText);
@@ -40,14 +42,10 @@ public class JasyptEncryptor implements Encryptor
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#encrypt(java.lang.String)
      */
+    @Override
     public String encrypt(String clearText)
     {
         return stringEncryptor.encrypt(clearText);
-    }
-
-    public StringEncryptor getStringEncryptor()
-    {
-        return this.stringEncryptor;
     }
 
     public void setStringEncryptor(StringEncryptor stringEncryptor)
