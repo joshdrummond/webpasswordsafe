@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,6 +21,7 @@ package com.joshdrummond.webpasswordsafe.server.plugin.encryption;
 
 import org.jasypt.util.password.PasswordEncryptor;
 
+
 /**
  * @author Josh Drummond
  *
@@ -32,6 +33,7 @@ public class JasyptDigester implements Digester
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester#digest(java.lang.String)
      */
+    @Override
     public String digest(String clearText)
     {
         return passwordEncryptor.encryptPassword(clearText);
@@ -40,14 +42,10 @@ public class JasyptDigester implements Digester
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester#check(java.lang.String, java.lang.String)
      */
+    @Override
     public boolean check(String clearText, String cryptedText)
     {
         return passwordEncryptor.checkPassword(clearText, cryptedText);
-    }
-
-    public PasswordEncryptor getPasswordEncryptor()
-    {
-        return this.passwordEncryptor;
     }
 
     public void setPasswordEncryptor(PasswordEncryptor passwordEncryptor)

@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -32,10 +32,23 @@ public class EsapiEncryptor implements Encryptor
 {
     private static Logger LOG = Logger.getLogger(EsapiEncryptor.class);
 
+    public EsapiEncryptor(boolean useClasspath, String esapiResourceDir)
+    {
+        if (useClasspath)
+        {
+            ESAPI.securityConfiguration().setResourceDirectory(esapiResourceDir); 
+        }
+        else
+        {
+            System.setProperty("org.owasp.esapi.resources", esapiResourceDir);
+        }
+    }
+    
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#decrypt(java.lang.String)
      */
     @SuppressWarnings("deprecation")
+    @Override
     public String decrypt(String cryptedText)
     {
         String clearText = null;
@@ -54,6 +67,7 @@ public class EsapiEncryptor implements Encryptor
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#encrypt(java.lang.String)
      */
     @SuppressWarnings("deprecation")
+    @Override
     public String encrypt(String clearText)
     {
         String cryptedText = null;
@@ -66,11 +80,6 @@ public class EsapiEncryptor implements Encryptor
             LOG.error("EsapiEncryptor.encrypt: "+e.getMessage(), e);
         }
         return cryptedText;
-    }
-
-    public void setEsapiResources(String esapiResources)
-    {
-        System.setProperty("org.owasp.esapi.resources", esapiResources);
     }
 
 }

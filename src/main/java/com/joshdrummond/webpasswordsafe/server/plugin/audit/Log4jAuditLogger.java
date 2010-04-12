@@ -39,5 +39,10 @@ public class Log4jAuditLogger implements AuditLogger
         LOG.info(DELIM + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")).format(date) + DELIM + user + DELIM + 
                 ip + DELIM + action + DELIM + target + DELIM + (status ? "success":"fail") + DELIM + message + DELIM);
     }
+    
+    public void setDelimiter(String delimiter)
+    {
+        DELIM = delimiter;
+    }
 
 }

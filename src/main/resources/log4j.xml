@@ -60,16 +60,21 @@
   <category name="com.joshdrummond.webpasswordsafe.server.plugin.audit.Log4jAuditLogger" additivity="false">
     <priority value="info" />
     <appender-ref ref="auditLog" />
-    <appender-ref ref="console" />
+    <!--<appender-ref ref="console" />-->
   </category>
 
   <category name="com.joshdrummond" additivity="false">
-    <priority value="debug" />
+    <priority value="info" />
     <appender-ref ref="console" />
   </category>
   
   <category name="org.hibernate.type" additivity="false">
-    <priority value="trace" />
+    <priority value="info" />
+    <appender-ref ref="console" />
+  </category>
+
+  <category name="net.sf.gilead" additivity="false">
+    <priority value="error" />
     <appender-ref ref="console" />
   </category>
 

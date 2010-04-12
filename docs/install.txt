@@ -23,7 +23,7 @@ To build and install from source:
         mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar
     d. JasperReports 3.7.1 (http://sourceforge.net/projects/jasperreports/)
         mvn install:install-file -DgroupId=jasperreports -DartifactId=jasperreports -Dversion=3.7.1 -Dpackaging=jar -Dfile=jasperreports-3.7.1.jar
-    e. OWASP ESAPI Java EE 2.0 rc5 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)
+    e. OWASP ESAPI Java EE 2.0 rc6 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)
         mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc6 -Dpackaging=jar -Dfile=ESAPI-2.0_rc6.jar
 
 4. Copy contents of ExtGWT's GXT/resources directory into webpasswordsafe/war/gxt/
@@ -31,7 +31,8 @@ To build and install from source:
 5. Edit webpasswordsafe/war/WEB-INF/jdbc.properties changing values specific to your environment
 
 6. Edit webpasswordsafe/war/WEB-INF/encryption.properties changing values specific to your environment
-    a. If using ESAPI for encryption... FIXME (copy esapi directory, blah blah) edit ESAPI.properties and generate new MasterKey and MasterSalt values
+    a. If using ESAPI for encryption... FIXME (copy esapi directory, blah blah) edit ESAPI.properties and generate new MasterKey and MasterSalt values:
+        mvn exec:java -Dexec.mainClass="org.owasp.esapi.reference.crypto.JavaEncryptor" -Dexec.classpathScope=runtime -Dorg.owasp.esapi.resources=src/main/resources/esapi
     b. If using Jasypt for encryption...
 
 7. Run "mvn clean package -DskipTests" from the webpasswordsafe directory
