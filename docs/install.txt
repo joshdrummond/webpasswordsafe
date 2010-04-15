@@ -30,10 +30,18 @@ To build and install from source:
 
 5. Edit webpasswordsafe/war/WEB-INF/jdbc.properties changing values specific to your environment
 
-6. Edit webpasswordsafe/war/WEB-INF/encryption.properties changing values specific to your environment
-    a. If using ESAPI for encryption... FIXME (copy esapi directory, blah blah) edit ESAPI.properties and generate new MasterKey and MasterSalt values:
-        mvn exec:java -Dexec.mainClass="org.owasp.esapi.reference.crypto.JavaEncryptor" -Dexec.classpathScope=runtime -Dorg.owasp.esapi.resources=src/main/resources/esapi
+6. Encryption configuration (only do this once, if these settings are changed after deployment data will become unreadable)
+    a. If using ESAPI for encryption...
+        i. Edit webpasswordsafe/war/WEB-INF/webpasswordsafe-data.xml and uncomment the appropriate lines for OWASP-ESAPI Encryption and comment out the Jasypt lines
+        ii. Copy the contents of your .esapi resources directory into webpasswordsafe/src/main/resources/esapi or if directory is kept outside the web application,
+            edit webpasswordsafe/war/WEB-INF/encryption.properties and change encryptor.esapi.useClasspath=false and encryptor.esapi.resourceDir=<full path to directory>
+        iii. Edit ESAPI.properties and verify all of the Encryptor.* values, notably EncryptionKeyLength (128 or 256) and MasterKey and MasterSalt values
+        iv. Generate new MasterKey and MasterSalt values by invoking from the webpasswordsafe directory:
+            mvn exec:java -Dexec.mainClass="org.owasp.esapi.reference.crypto.JavaEncryptor" -Dexec.classpathScope=runtime -Dorg.owasp.esapi.resources=src/main/resources/esapi
     b. If using Jasypt for encryption...
+        i. Edit webpasswordsafe/war/WEB-INF/webpasswordsafe-data.xml and uncomment the appropriate lines for Jasypt Encryption and comment out the OWASP-ESAPI lines
+        ii. Edit webpasswordsafe/war/WEB-INF/encryption.properties and verify encryptor.jasypt.* values
+        iii. At the very least change encryptor.jasypt.password to a key/passphrase value unique to your environment
 
 7. Run "mvn clean package -DskipTests" from the webpasswordsafe directory
 

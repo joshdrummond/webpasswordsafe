@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -49,7 +49,7 @@ public class PasswordData extends LightEntity implements Serializable
     @Column(name="id")
     private long id;
 
-    @Column(name="password", length=128, updatable=false, nullable=false)
+    @Column(name="password", length=250, updatable=false, nullable=false)
     private String password;
     
     @Column(name="date_created", updatable=false, nullable=false)
