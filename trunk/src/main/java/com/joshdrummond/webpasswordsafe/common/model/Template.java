@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -72,7 +72,7 @@ public class Template extends LightEntity implements Serializable
     public Template()
     {
         name = "";
-        share = true;
+        share = false;
         templateDetails = new HashSet<TemplateDetail>();
     }
     

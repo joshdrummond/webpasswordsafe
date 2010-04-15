@@ -24,6 +24,7 @@ import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -32,6 +33,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.joshdrummond.webpasswordsafe.client.ClientSessionUtil;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
@@ -142,6 +144,7 @@ public class LoginDialog extends Window
     @Override
     public void doGetLoginSuccess()
     {
+        Info.display("Status", ClientSessionUtil.getInstance().getLoggedInUser().getUsername()+" logged in");
         hide();
     }
     

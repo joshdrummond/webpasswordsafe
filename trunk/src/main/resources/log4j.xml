@@ -65,22 +65,22 @@
 
   <category name="com.joshdrummond" additivity="false">
     <priority value="info" />
-    <appender-ref ref="console" />
+    <appender-ref ref="dailyFile" />
   </category>
   
   <category name="org.hibernate.type" additivity="false">
     <priority value="info" />
-    <appender-ref ref="console" />
+    <appender-ref ref="dailyFile" />
   </category>
 
   <category name="net.sf.gilead" additivity="false">
     <priority value="error" />
-    <appender-ref ref="console" />
+    <appender-ref ref="dailyFile" />
   </category>
 
   <root>
     <priority value="info" />
-    <appender-ref ref="console" />
+    <appender-ref ref="dailyFile" />
   </root>
 
 </log4j:configuration>

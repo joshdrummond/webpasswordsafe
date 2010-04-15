@@ -24,6 +24,7 @@ import java.util.Set;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -281,6 +282,7 @@ public class PasswordDialog extends Window implements PermissionListener
 
                 public void onSuccess(Void result)
                 {
+                    Info.display("Status", "Password saved");
                     hide();
                 }
             };

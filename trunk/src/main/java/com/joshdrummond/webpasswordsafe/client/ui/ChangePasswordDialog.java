@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -31,6 +31,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+
 
 /**
  * @author Josh Drummond
@@ -125,7 +126,7 @@ public class ChangePasswordDialog extends Window
             public void onSuccess(Void result)
             {
                 hide();
-                Info.display("Status", "Password Changed");
+                Info.display("Status", "Password changed");
             }
         };
         UserService.Util.getInstance().changePassword(password, callback);

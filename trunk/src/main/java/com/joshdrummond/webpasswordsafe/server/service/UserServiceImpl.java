@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService
         // assign user to other groups
         for (Group newGroup : newUser.getGroups())
         {
-            Group group = groupDAO.findGroupByName(newGroup.getName());
+            Group group = groupDAO.findById(newGroup.getId(), false);
             group.addUser(user);
         }
         auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add user", user.getUsername(), true, "");
@@ -155,11 +155,23 @@ public class UserServiceImpl implements UserService
                 user.setPassword(digester.digest(updateUser.getPassword()));
             }
             
-            // assign everyone group if missing
+            // remove old groups
+            for (Group oldGroup : user.getGroups())
+            {
+                Group group = groupDAO.findById(oldGroup.getId(), false);
+                group.removeUser(user);
+            }
+
+            // assign everyone group
+            Group everyoneGroup = getEveryoneGroup();
+            everyoneGroup.addUser(user);
             
-            // remove groups removed
-            
-            // add groups added
+            // add new groups
+            for (Group newGroup : updateUser.getGroups())
+            {
+                Group group = groupDAO.findById(newGroup.getId(), false);
+                group.addUser(user);
+            }
             
             auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "update user", updateUser.getUsername(), true, "");
         }

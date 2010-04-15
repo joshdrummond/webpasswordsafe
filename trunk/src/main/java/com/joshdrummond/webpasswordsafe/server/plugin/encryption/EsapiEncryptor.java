@@ -21,6 +21,9 @@ package com.joshdrummond.webpasswordsafe.server.plugin.encryption;
 
 import org.apache.log4j.Logger;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.codecs.Base64;
+import org.owasp.esapi.crypto.CipherText;
+import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.EncryptionException;
 
 
@@ -47,14 +50,14 @@ public class EsapiEncryptor implements Encryptor
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#decrypt(java.lang.String)
      */
-    @SuppressWarnings("deprecation")
     @Override
     public String decrypt(String cryptedText)
     {
         String clearText = null;
         try
         {
-            clearText = ESAPI.encryptor().decrypt(cryptedText);
+            CipherText cipherText = CipherText.fromPortableSerializedBytes(Base64.decode(cryptedText));
+            clearText = ESAPI.encryptor().decrypt(cipherText).toString();
         }
         catch (EncryptionException e)
         {
@@ -66,14 +69,14 @@ public class EsapiEncryptor implements Encryptor
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor#encrypt(java.lang.String)
      */
-    @SuppressWarnings("deprecation")
     @Override
     public String encrypt(String clearText)
     {
         String cryptedText = null;
         try
         {
-            cryptedText = ESAPI.encryptor().encrypt(clearText);
+            CipherText cipherText = ESAPI.encryptor().encrypt(new PlainText(clearText));
+            cryptedText = Base64.encodeBytes(cipherText.asPortableSerializedByteArray());
         }
         catch (EncryptionException e)
         {

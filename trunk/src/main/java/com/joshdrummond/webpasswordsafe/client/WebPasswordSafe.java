@@ -641,7 +641,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     @Override
     public void doGetLoginSuccess()
     {
-    	Info.display("Login", getClientModel().getLoggedInUser().getUsername()+" logged in");
+    	Info.display("Status", getClientModel().getLoggedInUser().getUsername()+" logged in");
     }
     
     @Override
