@@ -174,14 +174,29 @@ public class UserDialog extends Window
             MessageBox.alert("Error", "Must enter Username", null);
             return false;
         }
+        if (Utils.safeString(usernameTextBox.getValue()).length() > User.LENGTH_USERNAME)
+        {
+            MessageBox.alert("Error", "Username too long", null);
+            return false;
+        }
         if (Utils.safeString(fullnameTextBox.getValue()).equals(""))
         {
             MessageBox.alert("Error", "Must enter Full Name", null);
             return false;
         }
+        if (Utils.safeString(fullnameTextBox.getValue()).length() > User.LENGTH_FULLNAME)
+        {
+            MessageBox.alert("Error", "Full Name too long", null);
+            return false;
+        }
         if (Utils.safeString(emailTextBox.getValue()).equals(""))
         {
             MessageBox.alert("Error", "Must enter Email", null);
+            return false;
+        }
+        if (Utils.safeString(emailTextBox.getValue()).length() > User.LENGTH_EMAIL)
+        {
+            MessageBox.alert("Error", "Email too long", null);
             return false;
         }
         return true;

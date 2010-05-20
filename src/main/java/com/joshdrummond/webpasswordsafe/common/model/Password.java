@@ -56,20 +56,23 @@ import org.hibernate.annotations.Type;
 public class Password extends LightEntity implements Serializable
 {
 	private static final long serialVersionUID = 7174192307771387126L;
+    public static final int LENGTH_NAME = 100;
+    public static final int LENGTH_USERNAME = 64;
+    public static final int LENGTH_TARGET = 64;
 
 	@Id
     @GeneratedValue
     @Column(name="id")
     private long id;
     
-    @Column(name="name", length=100, nullable=false, updatable=false, unique=true)
+    @Column(name="name", length=LENGTH_NAME, nullable=false, updatable=false, unique=true)
     @Index(name = "idx_password_name")
     private String name;
     
-    @Column(name="username", length=64, nullable=false, updatable=false)
+    @Column(name="username", length=LENGTH_USERNAME, nullable=false, updatable=false)
     private String username;
     
-    @Column(name="target", length=64, nullable=false)
+    @Column(name="target", length=LENGTH_TARGET, nullable=false)
     private String target;
 
     @Column(name="notes")

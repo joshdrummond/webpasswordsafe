@@ -46,8 +46,8 @@ import org.hibernate.annotations.Type;
 @Table(name="templates")
 public class Template extends LightEntity implements Serializable
 {
-
-	private static final long serialVersionUID = 4904231831095270401L;
+    private static final long serialVersionUID = 4904231831095270401L;
+	public static final int LENGTH_NAME = 100;
 
 	@Id
     @GeneratedValue
@@ -58,7 +58,7 @@ public class Template extends LightEntity implements Serializable
     @JoinColumn(name="user_id", nullable=false)
     private User user;
     
-    @Column(name="name", length=100, nullable=false, unique=true)
+    @Column(name="name", length=LENGTH_NAME, nullable=false, unique=true)
     private String name;
     
     @Column(name="share", nullable=false)

@@ -293,6 +293,11 @@ public class TemplateDialog extends Window
             MessageBox.alert("Error", "Must enter Name", null);
             return false;
         }
+        if (Utils.safeString(templateNameTextBox.getValue()).length() > Template.LENGTH_NAME)
+        {
+            MessageBox.alert("Error", "Name too long", null);
+            return false;
+        }
         return true;
     }
     
