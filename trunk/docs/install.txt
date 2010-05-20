@@ -23,33 +23,38 @@ To build and install from source:
         mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar
     d. JasperReports 3.7.1 (http://sourceforge.net/projects/jasperreports/)
         mvn install:install-file -DgroupId=jasperreports -DartifactId=jasperreports -Dversion=3.7.1 -Dpackaging=jar -Dfile=jasperreports-3.7.1.jar
+   Optional only:
     e. OWASP ESAPI Java EE 2.0 rc6 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)
         mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc6 -Dpackaging=jar -Dfile=ESAPI-2.0_rc6.jar
+    f. RSA SecurID AuthAgent 5.0.3 (http://www.rsa.com/node.aspx?id=1174)
+        mvn install:install-file -DgroupId=com.rsa.authagent -DartifactId=authapi -Dversion=5.0.3 -Dpackaging=jar -Dfile=authapi.jar
 
 4. Copy contents of ExtGWT's GXT/resources directory into webpasswordsafe/war/gxt/
 
 5. Edit webpasswordsafe/war/WEB-INF/jdbc.properties changing values specific to your environment
 
 6. Encryption configuration (only do this once, if these settings are changed after deployment data will become unreadable)
-    a. If using ESAPI for encryption...
+    a. If using Jasypt for encryption...
+        i. Edit webpasswordsafe/war/WEB-INF/webpasswordsafe-data.xml and uncomment the appropriate lines for Jasypt Encryption and comment out the OWASP-ESAPI lines
+        ii. Edit webpasswordsafe/war/WEB-INF/encryption.properties and verify encryptor.jasypt.* values
+        iii. At the very least change encryptor.jasypt.password to a key/passphrase value unique to your environment
+    b. If using ESAPI for encryption...
         i. Edit webpasswordsafe/war/WEB-INF/webpasswordsafe-data.xml and uncomment the appropriate lines for OWASP-ESAPI Encryption and comment out the Jasypt lines
         ii. Copy the contents of your .esapi resources directory into webpasswordsafe/src/main/resources/esapi or if directory is kept outside the web application,
             edit webpasswordsafe/war/WEB-INF/encryption.properties and change encryptor.esapi.useClasspath=false and encryptor.esapi.resourceDir=<full path to directory>
         iii. Edit ESAPI.properties and verify all of the Encryptor.* values, notably EncryptionKeyLength (128 or 256) and MasterKey and MasterSalt values
         iv. Generate new MasterKey and MasterSalt values by invoking from the webpasswordsafe directory:
             mvn exec:java -Dexec.mainClass="org.owasp.esapi.reference.crypto.JavaEncryptor" -Dexec.classpathScope=runtime -Dorg.owasp.esapi.resources=src/main/resources/esapi
-    b. If using Jasypt for encryption...
-        i. Edit webpasswordsafe/war/WEB-INF/webpasswordsafe-data.xml and uncomment the appropriate lines for Jasypt Encryption and comment out the OWASP-ESAPI lines
-        ii. Edit webpasswordsafe/war/WEB-INF/encryption.properties and verify encryptor.jasypt.* values
-        iii. At the very least change encryptor.jasypt.password to a key/passphrase value unique to your environment
 
 7. Run "mvn clean package -DskipTests" from the webpasswordsafe directory
 
 8. Verify your specific JDBC JAR file is in your J2EE server's appropriate shared classpath directory.
 
-9. Deploy the WAR file generated in webpasswordsafe/target to your J2EE server (Tomcat) as WebPasswordSafe.war
+9. Verify you have Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files installed for your J2EE server's Java VM.
+
+10. Deploy the WAR file generated in webpasswordsafe/target to your J2EE server (Tomcat) as WebPasswordSafe.war
     a. It is recommended you configure your web server to only accept SSL connections for this application
 
-10. Connect to URL https://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
+11. Connect to URL https://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
 
-11. Change default admin password, create new users and begin using, you are done!
+12. Change default admin password, create new users and begin using, you are done!

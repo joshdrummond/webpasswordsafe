@@ -44,8 +44,9 @@ import org.hibernate.annotations.Index;
 public class Group extends Subject
 {
 	private static final long serialVersionUID = 5845591346545424763L;
+	public static final int LENGTH_NAME = 100;
 
-	@Column(name="name", length=100, nullable=false, unique=true)
+	@Column(name="name", length=LENGTH_NAME, nullable=false, unique=true)
     @Index(name="idx_group_name")
     private String name;
 

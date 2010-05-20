@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -41,15 +41,15 @@ import net.sf.gilead.pojo.gwt.LightEntity;
 @Table(name="tags")
 public class Tag extends LightEntity implements Serializable, Comparable<Tag>
 {
-
-	private static final long serialVersionUID = 2413955215022013023L;
-
+    private static final long serialVersionUID = 2413955215022013023L;
+    public static final int LENGTH_NAME = 100;
+	
 	@Id
     @GeneratedValue
     @Column(name="id")
     private long id;
     
-    @Column(name="name", nullable=false, updatable=false, unique=true)
+    @Column(name="name", length=LENGTH_NAME, nullable=false, updatable=false, unique=true)
     private String name;
     
     @ManyToMany(mappedBy="tags")

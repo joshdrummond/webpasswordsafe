@@ -45,18 +45,21 @@ import com.joshdrummond.webpasswordsafe.common.util.Constants;
 public class User extends Subject
 {
 	private static final long serialVersionUID = 4024780603653185462L;
+    public static final int LENGTH_USERNAME = 64;
+    public static final int LENGTH_FULLNAME = 100;
+    public static final int LENGTH_EMAIL = 100;
 
-	@Column(name="username", length=64, nullable=false, updatable=false, unique=true)
+	@Column(name="username", length=LENGTH_USERNAME, nullable=false, updatable=false, unique=true)
     @Index(name="idx_user_username")
     private String username;
 
     @Column(name="password", length=88, nullable=false)
     private String password;
 
-    @Column(name="fullname", length=100, nullable=false)
+    @Column(name="fullname", length=LENGTH_FULLNAME, nullable=false)
     private String fullname;
 
-    @Column(name="email", length=100, nullable=false)
+    @Column(name="email", length=LENGTH_EMAIL, nullable=false)
     private String email;
 
     @Column(name="active", nullable=false)

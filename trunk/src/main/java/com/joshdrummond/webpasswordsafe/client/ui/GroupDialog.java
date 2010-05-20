@@ -171,6 +171,11 @@ public class GroupDialog extends Window
             MessageBox.alert("Error", "Must enter Name", null);
             return false;
         }
+        if (Utils.safeString(nameTextBox.getValue()).length() > Group.LENGTH_NAME)
+        {
+            MessageBox.alert("Error", "Name too long", null);
+            return false;
+        }
         return true;
     }
 

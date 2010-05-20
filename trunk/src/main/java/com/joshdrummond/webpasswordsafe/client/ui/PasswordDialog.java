@@ -304,9 +304,19 @@ public class PasswordDialog extends Window implements PermissionListener
             MessageBox.alert("Error", "Must enter Title", null);
             return false;
         }
+        if (Utils.safeString(nameTextBox.getValue()).length() > Password.LENGTH_NAME)
+        {
+            MessageBox.alert("Error", "Title too long", null);
+            return false;
+        }
         if (Utils.safeString(usernameTextBox.getValue()).equals(""))
         {
             MessageBox.alert("Error", "Must enter Username", null);
+            return false;
+        }
+        if (Utils.safeString(usernameTextBox.getValue()).length() > Password.LENGTH_USERNAME)
+        {
+            MessageBox.alert("Error", "Username too long", null);
             return false;
         }
         if ((password.getId() < 1) && (Utils.safeString(passwordTextBox.getValue()).equals("")))
@@ -314,6 +324,25 @@ public class PasswordDialog extends Window implements PermissionListener
             MessageBox.alert("Error", "Must enter Password", null);
             return false;
         }
+        if (Utils.safeString(passwordTextBox.getValue()).length() > PasswordData.LENGTH_PASSWORD)
+        {
+            MessageBox.alert("Error", "Password too long", null);
+            return false;
+        }
+        String[] tagNames = Utils.safeString(tagsTextBox.getValue()).replaceAll(",", " ").split(" ");
+        for (String tagName : tagNames)
+        {
+            tagName = tagName.trim();
+            if (!"".equals(tagName))
+            {
+                if (tagName.length() > Tag.LENGTH_NAME)
+                {
+                    MessageBox.alert("Error", "Tag Name too long", null);
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 

@@ -41,15 +41,16 @@ import net.sf.gilead.pojo.gwt.LightEntity;
 @Table(name="password_data")
 public class PasswordData extends LightEntity implements Serializable
 {
-
-	private static final long serialVersionUID = -643822521564959563L;
+    private static final long serialVersionUID = -643822521564959563L;
+    public static final int LENGTH_PASSWORD = 64;
+    public static final int LENGTH_PASSWORD_CRYPTED = 250;
 
 	@Id
     @GeneratedValue
     @Column(name="id")
     private long id;
 
-    @Column(name="password", length=250, updatable=false, nullable=false)
+    @Column(name="password", length=LENGTH_PASSWORD_CRYPTED, updatable=false, nullable=false)
     private String password;
     
     @Column(name="date_created", updatable=false, nullable=false)

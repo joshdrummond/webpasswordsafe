@@ -221,6 +221,15 @@
    <scope>provided</scope>
   </dependency>
 
+  <!--  optional dependencies -->
+  <!-- 
+  <dependency>
+    <groupId>com.rsa.authagent</groupId>
+    <artifactId>authapi</artifactId>
+    <version>5.0.3</version>
+  </dependency>
+  -->
+ 
   <!-- test -->
   <dependency>
    <groupId>junit</groupId>
