@@ -26,8 +26,8 @@ To build and install from source:
    Optional only:
     e. OWASP ESAPI Java EE 2.0 rc6 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)
         mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc6 -Dpackaging=jar -Dfile=ESAPI-2.0_rc6.jar
-    f. RSA SecurID AuthAgent 5.0.3 (http://www.rsa.com/node.aspx?id=1174)
-        mvn install:install-file -DgroupId=com.rsa.authagent -DartifactId=authapi -Dversion=5.0.3 -Dpackaging=jar -Dfile=authapi.jar
+    f. RSA SecurID AuthAgent 8.1.0 (http://www.rsa.com/node.aspx?id=1174)
+        mvn install:install-file -DgroupId=com.rsa.authagent -DartifactId=authapi -Dversion=8.1.0 -Dpackaging=jar -Dfile=authapi.jar
 
 4. Copy contents of ExtGWT's GXT/resources directory into webpasswordsafe/war/gxt/
 
