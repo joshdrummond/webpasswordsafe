@@ -176,11 +176,6 @@
     <version>3.7.1</version>
   </dependency>
   <dependency>
-    <groupId>org.owasp</groupId>
-    <artifactId>esapi</artifactId>
-    <version>2.0-rc6</version>
-  </dependency>
-  <dependency>
     <groupId>commons-fileupload</groupId>
     <artifactId>commons-fileupload</artifactId>
     <version>1.2.1</version>
@@ -222,11 +217,17 @@
   </dependency>
 
   <!--  optional dependencies -->
-  <!-- 
+  <!--
+  <dependency>
+    <groupId>org.owasp</groupId>
+    <artifactId>esapi</artifactId>
+    <version>2.0-rc6</version>
+  </dependency>
+
   <dependency>
     <groupId>com.rsa.authagent</groupId>
     <artifactId>authapi</artifactId>
-    <version>5.0.3</version>
+    <version>8.1.0</version>
   </dependency>
   -->
  

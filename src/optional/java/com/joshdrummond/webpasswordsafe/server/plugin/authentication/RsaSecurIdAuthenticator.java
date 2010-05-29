@@ -31,6 +31,7 @@ import com.rsa.authagent.authapi.AuthSessionFactory;
 public class RsaSecurIdAuthenticator implements Authenticator {
 
     private static Logger LOG = Logger.getLogger(RsaSecurIdAuthenticator.class);
+    private String configPath;
 
     @Override
     public boolean authenticate(String username, String password)
@@ -38,7 +39,7 @@ public class RsaSecurIdAuthenticator implements Authenticator {
         boolean valid = false;
         try
         {
-            AuthSessionFactory api = AuthSessionFactory.getInstance();
+            AuthSessionFactory api = AuthSessionFactory.getInstance(configPath);
             AuthSession authSession = api.createUserSession();
             int status = authSession.check(username, password);
             authSession.close();
@@ -52,6 +53,16 @@ public class RsaSecurIdAuthenticator implements Authenticator {
         }
         LOG.debug("RsaSecurIdAuthenticator: login success for "+username+"? "+valid);
         return valid;
+    }
+
+    public String getConfigPath()
+    {
+        return configPath;
+    }
+
+    public void setConfigPath(String configPath)
+    {
+        this.configPath = configPath;
     }
 
 }
