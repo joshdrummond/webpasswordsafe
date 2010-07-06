@@ -54,7 +54,7 @@ public class LoginServiceImpl implements LoginService {
     private static Logger LOG = Logger.getLogger(LoginServiceImpl.class);
     private static final long serialVersionUID = 7281742835626324457L;
     
-    @Autowired
+    @Resource
     private Authenticator authenticator;
     
     @Autowired
@@ -63,10 +63,10 @@ public class LoginServiceImpl implements LoginService {
     @Resource
     private AuditLogger auditLogger;
     
-    @Autowired
+    @Resource
     private RoleRetriever roleRetriever;
     
-    @Autowired
+    @Resource
     private Authorizer authorizer;
 
     

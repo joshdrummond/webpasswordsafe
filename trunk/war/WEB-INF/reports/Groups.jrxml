@@ -43,32 +43,32 @@ order by g.name, u.fullname]]>
 	<columnHeader>
 		<band height="55" splitType="Stretch">
 			<staticText>
-				<reportElement style="Column header" x="0" y="39" width="177" height="15"/>
-				<textElement/>
+				<reportElement style="Column header" x="0" y="33" width="177" height="20"/>
+				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="177" y="39" width="176" height="15"/>
-				<textElement/>
+				<reportElement style="Column header" x="177" y="33" width="176" height="20"/>
+				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Full Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="353" y="39" width="149" height="15"/>
-				<textElement/>
+				<reportElement style="Column header" x="353" y="33" width="149" height="20"/>
+				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Username]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="502" y="39" width="70" height="15"/>
-				<textElement/>
+				<reportElement style="Column header" x="502" y="33" width="70" height="20"/>
+				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Active]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="0" y="19" width="177" height="20"/>
+				<reportElement style="Column header" x="0" y="13" width="177" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Groups]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="Column header" x="177" y="19" width="395" height="20"/>
+				<reportElement style="Column header" x="177" y="13" width="395" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<text><![CDATA[Users]]></text>
 			</staticText>
