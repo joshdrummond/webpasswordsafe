@@ -61,13 +61,13 @@ public class UserServiceImpl implements UserService
     @Autowired
     private GroupDAO groupDAO;
     
-    @Autowired
+    @Resource
     private Digester digester;
 
     @Resource
     private AuditLogger auditLogger;
     
-    @Autowired
+    @Resource
     private Authorizer authorizer;
     
     @Autowired

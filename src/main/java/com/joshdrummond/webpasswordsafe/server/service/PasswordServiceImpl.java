@@ -77,19 +77,19 @@ public class PasswordServiceImpl implements PasswordService
     @Autowired
     private TemplateDAO templateDAO;
     
-    @Autowired
+    @Resource
     private PasswordGenerator passwordGenerator;
     
     @Autowired
     private LoginService loginService;
     
-    @Autowired
+    @Resource
     private Encryptor encryptor;
     
     @Resource
     private AuditLogger auditLogger;
     
-    @Autowired
+    @Resource
     private Authorizer authorizer;
     
     
