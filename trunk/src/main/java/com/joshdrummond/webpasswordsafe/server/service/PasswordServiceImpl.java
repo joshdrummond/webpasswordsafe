@@ -22,7 +22,9 @@ package com.joshdrummond.webpasswordsafe.server.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,6 +110,23 @@ public class PasswordServiceImpl implements PasswordService
             password.getCurrentPasswordData().setUserCreated(loggedInUser);
             password.getCurrentPasswordData().setDateCreated(now);
             password.getCurrentPasswordData().setPassword(encryptor.encrypt(password.getCurrentPasswordData().getPassword()));
+            
+            // update tags
+            Set<Tag> tags = new HashSet<Tag>(password.getTags());
+            password.removeTags();
+            for (Tag tag : tags)
+            {
+                Tag pTag = tagDAO.findTagByName(tag.getName());
+                if (null != pTag)
+                {
+                    password.addTag(pTag);
+                }
+                else
+                {
+                    password.addTag(tag);
+                }
+            }
+            
             passwordDAO.makePersistent(password);
             auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "add password", password.getName(), true, "");
         }
