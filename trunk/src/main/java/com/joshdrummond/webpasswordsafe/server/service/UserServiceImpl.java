@@ -21,7 +21,9 @@ package com.joshdrummond.webpasswordsafe.server.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -243,6 +245,15 @@ public class UserServiceImpl implements UserService
     private void addGroupInternal(Group group)
     {
         Date now = new Date();
+        // update users
+        Set<User> users = new HashSet<User>(group.getUsers());
+        group.removeUsers();
+        for (User user : users)
+        {
+            User pUser = userDAO.findById(user.getId(), false);
+            group.addUser(pUser);
+        }
+
         groupDAO.makePersistent(group);
         auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add group", group.getName(), true, "");
     }

@@ -9,7 +9,7 @@
  <artifactId>webpasswordsafe</artifactId>
  <packaging>war</packaging>
  <name>WebPasswordSafe</name>
- <version>0.9-SNAPSHOT</version>
+ <version>1.0-SNAPSHOT</version>
  <description>Web-based, multi-user, secure password safe with delegated access controls</description>
  <url>http://code.google.com/p/webpasswordsafe/</url>
  <issueManagement>
@@ -24,7 +24,7 @@
 
  <properties>
   <!-- convenience to define GWT version in one place -->
-  <gwt.version>2.0.3</gwt.version>
+  <gwt.version>2.0.4</gwt.version>
   <gxt.version>2.1.1</gxt.version>
   <maven.compiler.source>1.6</maven.compiler.source>
   <maven.compiler.target>1.6</maven.compiler.target>
@@ -171,9 +171,15 @@
     </exclusions> 
   </dependency>
   <dependency>
-    <groupId>jasperreports</groupId>
+    <groupId>net.sf.jasperreports</groupId>
     <artifactId>jasperreports</artifactId>
-    <version>3.7.1</version>
+    <version>3.7.4</version>
+    <exclusions>
+      <exclusion>
+        <groupId>eclipse</groupId>
+        <artifactId>jdtcore</artifactId>
+      </exclusion>
+    </exclusions> 
   </dependency>
   <dependency>
     <groupId>commons-fileupload</groupId>
