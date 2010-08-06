@@ -11,22 +11,15 @@ To build and install from source:
 2. Download WebPasswordSafe project source via SVN (http://code.google.com/p/webpasswordsafe/source/checkout) to new directory "webpasswordsafe"
 
 3. Install 3rd party JAR files locally that aren't in public Maven repositories (you'll need to download them yourself):
-    a. GWT 2.0.3 (http://code.google.com/webtoolkit/)
-        mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-user -Dversion=2.0.3 -Dpackaging=jar -Dfile=gwt-user.jar
-        mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-servlet -Dversion=2.0.3 -Dpackaging=jar -Dfile=gwt-servlet.jar
-        mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-dev -Dversion=2.0.3 -Dpackaging=jar -Dfile=gwt-dev.jar
-        mvn install:install-file -DgroupId=com.google.gwt -DartifactId=gwt-soyc-vis -Dversion=2.0.3 -Dpackaging=jar -Dfile=gwt-soyc-vis.jar
-    b. ExtGWT 2.1.1 (http://www.extjs.com/products/gxt/)
+    a. ExtGWT 2.1.1 (http://www.extjs.com/products/gxt/)
         mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.1.1 -Dpackaging=jar -Dfile=gxt.jar
-    c. GWT-SL 1.0 (http://gwt-widget.sourceforge.net/) WAR file
+    b. GWT-SL 1.0 (http://gwt-widget.sourceforge.net/) WAR file
         mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.0 -Dpackaging=jar -Dfile=gwt-sl-1.0.jar
         mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar
-    d. JasperReports 3.7.1 (http://sourceforge.net/projects/jasperreports/)
-        mvn install:install-file -DgroupId=jasperreports -DartifactId=jasperreports -Dversion=3.7.1 -Dpackaging=jar -Dfile=jasperreports-3.7.1.jar
    Optional only:
-    e. OWASP ESAPI Java EE 2.0 rc6 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)
+    c. OWASP ESAPI Java EE 2.0 rc6 (http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#tab=Java_EE)
         mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc6 -Dpackaging=jar -Dfile=ESAPI-2.0_rc6.jar
-    f. RSA SecurID AuthAgent 8.1.0 (http://www.rsa.com/node.aspx?id=1174)
+    d. RSA SecurID AuthAgent 8.1.0 (http://www.rsa.com/node.aspx?id=1174)
         mvn install:install-file -DgroupId=com.rsa.authagent -DartifactId=authapi -Dversion=8.1.0 -Dpackaging=jar -Dfile=authapi.jar
 
 4. Copy contents of ExtGWT's GXT/resources directory into webpasswordsafe/war/gxt/
