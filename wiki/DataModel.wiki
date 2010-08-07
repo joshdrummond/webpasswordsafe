@@ -1,25 +1,96 @@
 #labels design,database
-|| *subjects* ||||||
+|| *audit_log* ||||||
 ||id||long||pk||
-||type||char(1)||u/g||
-
-|| *users* ||||||
-||id||long||pk, fk subjects||
-||username||varchar(64)||immutable||
-||password||varchar(64)||hash encrypted of 64||
-||fullname||varchar(256)||||
-||email||varchar(321)||||
-||active||char(1)||y/n||
-||date_created||datetime||||
-||last_login||datetime||||
+||date||datetime||||
+||username||varchar(64)||||
+||ipaddress||varchar(17)||||
+||action||varchar(50)||||
+||target||varchar(100)||||
+||success||char(1)||Y/N||
+||message||varchar(100)||||
 
 || *groups* ||||||
 ||id||long||pk, fk subjects||
-||name||varchar(256)||||
+||name||varchar(100)||unique||
+
+|| *password_access_audit* ||||||
+||id||long||pk||
+||password_id||long||fk passwords||
+||user_id||long||fk users||
+||date_accessed||datetime||||
+
+|| *password_data* ||||||
+||id||long||pk||
+||password_id||long||fk passwords||
+||password_position||int||0 = current||
+||password||varchar(250)||encrypted of 64||
+||date_created||datetime||||
+||user_created_id||long||fk users||
+
+|| *password_tags* ||||||
+||password_id||long||pk, fk passwords||
+||tag_id||long||pk, fk tags||
+
+|| *passwords* ||||||
+||id||long||pk||
+||name||varchar(100)||unique, immutable||
+||username||varchar(64)||immutable||
+||target||varchar(64)||||
+||notes||text||||
+||max_history||int||-1 = infinite||
+||active||char(1)||Y/N||
+||date_created||datetime||||
+||user_created_id||long||fk users||
+||date_last_update||datetime||||
+||user_last_update_id||long||fk users||
+
+|| *permissions* ||||||
+||id||long||pk||
+||password_id||long||fk passwords||
+||subject_id||long||fk subjects||
+||access_level||varchar(5)||READ,WRITE,GRANT||
+
+|| *subjects* ||||||
+||id||long||pk||
+||type||char(1)||U/G||
+
+|| *tags* ||||||
+||id||long||pk||
+||name||varchar(100)||unique, immutable||
+
+|| *template_details* ||||||
+||id||long||pk||
+||template_id||long||fk templates||
+||subject_id||long||fk subjects||
+||access_level||varchar(5)||READ,WRITE,GRANT||
+
+|| *templates* ||||||
+||id||long||pk||
+||user_id||long||fk users||
+||name||varchar(100)||unique||
+||share||char(1)||Y/N||
 
 || *user_groups* ||||||
 ||user_id||long||pk, fk users||
 ||group_id||long||pk, fk groups||
+
+|| *users* ||||||
+||id||long||pk, fk subjects||
+||username||varchar(64)||unique, immutable||
+||password||varchar(88)||hash encrypted of 64||
+||fullname||varchar(100)||||
+||email||varchar(100)||||
+||active||char(1)||Y/N||
+||date_created||datetime||||
+||last_login||datetime||||
+
+<br>
+
+----
+
+<br>
+
+_future?_
 
 || *subject_roles* ||||||
 ||subject_id||long||pk, fk subjects||
@@ -28,58 +99,6 @@
 || *roles* ||||||
 ||id||long||pk||
 ||name||varchar(256)||||
-
-|| *passwords* ||||||
-||id||long||pk||
-||name||varchar(256)||||
-||username||varchar(64)||immutable||
-||notes||text||||
-||max_history||int||-1 = infinite?||
-||active||char(1)||y/n||
-||date_created||datetime||||
-||user_created_id||long||fk users||
-||date_last_update||datetime||||
-||user_last_update_id||long||fk users||
-
-|| *password_data* ||||||
-||id||long||pk||
-||password_id||long||fk passwords||
-||password_position||int||||
-||password||varchar(108)||encrypted of 64||
-||date_created||datetime||||
-||user_created_id||long||fk users||
-
-|| *password_access_audit* ||||||
-||id||long||pk||
-||password_id||long||fk passwords||
-||user_id||long||fk users||
-||date_accessed||datetime||||
-
-|| *permissions* ||||||
-||id||long||pk||
-||password_id||long||fk passwords||
-||subject_id||long||fk subjects||
-||access_level||int||1,2,3||
-
-|| *templates* ||||||
-||id||long||pk||
-||user_id||long||fk users||
-||name||varchar(256)||||
-||share||char(1)||y/n||
-
-|| *template_details* ||||||
-||id||long||pk||
-||template_id||long||fk templates||
-||subject_id||long||fk subjects||
-||access_level||int||1,2,3||
-
-|| *tags* ||||||
-||id||long||pk||
-||name||varchar(256)||||
-
-|| *password_tags* ||||||
-||password_id||long||pk, fk passwords||
-||tag_id||long||pk, fk tags||
 
 || *global_settings* ||||||
 ||id||long||pk||
