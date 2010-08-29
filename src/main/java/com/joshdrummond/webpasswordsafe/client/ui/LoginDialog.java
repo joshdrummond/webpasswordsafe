@@ -49,7 +49,9 @@ public class LoginDialog extends Window
 {
     private TextField<String> usernameTextBox;
     private TextField<String> passwordTextBox;
+    private Button enterButton;
     private MainWindow main;
+    private boolean isSubmitting;
     
     public LoginDialog(MainWindow main)
     {
@@ -59,6 +61,7 @@ public class LoginDialog extends Window
         this.setClosable(false);
         this.setOnEsc(false);
         this.setResizable(false);
+        this.isSubmitting = false;
         
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);
@@ -93,7 +96,7 @@ public class LoginDialog extends Window
         });
         form.add(passwordTextBox, new FormData("-20"));
         
-        Button enterButton = new Button("Submit", new SelectionListener<ButtonEvent>() {
+        enterButton = new Button("Submit", new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
                 doSubmit();
@@ -112,28 +115,42 @@ public class LoginDialog extends Window
         usernameTextBox.focus();
     }
     
-    private void doSubmit()
+    private void setSubmitting(boolean isSubmit)
     {
-        AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>()
+        usernameTextBox.setEnabled(!isSubmit);
+        passwordTextBox.setEnabled(!isSubmit);
+        enterButton.setEnabled(!isSubmit);
+        isSubmitting = isSubmit;
+    }
+    
+    private synchronized void doSubmit()
+    {
+        if (!isSubmitting)
         {
-
-            public void onFailure(Throwable caught) {
-            	MessageBox.alert("Error", caught.getMessage(), null);
-            }
-
-            public void onSuccess(Boolean result) {
-                if (result.booleanValue())
-                {
-                	doLoginSuccess();
+            setSubmitting(true);
+            AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>()
+            {
+    
+                public void onFailure(Throwable caught) {
+                	MessageBox.alert("Error", caught.getMessage(), null);
+                    setSubmitting(false);
                 }
-                else
-                {
-                	MessageBox.alert("Error", "Invalid Login!", null);
+    
+                public void onSuccess(Boolean result) {
+                    if (result.booleanValue())
+                    {
+                    	doLoginSuccess();
+                    }
+                    else
+                    {
+                    	MessageBox.alert("Error", "Invalid Login!", null);
+                    }
+                    setSubmitting(false);
                 }
-            }
-        };
-        LoginService.Util.getInstance().login(Utils.safeString(usernameTextBox.getValue()), 
-                Utils.safeString(passwordTextBox.getValue()), callback);
+            };
+            LoginService.Util.getInstance().login(Utils.safeString(usernameTextBox.getValue()), 
+                    Utils.safeString(passwordTextBox.getValue()), callback);
+        }
     }
     
     private void doLoginSuccess()
