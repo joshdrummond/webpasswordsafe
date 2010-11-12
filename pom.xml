@@ -24,8 +24,8 @@
 
  <properties>
   <!-- convenience to define GWT version in one place -->
-  <gwt.version>2.0.4</gwt.version>
-  <gxt.version>2.1.1</gxt.version>
+  <gwt.version>2.1.0</gwt.version>
+  <gxt.version>2.2.1</gxt.version>
   <maven.compiler.source>1.6</maven.compiler.source>
   <maven.compiler.target>1.6</maven.compiler.target>
  </properties>
@@ -40,6 +40,12 @@
    <id>gilead-maven-repo</id>
    <name>Gilead repo</name>
    <url>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo/</url>
+  </repository>
+  <repository>
+     <id>codehaus.releases</id>
+     <url>http://nexus.codehaus.org/releases</url>
+     <snapshots><enabled>false</enabled></snapshots>
+     <releases><enabled>true</enabled></releases>
   </repository>
  </repositories>
  
@@ -252,7 +258,7 @@
    <plugin>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>gwt-maven-plugin</artifactId>
-    <version>1.2</version>
+    <version>2.1.0</version>
     <executions>
      <execution>
       <goals>
