@@ -32,20 +32,9 @@
  
  <repositories>
   <repository>
-   <id>codehaus-maven-repo</id>
-   <name>Codehaus repo</name>
-   <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
-  </repository>
-  <repository>
    <id>gilead-maven-repo</id>
    <name>Gilead repo</name>
    <url>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo/</url>
-  </repository>
-  <repository>
-     <id>codehaus.releases</id>
-     <url>http://nexus.codehaus.org/releases</url>
-     <snapshots><enabled>false</enabled></snapshots>
-     <releases><enabled>true</enabled></releases>
   </repository>
  </repositories>
  

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -58,6 +58,7 @@ public interface UserService extends RemoteService {
 				instance = (UserServiceAsync) GWT.create(UserService.class);
 				ServiceDefTarget target = (ServiceDefTarget) instance;
 				target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/UserService");
+                target.setRpcRequestBuilder(new CSRFAwareRpcRequestBuilder());
 			}
 			return instance;
 		}

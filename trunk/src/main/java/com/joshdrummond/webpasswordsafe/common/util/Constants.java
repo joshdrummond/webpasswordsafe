@@ -32,6 +32,7 @@ public class Constants
     public static final String EVERYONE_GROUP_NAME = "Everyone";
     public static final String SESSION_KEY_USERNAME = "wps-username";
     public static final String SESSION_KEY_ROLES = "wps-roles";
+    public static final String HEADER_KEY_CSRF_TOKEN = "CSRFToken";
     public static final String VIEW_REPORT_PREFIX = "VIEW_REPORT_";
     public enum Role { ROLE_USER, ROLE_ADMIN };
     public enum Report { CurrentPasswordExport, Groups, PasswordAccessAudit, PasswordPermissions, Users };

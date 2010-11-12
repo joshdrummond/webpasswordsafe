@@ -63,6 +63,7 @@ public interface PasswordService extends RemoteService {
 				instance = (PasswordServiceAsync) GWT.create(PasswordService.class);
 				ServiceDefTarget target = (ServiceDefTarget) instance;
 				target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/PasswordService");
+                target.setRpcRequestBuilder(new CSRFAwareRpcRequestBuilder());
 			}
 			return instance;
 		}

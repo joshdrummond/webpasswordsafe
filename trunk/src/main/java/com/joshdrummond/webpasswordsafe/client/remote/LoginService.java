@@ -17,7 +17,6 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.client.remote;
 
 import java.util.Map;
@@ -28,6 +27,12 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
 
+
+/**
+ * 
+ * @author Josh Drummond
+ *
+ */
 public interface LoginService extends RemoteService {
     
     public boolean login(String username, String password);
@@ -45,6 +50,7 @@ public interface LoginService extends RemoteService {
 				instance = (LoginServiceAsync) GWT.create(LoginService.class);
 				ServiceDefTarget target = (ServiceDefTarget) instance;
 				target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/LoginService");
+	            target.setRpcRequestBuilder(new CSRFAwareRpcRequestBuilder());
 			}
 			return instance;
 		}

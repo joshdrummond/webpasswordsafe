@@ -37,6 +37,11 @@ public class ServerSessionUtil
     private static ThreadLocal<Set<Role>> rolesRef = new ThreadLocal<Set<Role>>();
     private static ThreadLocal<String> ipRef = new ThreadLocal<String>();
     
+    public static void invalidateSession()
+    {
+        ServletUtils.getRequest().getSession().invalidate();
+    }
+
     public static String getUsername()
     {
         if (ServletUtils.getRequest() != null)

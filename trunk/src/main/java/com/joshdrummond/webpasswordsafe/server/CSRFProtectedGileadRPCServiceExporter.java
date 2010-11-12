@@ -19,12 +19,15 @@
 */
 package com.joshdrummond.webpasswordsafe.server;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.gwtwidgets.server.spring.gilead.GileadRPCServiceExporter;
 import com.google.gwt.user.client.rpc.SerializationException;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 
 
 /**
- * Workaround wrapper to guard against CSRF while using GWT-SL RPC exporter
+ * Wrapper to guard against CSRF attacks while using GWT-SL RPC exporter
  * 
  * @author Josh Drummond
  *
@@ -32,6 +35,24 @@ import com.google.gwt.user.client.rpc.SerializationException;
 public class CSRFProtectedGileadRPCServiceExporter extends GileadRPCServiceExporter
 {
     private static final long serialVersionUID = 1L;
+    
+    @Override
+    protected void onBeforeRequestDeserialized(String serializedRequest)
+    {
+        HttpServletRequest servletRequest = getThreadLocalRequest();
+        HttpSession session = servletRequest.getSession(false);
+        // If there is currently no session or if the client doesn't know about it yet then don't check.
+        // Otherwise the client must provide the id of the session in a header.
+        if (session != null && !session.isNew()) {
+            String sessionId = servletRequest.getHeader(Constants.HEADER_KEY_CSRF_TOKEN);
+            if (sessionId == null || !sessionId.equals(servletRequest.getSession().getId())) {
+                throw new SecurityException(
+                    "Blocked request without session header (CSRF attack?)");
+            }
+        }
+
+        super.onBeforeRequestDeserialized(serializedRequest);
+    }
 
     @Override
     public String processCall(String payload) throws SerializationException
