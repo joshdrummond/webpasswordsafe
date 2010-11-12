@@ -130,6 +130,7 @@ public class LoginServiceImpl implements LoginService {
         auditLogger.log(new Date(), ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "logout", "", true, "");
         ServerSessionUtil.setUsername(null);
         ServerSessionUtil.setRoles(null);
+        ServerSessionUtil.invalidateSession();
         return true;
     }
 

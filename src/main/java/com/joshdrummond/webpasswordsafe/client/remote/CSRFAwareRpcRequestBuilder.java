@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,11 +19,10 @@
 */
 package com.joshdrummond.webpasswordsafe.client.remote;
 
-import java.util.Map;
-import java.util.Set;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.joshdrummond.webpasswordsafe.common.model.User;
-import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.rpc.RpcRequestBuilder;
+import com.joshdrummond.webpasswordsafe.common.util.Constants;
 
 
 /**
@@ -31,11 +30,15 @@ import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
  * @author Josh Drummond
  *
  */
-public interface LoginServiceAsync {
-    
-    public void login(String username, String password, AsyncCallback<Boolean> callback);
-    public void logout(AsyncCallback<Boolean> callback);
-    public void getLogin(AsyncCallback<User> callback);
-    public void getLoginAuthorizations(Set<Function> functions, AsyncCallback<Map<Function, Boolean>> callback);
-
+public class CSRFAwareRpcRequestBuilder extends RpcRequestBuilder
+{
+    @Override
+    protected void doFinish(RequestBuilder rb)
+    {
+        String sessionId = Cookies.getCookie("JSESSIONID");
+        if (sessionId != null) {
+            rb.setHeader(Constants.HEADER_KEY_CSRF_TOKEN, sessionId);
+        }
+        super.doFinish(rb);
+    }
 }
