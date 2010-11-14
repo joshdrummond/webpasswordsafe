@@ -11,8 +11,8 @@ To build and install from source:
 2. Download WebPasswordSafe project source via SVN (http://code.google.com/p/webpasswordsafe/source/checkout) to new directory "webpasswordsafe"
 
 3. Install 3rd party JAR files locally that aren't in public Maven repositories (you'll need to download them yourself):
-    a. ExtGWT 2.2.1 (http://www.extjs.com/products/gxt/)
-        mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.2.1 -Dpackaging=jar -Dfile=gxt.jar
+    a. ExtGWT 2.1.1 (http://www.sencha.com/products/gwt/thank-you.php?dl=extgwt211gwt2)
+        mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.1.1 -Dpackaging=jar -Dfile=gxt.jar
     b. GWT-SL 1.0 (http://gwt-widget.sourceforge.net/) WAR file
         mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.0 -Dpackaging=jar -Dfile=gwt-sl-1.0.jar
         mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar
