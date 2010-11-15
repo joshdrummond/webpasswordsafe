@@ -112,7 +112,6 @@ public class PermissionDialog extends Window
         }
 
         List<ColumnConfig> config = new ArrayList<ColumnConfig>(2);
-        ColumnModel cm = new ColumnModel(config);
         ColumnConfig column = new ColumnConfig();
         column.setId("subject");
         column.setHeader("User/Group");
@@ -124,6 +123,7 @@ public class PermissionDialog extends Window
         column.setWidth(113);
         column.setEditor(accessLevelEditor);
         config.add(column);
+        ColumnModel cm = new ColumnModel(config);
         permissionGrid = new EditorGrid<PermissionData>(permissionStore, cm);
         permissionGrid.setBorders(true);
         permissionGrid.setStripeRows(true);

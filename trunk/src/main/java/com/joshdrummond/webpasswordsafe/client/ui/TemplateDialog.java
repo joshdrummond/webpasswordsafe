@@ -116,7 +116,6 @@ public class TemplateDialog extends Window
         templateNameTextBox.setSize("276px", "22px");
 
         List<ColumnConfig> config = new ArrayList<ColumnConfig>(2);
-        ColumnModel cm = new ColumnModel(config);
         ColumnConfig column = new ColumnConfig();
         column.setId("subject");
         column.setHeader("User/Group");
@@ -128,6 +127,7 @@ public class TemplateDialog extends Window
         column.setWidth(113);
         column.setEditor(accessLevelEditor);
         config.add(column);
+        ColumnModel cm = new ColumnModel(config);
         permissionGrid = new EditorGrid<TemplateData>(permissionStore, cm);
         permissionGrid.setBorders(true);
         permissionGrid.setStripeRows(true);
