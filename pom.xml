@@ -25,7 +25,7 @@
  <properties>
   <!-- convenience to define GWT version in one place -->
   <gwt.version>2.1.0</gwt.version>
-  <gxt.version>2.1.1</gxt.version>
+  <gxt.version>2.2.1</gxt.version>
   <maven.compiler.source>1.6</maven.compiler.source>
   <maven.compiler.target>1.6</maven.compiler.target>
  </properties>
