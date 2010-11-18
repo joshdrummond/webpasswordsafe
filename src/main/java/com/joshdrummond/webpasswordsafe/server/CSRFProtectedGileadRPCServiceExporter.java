@@ -35,19 +35,23 @@ import com.joshdrummond.webpasswordsafe.common.util.Constants;
 public class CSRFProtectedGileadRPCServiceExporter extends GileadRPCServiceExporter
 {
     private static final long serialVersionUID = 1L;
+    private boolean isStrongCsrfProtection = true;
     
     @Override
     protected void onBeforeRequestDeserialized(String serializedRequest)
     {
-        HttpServletRequest servletRequest = getThreadLocalRequest();
-        HttpSession session = servletRequest.getSession(false);
-        // If there is currently no session or if the client doesn't know about it yet then don't check.
-        // Otherwise the client must provide the id of the session in a header.
-        if (session != null && !session.isNew()) {
-            String sessionId = servletRequest.getHeader(Constants.HEADER_KEY_CSRF_TOKEN);
-            if (sessionId == null || !sessionId.equals(servletRequest.getSession().getId())) {
-                throw new SecurityException(
-                    "Blocked request without session header (CSRF attack?)");
+        if (isStrongCsrfProtection)
+        {
+            HttpServletRequest servletRequest = getThreadLocalRequest();
+            HttpSession session = servletRequest.getSession(false);
+            // If there is currently no session or if the client doesn't know about it yet then don't check.
+            // Otherwise the client must provide the id of the session in a header.
+            if (session != null && !session.isNew()) {
+                String sessionId = servletRequest.getHeader(Constants.HEADER_KEY_CSRF_TOKEN);
+                if (sessionId == null || !sessionId.equals(servletRequest.getSession().getId())) {
+                    throw new SecurityException(
+                        "Blocked request without session header (CSRF attack?)");
+                }
             }
         }
 
@@ -60,4 +64,10 @@ public class CSRFProtectedGileadRPCServiceExporter extends GileadRPCServiceExpor
         checkPermutationStrongName();
         return super.processCall(payload);
     }
+
+    public void setStrongCsrfProtection(boolean isStrongCsrfProtection)
+    {
+        this.isStrongCsrfProtection = isStrongCsrfProtection;
+    }
+    
 }

@@ -32,17 +32,20 @@
 	</bean>
 	
 	<bean id="loginServiceExporter" class="com.joshdrummond.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
-		<property name="beanManager" ref="persistentBeanManager" />
+        <property name="beanManager" ref="persistentBeanManager" />
+        <property name="strongCsrfProtection" value="true" />
 		<property name="service" ref="loginService" />
 	</bean>
 	
 	<bean id="userServiceExporter" class="com.joshdrummond.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
+        <property name="strongCsrfProtection" value="true" />
 		<property name="service" ref="userService" />
 	</bean>
 	
 	<bean id="passwordServiceExporter" class="com.joshdrummond.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
+        <property name="strongCsrfProtection" value="true" />
 		<property name="service" ref="passwordService" />
 	</bean>
 	
