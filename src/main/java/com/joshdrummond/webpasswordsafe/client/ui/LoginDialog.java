@@ -144,8 +144,8 @@ public class LoginDialog extends Window
                     else
                     {
                     	MessageBox.alert("Error", "Invalid Login!", null);
+                        setSubmitting(false);
                     }
-                    setSubmitting(false);
                 }
             };
             LoginService.Util.getInstance().login(Utils.safeString(usernameTextBox.getValue()), 

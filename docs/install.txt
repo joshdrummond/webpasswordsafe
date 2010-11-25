@@ -39,7 +39,7 @@ To build and install from source:
         iv. Generate new MasterKey and MasterSalt values by invoking from the webpasswordsafe directory:
             mvn exec:java -Dexec.mainClass="org.owasp.esapi.reference.crypto.JavaEncryptor" -Dexec.classpathScope=runtime -Dorg.owasp.esapi.resources=src/main/resources/esapi
 
-7. Run "mvn clean package -DskipTests" from the webpasswordsafe directory
+7. Run "mvn clean package" from the webpasswordsafe directory
 
 8. Verify your specific JDBC JAR file is in your J2EE server's appropriate shared classpath directory.
 
