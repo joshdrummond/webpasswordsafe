@@ -39,7 +39,10 @@ public class ServerSessionUtil
     
     public static void invalidateSession()
     {
-        ServletUtils.getRequest().getSession().invalidate();
+        if (ServletUtils.getRequest() != null)
+        {
+            ServletUtils.getRequest().getSession().invalidate();
+        }
     }
 
     public static String getUsername()
