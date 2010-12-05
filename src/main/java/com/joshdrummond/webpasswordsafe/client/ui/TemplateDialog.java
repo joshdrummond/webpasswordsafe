@@ -31,6 +31,7 @@ import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
@@ -360,7 +361,7 @@ public class TemplateDialog extends Window
         public TemplateData(TemplateDetail templateDetail)
         {
             set("id", templateDetail.getId());
-            set("subject", templateDetail.getSubject().getName());
+            set("subject", Format.htmlEncode(templateDetail.getSubject().getName()));
             set("accessLevel", templateDetail.getAccessLevelObj());
             set("templateDetail", templateDetail);
         }
@@ -373,7 +374,7 @@ public class TemplateDialog extends Window
         public SubjectData(Subject subject)
         {
             set("id", subject.getId());
-            set("name", subject.getName());
+            set("name", Format.htmlEncode(subject.getName()));
             set("subject", subject);
         }
     }

@@ -33,6 +33,7 @@ import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
@@ -336,7 +337,7 @@ public class PermissionDialog extends Window
         public PermissionData(Permission permission)
         {
             set("id", permission.getId());
-            set("subject", permission.getSubject().getName());
+            set("subject", Format.htmlEncode(permission.getSubject().getName()));
             set("accessLevel", permission.getAccessLevelObj());
             set("permission", permission);
         }
@@ -349,7 +350,7 @@ public class PermissionDialog extends Window
         public SubjectData(Subject subject)
         {
             set("id", subject.getId());
-            set("name", subject.getName());
+            set("name", Format.htmlEncode(subject.getName()));
             set("subject", subject);
         }
     }

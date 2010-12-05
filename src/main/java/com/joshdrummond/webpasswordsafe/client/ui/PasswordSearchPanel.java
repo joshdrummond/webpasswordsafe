@@ -36,6 +36,7 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.TreeStore;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -296,11 +297,11 @@ public class PasswordSearchPanel extends ContentPanel
     	public PasswordSearchData(long id, String title, String username, String tags, String notes)
     	{
     		set("id", id);
-    		set("title", title);
-    		set("username", username);
+    		set("title", Format.htmlEncode(title));
+    		set("username", Format.htmlEncode(username));
     		set("password", "******");
-            set("tags", tags);
-            set("notes", notes);
+            set("tags", Format.htmlEncode(tags));
+            set("notes", Format.htmlEncode(notes));
     	}
     }
 
@@ -317,7 +318,7 @@ public class PasswordSearchPanel extends ContentPanel
                 Dialog popup = new Dialog();
                 popup.setHeading("Current Password");
                 popup.setButtons(Dialog.CLOSE);
-                popup.addText(result);
+                popup.addText(Format.htmlEncode(result));
                 popup.setScrollMode(Scroll.AUTO);
                 popup.setHideOnButtonClick(true);
                 popup.show();
@@ -333,7 +334,7 @@ public class PasswordSearchPanel extends ContentPanel
         public TagData(Tag tag)
         {
             set("id", tag.getId());
-            set("name", tag.getName());
+            set("name", Format.htmlEncode(tag.getName()));
             set("tag", tag);
         }
         /*
