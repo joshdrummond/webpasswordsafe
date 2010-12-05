@@ -72,7 +72,7 @@ public class Template extends LightEntity implements Serializable
     public Template()
     {
         name = "";
-        share = false;
+        share = true;
         templateDetails = new HashSet<TemplateDetail>();
     }
     

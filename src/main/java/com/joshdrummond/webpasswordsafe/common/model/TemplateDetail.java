@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -96,6 +96,8 @@ public class TemplateDetail extends LightEntity implements Serializable
     }
     public void setAccessLevel(String accessLevel)
     {
+        // test this is a valid accessLevel, will throw IllegalArgumentException if not
+        AccessLevel.valueOf(accessLevel);
         this.accessLevel = accessLevel;
     }
     public Template getParent()

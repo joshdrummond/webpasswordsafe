@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -37,9 +37,7 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
 public class TemplateDAOHibernate extends GenericHibernateDAO<Template, Long> implements TemplateDAO
 {
 
-    /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.dao.TemplateDAO#findTemplatesByUser(boolean)
-     */
+    @Override
     public List<Template> findTemplatesByUser(User user, boolean includeShared)
     {
         if (includeShared)
@@ -50,6 +48,14 @@ public class TemplateDAOHibernate extends GenericHibernateDAO<Template, Long> im
         {
             return findByCriteria(Order.asc("name"), Restrictions.eq("user", user));
         }
+    }
+
+    @Override
+    public Template findUpdatableTemplateById(long templateId, User user)
+    {
+        List<Template> templates = findByCriteria(Restrictions.eq("id", templateId), 
+                Restrictions.or(Restrictions.eq("user", user), Restrictions.eq("share", true)));
+        return (templates.size() > 0) ? templates.get(0) : null;
     }
 
 }
