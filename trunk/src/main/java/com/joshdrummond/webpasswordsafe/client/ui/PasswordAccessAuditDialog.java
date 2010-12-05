@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
@@ -124,7 +125,7 @@ public class PasswordAccessAuditDialog extends Window
         {
             set("id", passwordAccessAudit.getId());
             set("date", passwordAccessAudit.getDateAccessed());
-            set("user", passwordAccessAudit.getUser().getName());
+            set("user", Format.htmlEncode(passwordAccessAudit.getUser().getName()));
         }
     }
 

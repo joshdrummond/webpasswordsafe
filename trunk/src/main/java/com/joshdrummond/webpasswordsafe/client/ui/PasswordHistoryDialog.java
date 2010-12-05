@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.client.ui;
 
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.form.TextField;
@@ -131,9 +132,9 @@ public class PasswordHistoryDialog extends Window
         public PasswordHistoryData(PasswordData passwordData)
         {
             set("id", passwordData.getId());
-            set("password", passwordData.getPassword());
+            set("password", Format.htmlEncode(passwordData.getPassword()));
             set("date", passwordData.getDateCreated());
-            set("user", passwordData.getUserCreated().getName());
+            set("user", Format.htmlEncode(passwordData.getUserCreated().getName()));
         }
     }
 

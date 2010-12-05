@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.StoreSorter;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
@@ -229,7 +230,7 @@ public class GroupDialog extends Window
         public UserData(User user)
         {
             set("id", user.getId());
-            set("fullname", user.getFullname());
+            set("fullname", Format.htmlEncode(user.getFullname()));
             set("user", user);
         }
 
