@@ -68,7 +68,19 @@ public class PasswordHistoryDialog extends Window
         TextField<String> text = new TextField<String>();
         text.setSelectOnFocus(true);
         text.setReadOnly(true);
-        columnConfigPassword.setEditor(new CellEditor(text));
+        columnConfigPassword.setEditor(new CellEditor(text)
+        {
+            @Override
+            public Object preProcessValue(Object value)
+            {
+                return Format.htmlDecode(String.valueOf(value));
+            }
+            @Override
+            public Object postProcessValue(Object value)
+            {
+                return Format.htmlEncode(String.valueOf(value));
+            }
+        });
         configs.add(columnConfigPassword);
         ColumnConfig columnConfigDate = new ColumnConfig("date", "Date Created", 120);
         columnConfigDate.setDateTimeFormat(DateTimeFormat.getFormat("MM/dd/yyyy HH:mm:ss"));

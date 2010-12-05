@@ -25,6 +25,7 @@ import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
@@ -119,7 +120,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         Text loggedInLabel = null;
         if (clientSessionUtil.isLoggedIn())
         {
-            loggedInLabel = new Text(LOGGED_IN+clientSessionUtil.getLoggedInUser().getFullname());
+            loggedInLabel = new Text(LOGGED_IN + Format.htmlEncode(clientSessionUtil.getLoggedInUser().getFullname()));
         }
         else
         {
@@ -641,7 +642,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     @Override
     public void doGetLoginSuccess()
     {
-    	Info.display("Status", getClientModel().getLoggedInUser().getUsername()+" logged in");
+    	Info.display("Status", Format.htmlEncode(getClientModel().getLoggedInUser().getUsername()) + " logged in");
     }
     
     @Override

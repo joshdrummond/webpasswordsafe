@@ -24,6 +24,7 @@ import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
@@ -161,7 +162,7 @@ public class LoginDialog extends Window
     @Override
     public void doGetLoginSuccess()
     {
-        Info.display("Status", ClientSessionUtil.getInstance().getLoggedInUser().getUsername()+" logged in");
+        Info.display("Status", Format.htmlEncode(ClientSessionUtil.getInstance().getLoggedInUser().getUsername()) + " logged in");
         hide();
     }
     
