@@ -506,7 +506,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                     new TemplateSelectionDialog(new EditTemplateListener(), result, false).show();
                 }
             };
-            PasswordService.Util.getInstance().getTemplates(false, callback);
+            PasswordService.Util.getInstance().getTemplates(true, callback);
         }
         else
         {

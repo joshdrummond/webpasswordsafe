@@ -48,6 +48,7 @@ import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
+import com.joshdrummond.webpasswordsafe.client.ClientSessionUtil;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
@@ -192,6 +193,13 @@ public class TemplateDialog extends Window
         add(chkbxShared, new AbsoluteData(6, 284));
         chkbxShared.setBoxLabel("Shared?");
         chkbxShared.setHideLabel(true);
+        if (template.getId() != 0)
+        {
+            if (ClientSessionUtil.getInstance().getLoggedInUser().getId() != template.getUser().getId())
+            {
+                chkbxShared.setEnabled(false);
+            }
+        }
         
         Button saveButton = new Button("Save",
                 new SelectionListener<ButtonEvent>()

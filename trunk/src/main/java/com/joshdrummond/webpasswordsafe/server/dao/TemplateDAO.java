@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -33,5 +33,6 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
 public interface TemplateDAO extends GenericDAO<Template, Long> {
     
     public List<Template> findTemplatesByUser(User user, boolean includeShared);
+    public Template findUpdatableTemplateById(long templateId, User user);
 
 }

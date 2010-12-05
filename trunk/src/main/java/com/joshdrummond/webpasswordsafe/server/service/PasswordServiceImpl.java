@@ -379,12 +379,16 @@ public class PasswordServiceImpl implements PasswordService
         LOG.debug("updating template");
         Date now = new Date();
         User loggedInUser = loginService.getLogin();
-        Template template = templateDAO.findById(updateTemplate.getId(), false);
+        Template template = templateDAO.findUpdatableTemplateById(updateTemplate.getId(), loggedInUser);
         if (template != null)
         {
             // update simple fields
             template.setName(updateTemplate.getName());
-            template.setShare(updateTemplate.isShare());
+            // only change sharing status if original owner is updating
+            if (template.getUser().getId() == loggedInUser.getId())
+            {
+                template.setShare(updateTemplate.isShare());
+            }
             
             // update details
             // keep the permissions that haven't changed
@@ -401,7 +405,7 @@ public class PasswordServiceImpl implements PasswordService
         }
         else
         {
-            LOG.debug("template not found");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update template", updateTemplate.getName(), false, "invalid id or no access");
         }
     }
 
