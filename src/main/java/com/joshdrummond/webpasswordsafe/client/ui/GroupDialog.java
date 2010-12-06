@@ -139,29 +139,47 @@ public class GroupDialog extends Window
                 group.addUser((User)userData.get("user"));
             }
             
-            AsyncCallback<Void> callback = new AsyncCallback<Void>()
+            final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
             {
-
                 public void onFailure(Throwable caught)
                 {
                     MessageBox.alert("Error", caught.getMessage(), null);
                 }
 
-                public void onSuccess(Void result)
+                public void onSuccess(Boolean result)
                 {
-                    Info.display("Status", "Group saved");
-                    hide();
+                    // true => group name already taken, else go ahead and save
+                    if (result)
+                    {
+                        MessageBox.alert("Error", "Group name already exists", null);
+                    }
+                    else
+                    {
+                        AsyncCallback<Void> callback = new AsyncCallback<Void>()
+                        {
+                            public void onFailure(Throwable caught)
+                            {
+                                MessageBox.alert("Error", caught.getMessage(), null);
+                            }
+
+                            public void onSuccess(Void result)
+                            {
+                                Info.display("Status", "Group saved");
+                                hide();
+                            }
+                        };
+                        if (group.getId() == 0)
+                        {
+                            UserService.Util.getInstance().addGroup(group, callback);
+                        }
+                        else
+                        {
+                            UserService.Util.getInstance().updateGroup(group, callback);
+                        }
+                    }
                 }
-                
             };
-            if (group.getId() == 0)
-            {
-                UserService.Util.getInstance().addGroup(group, callback);
-            }
-            else
-            {
-                UserService.Util.getInstance().updateGroup(group, callback);
-            }
+            UserService.Util.getInstance().isGroupTaken(group.getName(), group.getId(), callbackCheck);
         }
     }
 

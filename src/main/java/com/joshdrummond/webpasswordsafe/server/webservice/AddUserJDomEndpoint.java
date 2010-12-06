@@ -59,8 +59,16 @@ public class AddUserJDomEndpoint extends BaseJDomEndpoint
                 boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
                 if (isAuthnValid)
                 {
-                    userService.addUser(user);
-                    isSuccess = true;
+                    boolean isUserTaken = userService.isUserTaken(user.getUsername());
+                    if (!isUserTaken)
+                    {
+                        userService.addUser(user);
+                        isSuccess = true;
+                    }
+                    else
+                    {
+                        message = "Username already exists";
+                    }
                 }
                 else
                 {

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -35,20 +35,23 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
 @Repository("userDAO")
 public class UserDAOHibernate extends GenericHibernateDAO<User, Long> implements UserDAO {
 
-    /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.dao.UserDAO#findActiveUserByUsername(String)
-     */
+    @Override
     public User findActiveUserByUsername(String username) {
         List<User> users = findByCriteria(Restrictions.eq("username", username), Restrictions.eq("activeFlag", true));
         return (users.size() > 0) ? users.get(0) : null;
     }
 
-    /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.dao.UserDAO#findAllUsers(boolean)
-     */
+    @Override
+    public User findUserByUsername(String username)
+    {
+        List<User> users = findByCriteria(Restrictions.eq("username", username));
+        return (users.size() > 0) ? users.get(0) : null;
+    }
+
+    @Override
     public List<User> findAllUsers(boolean includeOnlyActive)
     {
         return includeOnlyActive ? findByCriteria(Order.asc("fullname"), Restrictions.eq("activeFlag", true)) : findByCriteria(Order.asc("fullname"));
     }
-}
 
+}

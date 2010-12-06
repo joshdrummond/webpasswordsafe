@@ -46,12 +46,14 @@ public interface PasswordService extends RemoteService {
     public List<Tag> getAvailableTags();
     public Password getPassword(long passwordId);
     public Password getPassword(String passwordName);
+    public boolean isPasswordTaken(String passwordName);
     public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId);
     public List<PasswordData> getPasswordHistoryData(long passwordId);
     public void addTemplate(Template template);
     public void updateTemplate(Template template);
     public List<Template> getTemplates(boolean includeShared);
     public Template getTemplateWithDetails(long templateId);
+    public boolean isTemplateTaken(String templateName, long ignoreTemplateId);
     
 	/**
 	 * Utility class for simplifying access to the instance of async service.

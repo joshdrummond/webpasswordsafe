@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
@@ -184,4 +185,12 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         }
         return maxEffectiveAccessLevel;
     }
+
+    @Override
+    public Password findPasswordByName(String passwordName)
+    {
+        List<Password> passwords = findByCriteria(Restrictions.eq("name", passwordName));
+        return (passwords.size() > 0) ? passwords.get(0) : null;
+    }
+    
 }

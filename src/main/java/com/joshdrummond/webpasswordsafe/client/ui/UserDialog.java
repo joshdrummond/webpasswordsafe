@@ -219,9 +219,8 @@ public class UserDialog extends Window
                 user.addGroup(group);
             }
             
-            AsyncCallback<Void> callback = new AsyncCallback<Void>()
+            final AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
-
                 public void onFailure(Throwable caught)
                 {
                     MessageBox.alert("Error", caught.getMessage(), null);
@@ -232,11 +231,30 @@ public class UserDialog extends Window
                     Info.display("Status", "User saved");
                     hide();
                 }
-                
             };
             if (user.getId() == 0)
             {
-                UserService.Util.getInstance().addUser(user, callback);
+                final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
+                {
+                    public void onFailure(Throwable caught)
+                    {
+                        MessageBox.alert("Error", caught.getMessage(), null);
+                    }
+
+                    public void onSuccess(Boolean result)
+                    {
+                        // true => username already taken, else go ahead and save
+                        if (result)
+                        {
+                            MessageBox.alert("Error", "Username already exists", null);
+                        }
+                        else
+                        {
+                            UserService.Util.getInstance().addUser(user, callback);
+                        }
+                    }
+                };
+                UserService.Util.getInstance().isUserTaken(user.getUsername(), callbackCheck);
             }
             else
             {
