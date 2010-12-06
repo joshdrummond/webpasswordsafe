@@ -36,6 +36,7 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
 public interface PasswordDAO extends GenericDAO<Password, Long> {
 
     public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags);
+    public Password findPasswordByName(String passwordName);
     public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel);
     public Password findAllowedPasswordByName(String passwordName, User user, AccessLevel accessLevel);
     public AccessLevel getMaxEffectiveAccessLevel(Password password, User user);

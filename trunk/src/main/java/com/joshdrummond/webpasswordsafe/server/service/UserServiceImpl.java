@@ -319,7 +319,7 @@ public class UserServiceImpl implements UserService
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
 	private  User getAdminUser()
 	{
-	    return userDAO.findActiveUserByUsername(ADMIN_USER_NAME);
+	    return userDAO.findUserByUsername(ADMIN_USER_NAME);
 	}
 
     @Override
@@ -342,6 +342,30 @@ public class UserServiceImpl implements UserService
         int numGroups = user.getGroups().size();
         LOG.debug(user.getName()+" has "+numGroups+" groups");
         return user;
+    }
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public boolean isUserTaken(String username)
+    {
+        User user = userDAO.findUserByUsername(username);
+        return (null != user);
+    }
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public boolean isGroupTaken(String groupName, long ignoreGroupId)
+    {
+        boolean isGroupTaken = false;
+        Group group = groupDAO.findGroupByName(groupName);
+        if (group != null)
+        {
+            if (group.getId() != ignoreGroupId)
+            {
+                isGroupTaken = true;
+            }
+        }
+        return isGroupTaken;
     }
     
 }

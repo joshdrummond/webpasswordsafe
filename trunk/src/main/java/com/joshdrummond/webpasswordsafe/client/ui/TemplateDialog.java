@@ -330,27 +330,47 @@ public class TemplateDialog extends Window
                 template.addDetail(templateDetail);
             }
 
-            AsyncCallback<Void> callback = new AsyncCallback<Void>()
+            final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
             {
                 public void onFailure(Throwable caught)
                 {
                     MessageBox.alert("Error", caught.getMessage(), null);
                 }
 
-                public void onSuccess(Void result)
+                public void onSuccess(Boolean result)
                 {
-                    Info.display("Status", "Template saved");
-                    hide();
+                    // true => template name already taken, else go ahead and save
+                    if (result)
+                    {
+                        MessageBox.alert("Error", "Template name already exists", null);
+                    }
+                    else
+                    {
+                        AsyncCallback<Void> callback = new AsyncCallback<Void>()
+                        {
+                            public void onFailure(Throwable caught)
+                            {
+                                MessageBox.alert("Error", caught.getMessage(), null);
+                            }
+
+                            public void onSuccess(Void result)
+                            {
+                                Info.display("Status", "Template saved");
+                                hide();
+                            }
+                        };
+                        if (template.getId() == 0)
+                        {
+                            PasswordService.Util.getInstance().addTemplate(template, callback);
+                        }
+                        else
+                        {
+                            PasswordService.Util.getInstance().updateTemplate(template, callback);
+                        }
+                    }
                 }
             };
-            if (template.getId() == 0)
-            {
-                PasswordService.Util.getInstance().addTemplate(template, callback);
-            }
-            else
-            {
-                PasswordService.Util.getInstance().updateTemplate(template, callback);
-            }
+            PasswordService.Util.getInstance().isTemplateTaken(template.getName(), template.getId(), callbackCheck);
         }
     }
 

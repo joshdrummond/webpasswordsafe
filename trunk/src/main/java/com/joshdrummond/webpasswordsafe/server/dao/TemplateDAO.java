@@ -34,5 +34,6 @@ public interface TemplateDAO extends GenericDAO<Template, Long> {
     
     public List<Template> findTemplatesByUser(User user, boolean includeShared);
     public Template findUpdatableTemplateById(long templateId, User user);
-
+    public Template findTemplateByName(String name);
+    
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -24,6 +24,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
 
+
 /**
  * DAO implementation for Group
  * 
@@ -33,9 +34,7 @@ import com.joshdrummond.webpasswordsafe.common.model.Group;
 @Repository("groupDAO")
 public class GroupDAOHibernate extends GenericHibernateDAO<Group, Long> implements GroupDAO {
 
-    /* (non-Javadoc)
-     * @see com.joshdrummond.webpasswordsafe.server.dao.GroupDAO#findGroupByName(java.lang.String)
-     */
+    @Override
     public Group findGroupByName(String name)
     {
         List<Group> groups = findByCriteria(Restrictions.eq("name", name));

@@ -38,6 +38,7 @@ public interface UserService extends RemoteService {
     public void changePassword(String password);
     public void addUser(User user);
     public void updateUser(User user);
+    public boolean isUserTaken(String username);
     public List<User> getUsers(boolean includeOnlyActive);
     public void verifyInitialization();
     public Group getEveryoneGroup();
@@ -47,6 +48,7 @@ public interface UserService extends RemoteService {
     public User getUserWithGroups(long userId);
     public void addGroup(Group group);
     public void updateGroup(Group group);
+    public boolean isGroupTaken(String groupName, long ignoreGroupId);
 
 	/**
 	 * Utility class for simplifying access to the instance of async service.

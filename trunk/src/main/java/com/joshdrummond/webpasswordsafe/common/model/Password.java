@@ -282,6 +282,11 @@ public class Password extends LightEntity implements Serializable
         }
     }
     
+    public void removePasswordData()
+    {
+        passwordData.clear();
+    }
+    
     public String getTagsAsString()
     {
         StringBuilder tagString = new StringBuilder();

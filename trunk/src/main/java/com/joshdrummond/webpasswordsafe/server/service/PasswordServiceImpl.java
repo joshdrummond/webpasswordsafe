@@ -429,4 +429,28 @@ public class PasswordServiceImpl implements PasswordService
         return template;
     }
 
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public boolean isPasswordTaken(String passwordName)
+    {
+        Password password = passwordDAO.findPasswordByName(passwordName);
+        return (null != password);
+    }
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public boolean isTemplateTaken(String templateName, long ignoreTemplateId)
+    {
+        boolean isTemplateTaken = false;
+        Template template = templateDAO.findTemplateByName(templateName);
+        if (template != null)
+        {
+            if (template.getId() != ignoreTemplateId)
+            {
+                isTemplateTaken = true;
+            }
+        }
+        return isTemplateTaken;
+    }
+
 }

@@ -36,6 +36,7 @@ public interface UserServiceAsync {
     public void changePassword(String password, AsyncCallback<Void> callback);
     public void addUser(User user, AsyncCallback<Void> callback);
     public void updateUser(User user, AsyncCallback<Void> callback);
+    public void isUserTaken(String username, AsyncCallback<Boolean> callback);
     public void getUsers(boolean includeOnlyActive, AsyncCallback<List<User>> callback);
     public void verifyInitialization(AsyncCallback<Void> callback);
     public void getEveryoneGroup(AsyncCallback<Group> callback);
@@ -45,4 +46,5 @@ public interface UserServiceAsync {
     public void getUserWithGroups(long userId, AsyncCallback<User> callback);
     public void addGroup(Group group, AsyncCallback<Void> callback);
     public void updateGroup(Group group, AsyncCallback<Void> callback);
+    public void isGroupTaken(String groupName, long ignoreGroupId, AsyncCallback<Boolean> callback);
 }

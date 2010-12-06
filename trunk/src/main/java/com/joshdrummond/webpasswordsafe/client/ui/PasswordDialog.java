@@ -254,6 +254,7 @@ public class PasswordDialog extends Window implements PermissionListener
         {
             password.setName(Utils.safeString(nameTextBox.getValue()));
             password.setUsername(Utils.safeString(usernameTextBox.getValue()));
+            password.removePasswordData();
             PasswordData passwordDataItem = new PasswordData();
             passwordDataItem.setPassword(Utils.safeString(passwordTextBox.getValue()));
             password.addPasswordData(passwordDataItem);
@@ -273,7 +274,7 @@ public class PasswordDialog extends Window implements PermissionListener
             password.setMaxHistory((password.getMaxHistory() < -1) ? -1 : password.getMaxHistory());
             password.setActive(activeCheckBox.getValue());
 
-            AsyncCallback<Void> callback = new AsyncCallback<Void>()
+            final AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
                 public void onFailure(Throwable caught)
                 {
@@ -288,7 +289,27 @@ public class PasswordDialog extends Window implements PermissionListener
             };
             if (password.getId() == 0)
             {
-                PasswordService.Util.getInstance().addPassword(password, callback);
+                final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
+                {
+                    public void onFailure(Throwable caught)
+                    {
+                        MessageBox.alert("Error", caught.getMessage(), null);
+                    }
+
+                    public void onSuccess(Boolean result)
+                    {
+                        // true => password title already taken, else go ahead and save
+                        if (result)
+                        {
+                            MessageBox.alert("Error", "Password title already exists", null);
+                        }
+                        else
+                        {
+                            PasswordService.Util.getInstance().addPassword(password, callback);
+                        }
+                    }
+                };
+                PasswordService.Util.getInstance().isPasswordTaken(password.getName(), callbackCheck);
             }
             else
             {

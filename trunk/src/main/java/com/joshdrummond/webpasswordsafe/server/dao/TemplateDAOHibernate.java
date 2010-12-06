@@ -58,4 +58,11 @@ public class TemplateDAOHibernate extends GenericHibernateDAO<Template, Long> im
         return (templates.size() > 0) ? templates.get(0) : null;
     }
 
+    @Override
+    public Template findTemplateByName(String name)
+    {
+        List<Template> templates = findByCriteria(Restrictions.eq("name", name));
+        return (templates.size() > 0) ? templates.get(0) : null;
+    }
+
 }
