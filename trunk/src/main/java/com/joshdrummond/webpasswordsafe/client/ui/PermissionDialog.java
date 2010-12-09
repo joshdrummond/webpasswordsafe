@@ -230,7 +230,7 @@ public class PermissionDialog extends Window
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
             public void onSuccess(List<Template> result)
             {
@@ -318,7 +318,7 @@ public class PermissionDialog extends Window
                 {
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), null);
+                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                     }
                     public void onSuccess(Template result)
                     {

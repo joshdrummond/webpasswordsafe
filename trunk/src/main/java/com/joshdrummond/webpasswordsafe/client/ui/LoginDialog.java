@@ -133,7 +133,7 @@ public class LoginDialog extends Window
             {
     
                 public void onFailure(Throwable caught) {
-                	MessageBox.alert("Error", caught.getMessage(), null);
+                	MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                     setSubmitting(false);
                 }
     

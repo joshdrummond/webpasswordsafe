@@ -405,7 +405,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             {
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), null);
+                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                 }
                 public void onSuccess(List<Group> result)
                 {
@@ -465,7 +465,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             {
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), null);
+                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                 }
                 public void onSuccess(List<User> result)
                 {
@@ -500,7 +500,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             {
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), null);
+                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                 }
                 public void onSuccess(List<Template> result)
                 {
@@ -527,7 +527,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
 
             public void onSuccess(User result)
@@ -553,7 +553,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
 
             public void onSuccess(Map<Function, Boolean> result)
@@ -572,7 +572,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
             public void onSuccess(Void result)
             {
@@ -588,7 +588,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
             public void onSuccess(Group result)
             {
@@ -606,7 +606,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
 
             public void onSuccess(Boolean result)
@@ -685,7 +685,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                 {
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), null);
+                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                     }
                     public void onSuccess(User result)
                     {
@@ -707,7 +707,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                 {
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), null);
+                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                     }
                     public void onSuccess(Group result)
                     {
@@ -729,7 +729,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                 {
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), null);
+                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                     }
                     public void onSuccess(Template result)
                     {

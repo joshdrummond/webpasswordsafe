@@ -93,7 +93,7 @@ public class PasswordAccessAuditDialog extends Window
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
             public void onSuccess(List<PasswordAccessAudit> result)
             {

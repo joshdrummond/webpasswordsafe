@@ -216,7 +216,7 @@ public class PasswordSearchPanel extends ContentPanel
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
             public void onSuccess(List<Tag> result)
             {
@@ -232,7 +232,7 @@ public class PasswordSearchPanel extends ContentPanel
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
             public void onSuccess(Password result)
             {
@@ -270,7 +270,7 @@ public class PasswordSearchPanel extends ContentPanel
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
             public void onSuccess(List<Password> result)
             {
@@ -311,7 +311,7 @@ public class PasswordSearchPanel extends ContentPanel
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
             public void onSuccess(String result)
             {
