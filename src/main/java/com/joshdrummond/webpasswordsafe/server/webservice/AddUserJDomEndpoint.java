@@ -48,13 +48,13 @@ public class AddUserJDomEndpoint extends BaseJDomEndpoint
         Element returnDoc = null;
         try
         {
-            String authnUsername = extractAuthnUsernameFromRequest(element);
-            String authnPassword = extractAuthnPasswordFromRequest(element);
-            User user = extractUserFromRequest(element);
             boolean isSuccess = false;
             String message = "";
             try
             {
+                String authnUsername = extractAuthnUsernameFromRequest(element);
+                String authnPassword = extractAuthnPasswordFromRequest(element);
+                User user = extractUserFromRequest(element);
                 setIPAddress();
                 boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
                 if (isAuthnValid)

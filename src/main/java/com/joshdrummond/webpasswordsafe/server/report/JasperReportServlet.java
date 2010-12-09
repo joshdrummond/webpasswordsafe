@@ -89,6 +89,7 @@ public class JasperReportServlet extends HttpServlet
         {
             String reportName = req.getParameter("name");
             String type = req.getParameter("type").trim().toLowerCase();
+            setNoCache(res);
             if (isAuthorized(req, reportName))
             {
                 JasperDesign jasperDesign = JRXmlLoader.load(getServletConfig().getServletContext().getResourceAsStream(
@@ -196,5 +197,12 @@ public class JasperReportServlet extends HttpServlet
         }
         auditLogger.log(new Date(), user.getUsername(), req.getRemoteAddr(), "view report", reportName, isAuthorized, (isAuthorized ? "" : "not authorized"));
         return isAuthorized;
+    }
+    
+    private void setNoCache(HttpServletResponse res)
+    {
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Cache-Control", "no-cache,no-store");
+        res.setDateHeader("Expires", 0);
     }
 }
