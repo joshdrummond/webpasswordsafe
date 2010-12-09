@@ -218,7 +218,7 @@ public class PasswordDialog extends Window implements PermissionListener
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
 
             public void onSuccess(String result)
@@ -236,7 +236,7 @@ public class PasswordDialog extends Window implements PermissionListener
 
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
 
             public void onSuccess(String result)
@@ -278,7 +278,7 @@ public class PasswordDialog extends Window implements PermissionListener
             {
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), null);
+                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                 }
 
                 public void onSuccess(Void result)
@@ -293,7 +293,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 {
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), null);
+                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                     }
 
                     public void onSuccess(Boolean result)
@@ -373,7 +373,7 @@ public class PasswordDialog extends Window implements PermissionListener
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
 
             public void onSuccess(List<Subject> result)

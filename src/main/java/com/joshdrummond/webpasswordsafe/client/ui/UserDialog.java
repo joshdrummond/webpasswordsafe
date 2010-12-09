@@ -228,7 +228,7 @@ public class UserDialog extends Window
             {
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), null);
+                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                 }
 
                 public void onSuccess(Void result)
@@ -243,7 +243,7 @@ public class UserDialog extends Window
                 {
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), null);
+                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
                     }
 
                     public void onSuccess(Boolean result)
@@ -279,7 +279,7 @@ public class UserDialog extends Window
         {
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), null);
+                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
             }
             public void onSuccess(List<Group> result)
             {
