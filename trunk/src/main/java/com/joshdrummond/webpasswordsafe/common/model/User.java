@@ -31,6 +31,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
+import com.joshdrummond.webpasswordsafe.common.util.Utils;
 
 
 /**
@@ -177,6 +178,8 @@ public class User extends Subject
     }
 
     public void setEmail( String email ) {
+        if (!Utils.isValidEmail(email))
+            throw new RuntimeException("Email invalid");
         this.email = email;
     }
 

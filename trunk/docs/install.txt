@@ -39,15 +39,17 @@ To build and install from source:
         iv. Generate new MasterKey and MasterSalt values by invoking from the webpasswordsafe directory:
             mvn exec:java -Dexec.mainClass="org.owasp.esapi.reference.crypto.JavaEncryptor" -Dexec.classpathScope=runtime -Dorg.owasp.esapi.resources=src/main/resources/esapi
 
-7. Run "mvn clean package" from the webpasswordsafe directory
+7. If using web services, edit webpasswordsafe/war/WEB-INF/webservice-servlet.xml and change the "locationUri" value to valid host/port URL it will be deployed to
 
-8. Verify your specific JDBC JAR file is in your J2EE server's appropriate shared classpath directory.
+8. Run "mvn clean package" from the webpasswordsafe directory
 
-9. Verify you have Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files installed for your J2EE server's Java VM.
+9. Verify your specific JDBC JAR file is in your J2EE server's appropriate shared classpath directory.
 
-10. Deploy the WAR file generated in webpasswordsafe/target to your J2EE server (Tomcat) as WebPasswordSafe.war
+10. Verify you have Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files installed for your J2EE server's Java VM.
+
+11. Deploy the WAR file generated in webpasswordsafe/target to your J2EE server (Tomcat) as WebPasswordSafe.war
     a. It is recommended you configure your web server to only accept SSL connections for this application
 
-11. Connect to URL https://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
+12. Connect to URL https://host:port/WebPasswordSafe/ using default login and password "admin"/"admin"
 
-12. Change default admin password, create new users and begin using, you are done!
+13. Change default admin password, create new users and begin using, you are done!

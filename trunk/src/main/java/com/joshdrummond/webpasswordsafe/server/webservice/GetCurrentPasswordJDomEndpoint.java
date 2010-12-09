@@ -48,14 +48,14 @@ public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
         Element returnDoc = null;
         try
         {
-            String authnUsername = extractAuthnUsernameFromRequest(element);
-            String authnPassword = extractAuthnPasswordFromRequest(element);
-            String passwordName = extractPasswordNameFromRequest(element);
             boolean isSuccess = false;
             String message = "";
             String currentPassword = "";
             try
             {
+                String authnUsername = extractAuthnUsernameFromRequest(element);
+                String authnPassword = extractAuthnPasswordFromRequest(element);
+                String passwordName = extractPasswordNameFromRequest(element);
                 setIPAddress();
                 boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
                 if (isAuthnValid)

@@ -1,5 +1,5 @@
 /*
-    Copyright 2009 Josh Drummond
+    Copyright 2009-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -49,5 +49,10 @@ public class Utils
             num = -1;
         }
         return num;
+    }
+    
+    public static boolean isValidEmail(String s)
+    {
+        return s.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"); 
     }
 }

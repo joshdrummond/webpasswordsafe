@@ -200,6 +200,11 @@ public class UserDialog extends Window
             MessageBox.alert("Error", "Email too long", null);
             return false;
         }
+        if (!Utils.isValidEmail(Utils.safeString(emailTextBox.getValue())))
+        {
+            MessageBox.alert("Error", "Email invalid", null);
+            return false;
+        }
         return true;
     }
     
