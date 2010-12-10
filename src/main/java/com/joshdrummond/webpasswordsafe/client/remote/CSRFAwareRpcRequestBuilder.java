@@ -35,9 +35,9 @@ public class CSRFAwareRpcRequestBuilder extends RpcRequestBuilder
     @Override
     protected void doFinish(RequestBuilder rb)
     {
-        String sessionId = Cookies.getCookie("JSESSIONID");
+        String sessionId = Cookies.getCookie(Constants.CSRF_TOKEN_KEY);
         if (sessionId != null) {
-            rb.setHeader(Constants.HEADER_KEY_CSRF_TOKEN, sessionId);
+            rb.setHeader(Constants.CSRF_TOKEN_KEY, sessionId);
         }
         super.doFinish(rb);
     }

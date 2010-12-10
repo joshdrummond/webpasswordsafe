@@ -19,8 +19,10 @@
 */
 package com.joshdrummond.webpasswordsafe.server;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.gilead.GileadRPCServiceExporter;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
@@ -36,7 +38,8 @@ public class CSRFProtectedGileadRPCServiceExporter extends GileadRPCServiceExpor
 {
     private static final long serialVersionUID = 1L;
     private boolean isStrongCsrfProtection = true;
-    
+    private static Logger LOG = Logger.getLogger(CSRFProtectedGileadRPCServiceExporter.class);
+
     @Override
     protected void onBeforeRequestDeserialized(String serializedRequest)
     {
@@ -46,11 +49,28 @@ public class CSRFProtectedGileadRPCServiceExporter extends GileadRPCServiceExpor
             HttpSession session = servletRequest.getSession(false);
             // If there is currently no session or if the client doesn't know about it yet then don't check.
             // Otherwise the client must provide the id of the session in a header.
-            if (session != null && !session.isNew()) {
-                String sessionId = servletRequest.getHeader(Constants.HEADER_KEY_CSRF_TOKEN);
-                if (sessionId == null || !sessionId.equals(servletRequest.getSession().getId())) {
-                    throw new SecurityException(
-                        "Blocked request without session header (CSRF attack?)");
+            LOG.debug("session="+session);
+            if (session != null)
+            {
+                if (session.isNew() || (session.getAttribute(Constants.CSRF_TOKEN_KEY) == null))
+                {
+                    // either new session or old session without csrf token set, so set it but don't check
+                    session.setAttribute(Constants.CSRF_TOKEN_KEY, session.getId());
+                    Cookie cookie = new Cookie(Constants.CSRF_TOKEN_KEY, session.getId());
+                    cookie.setPath(servletRequest.getContextPath());
+                    getThreadLocalResponse().addCookie(cookie);
+                }
+                else
+                {
+                    // session exists, and csrf token was set, so client should know about it, thus enforce it
+                    String clientCsrfToken = servletRequest.getHeader(Constants.CSRF_TOKEN_KEY);
+                    String serverCsrfToken = (String)session.getAttribute(Constants.CSRF_TOKEN_KEY);
+                    LOG.debug("clientCsrfToken="+clientCsrfToken);
+                    LOG.debug("serverCsrfToken="+serverCsrfToken);
+                    if ((clientCsrfToken == null) || !clientCsrfToken.equals(serverCsrfToken)) {
+                        throw new SecurityException(
+                            "Blocked request without session header (CSRF attack?)");
+                    }
                 }
             }
         }
