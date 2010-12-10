@@ -22,6 +22,7 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 import java.util.ArrayList;
 import java.util.List;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -69,6 +70,7 @@ public class GroupSelectionDialog extends Window
         groupListBox.setSize(300, 150);
         groupListBox.setDisplayField("name");
         groupListBox.setFieldLabel(selectLabelText);
+        groupListBox.getListView().getSelectionModel().setSelectionMode(allowMultiple ? SelectionMode.MULTI : SelectionMode.SINGLE);
         groupListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
         {
             public void handleEvent(BaseEvent be)
