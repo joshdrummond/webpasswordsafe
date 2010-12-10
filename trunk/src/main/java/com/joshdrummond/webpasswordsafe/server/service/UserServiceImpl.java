@@ -207,7 +207,8 @@ public class UserServiceImpl implements UserService
 	    User adminUser = getAdminUser();
 	    if (null == adminUser)
 	    {
-	        adminUser = User.newActiveUser(ADMIN_USER_NAME, ADMIN_USER_NAME, ADMIN_USER_NAME, ADMIN_USER_NAME);
+	        adminUser = User.newActiveUser(ADMIN_USER_NAME, ADMIN_USER_NAME, ADMIN_USER_NAME,
+	                ADMIN_USER_NAME+"@"+ADMIN_USER_NAME+".com");
 	        adminUser.addGroup(getEveryoneGroup());
 	        addUserInternal(adminUser);
 	    }
