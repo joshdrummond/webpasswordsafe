@@ -78,6 +78,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     private final static String TITLE = "WebPasswordSafe v"+Constants.VERSION;
     private Viewport viewport; 
     private ContentPanel mainPanel, topPanel, menuPanel;
+    private PasswordSearchPanel passwordSearchPanel;
 
     public void onModuleLoad()
     {
@@ -149,7 +150,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         mainPanel.removeAll();
         if (clientSessionUtil.isLoggedIn())
         {
-            PasswordSearchPanel passwordSearchPanel = new PasswordSearchPanel();
+            passwordSearchPanel = new PasswordSearchPanel();
             passwordSearchPanel.setSize("100%", "100%");
             mainPanel.add(passwordSearchPanel);
         }
@@ -389,7 +390,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             Password newPassword = new Password();
             newPassword.setMaxEffectiveAccessLevel(AccessLevel.GRANT);
             newPassword.addPermission(new Permission(clientSessionUtil.getLoggedInUser(), AccessLevel.GRANT));
-            new PasswordDialog(newPassword).show();
+            new PasswordDialog(newPassword, passwordSearchPanel).show();
         }
         else
         {

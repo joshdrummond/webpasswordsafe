@@ -71,7 +71,7 @@ import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.CheckCascade;
  * @author Josh Drummond
  *
  */
-public class PasswordSearchPanel extends ContentPanel
+public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
 {
     private Grid<PasswordSearchData> passwordGrid;
     private ListStore<PasswordSearchData> gridStore;
@@ -238,7 +238,7 @@ public class PasswordSearchPanel extends ContentPanel
             {
                 if (null != result)
                 {
-                    new PasswordDialog(result).show();
+                    openPasswordDialog(result);
                 }
                 else
                 {
@@ -247,6 +247,11 @@ public class PasswordSearchPanel extends ContentPanel
             }
         };
         PasswordService.Util.getInstance().getPassword(passwordId, callback);
+    }
+    
+    private void openPasswordDialog(Password password)
+    {
+        new PasswordDialog(password, this).show();
     }
     
     private void refreshTags(List<Tag> tags)
@@ -290,6 +295,12 @@ public class PasswordSearchPanel extends ContentPanel
         }
     }
 
+    @Override
+    public void reloadTags()
+    {
+        doLoadTags();
+    }
+    
     private class PasswordSearchData extends BaseModel
     {
 		private static final long serialVersionUID = 1L;
@@ -337,15 +348,5 @@ public class PasswordSearchPanel extends ContentPanel
             set("name", Format.htmlEncode(tag.getName()));
             set("tag", tag);
         }
-        /*
-        public TagData(long id, String name, BaseTreeModel[] children)
-        {
-            this(id, name);
-            for (BaseTreeModel child : children)
-            {
-                add(child);
-            }
-        }
-        */
     }
 }
