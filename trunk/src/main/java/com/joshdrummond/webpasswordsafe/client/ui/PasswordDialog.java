@@ -61,10 +61,12 @@ public class PasswordDialog extends Window implements PermissionListener
     private NumberField maxHistoryTextBox;
     private TextArea notesTextArea;
     private CheckBox activeCheckBox;
+    private TagLoadListener tagLoadListener;
 
-    public PasswordDialog(Password password)
+    public PasswordDialog(Password password, TagLoadListener tagLoadListener)
     {
         this.password = password;
+        this.tagLoadListener = tagLoadListener;
         this.setHeading("Password");
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
@@ -284,6 +286,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 public void onSuccess(Void result)
                 {
                     Info.display("Status", "Password saved");
+                    tagLoadListener.reloadTags();
                     hide();
                 }
             };
