@@ -1,6 +1,10 @@
-#summary WebPasswordSafe Administrator Guide
+#summary WebPasswordSafe Administration Guides
 #labels help
 
-=WebPasswordSafe Administrator Guide=
+=WebPasswordSafe Administration Guides=
 
 [http://webpasswordsafe.googlecode.com/svn/trunk/docs/install.txt Installation Instructions]
+
+[http://webpasswordsafe.googlecode.com/svn/trunk/docs/AdministratorGuide.html Administrator Guide]
+
+[http://webpasswordsafe.googlecode.com/svn/trunk/docs/DeveloperGuide.html Developer Guide]
