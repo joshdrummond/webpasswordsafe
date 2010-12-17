@@ -3,4 +3,4 @@
 
 = WebPasswordSafe User Guide =
 
-This is a placeholder.
+[http://webpasswordsafe.googlecode.com/svn/trunk/docs/UserGuide.html Latest Version]
