@@ -67,6 +67,9 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         this.password = password;
         this.tagLoadListener = tagLoadListener;
+        boolean isPasswordReadOnly = password.getMaxEffectiveAccessLevel().equals(AccessLevel.READ);
+        boolean isPasswordGrantable = password.getMaxEffectiveAccessLevel().equals(AccessLevel.GRANT);
+
         this.setHeading("Password");
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
@@ -75,9 +78,9 @@ public class PasswordDialog extends Window implements PermissionListener
         
         LabelField lblfldName = new LabelField("Title:");
         add(lblfldName, new AbsoluteData(7, 6));
-        
+
         nameTextBox = new TextField<String>();
-        nameTextBox.setEnabled(password.getId() < 1);
+        nameTextBox.setReadOnly(password.getId() > 0);
         add(nameTextBox, new AbsoluteData(82, 6));
         nameTextBox.setSize("331px", "22px");
 
@@ -85,7 +88,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldUsername, new AbsoluteData(7, 34));
         
         usernameTextBox = new TextField<String>();
-        usernameTextBox.setEnabled(password.getId() < 1);
+        usernameTextBox.setReadOnly(password.getId() > 0);
         add(usernameTextBox, new AbsoluteData(82, 34));
         usernameTextBox.setSize("331px", "22px");
 
@@ -93,6 +96,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldPassword, new AbsoluteData(7, 62));
         
         passwordTextBox = new TextField<String>();
+        passwordTextBox.setReadOnly(isPasswordReadOnly);
         add(passwordTextBox, new AbsoluteData(82, 62));
         passwordTextBox.setSize("331px", "22px");
 
@@ -102,6 +106,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 doGeneratePassword();
 			}
 		});
+        generateButton.setEnabled(!isPasswordReadOnly);
         add(generateButton, new AbsoluteData(82, 90));
         generateButton.setSize("127px", "22px");
         
@@ -133,6 +138,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldTags, new AbsoluteData(6, 118));
             
         tagsTextBox = new TextField<String>();
+        tagsTextBox.setReadOnly(isPasswordReadOnly);
         add(tagsTextBox, new AbsoluteData(82, 118));
         tagsTextBox.setSize("331px", "22px");
 
@@ -140,6 +146,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldNotes, new AbsoluteData(6, 146));
         
         notesTextArea = new TextArea();
+        notesTextArea.setReadOnly(isPasswordReadOnly);
         add(notesTextArea, new AbsoluteData(82, 146));
         notesTextArea.setSize("331px", "75px");
         
@@ -147,6 +154,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldMaxHistory, new AbsoluteData(6, 227));
         
         maxHistoryTextBox = new NumberField();
+        maxHistoryTextBox.setReadOnly(isPasswordReadOnly);
         maxHistoryTextBox.setPropertyEditorType(Integer.class);
         add(maxHistoryTextBox, new AbsoluteData(82, 227));
         maxHistoryTextBox.setSize("76px", "22px");
@@ -155,10 +163,11 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldInfinite, new AbsoluteData(164, 227));
         
         activeCheckBox = new CheckBox();
+        activeCheckBox.setReadOnly(isPasswordReadOnly);
         activeCheckBox.setBoxLabel("Active");
         add(activeCheckBox, new AbsoluteData(82, 255));
         
-        Button editPermissionsButton = new Button(password.getMaxEffectiveAccessLevel().equals(AccessLevel.GRANT) ? 
+        Button editPermissionsButton = new Button(isPasswordGrantable ? 
                 "Edit Permissions" : "View Permissions", new SelectionListener<ButtonEvent>() {
 			@Override
 			public void componentSelected(ButtonEvent ce) {
@@ -186,7 +195,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 doSave();
 			}
 		});
-        saveButton.setEnabled(!password.getMaxEffectiveAccessLevel().equals(AccessLevel.READ));
+        saveButton.setEnabled(!isPasswordReadOnly);
 
         Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
 			@Override
