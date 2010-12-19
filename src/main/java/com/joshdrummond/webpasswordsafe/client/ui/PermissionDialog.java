@@ -78,12 +78,15 @@ public class PermissionDialog extends Window
         this.setResizable(false);
         this.password = password;
         this.permissionListener = permissionListener;
+        boolean isPasswordGrantable = password.getMaxEffectiveAccessLevel().equals(AccessLevel.GRANT);
+        
         this.setHeading("Permissions");
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
         permissionStore = new ListStore<PermissionData>();
 
         final SimpleComboBox<AccessLevel> accessLevelCombo = new SimpleComboBox<AccessLevel>();
+        accessLevelCombo.setEnabled(isPasswordGrantable);
         accessLevelCombo.setForceSelection(true);
         accessLevelCombo.setEditable(false);
         accessLevelCombo.setTriggerAction(TriggerAction.ALL);
@@ -150,6 +153,7 @@ public class PermissionDialog extends Window
                         doRemove();
                     }
                 });
+        removeButton.setEnabled(isPasswordGrantable);
         add(removeButton, new AbsoluteData(258, 230));
         removeButton.setSize("105px", "22px");
 
@@ -162,6 +166,7 @@ public class PermissionDialog extends Window
                         doAdd();
                     }
                 });
+        addUserButton.setEnabled(isPasswordGrantable);
         add(addUserButton, new AbsoluteData(160, 230));
         addUserButton.setSize("51px", "22px");
 
@@ -172,6 +177,7 @@ public class PermissionDialog extends Window
         comboSubjects.setStore(subjectStore);
         comboSubjects.setTypeAhead(true);
         comboSubjects.setTriggerAction(TriggerAction.ALL);
+        comboSubjects.setEnabled(isPasswordGrantable);
 
         Button btnRemoveAll = new Button("Remove All");
         btnRemoveAll.addSelectionListener(new SelectionListener<ButtonEvent>()
@@ -182,6 +188,7 @@ public class PermissionDialog extends Window
                 doRemoveAll();
             }
         });
+        btnRemoveAll.setEnabled(isPasswordGrantable);
         add(btnRemoveAll, new AbsoluteData(258, 254));
         btnRemoveAll.setSize("105px", "22px");
         
@@ -194,6 +201,7 @@ public class PermissionDialog extends Window
                         doAddTemplate();
                     }
                 });
+        btnAddTemplate.setEnabled(isPasswordGrantable);
         add(btnAddTemplate, new AbsoluteData(126, 254));
         btnAddTemplate.setSize("85px", "22px");
 
@@ -206,7 +214,7 @@ public class PermissionDialog extends Window
                         doOkay();
                     }
                 });
-        okayButton.setEnabled(password.getMaxEffectiveAccessLevel().equals(AccessLevel.GRANT));
+        okayButton.setEnabled(isPasswordGrantable);
 
         Button cancelButton = new Button("Cancel",
                 new SelectionListener<ButtonEvent>()

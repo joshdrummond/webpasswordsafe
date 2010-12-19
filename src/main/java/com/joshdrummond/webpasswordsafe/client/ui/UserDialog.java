@@ -74,7 +74,7 @@ public class UserDialog extends Window
         LabelField lblfldUsername = new LabelField("Username:");
         add(lblfldUsername, new AbsoluteData(6, 6));
         usernameTextBox = new TextField<String>();
-        usernameTextBox.setEnabled(user.getId() < 1);
+        usernameTextBox.setReadOnly(user.getId() > 0);
         add(usernameTextBox, new AbsoluteData(144, 6));
         usernameTextBox.setSize("271px", "22px");
         LabelField lblfldFullName = new LabelField("Full Name:");
