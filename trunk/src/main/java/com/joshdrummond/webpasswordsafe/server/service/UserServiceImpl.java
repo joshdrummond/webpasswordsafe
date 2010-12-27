@@ -81,10 +81,10 @@ public class UserServiceImpl implements UserService
     public void changePassword(String password)
     {
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         if (null != loggedInUser)
         {
-            loggedInUser.setPassword(digester.digest(password));
+            loggedInUser.updateAuthnPasswordValue(digester.digest(password));
             userDAO.makePersistent(loggedInUser);
             auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "change password", "", true, "");
         }
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService
     public void addUser(User newUser)
     {
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.ADD_USER))
         {
             addUserInternal(newUser);
@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserService
         user.setFullname(newUser.getFullname());
         user.setEmail(newUser.getEmail());
         user.setActiveFlag(newUser.isActiveFlag());
-        user.setPassword(digester.digest(newUser.getPassword()));
+        user.updateAuthnPasswordValue(digester.digest(newUser.getAuthnPasswordValue()));
         user.setDateCreated(now);
         userDAO.makePersistent(user);
         
@@ -144,7 +144,7 @@ public class UserServiceImpl implements UserService
     public void updateUser(User updateUser)
     {
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_USER))
         {
             // update base user
@@ -152,9 +152,9 @@ public class UserServiceImpl implements UserService
             user.setFullname(updateUser.getFullname());
             user.setEmail(updateUser.getEmail());
             user.setActiveFlag(updateUser.isActiveFlag());
-            if (!updateUser.getPassword().equals(""))
+            if (!updateUser.getAuthnPasswordValue().equals(""))
             {
-                user.setPassword(digester.digest(updateUser.getPassword()));
+                user.updateAuthnPasswordValue(digester.digest(updateUser.getAuthnPasswordValue()));
             }
             
             // remove old groups
@@ -230,7 +230,7 @@ public class UserServiceImpl implements UserService
     public void addGroup(Group group)
     {
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.ADD_GROUP))
         {
             addGroupInternal(group);
@@ -264,7 +264,7 @@ public class UserServiceImpl implements UserService
     public void updateGroup(Group updateGroup)
     {
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_GROUP))
         {
             Group group = groupDAO.findById(updateGroup.getId(), false);
@@ -368,5 +368,15 @@ public class UserServiceImpl implements UserService
         }
         return isGroupTaken;
     }
-    
+
+    private User getLoggedInUser()
+    {
+        User loggedInUser = loginService.getLogin();
+        if (null == loggedInUser)
+        {
+            throw new RuntimeException("Not Logged In!");
+        }
+        return loggedInUser;
+    }
+
 }

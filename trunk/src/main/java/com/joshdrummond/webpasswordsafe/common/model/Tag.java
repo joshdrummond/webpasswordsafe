@@ -132,6 +132,7 @@ public class Tag extends LightEntity implements Serializable, Comparable<Tag>
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
+	@Override
     public int compareTo(Tag otherTag)
     {
         return getName().compareTo(otherTag.getName());

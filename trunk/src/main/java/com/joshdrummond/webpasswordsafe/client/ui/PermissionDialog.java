@@ -34,7 +34,6 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Format;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
@@ -46,6 +45,7 @@ import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
 import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
+import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
@@ -93,6 +93,7 @@ public class PermissionDialog extends Window
         accessLevelCombo.add(Arrays.asList(AccessLevel.values()));
         CellEditor accessLevelEditor = new CellEditor(accessLevelCombo)
         {
+            @Override
             public Object preProcessValue(Object v)
             {
                 if (v instanceof AccessLevel)
@@ -102,6 +103,7 @@ public class PermissionDialog extends Window
                 return null;
             }
 
+            @Override
             @SuppressWarnings("unchecked")
             public Object postProcessValue(Object v)
             {
@@ -135,6 +137,7 @@ public class PermissionDialog extends Window
         gsm.setSelectionMode(SelectionMode.SINGLE);
         permissionGrid.addListener(Events.CellClick, new Listener<GridEvent<PermissionData>>()
         {
+            @Override
             public void handleEvent(GridEvent<PermissionData> ge)
             {
                 selectedPermission = ge.getModel();
@@ -236,10 +239,12 @@ public class PermissionDialog extends Window
     {
         AsyncCallback<List<Template>> callback = new AsyncCallback<List<Template>>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
+            @Override
             public void onSuccess(List<Template> result)
             {
                 new TemplateSelectionDialog(new ApplyTemplateListener(), result, false).show();
@@ -318,16 +323,19 @@ public class PermissionDialog extends Window
     
     private class ApplyTemplateListener implements TemplateListener
     {
+        @Override
         public void doTemplatesChosen(List<Template> templates)
         {
             if (templates.size() > 0)
             {
                 AsyncCallback<Template> callback = new AsyncCallback<Template>()
                 {
+                    @Override
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                        WebPasswordSafe.handleServerFailure(caught);
                     }
+                    @Override
                     public void onSuccess(Template result)
                     {
                         applyTemplateDetails(result);

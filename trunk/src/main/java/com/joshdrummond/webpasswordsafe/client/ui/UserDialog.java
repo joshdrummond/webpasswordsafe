@@ -21,11 +21,11 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import java.util.List;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
-import com.extjs.gxt.ui.client.store.StoreSorter;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
@@ -36,6 +36,7 @@ import com.extjs.gxt.ui.client.widget.form.DualListField;
 import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.User;
@@ -117,12 +118,12 @@ public class UserDialog extends Window
         from.setSize(300, 100);
         from.setDisplayField("name");
         fromGroupStore = new ListStore<GroupData>();
-        fromGroupStore.setStoreSorter(new StoreSorter<GroupData>());
+        fromGroupStore.sort("name", SortDir.ASC);
         from.setStore(fromGroupStore);
         to.setDisplayField("name");
         to.setSize(300, 100);
         toGroupStore = new ListStore<GroupData>();
-        toGroupStore.setStoreSorter(new StoreSorter<GroupData>());
+        toGroupStore.sort("name", SortDir.ASC);
         to.setStore(toGroupStore);
 
         Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
@@ -152,14 +153,13 @@ public class UserDialog extends Window
         fullnameTextBox.setValue(user.getFullname());
         emailTextBox.setValue(user.getEmail());
         enabledCheckBox.setValue(user.isActiveFlag());
-        for (Group group: user.getGroups())
+        for (Group group : user.getGroups())
         {
             if (!group.getName().equals(Constants.EVERYONE_GROUP_NAME))
             {
                 toGroupStore.add(new GroupData(group));
             }
         }
-
         loadAvailableGroups();
     }
     
@@ -216,7 +216,7 @@ public class UserDialog extends Window
             user.setFullname(Utils.safeString(fullnameTextBox.getValue()));
             user.setEmail(Utils.safeString(emailTextBox.getValue()));
             user.setActiveFlag(enabledCheckBox.getValue());
-            user.setPassword(Utils.safeString(password1TextBox.getValue()));
+            user.updateAuthnPasswordValue(Utils.safeString(password1TextBox.getValue()));
             user.removeGroups();
             for (GroupData groupData : toGroupStore.getModels())
             {
@@ -226,11 +226,12 @@ public class UserDialog extends Window
             
             final AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
+                @Override
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                    WebPasswordSafe.handleServerFailure(caught);
                 }
-
+                @Override
                 public void onSuccess(Void result)
                 {
                     Info.display("Status", "User saved");
@@ -241,11 +242,12 @@ public class UserDialog extends Window
             {
                 final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
                 {
+                    @Override
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                        WebPasswordSafe.handleServerFailure(caught);
                     }
-
+                    @Override
                     public void onSuccess(Boolean result)
                     {
                         // true => username already taken, else go ahead and save
@@ -277,10 +279,12 @@ public class UserDialog extends Window
     {
         AsyncCallback<List<Group>> callback = new AsyncCallback<List<Group>>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
+            @Override
             public void onSuccess(List<Group> result)
             {
                 refreshAvailableGroups(result);
@@ -291,7 +295,7 @@ public class UserDialog extends Window
     
     private void refreshAvailableGroups(List<Group> groups)
     {
-        for (Group group: groups)
+        for (Group group : groups)
         {
             if (!user.getGroups().contains(group))
             {
@@ -311,6 +315,7 @@ public class UserDialog extends Window
             set("group", group);
         }
 
+        @Override
         public String toString()
         {
             return get("name");

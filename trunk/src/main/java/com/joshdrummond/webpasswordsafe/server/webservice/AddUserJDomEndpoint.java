@@ -116,7 +116,7 @@ public class AddUserJDomEndpoint extends BaseJDomEndpoint
     {
         User user = new User();
         user.setUsername(usernameXPath.valueOf(element));
-        user.setPassword(passwordXPath.valueOf(element));
+        user.updateAuthnPasswordValue(passwordXPath.valueOf(element));
         user.setFullname(fullnameXPath.valueOf(element));
         user.setEmail(emailXPath.valueOf(element));
         String activeFlag = activeXPath.valueOf(element).trim().toLowerCase();

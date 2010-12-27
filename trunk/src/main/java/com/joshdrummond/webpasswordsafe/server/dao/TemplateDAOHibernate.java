@@ -22,9 +22,12 @@ package com.joshdrummond.webpasswordsafe.server.dao;
 import java.util.List;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.joshdrummond.webpasswordsafe.common.model.Template;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
+import com.joshdrummond.webpasswordsafe.server.plugin.authorization.Authorizer;
 
 
 /**
@@ -36,25 +39,42 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
 @Repository("templateDAO")
 public class TemplateDAOHibernate extends GenericHibernateDAO<Template, Long> implements TemplateDAO
 {
+    @Autowired
+    private Authorizer authorizer;
 
     @Override
     public List<Template> findTemplatesByUser(User user, boolean includeShared)
     {
-        if (includeShared)
+        if (authorizer.isAuthorized(user, Function.BYPASS_TEMPLATE_SHARING))
         {
-            return findByCriteria(Order.asc("name"), Restrictions.or(Restrictions.eq("user", user), Restrictions.eq("share", true)));
+            return findByCriteria(Order.asc("name"));
         }
         else
         {
-            return findByCriteria(Order.asc("name"), Restrictions.eq("user", user));
+            if (includeShared)
+            {
+                return findByCriteria(Order.asc("name"), Restrictions.or(Restrictions.eq("user", user), Restrictions.eq("share", true)));
+            }
+            else
+            {
+                return findByCriteria(Order.asc("name"), Restrictions.eq("user", user));
+            }
         }
     }
 
     @Override
     public Template findUpdatableTemplateById(long templateId, User user)
     {
-        List<Template> templates = findByCriteria(Restrictions.eq("id", templateId), 
+        List<Template> templates = null;
+        if (authorizer.isAuthorized(user, Function.BYPASS_TEMPLATE_SHARING))
+        {
+            templates = findByCriteria(Restrictions.eq("id", templateId));
+        }
+        else
+        {
+            templates = findByCriteria(Restrictions.eq("id", templateId), 
                 Restrictions.or(Restrictions.eq("user", user), Restrictions.eq("share", true)));
+        }
         return (templates.size() > 0) ? templates.get(0) : null;
     }
 

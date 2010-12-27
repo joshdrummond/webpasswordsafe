@@ -21,6 +21,8 @@ package com.joshdrummond.webpasswordsafe.client.ui;
 
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
@@ -29,7 +31,9 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 
 
@@ -55,10 +59,32 @@ public class ChangePasswordDialog extends Window
         password1 = new TextField<String>();
         password1.setFieldLabel("New Password");
         password1.setPassword(true);
+        password1.addKeyListener(new KeyListener()
+        {
+            @Override
+            public void componentKeyPress(ComponentEvent event)
+            {
+                if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+                {
+                    password2.focus();
+                }
+            }
+        });
         form.add(password1, formData);
         password2 = new TextField<String>();
         password2.setFieldLabel("Re-enter Password");
         password2.setPassword(true);
+        password2.addKeyListener(new KeyListener()
+        {
+            @Override
+            public void componentKeyPress(ComponentEvent event)
+            {
+                if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+                {
+                    doOkay();
+                }
+            }
+        });
         form.add(password2, formData);
         
         Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
@@ -79,18 +105,19 @@ public class ChangePasswordDialog extends Window
         this.add(form);
     }
 
-    /**
-     * 
-     */
-    protected void doCancel()
+    @Override
+    public void show()
+    {
+        super.show();
+        password1.focus();
+    }
+
+    private void doCancel()
     {
         hide();
     }
 
-    /**
-     * 
-     */
-    protected void doOkay()
+    private void doOkay()
     {
         String pw1 = password1.getValue().trim();
         String pw2 = password2.getValue().trim();
@@ -118,11 +145,12 @@ public class ChangePasswordDialog extends Window
     {
         AsyncCallback<Void> callback = new AsyncCallback<Void>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-            	MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
-
+            @Override
             public void onSuccess(Void result)
             {
                 hide();

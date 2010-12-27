@@ -22,12 +22,15 @@ package com.joshdrummond.webpasswordsafe.common.model;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
@@ -54,9 +57,10 @@ public class User extends Subject
     @Index(name="idx_user_username")
     private String username;
 
-    @Column(name="password", length=88, nullable=false)
-    private String password;
-
+	@OneToMany(cascade={CascadeType.ALL}, mappedBy="user")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
+	private Set<UserAuthnPassword> authnPassword;
+	
     @Column(name="fullname", length=LENGTH_FULLNAME, nullable=false)
     private String fullname;
 
@@ -84,31 +88,21 @@ public class User extends Subject
         groups = new HashSet<Group>();
         roles = new HashSet<Constants.Role>();
         activeFlag = true;
+        authnPassword = new HashSet<UserAuthnPassword>(1);
     }
 
     public static User newActiveUser(String username, String password, String fullname, String email)
     {
         User user = new User();
         user.setUsername(username);
-        user.setPassword(password);
         user.setFullname(fullname);
         user.setEmail(email);
         user.setActiveFlag(true);
         user.setDateCreated(new Date());
+        user.updateAuthnPasswordValue(password);
         return user;
     }
     
-    public User(long id, String username, String fullname, String email, boolean isActive)
-    {
-        this();
-        setId(id);
-        setEmail(email);
-        setFullname(fullname);
-        setActiveFlag(isActive);
-        setUsername(username);
-        setPassword("");
-    }
-
     public Set<Constants.Role> getRoles()
     {
         return this.roles;
@@ -157,12 +151,39 @@ public class User extends Subject
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public void setAuthnPassword(Set<UserAuthnPassword> authnPassword)
+    {
+        this.authnPassword = authnPassword;
     }
 
-    public void setPassword( String password ) {
-        this.password = password;
+    public Set<UserAuthnPassword> getAuthnPassword() {
+        return authnPassword;
+    }
+    
+    public String getAuthnPasswordValue() {
+        Set<UserAuthnPassword> uap = getAuthnPassword();
+        return ((uap == null) || (uap.size() == 0)) ? "" : uap.iterator().next().getPassword();
+    }
+    
+    // can't be the same as the get() name or else it will treat as bean field and load at inappropriate times
+    public void updateAuthnPasswordValue(String password) {
+        Set<UserAuthnPassword> uap = getAuthnPassword();
+        if ((uap == null) || (uap.size() == 0))
+        {
+            setAuthnPassword((uap == null) ? new HashSet<UserAuthnPassword>(1) : uap);
+            addAuthnPassword(new UserAuthnPassword(password));
+        }
+        else
+        {
+            UserAuthnPassword p = uap.iterator().next();
+            p.setPassword(password);
+        }
+    }
+
+    public void addAuthnPassword(UserAuthnPassword p)
+    {
+        p.setUser(this);
+        authnPassword.add(p);
     }
 
     public String getFullname() {
@@ -218,7 +239,6 @@ public class User extends Subject
         return "User{" +
                 "id='" + getId() + '\'' +
                 "username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", fullName='" + fullname + '\'' +
                 ", email='" + email + '\'' +
                 ", activeFlag=" + activeFlag +
@@ -248,9 +268,6 @@ public class User extends Subject
         if ( fullname != null ? !fullname.equals( user.fullname ) : user.fullname != null ) {
             return false;
         }
-        if ( !password.equals( user.password ) ) {
-            return false;
-        }
         if ( !username.equals( user.username ) ) {
             return false;
         }
@@ -262,7 +279,6 @@ public class User extends Subject
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + username.hashCode();
-        result = 31 * result + password.hashCode();
         result = 31 * result + ( fullname != null ? fullname.hashCode() : 0 );
         result = 31 * result + ( email != null ? email.hashCode() : 0 );
         result = 31 * result + ( activeFlag ? 1 : 0 );
