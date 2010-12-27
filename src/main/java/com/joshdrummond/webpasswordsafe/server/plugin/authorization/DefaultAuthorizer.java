@@ -33,6 +33,7 @@ public class DefaultAuthorizer implements Authorizer
 {
     private static Logger LOG = Logger.getLogger(DefaultAuthorizer.class);
 
+    @Override
     public boolean isAuthorized(User user, Function function)
     {
         boolean isAuthorized = false;
@@ -46,6 +47,7 @@ public class DefaultAuthorizer implements Authorizer
                 case ADD_USER:
                 case UPDATE_USER:
                 case BYPASS_PASSWORD_PERMISSIONS:
+                case BYPASS_TEMPLATE_SHARING:
                 case VIEW_REPORT_CurrentPasswordExport:
                 case VIEW_REPORT_PasswordAccessAudit:
                     isAuthorized = user.getRoles().contains(Role.ROLE_ADMIN);

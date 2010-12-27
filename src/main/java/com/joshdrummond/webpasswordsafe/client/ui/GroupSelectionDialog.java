@@ -73,6 +73,7 @@ public class GroupSelectionDialog extends Window
         groupListBox.getListView().getSelectionModel().setSelectionMode(allowMultiple ? SelectionMode.MULTI : SelectionMode.SINGLE);
         groupListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
         {
+            @Override
             public void handleEvent(BaseEvent be)
             {
                 doOkay();

@@ -33,6 +33,7 @@ import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
@@ -227,11 +228,12 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         AsyncCallback<String> callback = new AsyncCallback<String>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
-
+            @Override
             public void onSuccess(String result)
             {
                 passwordTextBox.setValue(result);
@@ -244,17 +246,16 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         AsyncCallback<String> callback = new AsyncCallback<String>()
         {
-
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
-
+            @Override
             public void onSuccess(String result)
             {
                 passwordTextBox.setValue(result);
             }
-            
         };
         PasswordService.Util.getInstance().generatePassword(callback);
     }
@@ -287,11 +288,12 @@ public class PasswordDialog extends Window implements PermissionListener
 
             final AsyncCallback<Void> callback = new AsyncCallback<Void>()
             {
+                @Override
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                    WebPasswordSafe.handleServerFailure(caught);
                 }
-
+                @Override
                 public void onSuccess(Void result)
                 {
                     Info.display("Status", "Password saved");
@@ -303,11 +305,12 @@ public class PasswordDialog extends Window implements PermissionListener
             {
                 final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
                 {
+                    @Override
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                        WebPasswordSafe.handleServerFailure(caught);
                     }
-
+                    @Override
                     public void onSuccess(Boolean result)
                     {
                         // true => password title already taken, else go ahead and save
@@ -383,11 +386,12 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         AsyncCallback<List<Subject>> callback = new AsyncCallback<List<Subject>>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
-
+            @Override
             public void onSuccess(List<Subject> result)
             {
                 doShowPermissionDialog(result);
@@ -419,6 +423,7 @@ public class PasswordDialog extends Window implements PermissionListener
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.client.ui.PermissionListener#doPermissionsChanged(java.util.List)
      */
+    @Override
     public void doPermissionsChanged(Set<Permission> permissions)
     {
         password.clearPermissions();

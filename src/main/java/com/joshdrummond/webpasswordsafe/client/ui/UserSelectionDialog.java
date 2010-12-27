@@ -73,6 +73,7 @@ public class UserSelectionDialog extends Window
         userListBox.getListView().getSelectionModel().setSelectionMode(allowMultiple ? SelectionMode.MULTI : SelectionMode.SINGLE);
         userListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
         {
+            @Override
             public void handleEvent(BaseEvent be)
             {
                 doOkay();

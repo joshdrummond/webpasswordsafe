@@ -36,6 +36,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.ClientSessionUtil;
 import com.joshdrummond.webpasswordsafe.client.MainWindow;
+import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
 
@@ -106,7 +107,6 @@ public class LoginDialog extends Window
         form.setButtonAlign(HorizontalAlignment.CENTER);
         form.addButton(enterButton);
         this.add(form);
-
     }
 
     @Override
@@ -131,12 +131,12 @@ public class LoginDialog extends Window
             setSubmitting(true);
             AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>()
             {
-    
+                @Override
                 public void onFailure(Throwable caught) {
-                	MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                    WebPasswordSafe.handleServerFailure(caught);
                     setSubmitting(false);
                 }
-    
+                @Override
                 public void onSuccess(Boolean result) {
                     if (result.booleanValue())
                     {

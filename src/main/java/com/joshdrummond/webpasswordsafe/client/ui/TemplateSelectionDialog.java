@@ -73,6 +73,7 @@ public class TemplateSelectionDialog extends Window
         templateListBox.getListView().getSelectionModel().setSelectionMode(allowMultiple ? SelectionMode.MULTI : SelectionMode.SINGLE);
         templateListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
         {
+            @Override
             public void handleEvent(BaseEvent be)
             {
                 doOkay();

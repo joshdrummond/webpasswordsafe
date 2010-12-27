@@ -67,21 +67,21 @@ public class JasperReportServlet extends HttpServlet
     private static final long serialVersionUID = 2493946517487023931L;
     public static ThreadLocal<Encryptor> encryptorRef = new ThreadLocal<Encryptor>();
 
-
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
         processRequest(request, response);
     }
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
         processRequest(request, response);
     }
 
-
-    public void processRequest(HttpServletRequest req, HttpServletResponse res)
+    private void processRequest(HttpServletRequest req, HttpServletResponse res)
     {
         OutputStream outputStream = null;
         Connection jdbcConnection = null;

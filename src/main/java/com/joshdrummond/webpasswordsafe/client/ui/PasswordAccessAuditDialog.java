@@ -20,7 +20,6 @@
 package com.joshdrummond.webpasswordsafe.client.ui;
 
 import com.extjs.gxt.ui.client.util.Format;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.grid.Grid;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -37,6 +36,7 @@ import java.util.ArrayList;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.PasswordAccessAudit;
@@ -91,10 +91,12 @@ public class PasswordAccessAuditDialog extends Window
     {
         AsyncCallback<List<PasswordAccessAudit>> callback = new AsyncCallback<List<PasswordAccessAudit>>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
+            @Override
             public void onSuccess(List<PasswordAccessAudit> result)
             {
                 refreshData(result);

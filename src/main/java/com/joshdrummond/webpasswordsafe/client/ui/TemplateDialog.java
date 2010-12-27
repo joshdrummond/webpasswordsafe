@@ -50,12 +50,14 @@ import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
 import com.joshdrummond.webpasswordsafe.client.ClientSessionUtil;
+import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
 import com.joshdrummond.webpasswordsafe.common.model.Subject;
 import com.joshdrummond.webpasswordsafe.common.model.Template;
 import com.joshdrummond.webpasswordsafe.common.model.TemplateDetail;
+import com.joshdrummond.webpasswordsafe.common.util.Constants.Function;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -75,6 +77,7 @@ public class TemplateDialog extends Window
     private TemplateData selectedPermission;
     private CheckBox chkbxShared;
     private ListStore<SubjectData> subjectStore;
+    private ClientSessionUtil clientSessionUtil = ClientSessionUtil.getInstance();
     
     public TemplateDialog(Template template)
     {
@@ -93,6 +96,7 @@ public class TemplateDialog extends Window
         accessLevelCombo.add(Arrays.asList(AccessLevel.values()));
         CellEditor accessLevelEditor = new CellEditor(accessLevelCombo)
         {
+            @Override
             public Object preProcessValue(Object v)
             {
                 if (v instanceof AccessLevel)
@@ -102,6 +106,7 @@ public class TemplateDialog extends Window
                 return null;
             }
 
+            @Override
             @SuppressWarnings("unchecked")
             public Object postProcessValue(Object v)
             {
@@ -137,6 +142,7 @@ public class TemplateDialog extends Window
         gsm.setSelectionMode(SelectionMode.SINGLE);
         permissionGrid.addListener(Events.CellClick, new Listener<GridEvent<TemplateData>>()
         {
+            @Override
             public void handleEvent(GridEvent<TemplateData> ge)
             {
                 selectedPermission = ge.getModel();
@@ -196,9 +202,10 @@ public class TemplateDialog extends Window
         chkbxShared.setHideLabel(true);
         if (template.getId() != 0)
         {
-            if (ClientSessionUtil.getInstance().getLoggedInUser().getId() != template.getUser().getId())
+            if (!clientSessionUtil.isAuthorized(Function.BYPASS_TEMPLATE_SHARING) &&
+               (ClientSessionUtil.getInstance().getLoggedInUser().getId() != template.getUser().getId()))
             {
-                chkbxShared.setEnabled(false);
+                chkbxShared.setReadOnly(true);
             }
         }
         
@@ -273,11 +280,12 @@ public class TemplateDialog extends Window
     {
         AsyncCallback<List<Subject>> callback = new AsyncCallback<List<Subject>>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
-
+            @Override
             public void onSuccess(List<Subject> result)
             {
                 for (Subject subject : result)
@@ -332,11 +340,12 @@ public class TemplateDialog extends Window
 
             final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
             {
+                @Override
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                    WebPasswordSafe.handleServerFailure(caught);
                 }
-
+                @Override
                 public void onSuccess(Boolean result)
                 {
                     // true => template name already taken, else go ahead and save
@@ -348,11 +357,12 @@ public class TemplateDialog extends Window
                     {
                         AsyncCallback<Void> callback = new AsyncCallback<Void>()
                         {
+                            @Override
                             public void onFailure(Throwable caught)
                             {
-                                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                                WebPasswordSafe.handleServerFailure(caught);
                             }
-
+                            @Override
                             public void onSuccess(Void result)
                             {
                                 Info.display("Status", "Template saved");

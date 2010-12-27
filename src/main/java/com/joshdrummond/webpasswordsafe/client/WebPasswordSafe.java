@@ -404,10 +404,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         {
             AsyncCallback<List<Group>> callback = new AsyncCallback<List<Group>>()
             {
+                @Override
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                    WebPasswordSafe.handleServerFailure(caught);
                 }
+                @Override
                 public void onSuccess(List<Group> result)
                 {
                     new GroupSelectionDialog(new EditGroupListener(), result, false).show();
@@ -464,10 +466,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         {
             AsyncCallback<List<User>> callback = new AsyncCallback<List<User>>()
             {
+                @Override
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                    WebPasswordSafe.handleServerFailure(caught);
                 }
+                @Override
                 public void onSuccess(List<User> result)
                 {
                     new UserSelectionDialog(new EditUserListener(), result, false).show();
@@ -499,10 +503,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         {
             AsyncCallback<List<Template>> callback = new AsyncCallback<List<Template>>()
             {
+                @Override
                 public void onFailure(Throwable caught)
                 {
-                    MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                    WebPasswordSafe.handleServerFailure(caught);
                 }
+                @Override
                 public void onSuccess(List<Template> result)
                 {
                     new TemplateSelectionDialog(new EditTemplateListener(), result, false).show();
@@ -526,11 +532,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     {
         AsyncCallback<User> callback = new AsyncCallback<User>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
-
+            @Override
             public void onSuccess(User result)
             {
                 if (null != result)
@@ -552,11 +559,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     {
         AsyncCallback<Map<Function, Boolean>> callback = new AsyncCallback<Map<Function, Boolean>>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
-
+            @Override
             public void onSuccess(Map<Function, Boolean> result)
             {
                 getClientModel().setAuthorizations(result);
@@ -571,10 +579,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     {
         AsyncCallback<Void> callback = new AsyncCallback<Void>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
+            @Override
             public void onSuccess(Void result)
             {
                 getEveryoneGroup();
@@ -587,10 +597,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     {
         AsyncCallback<Group> callback = new AsyncCallback<Group>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
+            @Override
             public void onSuccess(Group result)
             {
                 ClientSessionUtil.getInstance().setEveryoneGroup(result);
@@ -604,12 +616,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     {
         AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>()
         {
-
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
-
+            @Override
             public void onSuccess(Boolean result)
             {
                 if (result)
@@ -678,16 +690,19 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     
     private class EditUserListener implements UserListener
     {
+        @Override
         public void doUsersChosen(List<User> users)
         {
             if (users.size() > 0)
             {
                 AsyncCallback<User> callback = new AsyncCallback<User>()
                 {
+                    @Override
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                        WebPasswordSafe.handleServerFailure(caught);
                     }
+                    @Override
                     public void onSuccess(User result)
                     {
                         displayUserDialog(result);
@@ -700,16 +715,19 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 
     private class EditGroupListener implements GroupListener
     {
+        @Override
         public void doGroupsChosen(List<Group> groups)
         {
             if (groups.size() > 0)
             {
                 AsyncCallback<Group> callback = new AsyncCallback<Group>()
                 {
+                    @Override
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                        WebPasswordSafe.handleServerFailure(caught);
                     }
+                    @Override
                     public void onSuccess(Group result)
                     {
                         displayGroupDialog(result);
@@ -722,16 +740,19 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     
     private class EditTemplateListener implements TemplateListener
     {
+        @Override
         public void doTemplatesChosen(List<Template> templates)
         {
             if (templates.size() > 0)
             {
                 AsyncCallback<Template> callback = new AsyncCallback<Template>()
                 {
+                    @Override
                     public void onFailure(Throwable caught)
                     {
-                        MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                        WebPasswordSafe.handleServerFailure(caught);
                     }
+                    @Override
                     public void onSuccess(Template result)
                     {
                         displayTemplateDialog(result);
@@ -742,4 +763,18 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
     }
 
+    //// public static methods...
+    
+    public static void handleServerFailure(Throwable caught)
+    {
+        handleServerFailure(caught, false);
+    }
+    
+    public static void handleServerFailure(Throwable caught, boolean showDetails)
+    {
+        String message = "Session Timeout. Please login again." + 
+            (showDetails ? "<br>"+caught.getMessage() : "");
+        MessageBox.alert("Error", message, new ServerErrorListener());
+    }
+    
 }

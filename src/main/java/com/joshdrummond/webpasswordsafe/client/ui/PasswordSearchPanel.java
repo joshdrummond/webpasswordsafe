@@ -59,6 +59,7 @@ import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
@@ -79,8 +80,8 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
     private TreePanel<TagData> tagTree;
     private TextField<String> searchTextBox;
     private CheckBox activeOnlyCheckBox;
-//    private static final String TOOLTIP_VIEW_PASSWORD_VALUE = "Click to view current password value.";
-//    private static final String TOOLTIP_EDIT_PASSWORD = "Click to edit password and/or permissions.";
+    //private static final String TOOLTIP_VIEW_PASSWORD_VALUE = "Click to view current password value.";
+    //private static final String TOOLTIP_EDIT_PASSWORD = "Click to edit password and/or permissions.";
 
     public PasswordSearchPanel()
     {
@@ -139,7 +140,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         centerPanel.setScrollMode(Scroll.AUTOX);
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>(4);
         ColumnConfig column = new ColumnConfig();
-//        column.setToolTip(TOOLTIP_EDIT_PASSWORD);
+        //column.setToolTip(TOOLTIP_EDIT_PASSWORD);
         column.setId("title");
         column.setHeader("Title");
         column.setWidth(200);
@@ -150,7 +151,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         column.setWidth(100);
         configs.add(column);
         column = new ColumnConfig();
-//        column.setToolTip(TOOLTIP_VIEW_PASSWORD_VALUE);
+        //column.setToolTip(TOOLTIP_VIEW_PASSWORD_VALUE);
         column.setId("password");
         column.setHeader("Password");
         column.setWidth(100);
@@ -174,6 +175,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         passwordGrid.setStripeRows(true);
         passwordGrid.addListener(Events.CellDoubleClick, new Listener<GridEvent<PasswordSearchData>>()
         {
+            @Override
             public void handleEvent(GridEvent<PasswordSearchData> ge)
             {
                 if (2 == ge.getColIndex())
@@ -214,10 +216,12 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
     {
         AsyncCallback<List<Tag>> callback = new AsyncCallback<List<Tag>>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
+            @Override
             public void onSuccess(List<Tag> result)
             {
                 refreshTags(result);
@@ -230,10 +234,12 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
     {
         AsyncCallback<Password> callback = new AsyncCallback<Password>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
+            @Override
             public void onSuccess(Password result)
             {
                 if (null != result)
@@ -273,10 +279,12 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         }
         AsyncCallback<List<Password>> callback = new AsyncCallback<List<Password>>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
+            @Override
             public void onSuccess(List<Password> result)
             {
                 Info.display("Status", "Found "+result.size()+" Password(s)");
@@ -320,10 +328,12 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
     {
         AsyncCallback<String> callback = new AsyncCallback<String>()
         {
+            @Override
             public void onFailure(Throwable caught)
             {
-                MessageBox.alert("Error", caught.getMessage(), new ServerErrorListener());
+                WebPasswordSafe.handleServerFailure(caught);
             }
+            @Override
             public void onSuccess(String result)
             {
                 Dialog popup = new Dialog();

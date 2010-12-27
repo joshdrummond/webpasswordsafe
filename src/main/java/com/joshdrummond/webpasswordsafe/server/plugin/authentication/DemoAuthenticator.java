@@ -17,9 +17,13 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.server.plugin.authentication;
 
+
+/**
+ * @author Josh Drummond
+ *
+ */
 public class DemoAuthenticator implements Authenticator {
 
 	private String demoPassword = "";

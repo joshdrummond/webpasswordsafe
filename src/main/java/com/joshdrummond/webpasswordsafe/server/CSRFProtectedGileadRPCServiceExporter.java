@@ -24,7 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.gwtwidgets.server.spring.gilead.GileadRPCServiceExporter;
+import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.SerializationException;
+import com.google.gwt.user.server.rpc.RPC;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
 
 
@@ -81,8 +83,18 @@ public class CSRFProtectedGileadRPCServiceExporter extends GileadRPCServiceExpor
     @Override
     public String processCall(String payload) throws SerializationException
     {
+        //LOG.debug("payload="+payload);
         checkPermutationStrongName();
-        return super.processCall(payload);
+        String response = super.processCall(payload);
+        //LOG.debug("response="+response);
+        return response;
+    }
+
+    @Override
+    protected String handleIncompatibleRemoteServiceException(IncompatibleRemoteServiceException e)
+        throws SerializationException {
+        logger.error(e.getMessage(), e);
+        return RPC.encodeResponseForFailure(null, e);
     }
 
     public void setStrongCsrfProtection(boolean isStrongCsrfProtection)

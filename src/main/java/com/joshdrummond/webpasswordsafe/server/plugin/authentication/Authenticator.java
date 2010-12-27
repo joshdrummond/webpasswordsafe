@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -17,11 +17,11 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 package com.joshdrummond.webpasswordsafe.server.plugin.authentication;
 
+
 /**
- * @author josh
+ * @author Josh Drummond
  *
  */
 public interface Authenticator

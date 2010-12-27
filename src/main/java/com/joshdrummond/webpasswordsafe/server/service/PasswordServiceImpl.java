@@ -100,7 +100,7 @@ public class PasswordServiceImpl implements PasswordService
     public void addPassword(Password password)
     {
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.ADD_PASSWORD))
         {
             password.setUserCreated(loggedInUser);
@@ -143,13 +143,11 @@ public class PasswordServiceImpl implements PasswordService
     {
         LOG.debug("updating password");
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(updatePassword.getId(), loggedInUser, AccessLevel.WRITE);
         if (password != null)
         {
             // update simple fields
-            password.setName(updatePassword.getName());
-            password.setUsername(updatePassword.getUsername());
             password.setNotes(updatePassword.getNotes());
             password.setDateLastUpdate(now);
             password.setUserLastUpdate(loggedInUser);
@@ -221,7 +219,7 @@ public class PasswordServiceImpl implements PasswordService
     {
     	query = Utils.safeString(query);
     	Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly, tags);
         auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "search password", "query=["+query+"] activeOnly=["+activeOnly+"] tags=["+tags+"]", true, "found "+passwords.size());
         return passwords;
@@ -241,7 +239,7 @@ public class PasswordServiceImpl implements PasswordService
     {
         String currentPasswordValue = "";
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
@@ -272,7 +270,7 @@ public class PasswordServiceImpl implements PasswordService
     public Password getPassword(long passwordId)
     {
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
@@ -291,7 +289,7 @@ public class PasswordServiceImpl implements PasswordService
     public Password getPassword(String passwordName)
     {
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordByName(passwordName, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
@@ -310,7 +308,7 @@ public class PasswordServiceImpl implements PasswordService
     {
         Date now = new Date();
         List<PasswordAccessAudit> accessAuditList = new ArrayList<PasswordAccessAudit>(0);
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (null != password)
         {
@@ -331,7 +329,7 @@ public class PasswordServiceImpl implements PasswordService
     {
         Date now = new Date();
         List<PasswordData> decryptedPasswordDataList = new ArrayList<PasswordData>(0);
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (null != password)
         {
@@ -366,7 +364,7 @@ public class PasswordServiceImpl implements PasswordService
     public void addTemplate(Template template)
     {
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         template.setUser(loggedInUser);
         templateDAO.makePersistent(template);
         auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "add template", template.getName(), true, "");
@@ -378,14 +376,15 @@ public class PasswordServiceImpl implements PasswordService
     {
         LOG.debug("updating template");
         Date now = new Date();
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         Template template = templateDAO.findUpdatableTemplateById(updateTemplate.getId(), loggedInUser);
         if (template != null)
         {
             // update simple fields
             template.setName(updateTemplate.getName());
-            // only change sharing status if original owner is updating
-            if (template.getUser().getId() == loggedInUser.getId())
+            // only change sharing status if original owner is updating or special bypass authz
+            if ((template.getUser().getId() == loggedInUser.getId()) || 
+                authorizer.isAuthorized(loggedInUser, Function.BYPASS_TEMPLATE_SHARING))
             {
                 template.setShare(updateTemplate.isShare());
             }
@@ -413,7 +412,7 @@ public class PasswordServiceImpl implements PasswordService
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Template> getTemplates(boolean includeShared)
     {
-        User loggedInUser = loginService.getLogin();
+        User loggedInUser = getLoggedInUser();
         return templateDAO.findTemplatesByUser(loggedInUser, includeShared);
     }
 
@@ -451,6 +450,16 @@ public class PasswordServiceImpl implements PasswordService
             }
         }
         return isTemplateTaken;
+    }
+    
+    private User getLoggedInUser()
+    {
+        User loggedInUser = loginService.getLogin();
+        if (null == loggedInUser)
+        {
+            throw new RuntimeException("Not Logged In!");
+        }
+        return loggedInUser;
     }
 
 }
