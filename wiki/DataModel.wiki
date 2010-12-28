@@ -71,7 +71,7 @@
 ||share||char(1)||Y/N||
 
 || *user_authn_password* ||||||
-||id||long||pk, fk users||
+||id||long||pk||
 ||user_id||long||fk users, unique||
 ||password||varchar(88)||hash encrypted of 64||
 
