@@ -35,6 +35,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+import com.joshdrummond.webpasswordsafe.common.util.Utils;
 
 
 /**
@@ -119,8 +120,8 @@ public class ChangePasswordDialog extends Window
 
     private void doOkay()
     {
-        String pw1 = password1.getValue().trim();
-        String pw2 = password2.getValue().trim();
+        String pw1 = Utils.safeString(password1.getValue());
+        String pw2 = Utils.safeString(password2.getValue());
         if (pw1.equals(pw2))
         {
             if (pw1.equals("") || pw2.equals(""))
