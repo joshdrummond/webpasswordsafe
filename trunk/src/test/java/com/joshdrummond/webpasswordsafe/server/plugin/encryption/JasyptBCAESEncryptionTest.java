@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2010 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -36,8 +36,8 @@ public class JasyptBCAESEncryptionTest
     {
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setProvider(new BouncyCastleProvider());
-        encryptor.setAlgorithm("PBEWITHSHA256AND128BITAES-CBC-BC");
-        encryptor.setPassword("blah");
+        encryptor.setAlgorithm("PBEWITHSHA256AND256BITAES-CBC-BC");
+        encryptor.setPassword("test");
         encryptor.setKeyObtentionIterations(1000);
 
         String clearText = "1234567890123456789012345678901234567890123456789012345678901234";
