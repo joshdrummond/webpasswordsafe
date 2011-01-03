@@ -23,11 +23,20 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
+import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 import com.joshdrummond.webpasswordsafe.common.model.Tag;
 import com.joshdrummond.webpasswordsafe.common.model.User;
@@ -51,43 +60,32 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     @SuppressWarnings("unchecked")
 	public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags)
     {
-        StringBuilder hqlString = new StringBuilder();
-        hqlString.append("select distinct pw from Password pw join pw.permissions pm left join fetch pw.tags ");
-        hqlString.append("where (pw.name like :query or pw.username like :query or pw.notes like :query) ");
-        hqlString.append(activeOnly ? "and pw.active = :active " : "");
-        for (int tagCounter = 0; tagCounter < tags.size(); tagCounter++)
+        Criteria crit = getSession().createCriteria(getPersistentClass());
+        crit.setFetchMode("tags", FetchMode.JOIN);
+        crit.add(Restrictions.or(Restrictions.or(Restrictions.like("name", query, MatchMode.ANYWHERE), 
+                Restrictions.like("username", query, MatchMode.ANYWHERE)),
+                Restrictions.like("notes", query, MatchMode.ANYWHERE)));
+        if (activeOnly)
         {
-            hqlString.append("and :tag");
-            hqlString.append(tagCounter);
-            hqlString.append(" in elements(pw.tags) ");
+            crit.add(Restrictions.eq("active", true));
         }
-        hqlString.append("and pm.accessLevel in (:aclread, :aclwrite, :aclgrant)");
-        if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS))
-        {
-        	hqlString.append(" and ((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user)))");
-        }
-        hqlString.append(" order by pw.name asc");
-        
-    	Query hqlQuery = getSession().createQuery(hqlString.toString());
-    	hqlQuery.setString("query", "%"+query+"%");
-        if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS))
-        {
-        	hqlQuery.setEntity("user", user);
-        }
-    	if (activeOnly)
-    	{
-    	    hqlQuery.setString("active", "Y");
-    	}
-        hqlQuery.setString("aclread", AccessLevel.READ.name());
-        hqlQuery.setString("aclwrite", AccessLevel.WRITE.name());
-        hqlQuery.setString("aclgrant", AccessLevel.GRANT.name());
-        int tagCounter = 0;
         for (Tag tag : tags)
         {
-            hqlQuery.setEntity("tag"+tagCounter, tag);
-            tagCounter++;
+            crit.add(Restrictions.sqlRestriction("? in (select tag_id from password_tags where password_id = {alias}.id)", tag.getId(), Hibernate.LONG));
         }
-        return hqlQuery.list();
+        crit.createAlias("permissions", "pm");
+        crit.add(Restrictions.in("pm.accessLevel", 
+                new String[] {AccessLevel.READ.name(), AccessLevel.WRITE.name(), AccessLevel.GRANT.name()}));
+        if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS))
+        {
+            DetachedCriteria groupQuery = DetachedCriteria.forClass(Group.class);
+            groupQuery.setProjection(Projections.id());
+            groupQuery.createCriteria("users", "u").add(Restrictions.eq("u.id", user.getId()));
+            crit.add(Restrictions.or(Restrictions.eq("pm.subject", user), Subqueries.propertyIn("pm.subject", groupQuery)));
+        }
+        crit.addOrder(Order.asc("name"));
+        crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return crit.list();
     }
 
     @Override
@@ -102,8 +100,10 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         return findAllowedPassword(false, passwordName, user, accessLevel);
     }
 
+    @SuppressWarnings("unchecked")
     private Password findAllowedPassword(boolean isPasswordId, String password, User user, AccessLevel accessLevel)
     {
+        Password foundPassword = null;
         String sqlAccessLevelIn = null;
         switch (accessLevel) {
             case GRANT : sqlAccessLevelIn = "(:aclgrant) "; break;
@@ -111,7 +111,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
             case READ : sqlAccessLevelIn = "(:aclread, :aclwrite, :aclgrant) "; break;
         }
         StringBuilder hqlString = new StringBuilder();
-        hqlString.append("select distinct pw from Password pw join pw.permissions pm left join fetch pw.permissions left join fetch pw.tags where ");
+        hqlString.append("select distinct pw.id from Password pw join pw.permissions pm where ");
         hqlString.append(isPasswordId ? "pw.id = :passwordId " : "pw.name = :passwordName ");
         if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS))
         {
@@ -144,7 +144,14 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
                 hqlQuery.setString("aclread", AccessLevel.READ.name());
             }
         }
-        return (Password)hqlQuery.uniqueResult();
+        List<Long> passwordIds = hqlQuery.list();
+        if (passwordIds.size() > 0)
+        {
+            foundPassword = findById(passwordIds.get(0), false);
+            foundPassword.getPermissions().size();
+            foundPassword.getTags().size();
+        }
+        return foundPassword;
     }
 
     @Override

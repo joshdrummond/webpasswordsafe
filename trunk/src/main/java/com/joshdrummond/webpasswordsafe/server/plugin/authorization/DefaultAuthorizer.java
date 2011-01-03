@@ -48,6 +48,7 @@ public class DefaultAuthorizer implements Authorizer
                 case UPDATE_USER:
                 case BYPASS_PASSWORD_PERMISSIONS:
                 case BYPASS_TEMPLATE_SHARING:
+                case VIEW_REPORT_PasswordPermissions:
                 case VIEW_REPORT_CurrentPasswordExport:
                 case VIEW_REPORT_PasswordAccessAudit:
                     isAuthorized = user.getRoles().contains(Role.ROLE_ADMIN);
@@ -56,7 +57,6 @@ public class DefaultAuthorizer implements Authorizer
                 case ADD_TEMPLATE:
                 case UPDATE_TEMPLATE:
                 case VIEW_REPORT_Groups:
-                case VIEW_REPORT_PasswordPermissions:
                 case VIEW_REPORT_Users:
                     isAuthorized = user.getRoles().contains(Role.ROLE_USER);
                     break;
