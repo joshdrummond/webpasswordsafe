@@ -53,7 +53,7 @@ public class AuditLog extends LightEntity implements Serializable
     @Column(name="username", length=64, nullable=false, updatable=false)
     private String username;
 
-    @Column(name="ipaddress", length=17, nullable=false, updatable=false)
+    @Column(name="ipaddress", length=50, nullable=false, updatable=false)
     private String ipaddress;
 
     @Column(name="action", length=50, nullable=false, updatable=false)

@@ -268,6 +268,7 @@ public class UserServiceImpl implements UserService
         if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_GROUP))
         {
             Group group = groupDAO.findById(updateGroup.getId(), false);
+            String groupMessage = (updateGroup.getName().equals(group.getName())) ? "" : ("was: "+group.getName());
             group.setName(updateGroup.getName());
             group.removeUsers();
             for (User user : updateGroup.getUsers())
@@ -275,7 +276,7 @@ public class UserServiceImpl implements UserService
                 User pUser = userDAO.findById(user.getId(), false);
                 group.addUser(pUser);
             }
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update group", updateGroup.getName(), true, "");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update group", updateGroup.getName(), true, groupMessage);
         }
         else
         {

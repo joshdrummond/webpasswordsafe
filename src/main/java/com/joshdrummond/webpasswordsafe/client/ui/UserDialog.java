@@ -40,6 +40,7 @@ import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.Group;
 import com.joshdrummond.webpasswordsafe.common.model.User;
+import com.joshdrummond.webpasswordsafe.common.model.UserAuthnPassword;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
@@ -168,6 +169,11 @@ public class UserDialog extends Window
         if (!(Utils.safeString(password2TextBox.getValue())).equals(Utils.safeString(password1TextBox.getValue())))
         {
             MessageBox.alert("Error", "Passwords don't match", null);
+            return false;
+        }
+        if (Utils.safeString(password1TextBox.getValue()).length() > UserAuthnPassword.LENGTH_PASSWORD)
+        {
+            MessageBox.alert("Error", "Password too long", null);
             return false;
         }
         if (Utils.safeString(usernameTextBox.getValue()).equals(""))
