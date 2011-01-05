@@ -380,6 +380,7 @@ public class PasswordServiceImpl implements PasswordService
         Template template = templateDAO.findUpdatableTemplateById(updateTemplate.getId(), loggedInUser);
         if (template != null)
         {
+            String templateMessage = (updateTemplate.getName().equals(template.getName())) ? "" : ("was: "+template.getName());
             // update simple fields
             template.setName(updateTemplate.getName());
             // only change sharing status if original owner is updating or special bypass authz
@@ -400,7 +401,7 @@ public class PasswordServiceImpl implements PasswordService
                     template.addDetail(templateDetail);
                 }
             }
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update template", updateTemplate.getName(), true, "");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update template", updateTemplate.getName(), true, templateMessage);
         }
         else
         {

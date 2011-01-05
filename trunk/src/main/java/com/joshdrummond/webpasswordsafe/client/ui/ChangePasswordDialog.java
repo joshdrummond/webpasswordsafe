@@ -35,6 +35,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.joshdrummond.webpasswordsafe.client.WebPasswordSafe;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
+import com.joshdrummond.webpasswordsafe.common.model.UserAuthnPassword;
 import com.joshdrummond.webpasswordsafe.common.util.Utils;
 
 
@@ -120,23 +121,30 @@ public class ChangePasswordDialog extends Window
 
     private void doOkay()
     {
-        String pw1 = Utils.safeString(password1.getValue());
-        String pw2 = Utils.safeString(password2.getValue());
-        if (pw1.equals(pw2))
+        if (validateFields())
         {
-            if (pw1.equals("") || pw2.equals(""))
-            {
-            	MessageBox.alert("Error", "Must enter a password", null);
-            }
-            else
-            {
-                doChangePassword(pw1);
-            }
+            doChangePassword(Utils.safeString(password1.getValue()));
         }
-        else
+    }
+    
+    private boolean validateFields()
+    {
+        if (!(Utils.safeString(password2.getValue())).equals(Utils.safeString(password1.getValue())))
         {
-        	MessageBox.alert("Error", "Passwords must match", null);
+            MessageBox.alert("Error", "Passwords must match", null);
+            return false;
         }
+        if (Utils.safeString(password1.getValue()).equals(""))
+        {
+            MessageBox.alert("Error", "Must enter a password", null);
+            return false;
+        }
+        if (Utils.safeString(password1.getValue()).length() > UserAuthnPassword.LENGTH_PASSWORD)
+        {
+            MessageBox.alert("Error", "Password too long", null);
+            return false;
+        }
+        return true;
     }
 
     /**

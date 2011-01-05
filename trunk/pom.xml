@@ -289,7 +289,7 @@
    <plugin>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>gwt-maven-plugin</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.0-1</version>
     <executions>
      <execution>
       <goals>
@@ -297,18 +297,17 @@
       </goals>
      </execution>
     </executions>
-    <configuration>
-     <runTarget>com.joshdrummond.wps.Application/Application.html</runTarget>
-    </configuration>
    </plugin>
    
    <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-war-plugin</artifactId>
+    <version>2.1.1</version>
     <configuration>
+     <archiveClasses>true</archiveClasses>
      <warSourceDirectory>war</warSourceDirectory>
      <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-     <warSourceExcludes>.gwt-tmp/**</warSourceExcludes>
+     <warSourceExcludes>**/classes/**</warSourceExcludes>
     </configuration>
    </plugin>
 
