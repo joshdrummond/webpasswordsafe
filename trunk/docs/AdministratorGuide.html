@@ -27,5 +27,116 @@
 
 <h1>WebPasswordSafe Administrator Guide</h1>
 
+<h2>I. Introduction</h2>
+<p>
+This administrator guide covers installation, configuration, customization, deployment, and best practices for setting up WebPasswordSafe in your environment.
+</p>
+
+<h2>II. Requirements</h2>
+<ol>
+<li>Java SE 6 (JDK)</li>
+<li>Maven 2.2.x</li>
+<li>Java Servlet Container (i.e. Tomcat 5.5+, Glassfish)</li>
+<li>Database (JDBC compatible) (i.e. MySQL, MSSQL, HSQL)</li>
+</ol>
+
+<h2>III. Download</h2>
+<ol>
+<li>Download <b>webpasswordsafe-src-[version].zip</b> and <b>webpasswordsafe-dependencies-bin-[version].zip</b> from <a href="http://code.google.com/p/webpasswordsafe/downloads/list" target="_blank">http://code.google.com/p/webpasswordsafe/downloads/list</a></li>
+<li><i>Optionally, advanced users can instead download other revisions directly from public SVN repository at <a href="http://code.google.com/p/webpasswordsafe/source/checkout" target="_blank">http://code.google.com/p/webpasswordsafe/source/checkout</a></i></li>
+</ol>
+
+<h2>IV. Environment Setup</h2>
+<ol>
+<li>Verify Java and Maven are installed properly, JAVA_HOME and MAVEN_HOME environment variables are set, and their bin directories are in your PATH.</li>
+<li>Verify Java Servlet Container installed properly, optionally Web Server also installed properly and forwarding appropriate requests to container, and SSL enforcement is configured properly.</li>
+<li>Verify you have Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files installed for your Java Servlet Container's Java VM.</li>
+<li>Create new database (i.e. "webpasswordsafe") and user (i.e. "wps") in database server.  Verify only that user (with dbo privileges) has access to that database.</li>
+<li>Extract contents of webpasswordsafe-src-[version].zip to create /webpasswordsafe directory.</li>
+<li>Copy your database vendor's JDBC driver .jar file(s) into /webpasswordsafe/war/WEB-INF/lib directory.</li>
+<li>Extract contents of webpasswordsafe-dependencies-bin-[version].zip into a temporary /tmp directory.</li>
+<li>Copy the <i>contents</i> of the /tmp/webpasswordsafe-dependencies-bin/resources/ directory into the /webpasswordsafe/war/gxt/ directory.</li>
+<li>From inside the /tmp/webpasswordsafe-dependencies-bin directory, execute the following Maven commands:
+  <ul>
+   <li>mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.2.1 -Dpackaging=jar -Dfile=gxt.jar</li>
+   <li>mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.0 -Dpackaging=jar -Dfile=gwt-sl-1.0.jar</li>
+   <li>mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar</li>
+  </ul>
+</li>
+</ol>
+
+<h2>V. Configuration</h2>
+
+<h3>1. encryption.properties</h3>
+<p>
+Edit <i>/webpasswordsafe/war/WEB-INF/encryption.properties</i> changing values specific to your encryption environment.  You absolutely should change the <b>encryptor.jasypt.password</b> value
+to a new random value as this is your secret encryption key/passphrase.  It is also important it is protected properly and not changed after initial deployment, doing so will render your data unreadable.
+</p>
+
+<h3>2. jdbc.properties</h3>
+<p>
+Edit <i>/webpasswordsafe/war/WEB-INF/jdbc.properties</i> changing values specific to your database environment.  Commonly you'll need to change <b>jdbc.username</b> and <b>jdbc.password</b>, as well as
+uncomment (remove # at beginning of line) the <b>hibernate.dialect</b>, <b>jdbc.driverClassName</b>, <b>jdbc.url</b>, <b>jdbc.validationQuery</b> lines that relate to your database server vendor and 
+delete the others.  Finally change the <b>jdbc.url</b> value to point to your database server.
+</p>
+
+<h3>3. webpasswordsafe-service.xml</h3>
+<p>
+Edit <i>/webpasswordsafe/war/WEB-INF/webpasswordsafe-service.xml</i> to customize the plugins to fit your environment:
+</p>
+
+<h4>i. Password Generator Plugin</h4>
+<p>
+The default SimpleRandomPasswordGenerator implementation allows for the changing of some basic parameters.  Change "passwordLength" value to length of passwords it
+should generate, "allowLowercase"/"allowUppercase"/"allowNumeric" to either "true"/"false" based on whether to include those types of characters in the generated
+password, and "specialChars" to a string which contains any other characters not included in the above sets in the generated password (i.e. "!@#$%^*()").
+</p>
+
+<h4>ii. Audit Logger Plugin</h4>
+<p>
+</p>
+
+<h4>iii. Authentication Plugin</h4>
+<p>
+</p>
+
+<h4>iv. Role Retriever Plugin</h4>
+<p>
+The default LocalRoleRetriever implementation simply as a "adminUsers" property where you pass it a set of usernames that are given the ROLE_ADMIN role, it is inferred
+all users get ROLE_USER role as well.
+</p>
+
+<h4>v. Authorization Plugin</h4>
+<p>
+The default DefaultAuthorizer implementation currently hardcodes default permissions based on the two roles in the system.
+</p>
+
+
+<h3>4. webservice-servlet.xml</h3>
+<p>
+Edit <i>/webpasswordsafe/war/WEB-INF/webservice-servlet.xml</i> changing the <b>locationUri</b> value to the URL it will be deployed as (the part before /webservice).
+</p>
+
+<h3>5. log4j.xml</h3>
+<p>
+Edit <i>/webpasswordsafe/src/main/resources/log4j.xml</i> changing ...
+</p>
+
+<h3>6. web.xml</h3>
+<p>
+Edit <i>/webpasswordsafe/src/main/webapp/WEB-INF/web.xml</i> changing ...
+</p>
+
+<h2>VI. Build and Deploy</h2>
+<ol>
+<li>From inside the /webpasswordsafe directory, execute the following Maven command:
+  <ul>
+   <li>mvn clean package</li>
+  </ul>
+</li>
+<li>Deploy the WAR file generated in /webpasswordsafe/target/webpasswordsafe-[version].war to Java Servlet Container as WebPasswordSafe.war</li>
+<li>If using LocalAuthenticator the default <b>admin</b> user login password is <b>admin</b>, login to WebPasswordSafe according to the User Guide and change that to something stronger, you are done!</li>
+</ol>
+
 </body>
 </html>
