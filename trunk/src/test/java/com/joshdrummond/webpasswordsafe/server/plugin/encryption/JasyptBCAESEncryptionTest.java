@@ -37,7 +37,7 @@ public class JasyptBCAESEncryptionTest
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setProvider(new BouncyCastleProvider());
         encryptor.setAlgorithm("PBEWITHSHA256AND256BITAES-CBC-BC");
-        encryptor.setPassword("test");
+        encryptor.setPassword("w3bp@$$w0rd$@f3k3y");
         encryptor.setKeyObtentionIterations(1000);
 
         String clearText = "1234567890123456789012345678901234567890123456789012345678901234";
