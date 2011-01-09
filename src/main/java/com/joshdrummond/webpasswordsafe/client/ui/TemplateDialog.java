@@ -262,7 +262,7 @@ public class TemplateDialog extends Window
     private void setFields()
     {
         templateNameTextBox.setValue(template.getName());
-        chkbxShared.setValue(template.isShare());
+        chkbxShared.setValue(template.isShared());
         updateTemplateDetails();
         updateSubjects();
     }
@@ -324,7 +324,7 @@ public class TemplateDialog extends Window
         if (validateFields())
         {
             template.setName(Utils.safeString(templateNameTextBox.getValue()));
-            template.setShare(chkbxShared.getValue());
+            template.setShared(chkbxShared.getValue());
             template.clearDetails();
             for (TemplateData data : permissionStore.getModels())
             {

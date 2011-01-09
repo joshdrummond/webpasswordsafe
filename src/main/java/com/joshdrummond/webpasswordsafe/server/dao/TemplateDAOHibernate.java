@@ -53,7 +53,7 @@ public class TemplateDAOHibernate extends GenericHibernateDAO<Template, Long> im
         {
             if (includeShared)
             {
-                return findByCriteria(Order.asc("name"), Restrictions.or(Restrictions.eq("user", user), Restrictions.eq("share", true)));
+                return findByCriteria(Order.asc("name"), Restrictions.or(Restrictions.eq("user", user), Restrictions.eq("shared", true)));
             }
             else
             {
@@ -73,7 +73,7 @@ public class TemplateDAOHibernate extends GenericHibernateDAO<Template, Long> im
         else
         {
             templates = findByCriteria(Restrictions.eq("id", templateId), 
-                Restrictions.or(Restrictions.eq("user", user), Restrictions.eq("share", true)));
+                Restrictions.or(Restrictions.eq("user", user), Restrictions.eq("shared", true)));
         }
         return (templates.size() > 0) ? templates.get(0) : null;
     }

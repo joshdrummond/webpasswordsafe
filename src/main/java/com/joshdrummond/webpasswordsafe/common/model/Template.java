@@ -61,9 +61,9 @@ public class Template extends LightEntity implements Serializable
     @Column(name="name", length=LENGTH_NAME, nullable=false, unique=true)
     private String name;
     
-    @Column(name="share", nullable=false)
+    @Column(name="shared", nullable=false)
     @Type(type="yes_no")
-    private boolean share;
+    private boolean shared;
     
     @OneToMany(cascade={CascadeType.ALL}, mappedBy="parent")
     @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
@@ -72,7 +72,7 @@ public class Template extends LightEntity implements Serializable
     public Template()
     {
         name = "";
-        share = true;
+        shared = true;
         templateDetails = new HashSet<TemplateDetail>();
     }
     
@@ -106,14 +106,14 @@ public class Template extends LightEntity implements Serializable
         this.name = name;
     }
 
-    public boolean isShare()
+    public boolean isShared()
     {
-        return this.share;
+        return this.shared;
     }
 
-    public void setShare(boolean share)
+    public void setShared(boolean shared)
     {
-        this.share = share;
+        this.shared = shared;
     }
 
     public Set<TemplateDetail> getTemplateDetails()

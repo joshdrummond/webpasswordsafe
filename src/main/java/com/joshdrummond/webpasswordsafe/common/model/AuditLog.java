@@ -47,19 +47,19 @@ public class AuditLog extends LightEntity implements Serializable
     @Column(name="id")
     private long id;
     
-    @Column(name="date", nullable=false, updatable=false)
-    private Date date;
+    @Column(name="eventdate", nullable=false, updatable=false)
+    private Date eventDate;
 
-    @Column(name="username", length=64, nullable=false, updatable=false)
+    @Column(name="username", length=64, updatable=false)
     private String username;
 
-    @Column(name="ipaddress", length=50, nullable=false, updatable=false)
+    @Column(name="ipaddress", length=50, updatable=false)
     private String ipaddress;
 
     @Column(name="action", length=50, nullable=false, updatable=false)
     private String action;
 
-    @Column(name="target", nullable=false, updatable=false)
+    @Column(name="target", updatable=false)
     @Type(type="text")
     private String target;
 
@@ -67,15 +67,15 @@ public class AuditLog extends LightEntity implements Serializable
     @Type(type = "yes_no")
     private boolean success;
 
-    @Column(name="message", nullable=false, updatable=false)
+    @Column(name="message", updatable=false)
     @Type(type="text")
     private String message;
 
-    public AuditLog(Date date, String username, String ipaddress, String action,
+    public AuditLog(Date eventDate, String username, String ipaddress, String action,
             String target, boolean success, String message)
     {
         super();
-        this.date = date;
+        this.eventDate = eventDate;
         this.username = (null==username) ? "" : username;
         this.ipaddress = (null==ipaddress) ? "" : ipaddress;
         this.action = (null==action) ? "" : action;
@@ -89,9 +89,9 @@ public class AuditLog extends LightEntity implements Serializable
         return id;
     }
 
-    public Date getDate()
+    public Date getEventDate()
     {
-        return date;
+        return eventDate;
     }
 
     public String getUsername()
