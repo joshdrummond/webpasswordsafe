@@ -387,7 +387,7 @@ public class PasswordServiceImpl implements PasswordService
             if ((template.getUser().getId() == loggedInUser.getId()) || 
                 authorizer.isAuthorized(loggedInUser, Function.BYPASS_TEMPLATE_SHARING))
             {
-                template.setShare(updateTemplate.isShare());
+                template.setShared(updateTemplate.isShared());
             }
             
             // update details
