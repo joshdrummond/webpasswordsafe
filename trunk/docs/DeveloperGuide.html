@@ -27,5 +27,106 @@
 
 <h1>WebPasswordSafe Developer Guide</h1>
 
+<h2>I. Introduction</h2>
+<p>
+This developer guide covers customizing reports, using optional plugins, developing custom plugins, and integrating these into the build process of WebPasswordSafe.
+</p>
+
+<h2>II. General Integrating Source Code Into Build Process</h2>
+<ul>
+<li>Copy main source code under /webpasswordsafe/src/main/java/* using full package/directory structure</li>
+<li>Copy JTest source code under /webpasswordsafe/src/test/java/* using full package/directory structure</li>
+<li>Follow Build and Deploy directions as in Administrator Guide</li>
+</ul>
+
+<h2>III. Optional Plugins</h2>
+<p>
+RsaSecurIDAuthenticator, EsapiDigester, and EsapiEncryptor are some optional plugins that are included in the download.  If you want to
+use any of these, you need to copy from /webpasswordsafe/src/optional/java/* into the appropriate source directories (see above) as well
+as edit the /webpasswordsafe/pom.xml file to include their dependencies.  Lastly edit the various configuration files to reference them 
+(see Administrator Guide).
+</p>
+<p>Here are the appropriate Maven commands to integrate these plugins:</p>
+  <ul>
+   <li>mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc6 -Dpackaging=jar -Dfile=ESAPI-2.0_rc6.jar</li>
+   <li>mvn install:install-file -DgroupId=com.rsa.authagent -DartifactId=authapi -Dversion=8.1.0 -Dpackaging=jar -Dfile=authapi.jar</li>
+  </ul>
+<p>If using ESAPI for encryption:</p>
+<ol>
+<li>Copy the contents of your .esapi resources directory into /webpasswordsafe/src/main/resources/esapi or if directory is kept outside the web application,
+edit /webpasswordsafe/war/WEB-INF/encryption.properties and change encryptor.esapi.useClasspath=false and encryptor.esapi.resourceDir=&lt;full path to directory&gt;</li>
+<li>Edit ESAPI.properties and verify all of the Encryptor.* values, notably EncryptionKeyLength (128 or 256) and MasterKey and MasterSalt values</li>
+<li>Generate new MasterKey and MasterSalt values by invoking from the /webpasswordsafe directory:
+<ul>
+<li>mvn exec:java -Dexec.mainClass=&quot;org.owasp.esapi.reference.crypto.JavaEncryptor&quot; -Dexec.classpathScope=runtime -Dorg.owasp.esapi.resources=src/main/resources/esapi</li>
+</ul>
+</li>
+</ol>        
+            
+<h2>IV. Custom Plugins</h2>
+<p>
+You can write your own implementations to the WebPasswordSafe plugins using Java and integrate them into the build process similar to
+the optional plugins (see above).  Below discusses the interface requirements of each plugin.
+</p>
+
+<h3>1. Audit Logger Plugin</h3>
+<ul>
+<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger</b></li>
+<li>Override: <b>public void log(Date eventdate, String username, String ipaddress, String action, String target, boolean status, String message)</b></li>
+</ul>
+
+<h3>2. Authentication Plugin</h3>
+<ul>
+<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator</b></li>
+<li>Override: <b>public boolean authenticate(String username, String password)</b></li>
+</ul>
+
+<h3>3. Role Retriever Plugin</h3>
+<ul>
+<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.authentication.RoleRetriever</b></li>
+<li>Override: <b>public Set&lt;Role&gt; retrieveRoles(User user)</b></li>
+<li>Note: You will want to pay attention to the available roles defined in com.joshdrummond.webpasswordsafe.common.util.Constants</li>
+</ul>
+
+<h3>4. Authorization Plugin</h3>
+<ul>
+<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.authorization.Authorizer</b></li>
+<li>Override: <b>public boolean isAuthorized(User user, Function function)</b></li>
+<li>Note: You will want to pay attention to the available roles and functions defined in com.joshdrummond.webpasswordsafe.common.util.Constants</li>
+</ul>
+
+<h3>5. Password Generator Plugin</h3>
+<ul>
+<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator</b></li>
+<li>Override: <b>public String generatePassword()</b></li>
+</ul>
+
+<h3>6. Encryption - Digester Plugin</h3>
+<ul>
+<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester</b></li>
+<li>Override: <b>public String digest(String clearText)</b></li>
+<li>Override: <b>public boolean check(String clearText, String cryptedText)</b></li>
+</ul>
+
+<h3>7. Encryption - Encryptor Plugin</h3>
+<ul>
+<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor</b></li>
+<li>Override: <b>public String encrypt(String clearText)</b></li>
+<li>Override: <b>public String decrypt(String cryptedText)</b></li>
+</ul>
+
+
+<h2>V. Customizing Reports</h2>
+<p>
+Reports in WebPasswordSafe are developed using JasperReports.  You can find the .jrxml files in
+/webpasswordsafe/war/WEB-INF/reports/ from which you can edit and customize the look of them and in some cases
+the data contained in them.  Be careful however that the look-and-feel customizations you make for either PDF or
+CSV format doesn't break the other format (if you care).  If you change data, be careful that the appropriate
+security controls and authorization are in place.
+</p>
+
+
+<br/>
+
 </body>
 </html>
