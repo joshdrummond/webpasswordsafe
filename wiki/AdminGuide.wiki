@@ -3,8 +3,6 @@
 
 =WebPasswordSafe Administration Guides=
 
-[http://webpasswordsafe.googlecode.com/svn/trunk/docs/install.txt Installation Instructions]
+[http://webpasswordsafe.googlecode.com/svn/trunk/docs/AdministratorGuide.html Administrator Guide - Latest Version]
 
-[http://webpasswordsafe.googlecode.com/svn/trunk/docs/AdministratorGuide.html Administrator Guide]
-
-[http://webpasswordsafe.googlecode.com/svn/trunk/docs/DeveloperGuide.html Developer Guide]
+[http://webpasswordsafe.googlecode.com/svn/trunk/docs/DeveloperGuide.html Developer Guide - Latest Version]
