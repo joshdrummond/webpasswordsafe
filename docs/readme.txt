@@ -1,14 +1,11 @@
 WebPasswordSafe
+http://www.webpasswordsafe.net
 
-Open-source, web-based secure password safe that supports multiple users with 
-delegated access controls. Store passwords and other sensitive secrets centrally
-in a secure database with industry standard strong encryption. Multiple users
-can be added using strong authentication. Access controls can be put on passwords
-such that they can be shared with other authorized users in view only, view and update,
-or delegated granting modes. Full auditing of all actions is performed and can be 
-reported on. History of old passwords can be kept. Exports can be done for disaster 
-recovery purposes. JMS based notifications. 
+Documentation included in this release:
 
-Copyright 2008 Josh Drummond (www.joshdrummond.com) under GPL 2.0
-
-http://code.google.com/p/webpasswordsafe/
+1) UserGuide.html - Guide for users to use that covers all functionality of WebPasswordSafe
+2) AdministratorGuide.html - Guide for administrators to use for installation, configuration, and deployment of WebPasswordSafe
+3) DeveloperGuide.html - Guide for developers to use for customizing reports, using optional plugins, developing custom plugins, 
+                         and integrating these into the build process of WebPasswordSafe
+4) DataModel.html - Simple data model of WebPasswordsafe database
+5) license.txt - License agreement information for WebPasswordSafe
