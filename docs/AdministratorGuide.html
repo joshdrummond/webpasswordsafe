@@ -1,5 +1,5 @@
 <!--
-    Copyright 2010 Josh Drummond
+    Copyright 2010-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -35,7 +35,7 @@ This administrator guide covers installation, configuration, and deployment of W
 <h2>II. Requirements</h2>
 <ol>
 <li>Java SE 6 (JDK)</li>
-<li>Maven 2.2.x</li>
+<li>Maven 2.2+</li>
 <li>Java Servlet Container (i.e. Tomcat 5.5+, Glassfish)</li>
 <li>Database (JDBC compatible) (i.e. MySQL, MSSQL, Oracle, PostgreSQL, HSQL)</li>
 </ol>
@@ -58,8 +58,8 @@ This administrator guide covers installation, configuration, and deployment of W
 <li>Copy the <i>contents</i> of the /tmp/webpasswordsafe-dependencies-bin/resources/ directory into the /webpasswordsafe/war/gxt/ directory.</li>
 <li>From inside the /tmp/webpasswordsafe-dependencies-bin directory, execute the following Maven commands:
   <ul>
-   <li>mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.2.1 -Dpackaging=jar -Dfile=gxt.jar</li>
-   <li>mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.0 -Dpackaging=jar -Dfile=gwt-sl-1.0.jar</li>
+   <li>mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.2.4 -Dpackaging=jar -Dfile=gxt-2.2.4-gwt22.jar</li>
+   <li>mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.1 -Dpackaging=jar -Dfile=gwt-sl-1.1.jar</li>
    <li>mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar</li>
   </ul>
 </li>

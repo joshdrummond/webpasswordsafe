@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <!--
-	Copyright 2008-2010 Josh Drummond
+	Copyright 2008-2011 Josh Drummond
 	
 	This file is part of WebPasswordSafe.
 	
@@ -44,14 +44,14 @@
 	</bean>
 
 	<bean id="webservice"
-		class="org.springframework.ws.wsdl.wsdl11.DynamicWsdl11Definition">
-		<property name="builder">
-			<bean class="org.springframework.ws.wsdl.wsdl11.builder.XsdBasedSoap11Wsdl4jDefinitionBuilder">
-				<property name="schema" value="/WEB-INF/schema/WebPasswordSafeTypes.xsd" />
-				<property name="portTypeName" value="WebPasswordSafe" />
-				<property name="locationUri" value="http://localhost:8080/WebPasswordSafe/webservice" />
-			</bean>
-		</property>
+		class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+		<property name="schema">
+			<bean class="org.springframework.xml.xsd.SimpleXsdSchema">
+				<property name="xsd" value="/WEB-INF/schema/WebPasswordSafeTypes.xsd" />
+            </bean>
+        </property>
+		<property name="portTypeName" value="WebPasswordSafe" />
+		<property name="locationUri" value="http://localhost:8080/WebPasswordSafe/webservice" />
 	</bean>
 		
 	<bean id="addUserEndpoint"
