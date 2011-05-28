@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -22,14 +22,12 @@ package com.joshdrummond.webpasswordsafe.client;
 import java.util.List;
 import java.util.Map;
 import com.extjs.gxt.ui.client.Style.Orientation;
-import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.util.Margins;
 import com.extjs.gxt.ui.client.util.Padding;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
-import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Text;
@@ -216,12 +214,35 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 	            }
 	        }));
         }
-        passwordMenu.add(new MenuItem("Search", new SelectionListener<MenuEvent>() {
+        MenuItem passwordSearch = new MenuItem("Search");
+        Menu passwordSearchMenu = new Menu();
+        passwordSearchMenu.add(new MenuItem("Open Selected Password", new SelectionListener<MenuEvent>() {
+            @Override
+            public void componentSelected(MenuEvent ce) {
+                if (null != passwordSearchPanel)
+                {
+                    passwordSearchPanel.openSelectedPassword();
+                }
+            }
+        }));
+        passwordSearchMenu.add(new MenuItem("Get Selected Password Value", new SelectionListener<MenuEvent>() {
+            @Override
+            public void componentSelected(MenuEvent ce) {
+                if (null != passwordSearchPanel)
+                {
+                    passwordSearchPanel.getSelectedCurrentPasswordData();
+                }
+            }
+        }));
+        passwordSearchMenu.add(new MenuItem("Refresh Search", new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
                 refreshPasswordSearch();
             }
         }));
+        passwordSearch.setSubMenu(passwordSearchMenu);
+        passwordMenu.add(passwordSearch);
+
         MenuItem passwordTemplate = new MenuItem("Template");
         Menu passwordTemplateMenu = new Menu();
         if (clientSessionUtil.isAuthorized(Function.ADD_TEMPLATE))
@@ -666,21 +687,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     
     private void doShowAbout()
     {
-        StringBuilder aboutText = new StringBuilder();
-        aboutText.append("<br><center><b>WebPasswordSafe</b><br><b>Version ");
-        aboutText.append(Constants.VERSION);
-        aboutText.append("</b><br><a target=\"_blank\" href=\"http://www.webpasswordsafe.net\">http://www.webpasswordsafe.net</a><br><br>");
-        aboutText.append("Copyright &#169; 2008-2010 Josh Drummond.");
-        aboutText.append("<br>All rights reserved. <a target=\"_blank\" href=\"http://webpasswordsafe.googlecode.com/svn/trunk/docs/license.txt\">");
-        aboutText.append("GNU General Public License v2</a></center><br><br>");
-        Dialog popup = new Dialog();
-        popup.setHeading("About");
-        popup.setButtons(Dialog.CLOSE);
-        popup.addText(aboutText.toString());
-        popup.setScrollMode(Scroll.AUTO);
-        popup.setHideOnButtonClick(true);
-        popup.setModal(true);
-        popup.show();
+        new AboutDialog().show();
     }
     
     private void doShowHelp()

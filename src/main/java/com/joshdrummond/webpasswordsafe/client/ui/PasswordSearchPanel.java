@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
 import com.extjs.gxt.ui.client.Style.Scroll;
+import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.BaseTreeModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -170,6 +171,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         gridStore = new ListStore<PasswordSearchData>();
         ColumnModel cm = new ColumnModel(configs);
         passwordGrid = new Grid<PasswordSearchData>(gridStore, cm);
+        passwordGrid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         passwordGrid.setStyleAttribute("borderTop", "none");
         passwordGrid.setBorders(true);
         passwordGrid.setStripeRows(true);
@@ -212,6 +214,24 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
     	doLoadTags();
     }
 
+    public void openSelectedPassword()
+    {
+        PasswordSearchData p = passwordGrid.getSelectionModel().getSelectedItem();
+        if (null != p)
+        {
+            doLoadPasswordDialog((Long)p.get("id"));
+        }
+    }
+    
+    public void getSelectedCurrentPasswordData()
+    {
+        PasswordSearchData p = passwordGrid.getSelectionModel().getSelectedItem();
+        if (null != p)
+        {
+            doShowPasswordPopup((Long)p.get("id"));
+        }
+    }
+    
     private void doLoadTags()
     {
         AsyncCallback<List<Tag>> callback = new AsyncCallback<List<Tag>>()
