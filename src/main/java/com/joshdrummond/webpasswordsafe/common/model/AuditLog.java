@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 Josh Drummond
+    Copyright 2010-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -50,7 +50,7 @@ public class AuditLog extends LightEntity implements Serializable
     @Column(name="eventdate", nullable=false, updatable=false)
     private Date eventDate;
 
-    @Column(name="username", length=64, updatable=false)
+    @Column(name="username", length=User.LENGTH_USERNAME, updatable=false)
     private String username;
 
     @Column(name="ipaddress", length=50, updatable=false)
