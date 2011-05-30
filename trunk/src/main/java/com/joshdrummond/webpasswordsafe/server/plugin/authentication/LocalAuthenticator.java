@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,6 +19,7 @@
 */
 package com.joshdrummond.webpasswordsafe.server.plugin.authentication;
 
+import org.apache.log4j.Logger;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester;
@@ -32,7 +33,8 @@ public class LocalAuthenticator implements Authenticator
 {
     private UserDAO userDAO;
     private Digester digester;
-    
+    private static Logger LOG = Logger.getLogger(LocalAuthenticator.class);
+
     /* (non-Javadoc)
      * @see com.joshdrummond.webpasswordsafe.server.Authenticator#authenticate(java.lang.String, java.lang.String)
      */
@@ -45,6 +47,7 @@ public class LocalAuthenticator implements Authenticator
         {
             isValid = digester.check(password, user.getAuthnPasswordValue());
         }
+        LOG.debug("LocalAuthenticator: login success for "+username+"? "+isValid);
         return isValid;
     }
 

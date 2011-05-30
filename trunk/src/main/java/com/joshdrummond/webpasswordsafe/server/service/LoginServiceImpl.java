@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -97,6 +97,7 @@ public class LoginServiceImpl implements LoginService {
         boolean isValidLogin = false;
         Date now = new Date();
         String message = "";
+        username = trimUsername(username);
         if (authenticator.authenticate(username, password))
         {
             User user = userDAO.findActiveUserByUsername(username);
@@ -119,6 +120,18 @@ public class LoginServiceImpl implements LoginService {
         }
         auditLogger.log(now, username, ServerSessionUtil.getIP(), "login", "", isValidLogin, message);
         return isValidLogin;
+    }
+
+    private String trimUsername(String username)
+    {
+        if ((null != username) && (username.length() > User.LENGTH_USERNAME))
+        {
+            return username.substring(0, User.LENGTH_USERNAME);
+        }
+        else
+        {
+            return username;
+        }
     }
 
     /* (non-Javadoc)
