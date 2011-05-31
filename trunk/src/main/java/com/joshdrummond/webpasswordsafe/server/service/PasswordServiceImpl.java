@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -421,7 +421,7 @@ public class PasswordServiceImpl implements PasswordService
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public Template getTemplateWithDetails(long templateId)
     {
-        Template template = templateDAO.findById(templateId, false);
+        Template template = templateDAO.findById(templateId);
         if (template != null)
         {
             template.getTemplateDetails().size();

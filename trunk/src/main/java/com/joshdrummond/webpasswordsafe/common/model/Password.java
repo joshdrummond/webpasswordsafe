@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -39,7 +39,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import net.sf.gilead.pojo.gwt.LightEntity;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
@@ -100,10 +99,9 @@ public class Password extends LightEntity implements Serializable
     @JoinColumn(name="user_last_update_id", nullable=false)
     private User userLastUpdate;
     
-    @OneToMany(cascade={CascadeType.ALL})
+    @OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true)
     @JoinColumn(name="password_id")
     @IndexColumn(name="password_position")
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
     private List<PasswordData> passwordData;
     
     @ManyToMany(cascade={CascadeType.ALL})
@@ -112,8 +110,7 @@ public class Password extends LightEntity implements Serializable
             inverseJoinColumns={@JoinColumn(name="tag_id")})
     private Set<Tag> tags;
 
-    @OneToMany(cascade={CascadeType.ALL}, mappedBy="password")
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
+    @OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true, mappedBy="password")
     private Set<Permission> permissions;
     
     @Transient

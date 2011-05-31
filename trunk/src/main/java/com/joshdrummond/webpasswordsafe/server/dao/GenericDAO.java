@@ -1,5 +1,5 @@
 /*
-    Copyright 2008 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -22,6 +22,7 @@ package com.joshdrummond.webpasswordsafe.server.dao;
 import java.io.Serializable;
 import java.util.List;
 
+
 /**
  * Generic interface for all DAO
  * 
@@ -29,7 +30,7 @@ import java.util.List;
  *
  */
 public interface GenericDAO<T, ID extends Serializable> {
-    public T findById(ID id, boolean lock);
+    public T findById(ID id);
 
     public List<T> findAll();
 

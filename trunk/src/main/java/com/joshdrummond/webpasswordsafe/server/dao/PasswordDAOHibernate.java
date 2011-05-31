@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -33,6 +32,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.joshdrummond.webpasswordsafe.common.model.AccessLevel;
@@ -71,7 +71,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         }
         for (Tag tag : tags)
         {
-            crit.add(Restrictions.sqlRestriction("? in (select tag_id from password_tags where password_id = {alias}.id)", tag.getId(), Hibernate.LONG));
+            crit.add(Restrictions.sqlRestriction("? in (select tag_id from password_tags where password_id = {alias}.id)", tag.getId(), StandardBasicTypes.LONG));
         }
         crit.createAlias("permissions", "pm");
         crit.add(Restrictions.in("pm.accessLevel", 
@@ -147,7 +147,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         List<Long> passwordIds = hqlQuery.list();
         if (passwordIds.size() > 0)
         {
-            foundPassword = findById(passwordIds.get(0), false);
+            foundPassword = findById(passwordIds.get(0));
             foundPassword.getPermissions().size();
             foundPassword.getTags().size();
         }

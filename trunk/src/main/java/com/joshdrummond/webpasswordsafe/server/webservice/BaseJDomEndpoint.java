@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 Josh Drummond
+    Copyright 2010-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,8 +23,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.xpath.XPath;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.transport.context.TransportContextHolder;
 import org.springframework.ws.transport.http.HttpServletConnection;
 import com.joshdrummond.webpasswordsafe.client.remote.LoginService;
@@ -37,16 +36,22 @@ import com.joshdrummond.webpasswordsafe.server.ServerSessionUtil;
  * @author Josh Drummond
  *
  */
-public abstract class BaseJDomEndpoint extends AbstractJDomPayloadEndpoint
-    implements InitializingBean
+public abstract class BaseJDomEndpoint
 {
-    protected Namespace namespace;
+    @Autowired
     protected LoginService loginService;
+    protected Namespace namespace;
     protected XPath authnUsernameXPath, authnPasswordXPath; 
+    protected static final String NAMESPACE_URI = "http://www.joshdrummond.com/webpasswordsafe/schemas";
 
-    public void setLoginService(LoginService loginService)
+    protected void setBaseXPath(String requestName)
+        throws JDOMException
     {
-        this.loginService = loginService;
+        namespace = Namespace.getNamespace("wps", NAMESPACE_URI); 
+        authnUsernameXPath = XPath.newInstance("/wps:"+requestName+"/wps:authnUsername"); 
+        authnUsernameXPath.addNamespace(namespace);
+        authnPasswordXPath = XPath.newInstance("/wps:"+requestName+"/wps:authnPassword");
+        authnPasswordXPath.addNamespace(namespace);
     }
 
     protected String extractAuthnUsernameFromRequest(Element element)
@@ -75,13 +80,4 @@ public abstract class BaseJDomEndpoint extends AbstractJDomPayloadEndpoint
         return responseElement;  
     }
     
-    protected void afterPropertiesSetBase(String requestName) throws Exception
-    {
-        namespace = Namespace.getNamespace("wps", "http://www.joshdrummond.com/webpasswordsafe/schemas"); 
-        authnUsernameXPath = XPath.newInstance("/wps:"+requestName+"/wps:authnUsername"); 
-        authnUsernameXPath.addNamespace(namespace);
-        authnPasswordXPath = XPath.newInstance("/wps:"+requestName+"/wps:authnPassword");
-        authnPasswordXPath.addNamespace(namespace);
-    }
-
 }

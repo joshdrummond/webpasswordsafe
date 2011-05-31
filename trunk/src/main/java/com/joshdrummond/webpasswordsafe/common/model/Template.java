@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -32,7 +32,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import net.sf.gilead.pojo.gwt.LightEntity;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Type;
 
 
@@ -65,8 +64,7 @@ public class Template extends LightEntity implements Serializable
     @Type(type="yes_no")
     private boolean shared;
     
-    @OneToMany(cascade={CascadeType.ALL}, mappedBy="parent")
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
+    @OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true, mappedBy="parent")
     private Set<TemplateDetail> templateDetails;
 
     public Template()

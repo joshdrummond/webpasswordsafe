@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService
         // assign user to other groups
         for (Group newGroup : newUser.getGroups())
         {
-            Group group = groupDAO.findById(newGroup.getId(), false);
+            Group group = groupDAO.findById(newGroup.getId());
             group.addUser(user);
         }
         auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add user", user.getUsername(), true, "");
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService
         if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_USER))
         {
             // update base user
-            User user = userDAO.findById(updateUser.getId(), false);
+            User user = userDAO.findById(updateUser.getId());
             user.setFullname(updateUser.getFullname());
             user.setEmail(updateUser.getEmail());
             user.setActiveFlag(updateUser.isActiveFlag());
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService
             // remove old groups
             for (Group oldGroup : user.getGroups())
             {
-                Group group = groupDAO.findById(oldGroup.getId(), false);
+                Group group = groupDAO.findById(oldGroup.getId());
                 group.removeUser(user);
             }
 
@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService
             // add new groups
             for (Group newGroup : updateUser.getGroups())
             {
-                Group group = groupDAO.findById(newGroup.getId(), false);
+                Group group = groupDAO.findById(newGroup.getId());
                 group.addUser(user);
             }
             
@@ -251,7 +251,7 @@ public class UserServiceImpl implements UserService
         group.removeUsers();
         for (User user : users)
         {
-            User pUser = userDAO.findById(user.getId(), false);
+            User pUser = userDAO.findById(user.getId());
             group.addUser(pUser);
         }
 
@@ -267,13 +267,13 @@ public class UserServiceImpl implements UserService
         User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_GROUP))
         {
-            Group group = groupDAO.findById(updateGroup.getId(), false);
+            Group group = groupDAO.findById(updateGroup.getId());
             String groupMessage = (updateGroup.getName().equals(group.getName())) ? "" : ("was: "+group.getName());
             group.setName(updateGroup.getName());
             group.removeUsers();
             for (User user : updateGroup.getUsers())
             {
-                User pUser = userDAO.findById(user.getId(), false);
+                User pUser = userDAO.findById(user.getId());
                 group.addUser(pUser);
             }
             auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update group", updateGroup.getName(), true, groupMessage);
@@ -328,7 +328,7 @@ public class UserServiceImpl implements UserService
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public Group getGroupWithUsers(long groupId)
     {
-        Group group = groupDAO.findById(groupId, false);
+        Group group = groupDAO.findById(groupId);
         // fetch users
         int numUsers = group.getUsers().size();
         LOG.debug(group.getName()+" has "+numUsers+" users");
@@ -339,7 +339,7 @@ public class UserServiceImpl implements UserService
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public User getUserWithGroups(long userId)
     {
-        User user = userDAO.findById(userId, false);
+        User user = userDAO.findById(userId);
         // fetch groups
         int numGroups = user.getGroups().size();
         LOG.debug(user.getName()+" has "+numGroups+" groups");
