@@ -22,23 +22,24 @@ package com.joshdrummond.webpasswordsafe.server.dao;
 import java.util.List;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
-import com.joshdrummond.webpasswordsafe.common.model.User;
-import com.joshdrummond.webpasswordsafe.common.model.UserLockout;
+
+import com.joshdrummond.webpasswordsafe.common.model.IPLockout;
 
 
 /**
- * DAO implementation for UserLockout
+ * DAO implementation for IPLockout
  * 
  * @author Josh Drummond
  *
  */
-@Repository("userLockoutDAO")
-public class UserLockoutDAOHibernate extends GenericHibernateDAO<UserLockout, Long> implements UserLockoutDAO {
+@Repository("ipLockoutDAO")
+public class IPLockoutDAOHibernate extends GenericHibernateDAO<IPLockout, Long> implements IPLockoutDAO {
 
     @Override
-    public UserLockout findByUser(User user)
+    public IPLockout findByIP(String ipaddress)
     {
-        List<UserLockout> lockouts = findByCriteria(Restrictions.eq("user", user));
+        List<IPLockout> lockouts = findByCriteria(Restrictions.eq("ipaddress", ipaddress));
         return (lockouts.size() > 0) ? lockouts.get(0) : null;
     }
+
 }
