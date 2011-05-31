@@ -23,11 +23,9 @@ import java.util.Date;
 import java.util.Set;
 import javax.annotation.Resource;
 import org.apache.log4j.Logger;
-import com.joshdrummond.webpasswordsafe.common.model.User;
-import com.joshdrummond.webpasswordsafe.common.model.UserLockout;
+import com.joshdrummond.webpasswordsafe.common.model.IPLockout;
 import com.joshdrummond.webpasswordsafe.server.ServerSessionUtil;
-import com.joshdrummond.webpasswordsafe.server.dao.UserDAO;
-import com.joshdrummond.webpasswordsafe.server.dao.UserLockoutDAO;
+import com.joshdrummond.webpasswordsafe.server.dao.IPLockoutDAO;
 import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
 
 
@@ -35,16 +33,15 @@ import com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger;
  * @author Josh Drummond
  *
  */
-public class UserLockoutAuthenticator implements Authenticator
+public class IPLockoutAuthenticator implements Authenticator
 {
-    private static Logger LOG = Logger.getLogger(UserLockoutAuthenticator.class);
+    private static Logger LOG = Logger.getLogger(IPLockoutAuthenticator.class);
     @Resource
-    private UserDAO userDAO;
-    @Resource
-    private UserLockoutDAO userLockoutDAO;
+    private IPLockoutDAO ipLockoutDAO;
     @Resource
     private AuditLogger auditLogger;
     private Authenticator authenticator;
+    private int lockoutLength;
     private int failedLoginThreshold;
     private Set<String> whitelist;
 
@@ -52,33 +49,48 @@ public class UserLockoutAuthenticator implements Authenticator
     public boolean authenticate(String username, String password)
     {
         boolean isAuthSuccess = false;
-        User user = userDAO.findActiveUserByUsername(username);
-        if (null != user)
+        boolean isLockedOut = false;
+        Date dateNow = new Date();
+        String ipaddress = ServerSessionUtil.getIP();
+        IPLockout lockout = ipLockoutDAO.findByIP(ipaddress);
+        if (!isWhitelistIP(ipaddress))
+        {
+            if ((null != lockout) && (null != lockout.getLockoutDate()))
+            {
+                isLockedOut = true;
+                Date endLockout = new Date(lockout.getLockoutDate().getTime() + (lockoutLength * 60000));
+                if (dateNow.getTime() > endLockout.getTime())
+                {
+                    isLockedOut = false;
+                    lockout.setLockoutDate(null);
+                }
+            }
+        }
+        
+        if (!isLockedOut)
         {
             isAuthSuccess = authenticator.authenticate(username, password);
-            if (!isWhitelistUser(username))
+            if (!isWhitelistIP(ipaddress))
             {
                 if (!isAuthSuccess)
                 {
-                    UserLockout lockout = userLockoutDAO.findByUser(user);
-                    lockout = (null == lockout) ? new UserLockout(user, 0) : lockout;
+                    lockout = (null == lockout) ? new IPLockout(ipaddress, 0) : lockout;
                     int failCount = lockout.getFailCount() + 1;
                     if (failCount >= failedLoginThreshold)
                     {
                         lockout.setFailCount(0);
-                        user.setActiveFlag(false);
-                        LOG.debug("UserLockoutAuthenticator: "+username+" is locked out");
-                        auditLogger.log(new Date(), username, ServerSessionUtil.getIP(), "lockout", username, true, "user disabled");
+                        lockout.setLockoutDate(dateNow);
+                        LOG.debug("IPLockoutAuthenticator: "+ipaddress+" is locked out");
+                        auditLogger.log(dateNow, username, ipaddress, "lockout", ipaddress, true, "IP blocked");
                     }
                     else
                     {
                         lockout.setFailCount(failCount);
                     }
-                    userLockoutDAO.makePersistent(lockout);
+                    ipLockoutDAO.makePersistent(lockout);
                 }
                 else
                 {
-                    UserLockout lockout = userLockoutDAO.findByUser(user);
                     if (null != lockout)
                     {
                         lockout.setFailCount(0);
@@ -87,15 +99,15 @@ public class UserLockoutAuthenticator implements Authenticator
             }
         }
 
-        LOG.debug("UserLockoutAuthenticator: login success for "+username+"? "+isAuthSuccess);
+        LOG.debug("IPLockoutAuthenticator: login success for "+username+"? "+isAuthSuccess);
         return isAuthSuccess;
     }
-
-    private boolean isWhitelistUser(String username)
-    {
-        return whitelist.contains(username);
-    }
     
+    private boolean isWhitelistIP(String ipaddress)
+    {
+        return whitelist.contains(ipaddress);
+    }
+
     public Authenticator getAuthenticator()
     {
         return authenticator;
@@ -104,6 +116,16 @@ public class UserLockoutAuthenticator implements Authenticator
     public void setAuthenticator(Authenticator authenticator)
     {
         this.authenticator = authenticator;
+    }
+
+    public int getLockoutLength()
+    {
+        return lockoutLength;
+    }
+
+    public void setLockoutLength(int lockoutLength)
+    {
+        this.lockoutLength = lockoutLength;
     }
 
     public int getFailedLoginThreshold()
@@ -115,7 +137,7 @@ public class UserLockoutAuthenticator implements Authenticator
     {
         this.failedLoginThreshold = failedLoginThreshold;
     }
-
+    
     public Set<String> getWhitelist()
     {
         return whitelist;
