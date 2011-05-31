@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2009 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import org.hibernate.Criteria;
-import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -69,14 +68,8 @@ public abstract class GenericHibernateDAO<T, ID extends Serializable> implements
     }
 
     @SuppressWarnings({"unchecked"})
-    public T findById(ID id, boolean lock) {
-        T entity;
-        if (lock) {
-            entity = (T) getSession().load(getPersistentClass(), id, LockMode.UPGRADE);
-        } else {
-            entity = (T) getSession().load(getPersistentClass(), id);
-        }
-        return entity;
+    public T findById(ID id) {
+        return (T) getSession().load(getPersistentClass(), id);
     }
 
     public List<T> findAll() {

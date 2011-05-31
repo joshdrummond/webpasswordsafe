@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,6 +23,11 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import com.joshdrummond.webpasswordsafe.client.remote.UserService;
 import com.joshdrummond.webpasswordsafe.common.model.User;
 
@@ -33,17 +38,39 @@ import com.joshdrummond.webpasswordsafe.common.model.User;
  * @author Josh Drummond
  *
  */
+@Endpoint
 public class AddUserJDomEndpoint extends BaseJDomEndpoint
 {
     private static Logger LOG = Logger.getLogger(AddUserJDomEndpoint.class);
+    @Autowired
     private UserService userService;
     private XPath usernameXPath, passwordXPath, fullnameXPath, emailXPath, activeXPath;
 
-    /* (non-Javadoc)
-     * @see org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint#invokeInternal(org.jdom.Element)
-     */
-    @Override
-    protected Element invokeInternal(Element element) throws Exception
+    public AddUserJDomEndpoint()
+        throws JDOMException
+    {
+        setXPath();
+    }
+    
+    private void setXPath()
+        throws JDOMException
+    {
+        setBaseXPath("AddUserRequest");
+        usernameXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:username"); 
+        usernameXPath.addNamespace(namespace);
+        passwordXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:password");
+        passwordXPath.addNamespace(namespace);
+        fullnameXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:fullname");
+        fullnameXPath.addNamespace(namespace);
+        emailXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:email");
+        emailXPath.addNamespace(namespace);
+        activeXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:active");
+        activeXPath.addNamespace(namespace);
+    }
+
+    @PayloadRoot(namespace=NAMESPACE_URI, localPart="AddUserRequest")
+    public @ResponsePayload Element handleGetCurrentPasswordRequest(@RequestPayload Element requestDoc)
+        throws Exception
     {
         Element returnDoc = null;
         try
@@ -52,9 +79,9 @@ public class AddUserJDomEndpoint extends BaseJDomEndpoint
             String message = "";
             try
             {
-                String authnUsername = extractAuthnUsernameFromRequest(element);
-                String authnPassword = extractAuthnPasswordFromRequest(element);
-                User user = extractUserFromRequest(element);
+                String authnUsername = extractAuthnUsernameFromRequest(requestDoc);
+                String authnPassword = extractAuthnPasswordFromRequest(requestDoc);
+                User user = extractUserFromRequest(requestDoc);
                 setIPAddress();
                 boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
                 if (isAuthnValid)
@@ -92,25 +119,11 @@ public class AddUserJDomEndpoint extends BaseJDomEndpoint
         return returnDoc;
     }
 
-    /**
-     * @param isSuccess
-     * @param message
-     * @return
-     */
     private Element createResponse(boolean isSuccess, String message)
     {
         return createBaseResponse("AddUserResponse", isSuccess, message);
     }
 
-    public void setUserService(UserService userService)
-    {
-        this.userService = userService;
-    }
-
-    /**
-     * @param element
-     * @return
-     */
     private User extractUserFromRequest(Element element)
         throws JDOMException
     {
@@ -122,25 +135,6 @@ public class AddUserJDomEndpoint extends BaseJDomEndpoint
         String activeFlag = activeXPath.valueOf(element).trim().toLowerCase();
         user.setActiveFlag(activeFlag.equals("true") || activeFlag.equals("yes") || activeFlag.equals("y"));
         return user;
-    }
-
-    /* (non-Javadoc)
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception
-    {
-        afterPropertiesSetBase("AddUserRequest");
-        usernameXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:username"); 
-        usernameXPath.addNamespace(namespace);
-        passwordXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:password");
-        passwordXPath.addNamespace(namespace);
-        fullnameXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:fullname");
-        fullnameXPath.addNamespace(namespace);
-        emailXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:email");
-        emailXPath.addNamespace(namespace);
-        activeXPath = XPath.newInstance("/wps:AddUserRequest/wps:user/wps:active");
-        activeXPath.addNamespace(namespace);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -30,7 +30,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import com.joshdrummond.webpasswordsafe.common.util.Constants;
@@ -57,8 +56,7 @@ public class User extends Subject
     @Index(name="idx_user_username")
     private String username;
 
-	@OneToMany(cascade={CascadeType.ALL}, mappedBy="user")
-    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN) 
+	@OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true, mappedBy="user")
 	private Set<UserAuthnPassword> authnPassword;
 	
     @Column(name="fullname", length=LENGTH_FULLNAME, nullable=false)

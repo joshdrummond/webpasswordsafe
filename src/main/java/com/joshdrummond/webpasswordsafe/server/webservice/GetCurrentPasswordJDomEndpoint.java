@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 Josh Drummond
+    Copyright 2010-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,6 +23,11 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.xpath.XPath;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.RequestPayload;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import com.joshdrummond.webpasswordsafe.client.remote.PasswordService;
 import com.joshdrummond.webpasswordsafe.common.model.Password;
 
@@ -33,17 +38,31 @@ import com.joshdrummond.webpasswordsafe.common.model.Password;
  * @author Josh Drummond
  *
  */
+@Endpoint
 public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
 {
     private static Logger LOG = Logger.getLogger(GetCurrentPasswordJDomEndpoint.class);
+    @Autowired
     private PasswordService passwordService;
     private XPath passwordNameXPath; 
-
-    /* (non-Javadoc)
-     * @see org.springframework.ws.server.endpoint.AbstractJDomPayloadEndpoint#invokeInternal(org.jdom.Element)
-     */
-    @Override
-    protected Element invokeInternal(Element element) throws Exception
+    
+    public GetCurrentPasswordJDomEndpoint()
+        throws JDOMException
+    {
+        setXPath();
+    }
+    
+    private void setXPath()
+        throws JDOMException
+    {
+        setBaseXPath("GetCurrentPasswordRequest");
+        passwordNameXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:passwordName");
+        passwordNameXPath.addNamespace(namespace);
+    }
+    
+    @PayloadRoot(namespace=NAMESPACE_URI, localPart="GetCurrentPasswordRequest")
+    public @ResponsePayload Element handleGetCurrentPasswordRequest(@RequestPayload Element requestDoc)
+        throws Exception
     {
         Element returnDoc = null;
         try
@@ -53,9 +72,9 @@ public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
             String currentPassword = "";
             try
             {
-                String authnUsername = extractAuthnUsernameFromRequest(element);
-                String authnPassword = extractAuthnPasswordFromRequest(element);
-                String passwordName = extractPasswordNameFromRequest(element);
+                String authnUsername = extractAuthnUsernameFromRequest(requestDoc);
+                String authnPassword = extractAuthnPasswordFromRequest(requestDoc);
+                String passwordName = extractPasswordNameFromRequest(requestDoc);
                 setIPAddress();
                 boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
                 if (isAuthnValid)
@@ -93,11 +112,6 @@ public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
         return returnDoc;
     }
 
-    /**
-     * @param isSuccess
-     * @param message
-     * @return
-     */
     private Element createResponse(boolean isSuccess, String message, String currentPassword)
     {
         Element responseElement = createBaseResponse("GetCurrentPasswordResponse", isSuccess, message);
@@ -109,22 +123,6 @@ public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
         throws JDOMException
     {
         return passwordNameXPath.valueOf(element);
-    }
-
-	public void setPasswordService(PasswordService passwordService)
-	{
-	    this.passwordService = passwordService;
-	}
-
-	/* (non-Javadoc)
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception
-    {
-        afterPropertiesSetBase("GetCurrentPasswordRequest");
-        passwordNameXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:passwordName");
-        passwordNameXPath.addNamespace(namespace);
     }
 
 }
