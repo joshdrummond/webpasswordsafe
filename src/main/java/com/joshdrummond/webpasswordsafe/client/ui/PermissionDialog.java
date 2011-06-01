@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -34,6 +34,7 @@ import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Format;
+import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
@@ -305,20 +306,27 @@ public class PermissionDialog extends Window
     private void doOkay()
     {
         permissionStore.commitChanges();
-        Set<Permission> permissions = new HashSet<Permission>(permissionStore.getCount());
-        for (PermissionData data : permissionStore.getModels())
+        if (permissionStore.getCount() > 0)
         {
-            Permission permission = (Permission)data.get("permission");
-            String newAccessLevel = ((AccessLevel)data.get("accessLevel")).name();
-            if (!newAccessLevel.equals(permission.getAccessLevel()))
+            Set<Permission> permissions = new HashSet<Permission>(permissionStore.getCount());
+            for (PermissionData data : permissionStore.getModels())
             {
-                // if user changed the access level value in the GUI, treat it like a new permission
-                permission = new Permission(permission.getSubject(), AccessLevel.valueOf(newAccessLevel));
+                Permission permission = (Permission)data.get("permission");
+                String newAccessLevel = ((AccessLevel)data.get("accessLevel")).name();
+                if (!newAccessLevel.equals(permission.getAccessLevel()))
+                {
+                    // if user changed the access level value in the GUI, treat it like a new permission
+                    permission = new Permission(permission.getSubject(), AccessLevel.valueOf(newAccessLevel));
+                }
+                permissions.add(permission);
             }
-            permissions.add(permission);
+            permissionListener.doPermissionsChanged(permissions);
+            hide();
         }
-        permissionListener.doPermissionsChanged(permissions);
-        hide();
+        else
+        {
+            MessageBox.alert("Error", "Must have at least one permission", null);
+        }
     }
     
     private class ApplyTemplateListener implements TemplateListener

@@ -103,32 +103,40 @@ public class PasswordServiceImpl implements PasswordService
         User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.ADD_PASSWORD))
         {
-            password.setUserCreated(loggedInUser);
-            password.setDateCreated(now);
-            password.setUserLastUpdate(loggedInUser);
-            password.setDateLastUpdate(now);
-            password.getCurrentPasswordData().setUserCreated(loggedInUser);
-            password.getCurrentPasswordData().setDateCreated(now);
-            password.getCurrentPasswordData().setPassword(encryptor.encrypt(password.getCurrentPasswordData().getPassword()));
-            
-            // update tags
-            Set<Tag> tags = new HashSet<Tag>(password.getTags());
-            password.removeTags();
-            for (Tag tag : tags)
+            if (password.getPermissions().size() > 0)
             {
-                Tag pTag = tagDAO.findTagByName(tag.getName());
-                if (null != pTag)
+                password.setUserCreated(loggedInUser);
+                password.setDateCreated(now);
+                password.setUserLastUpdate(loggedInUser);
+                password.setDateLastUpdate(now);
+                password.getCurrentPasswordData().setUserCreated(loggedInUser);
+                password.getCurrentPasswordData().setDateCreated(now);
+                password.getCurrentPasswordData().setPassword(encryptor.encrypt(password.getCurrentPasswordData().getPassword()));
+                
+                // update tags
+                Set<Tag> tags = new HashSet<Tag>(password.getTags());
+                password.removeTags();
+                for (Tag tag : tags)
                 {
-                    password.addTag(pTag);
+                    Tag pTag = tagDAO.findTagByName(tag.getName());
+                    if (null != pTag)
+                    {
+                        password.addTag(pTag);
+                    }
+                    else
+                    {
+                        password.addTag(tag);
+                    }
                 }
-                else
-                {
-                    password.addTag(tag);
-                }
+                
+                passwordDAO.makePersistent(password);
+                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "add password", password.getName(), true, "");
             }
-            
-            passwordDAO.makePersistent(password);
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "add password", password.getName(), true, "");
+            else
+            {
+                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add password", password.getName(), false, "missing permissions");
+                throw new RuntimeException("Missing Permissions");
+            }
         }
         else
         {
@@ -147,65 +155,73 @@ public class PasswordServiceImpl implements PasswordService
         Password password = passwordDAO.findAllowedPasswordById(updatePassword.getId(), loggedInUser, AccessLevel.WRITE);
         if (password != null)
         {
-            // update simple fields
-            password.setNotes(updatePassword.getNotes());
-            password.setDateLastUpdate(now);
-            password.setUserLastUpdate(loggedInUser);
-            password.setActive(updatePassword.isActive());
-            password.setMaxHistory(updatePassword.getMaxHistory());
-            
-            // update tags
-            password.removeTags();
-            for (Tag tag : updatePassword.getTags())
+            if (updatePassword.getPermissions().size() > 0)
             {
-                Tag pTag = tagDAO.findTagByName(tag.getName());
-                if (null != pTag)
+                // update simple fields
+                password.setNotes(updatePassword.getNotes());
+                password.setDateLastUpdate(now);
+                password.setUserLastUpdate(loggedInUser);
+                password.setActive(updatePassword.isActive());
+                password.setMaxHistory(updatePassword.getMaxHistory());
+                
+                // update tags
+                password.removeTags();
+                for (Tag tag : updatePassword.getTags())
                 {
-                    password.addTag(pTag);
+                    Tag pTag = tagDAO.findTagByName(tag.getName());
+                    if (null != pTag)
+                    {
+                        password.addTag(pTag);
+                    }
+                    else
+                    {
+                        password.addTag(tag);
+                    }
+                }
+                
+                // update password data, push others back in history if applicable
+                PasswordData updatePasswordData = updatePassword.getCurrentPasswordData();
+                String updatePasswordVal = updatePasswordData.getPassword();
+                // if user entered a password value and its not the same as the current one...
+                if (!"".equals(updatePasswordVal))
+                {
+                    String currentPasswordVal = encryptor.decrypt(password.getCurrentPasswordData().getPassword());
+                    if (!updatePasswordVal.equals(currentPasswordVal))
+                    {
+                        updatePasswordData.setUserCreated(loggedInUser);
+                        updatePasswordData.setDateCreated(now);
+                        updatePasswordData.setPassword(encryptor.encrypt(updatePasswordVal));
+                        password.addPasswordData(updatePasswordData);
+                    }
+                }
+                // trim history if not infinite
+                password.pruneDataHistory();
+    
+                // update permissions if allowed to grant
+                if (passwordDAO.findAllowedPasswordById(updatePassword.getId(), loggedInUser, AccessLevel.GRANT) != null)
+                {
+                    // keep the permissions that haven't changed
+                    password.getPermissions().retainAll(updatePassword.getPermissions());
+                    // add the permissions that have changed
+                    for (Permission permission : updatePassword.getPermissions())
+                    {
+                        if (permission.getId() == 0)
+                        {
+                            password.addPermission(permission);
+                        }
+                    }
                 }
                 else
                 {
-                    password.addTag(tag);
+                	LOG.debug("no access to grant permissions");
                 }
-            }
-            
-            // update password data, push others back in history if applicable
-            PasswordData updatePasswordData = updatePassword.getCurrentPasswordData();
-            String updatePasswordVal = updatePasswordData.getPassword();
-            // if user entered a password value and its not the same as the current one...
-            if (!"".equals(updatePasswordVal))
-            {
-                String currentPasswordVal = encryptor.decrypt(password.getCurrentPasswordData().getPassword());
-                if (!updatePasswordVal.equals(currentPasswordVal))
-                {
-                    updatePasswordData.setUserCreated(loggedInUser);
-                    updatePasswordData.setDateCreated(now);
-                    updatePasswordData.setPassword(encryptor.encrypt(updatePasswordVal));
-                    password.addPasswordData(updatePasswordData);
-                }
-            }
-            // trim history if not infinite
-            password.pruneDataHistory();
-
-            // update permissions if allowed to grant
-            if (passwordDAO.findAllowedPasswordById(updatePassword.getId(), loggedInUser, AccessLevel.GRANT) != null)
-            {
-                // keep the permissions that haven't changed
-                password.getPermissions().retainAll(updatePassword.getPermissions());
-                // add the permissions that have changed
-                for (Permission permission : updatePassword.getPermissions())
-                {
-                    if (permission.getId() == 0)
-                    {
-                        password.addPermission(permission);
-                    }
-                }
+                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update password", updatePassword.getName(), true, "");
             }
             else
             {
-            	LOG.debug("no access to grant permissions");
+                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update password", updatePassword.getName(), false, "missing permissions");
+                throw new RuntimeException("Missing Permissions");
             }
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update password", updatePassword.getName(), true, "");
         }
         else
         {
