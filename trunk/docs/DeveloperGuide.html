@@ -1,5 +1,5 @@
 <!--
-    Copyright 2010 Josh Drummond
+    Copyright 2010-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -46,15 +46,15 @@ use any of these, you need to copy from /webpasswordsafe/src/optional/java/* int
 as edit the /webpasswordsafe/pom.xml file to include their dependencies.  Lastly edit the various configuration files to reference them 
 (see Administrator Guide).
 </p>
-<p>Here are the appropriate Maven commands to integrate these plugins:</p>
+<p>Here is the appropriate Maven command to integrate the RSA plugin:</p>
   <ul>
-   <li>mvn install:install-file -DgroupId=org.owasp -DartifactId=esapi -Dversion=2.0-rc6 -Dpackaging=jar -Dfile=ESAPI-2.0_rc6.jar</li>
    <li>mvn install:install-file -DgroupId=com.rsa.authagent -DartifactId=authapi -Dversion=8.1.0 -Dpackaging=jar -Dfile=authapi.jar</li>
   </ul>
 <p>If using ESAPI for encryption:</p>
 <ol>
-<li>Copy the contents of your .esapi resources directory into /webpasswordsafe/src/main/resources/esapi or if directory is kept outside the web application,
-edit /webpasswordsafe/war/WEB-INF/encryption.properties and change encryptor.esapi.useClasspath=false and encryptor.esapi.resourceDir=&lt;full path to directory&gt;</li>
+<li>Copy the contents of your /configuration/esapi resources directory (downloaded from esapi-2.0GA-config.zip) into /webpasswordsafe/src/main/resources/esapi 
+or if directory is kept outside the web application, edit /webpasswordsafe/war/WEB-INF/encryption.properties and change encryptor.esapi.useClasspath=false and 
+encryptor.esapi.resourceDir=&lt;full path to directory&gt;</li>
 <li>Edit ESAPI.properties and verify all of the Encryptor.* values, notably EncryptionKeyLength (128 or 256) and MasterKey and MasterSalt values</li>
 <li>Generate new MasterKey and MasterSalt values by invoking from the /webpasswordsafe directory:
 <ul>
