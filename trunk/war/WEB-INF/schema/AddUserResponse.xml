@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	Copyright 2008 Josh Drummond
+	Copyright 2008-2011 Josh Drummond
 	
 	This file is part of WebPasswordSafe.
 	
@@ -18,7 +18,7 @@
 	along with WebPasswordSafe; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
-<AddUserResponse xmlns="http://www.joshdrummond.com/webpasswordsafe/schemas">
+<AddUserResponse xmlns="http://www.webpasswordsafe.net/schemas">
 	<success>true</success>
 	<message>Successfully added</message>
 </AddUserResponse>

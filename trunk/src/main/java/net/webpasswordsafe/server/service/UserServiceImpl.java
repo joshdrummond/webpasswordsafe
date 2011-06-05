@@ -28,11 +28,13 @@ import javax.annotation.Resource;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.Group;
+import net.webpasswordsafe.common.model.IPLockout;
 import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants.Function;
 import net.webpasswordsafe.server.ServerSessionUtil;
 import net.webpasswordsafe.server.dao.GroupDAO;
+import net.webpasswordsafe.server.dao.IPLockoutDAO;
 import net.webpasswordsafe.server.dao.UserDAO;
 import net.webpasswordsafe.server.plugin.audit.AuditLogger;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
@@ -62,6 +64,9 @@ public class UserServiceImpl implements UserService
     
     @Autowired
     private GroupDAO groupDAO;
+    
+    @Autowired
+    private IPLockoutDAO ipLockoutDAO;
     
     @Resource
     private Digester digester;
@@ -368,6 +373,37 @@ public class UserServiceImpl implements UserService
             }
         }
         return isGroupTaken;
+    }
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public boolean unblockIP(String ipaddress)
+    {
+        boolean isUnblocked = false;
+        Date now = new Date();
+        User loggedInUser = getLoggedInUser();
+        if (authorizer.isAuthorized(loggedInUser, Function.UNBLOCK_IP))
+        {
+            IPLockout ipLockout = ipLockoutDAO.findByIP(ipaddress);
+            if ((null != ipLockout) && (null != ipLockout.getLockoutDate()))
+            {
+                ipLockout.setLockoutDate(null);
+                ipLockout.setFailCount(0);
+                isUnblocked = true;
+                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "unblock ip", ipaddress, true, "");
+            }
+            else
+            {
+                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "unblock ip", ipaddress, false, "doesn't exist");
+            }
+        }
+        else
+        {
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "unblock ip", ipaddress, false, "not authorized");
+            throw new RuntimeException("Not Authorized!");
+        }
+ 
+        return isUnblocked;
     }
 
     private User getLoggedInUser()

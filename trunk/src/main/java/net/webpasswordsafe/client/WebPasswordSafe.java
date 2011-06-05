@@ -275,7 +275,8 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         if (clientSessionUtil.isAuthorized(Function.ADD_USER) ||
         	clientSessionUtil.isAuthorized(Function.UPDATE_USER) ||
         	clientSessionUtil.isAuthorized(Function.ADD_GROUP) ||
-        	clientSessionUtil.isAuthorized(Function.UPDATE_GROUP))
+        	clientSessionUtil.isAuthorized(Function.UPDATE_GROUP) ||
+        	clientSessionUtil.isAuthorized(Function.UNBLOCK_IP))
         {
 	        Menu adminMenu = new Menu();
 	        //adminMenu.add(new MenuItem("Settings"));
@@ -326,6 +327,20 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 	        adminGroup.setSubMenu(adminGroupMenu);
 	        adminMenu.add(adminGroup);
 
+            MenuItem adminTools = new MenuItem("Tools");
+            Menu adminToolsMenu = new Menu();
+            if (clientSessionUtil.isAuthorized(Function.UNBLOCK_IP))
+            {
+                adminToolsMenu.add(new MenuItem("Unblock IP", new SelectionListener<MenuEvent>() {
+                    @Override
+                    public void componentSelected(MenuEvent ce) {
+                        doUnblockIP();
+                    }
+                }));
+            }
+            adminTools.setSubMenu(adminToolsMenu);
+            adminMenu.add(adminTools);
+	        
 	        mainMenu.add(new MenuBarItem("Admin", adminMenu));
         }
 //        MenuItem adminRole = new MenuItem("Roles");
@@ -454,6 +469,23 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         {
             MessageBox.alert("Error", "Not Authorized!", null);
         }
+    }
+
+    private void doUnblockIP()
+    {
+        if (clientSessionUtil.isAuthorized(Function.UNBLOCK_IP))
+        {
+            displayIPUnblockDialog();
+        }
+        else
+        {
+            MessageBox.alert("Error", "Not Authorized!", null);
+        }
+    }
+
+    private void displayIPUnblockDialog()
+    {
+        new IPUnblockDialog().show();
     }
 
     private void displayGroupDialog(Group group)

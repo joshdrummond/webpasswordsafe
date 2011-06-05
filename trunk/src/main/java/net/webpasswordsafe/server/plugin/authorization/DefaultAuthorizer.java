@@ -48,6 +48,7 @@ public class DefaultAuthorizer implements Authorizer
                 case UPDATE_USER:
                 case BYPASS_PASSWORD_PERMISSIONS:
                 case BYPASS_TEMPLATE_SHARING:
+                case UNBLOCK_IP:
                 case VIEW_REPORT_PasswordPermissions:
                 case VIEW_REPORT_CurrentPasswordExport:
                 case VIEW_REPORT_PasswordAccessAudit:
