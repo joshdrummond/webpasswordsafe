@@ -1,5 +1,5 @@
 <!--
-    Copyright 2010 Josh Drummond
+    Copyright 2010-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -43,6 +43,14 @@
 <tr bgcolor="#eeeeee"><th colspan="3">groups</th></tr>
 <tr><td>id</td><td>long</td><td>pk, fk subjects</td></tr>
 <tr><td>name</td><td>varchar(100)</td><td>unique</td></tr>
+</table>
+<br/>
+<table border="1">
+<tr bgcolor="#eeeeee"><th colspan="3">ip_lockout</th></tr>
+<tr><td>id</td><td>long</td><td>pk</td></tr>
+<tr><td>ipaddress</td><td>varchar(50)</td><td>unique</td></tr>
+<tr><td>fail_count</td><td>int</td><td>&nbsp;</td></tr>
+<tr><td>lockout_date</td><td>datetime</td><td>null = not blocked</td></tr>
 </table>
 <br/>
 <table border="1">
@@ -131,6 +139,13 @@
 <tr bgcolor="#eeeeee"><th colspan="3">user_groups</th></tr>
 <tr><td>user_id</td><td>long</td><td>pk, fk users</td></tr>
 <tr><td>group_id</td><td>long</td><td>pk, fk groups</td></tr>
+</table>
+<br/>
+<table border="1">
+<tr bgcolor="#eeeeee"><th colspan="3">user_lockout</th></tr>
+<tr><td>id</td><td>long</td><td>pk</td></tr>
+<tr><td>user_id</td><td>long</td><td>fk users, unique</td></tr>
+<tr><td>fail_count</td><td>int</td><td>&nbsp;</td></tr>
 </table>
 <br/>
 <table border="1">
