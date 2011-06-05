@@ -47,4 +47,5 @@ public interface UserServiceAsync {
     public void addGroup(Group group, AsyncCallback<Void> callback);
     public void updateGroup(Group group, AsyncCallback<Void> callback);
     public void isGroupTaken(String groupName, long ignoreGroupId, AsyncCallback<Boolean> callback);
+    public void unblockIP(String ipaddress, AsyncCallback<Boolean> callback);
 }

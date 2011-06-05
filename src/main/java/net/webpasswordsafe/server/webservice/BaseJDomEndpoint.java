@@ -42,7 +42,7 @@ public abstract class BaseJDomEndpoint
     protected LoginService loginService;
     protected Namespace namespace;
     protected XPath authnUsernameXPath, authnPasswordXPath; 
-    protected static final String NAMESPACE_URI = "http://www.joshdrummond.com/webpasswordsafe/schemas";
+    protected static final String NAMESPACE_URI = "http://www.webpasswordsafe.net/schemas";
 
     protected void setBaseXPath(String requestName)
         throws JDOMException

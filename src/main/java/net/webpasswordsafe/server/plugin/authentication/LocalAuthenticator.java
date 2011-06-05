@@ -19,6 +19,7 @@
 */
 package net.webpasswordsafe.server.plugin.authentication;
 
+import javax.annotation.Resource;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.server.dao.UserDAO;
 import net.webpasswordsafe.server.plugin.encryption.Digester;
@@ -31,7 +32,9 @@ import org.apache.log4j.Logger;
  */
 public class LocalAuthenticator implements Authenticator
 {
+    @Resource
     private UserDAO userDAO;
+    @Resource
     private Digester digester;
     private static Logger LOG = Logger.getLogger(LocalAuthenticator.class);
 
@@ -46,26 +49,6 @@ public class LocalAuthenticator implements Authenticator
         }
         LOG.debug("LocalAuthenticator: login success for "+username+"? "+isValid);
         return isValid;
-    }
-
-    public UserDAO getUserDAO()
-    {
-        return this.userDAO;
-    }
-
-    public void setUserDAO(UserDAO userDAO)
-    {
-        this.userDAO = userDAO;
-    }
-
-    public Digester getDigester()
-    {
-        return this.digester;
-    }
-
-    public void setDigester(Digester digester)
-    {
-        this.digester = digester;
     }
 
 }

@@ -262,7 +262,8 @@ To edit an existing user in the system, click on "Admin" in the main menu, then 
 full name you want to update in the Users window and click "Okay" button or simply double-click the user full name.  Now you can change
 the values just as you do when adding a new user (except the username for audit reasons).  You cannot really "delete" a user
 from the system for audit reasons, however you can uncheck the "Enabled" checkbox to deactivate them so they cannot login
-and use the system anymore. Finally, click the "Save" button.
+and use the system anymore. Also by checking the "Enabled" checkbox, you can re-enable a user that was auto-disabled if using the 
+UserLockoutAuthenticator because of too many consecutive failed login attempts by that user.  Finally, click the "Save" button.
 </p>
 
 <h3>3. Add Group</h3>
@@ -279,7 +280,15 @@ name you want to update in the Groups window and click "Okay" button or simply d
 the values just as you do when adding a new group. Finally, click the "Save" button.
 </p>
 
-<h3>5. Reports</h3>
+<h3>5. Unblock IP</h3>
+<p>
+To manually unblock an IP Address that may have been auto-blocked if using the IPLockoutAuthenticator for having too many
+consecutive failed login attempts come from that IP, click on "Admin" in the main menu, then "Tools", then "Unblock IP".
+Enter the IP Address you want to unblock in the textbox and click "Okay" button.  A message will pop-up saying it has been
+unblocked or that it did not exist as blocked to begin with.
+</p>
+
+<h3>6. Reports</h3>
 <p>
 Reports in WebPasswordSafe can be generated as either PDF (better for printing) or CSV (better for data analysis)
 formatted files.

@@ -49,6 +49,7 @@ public interface UserService extends RemoteService {
     public void addGroup(Group group);
     public void updateGroup(Group group);
     public boolean isGroupTaken(String groupName, long ignoreGroupId);
+    public boolean unblockIP(String ipaddress);
 
 	/**
 	 * Utility class for simplifying access to the instance of async service.

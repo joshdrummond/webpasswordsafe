@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	Copyright 2008-2010 Josh Drummond
+	Copyright 2008-2011 Josh Drummond
 	
 	This file is part of WebPasswordSafe.
 	
@@ -18,14 +18,14 @@
 	along with WebPasswordSafe; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
-<AddUserRequest xmlns="http://www.joshdrummond.com/webpasswordsafe/schemas">
+<AddUserRequest xmlns="http://www.webpasswordsafe.net/schemas">
     <authnUsername>admin</authnUsername>
     <authnPassword>admin</authnPassword>
 	<user>
 		<username>josh</username>
 		<password>josh</password>
 		<fullname>Josh Drummond</fullname>
-		<email>josh@joshdrummond.com</email>
+		<email>admin@webpasswordsafe.net</email>
 		<active>true</active>
 	</user>
 </AddUserRequest>
