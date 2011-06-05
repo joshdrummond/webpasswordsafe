@@ -49,7 +49,7 @@ public class UserLockout extends LightEntity implements Serializable
     private long id;
 
     @ManyToOne
-    @JoinColumn(name="user_id", nullable=false, updatable=false)
+    @JoinColumn(name="user_id", nullable=false, updatable=false, unique=true)
     @Index(name="idx_lockout_user")
     private User user;
 

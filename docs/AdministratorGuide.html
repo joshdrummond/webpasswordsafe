@@ -115,6 +115,9 @@ Log4jAuditLogger.
 <h4>ii. Authentication Plugin</h4>
 <p>
 This plugin is configured using the <b>bean id="authenticator"</b> tag and can point to any class that implements the Authenticator interface.
+Note that these plugins will only successfully authenticate users that have already been added to the WebPasswordSafe application.  If
+authenticating with an external source, make sure the usernames match.  In many cases multiple authenticators can be chained together to achieve
+additional functionality, details are below.
 </p>
 
 <h5>a. LocalAuthenticator</h5>
@@ -154,6 +157,28 @@ implementation.
 The RsaSecurIdAuthenticator class implementation is an optional Authenticator implementation (see Developer Guide) that authenticates against an
 RSA SecurID server for multi-factor authentication.  Since RSA SecurID has its own configuration file for setup, this plugin simply has on parameter
 "configPath" that contains the full directory and file path to the rsa_api.properties file that defines that setup.
+</p>
+
+<h5>f. UserLockoutAuthenticator</h5>
+<p>
+The UserLockoutAuthenticator class implementation is used by default to chain another Authenticator implementation adding extra functionality to it.
+It this case, it will disable a user after a given number of consecutive failed login attempts from the chained authenticator.  The "authenticator" 
+parameter must be set to reference another valid configured Authenticator bean instance it will chain with.  The "failedLoginThreshold" parameter
+is set to an integer, the number of consecutive failed authenticator attempts at which the user will get disabled.  Finally the "whitelist"
+entry contains a list of string values, one value tag for each username that can be whitelisted and bypass ever getting disabled by this plugin.
+Typically you'll want at least one administrator role user to be whitelisted, so they can always login and enable other users who've been disabled,
+however best practice is to not use the default "admin" user for this, use a non-obvious username which makes a denial of service attack less likely.
+</p>
+
+<h5>g. IPLockoutAuthenticator</h5>
+<p>
+The IPLockoutAuthenticator class implementation is used by default to chain another Authenticator implementation adding extra functionality to it.
+It this case, it will block an IP address after a given number of consecutive failed login attempts from the chained authenticator.  The "authenticator" 
+parameter must be set to reference another valid configured Authenticator bean instance it will chain with.  The "failedLoginThreshold" parameter
+is set to an integer, the number of consecutive failed authenticator attempts at which the IP address will be blocked.  The "lockoutLength" parameter
+is set to an integer, the number of minutes that an IP address should be blocked to prevent or slow down brute-force attacks of multiple users
+from the same IP address.  Finally the "whitelist" entry contains a list of string values, one value tag for each IP address that can be whitelisted 
+and bypass ever getting blocked by this plugin, you may want to set this to an internal IP address you know will never be used to stage an attack.
 </p>
 
 <h4>iii. Role Retriever Plugin</h4>
@@ -204,7 +229,7 @@ The JasyptDigester class implementation is the default using the Jasypt encrypti
 <h5>b. EsapiDigester</h5>
 <p>
 The EsapiDigester class implementation is an optional implementation (see Developer Guide) using the OWASP-ESAPI encryption library and is configured 
-using the encryption.properties and its own configuration files.  As of this release, this library is not considered production ready.
+using the encryption.properties and its own configuration files.
 </p>
 
 <h4>vii. Encryption - Encryptor Plugin</h4>
@@ -221,7 +246,7 @@ The JasyptEncryptor class implementation is the default using the Jasypt encrypt
 <h5>b. EsapiEncryptor</h5>
 <p>
 The EsapiEncryptor class implementation is an optional implementation (see Developer Guide) using the OWASP-ESAPI encryption library and is configured 
-using the encryption.properties and its own configuration files.  As of this release, this library is not considered production ready.
+using the encryption.properties and its own configuration files.
 </p>
 
 <h3>4. webservice-servlet.xml</h3>
