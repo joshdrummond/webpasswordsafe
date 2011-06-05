@@ -71,46 +71,46 @@ the optional plugins (see above).  Below discusses the interface requirements of
 
 <h3>1. Audit Logger Plugin</h3>
 <ul>
-<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.audit.AuditLogger</b></li>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.audit.AuditLogger</b></li>
 <li>Override: <b>public void log(Date eventdate, String username, String ipaddress, String action, String target, boolean status, String message)</b></li>
 </ul>
 
 <h3>2. Authentication Plugin</h3>
 <ul>
-<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.authentication.Authenticator</b></li>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.authentication.Authenticator</b></li>
 <li>Override: <b>public boolean authenticate(String username, String password)</b></li>
 </ul>
 
 <h3>3. Role Retriever Plugin</h3>
 <ul>
-<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.authentication.RoleRetriever</b></li>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.authentication.RoleRetriever</b></li>
 <li>Override: <b>public Set&lt;Role&gt; retrieveRoles(User user)</b></li>
-<li>Note: You will want to pay attention to the available roles defined in com.joshdrummond.webpasswordsafe.common.util.Constants</li>
+<li>Note: You will want to pay attention to the available roles defined in net.webpasswordsafe.common.util.Constants</li>
 </ul>
 
 <h3>4. Authorization Plugin</h3>
 <ul>
-<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.authorization.Authorizer</b></li>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.authorization.Authorizer</b></li>
 <li>Override: <b>public boolean isAuthorized(User user, Function function)</b></li>
-<li>Note: You will want to pay attention to the available roles and functions defined in com.joshdrummond.webpasswordsafe.common.util.Constants</li>
+<li>Note: You will want to pay attention to the available roles and functions defined in net.webpasswordsafe.common.util.Constants</li>
 </ul>
 
 <h3>5. Password Generator Plugin</h3>
 <ul>
-<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.generator.PasswordGenerator</b></li>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.generator.PasswordGenerator</b></li>
 <li>Override: <b>public String generatePassword()</b></li>
 </ul>
 
 <h3>6. Encryption - Digester Plugin</h3>
 <ul>
-<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.encryption.Digester</b></li>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.encryption.Digester</b></li>
 <li>Override: <b>public String digest(String clearText)</b></li>
 <li>Override: <b>public boolean check(String clearText, String cryptedText)</b></li>
 </ul>
 
 <h3>7. Encryption - Encryptor Plugin</h3>
 <ul>
-<li>Implement: <b>com.joshdrummond.webpasswordsafe.server.plugin.encryption.Encryptor</b></li>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.encryption.Encryptor</b></li>
 <li>Override: <b>public String encrypt(String clearText)</b></li>
 <li>Override: <b>public String decrypt(String cryptedText)</b></li>
 </ul>

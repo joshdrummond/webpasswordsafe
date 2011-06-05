@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-	Copyright 2008-2010 Josh Drummond
+	Copyright 2008-2011 Josh Drummond
 	
 	This file is part of WebPasswordSafe.
 	
@@ -50,7 +50,7 @@
     <servlet>
         <servlet-name>report</servlet-name>
         <servlet-class>
-            com.joshdrummond.webpasswordsafe.server.report.JasperReportServlet
+            net.webpasswordsafe.server.report.JasperReportServlet
         </servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>

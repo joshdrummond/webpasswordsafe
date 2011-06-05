@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <!--
-    Copyright 2008-2010 Josh Drummond
+    Copyright 2008-2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -57,13 +57,13 @@
     </layout>
   </appender>
 
-  <category name="com.joshdrummond.webpasswordsafe.server.plugin.audit.Log4jAuditLogger" additivity="false">
+  <category name="net.webpasswordsafe.server.plugin.audit.Log4jAuditLogger" additivity="false">
     <priority value="info" />
     <appender-ref ref="auditLog" />
     <!--<appender-ref ref="console" />-->
   </category>
 
-  <category name="com.joshdrummond" additivity="false">
+  <category name="net.webpasswordsafe" additivity="false">
     <priority value="info" />
     <appender-ref ref="dailyFile" />
   </category>

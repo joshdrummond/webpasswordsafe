@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <!--
-	Copyright 2008-2010 Josh Drummond
+	Copyright 2008-2011 Josh Drummond
 	
 	This file is part of WebPasswordSafe.
 	
@@ -31,19 +31,19 @@
 		</property>
 	</bean>
 	
-	<bean id="loginServiceExporter" class="com.joshdrummond.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
+	<bean id="loginServiceExporter" class="net.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
         <property name="beanManager" ref="persistentBeanManager" />
         <property name="strongCsrfProtection" value="true" />
 		<property name="service" ref="loginService" />
 	</bean>
 	
-	<bean id="userServiceExporter" class="com.joshdrummond.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
+	<bean id="userServiceExporter" class="net.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
         <property name="strongCsrfProtection" value="true" />
 		<property name="service" ref="userService" />
 	</bean>
 	
-	<bean id="passwordServiceExporter" class="com.joshdrummond.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
+	<bean id="passwordServiceExporter" class="net.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
 		<property name="beanManager" ref="persistentBeanManager" />
         <property name="strongCsrfProtection" value="true" />
 		<property name="service" ref="passwordService" />
