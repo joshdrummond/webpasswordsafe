@@ -76,7 +76,10 @@ public class GroupSelectionDialog extends Window
             @Override
             public void handleEvent(BaseEvent be)
             {
-                doOkay();
+                if (groupListBox.getSelection().size() > 0)
+                {
+                    doOkay();
+                }
             }
         });
         form.add(groupListBox);
