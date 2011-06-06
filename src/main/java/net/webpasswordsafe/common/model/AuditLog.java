@@ -25,6 +25,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import net.sf.gilead.pojo.gwt.LightEntity;
@@ -59,16 +60,16 @@ public class AuditLog extends LightEntity implements Serializable
     @Column(name="action", length=50, nullable=false, updatable=false)
     private String action;
 
+    @Lob
     @Column(name="target", updatable=false)
-    @Type(type="text")
     private String target;
 
     @Column(name="success", nullable=false, updatable=false)
     @Type(type = "yes_no")
     private boolean success;
 
+    @Lob
     @Column(name="message", updatable=false)
-    @Type(type="text")
     private String message;
 
     public AuditLog(Date eventDate, String username, String ipaddress, String action,
