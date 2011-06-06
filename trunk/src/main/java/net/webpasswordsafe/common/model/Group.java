@@ -57,13 +57,13 @@ public class Group extends Subject
     private Set<User> users;
     
     public Group() {
-        super('G');
-        users = new HashSet<User>();
+        this("");
     }
 
     public Group( String name ) {
-        this();
+        super('G');
         this.name = name;
+        users = new HashSet<User>();
     }
 
     @Override

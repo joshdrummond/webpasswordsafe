@@ -76,7 +76,10 @@ public class UserSelectionDialog extends Window
             @Override
             public void handleEvent(BaseEvent be)
             {
-                doOkay();
+                if (userListBox.getSelection().size() > 0)
+                {
+                    doOkay();
+                }
             }
         });
         form.add(userListBox);

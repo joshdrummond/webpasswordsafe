@@ -76,7 +76,10 @@ public class TemplateSelectionDialog extends Window
             @Override
             public void handleEvent(BaseEvent be)
             {
-                doOkay();
+                if (templateListBox.getSelection().size() > 0)
+                {
+                    doOkay();
+                }
             }
         });
         form.add(templateListBox);
