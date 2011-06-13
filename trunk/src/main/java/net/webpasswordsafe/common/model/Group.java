@@ -29,7 +29,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import org.hibernate.annotations.Index;
 
 
 /**
@@ -47,7 +46,6 @@ public class Group extends Subject
 	public static final int LENGTH_NAME = 100;
 
 	@Column(name="name", length=LENGTH_NAME, nullable=false, unique=true)
-    @Index(name="idx_group_name")
     private String name;
 
     @ManyToMany(cascade={CascadeType.ALL})

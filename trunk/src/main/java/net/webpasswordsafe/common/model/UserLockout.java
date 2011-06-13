@@ -27,7 +27,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import org.hibernate.annotations.Index;
 import net.sf.gilead.pojo.gwt.LightEntity;
 
 
@@ -50,7 +49,6 @@ public class UserLockout extends LightEntity implements Serializable
 
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false, updatable=false, unique=true)
-    @Index(name="idx_lockout_user")
     private User user;
 
     @Column(name="fail_count", nullable=false)

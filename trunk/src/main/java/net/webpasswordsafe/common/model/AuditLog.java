@@ -61,6 +61,7 @@ public class AuditLog extends LightEntity implements Serializable
     private String action;
 
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name="target", updatable=false)
     private String target;
 
@@ -69,6 +70,7 @@ public class AuditLog extends LightEntity implements Serializable
     private boolean success;
 
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name="message", updatable=false)
     private String message;
 

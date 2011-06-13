@@ -40,7 +40,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import net.sf.gilead.pojo.gwt.LightEntity;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
 
@@ -66,7 +65,6 @@ public class Password extends LightEntity implements Serializable
     private long id;
     
     @Column(name="name", length=LENGTH_NAME, nullable=false, updatable=false, unique=true)
-    @Index(name = "idx_password_name")
     private String name;
     
     @Column(name="username", length=LENGTH_USERNAME, nullable=false, updatable=false)
@@ -76,6 +74,7 @@ public class Password extends LightEntity implements Serializable
     private String target;
 
     @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @Column(name="notes")
     private String notes;
     

@@ -26,7 +26,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.hibernate.annotations.Index;
 import net.sf.gilead.pojo.gwt.LightEntity;
 
 
@@ -49,7 +48,6 @@ public class IPLockout extends LightEntity implements Serializable
     private long id;
     
     @Column(name="ipaddress", length=LENGTH_IPADDRESS, nullable=false, updatable=false, unique=true)
-    @Index(name="idx_lockout_ip")
     private String ipaddress;
 
     @Column(name="fail_count", nullable=false)
