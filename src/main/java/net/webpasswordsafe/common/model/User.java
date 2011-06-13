@@ -32,7 +32,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Utils;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
 
@@ -53,7 +52,6 @@ public class User extends Subject
     public static final int LENGTH_EMAIL = 100;
 
 	@Column(name="username", length=LENGTH_USERNAME, nullable=false, updatable=false, unique=true)
-    @Index(name="idx_user_username")
     private String username;
 
 	@OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true, mappedBy="user")
