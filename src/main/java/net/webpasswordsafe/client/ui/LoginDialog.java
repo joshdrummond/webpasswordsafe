@@ -47,7 +47,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  */
 public class LoginDialog extends Window
-	implements LoginWindow
+    implements LoginWindow
 {
     private TextField<String> usernameTextBox;
     private TextField<String> passwordTextBox;
@@ -72,14 +72,14 @@ public class LoginDialog extends Window
         usernameTextBox.setFieldLabel("Username");
         usernameTextBox.addKeyListener(new KeyListener()
         {
-        	@Override
-        	public void componentKeyPress(ComponentEvent event)
-        	{
-        		if (event.getKeyCode() == KeyCodes.KEY_ENTER)
-        		{
-        			passwordTextBox.focus();
-        		}
-        	}
+            @Override
+            public void componentKeyPress(ComponentEvent event)
+            {
+                if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+                {
+                    passwordTextBox.focus();
+                }
+            }
         });
         form.add(usernameTextBox, new FormData("-20"));
         passwordTextBox = new TextField<String>();
@@ -87,23 +87,23 @@ public class LoginDialog extends Window
         passwordTextBox.setPassword(true);
         passwordTextBox.addKeyListener(new KeyListener()
         {
-        	@Override
-        	public void componentKeyPress(ComponentEvent event)
-        	{
-        		if (event.getKeyCode() == KeyCodes.KEY_ENTER)
-        		{
-        			doSubmit();
-        		}
-        	}
+            @Override
+            public void componentKeyPress(ComponentEvent event)
+            {
+                if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+                {
+                    doSubmit();
+                }
+            }
         });
         form.add(passwordTextBox, new FormData("-20"));
         
         enterButton = new Button("Submit", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doSubmit();
-			}
-		});
+            }
+        });
         form.setButtonAlign(HorizontalAlignment.CENTER);
         form.addButton(enterButton);
         this.add(form);
@@ -140,11 +140,11 @@ public class LoginDialog extends Window
                 public void onSuccess(Boolean result) {
                     if (result.booleanValue())
                     {
-                    	doLoginSuccess();
+                        doLoginSuccess();
                     }
                     else
                     {
-                    	MessageBox.alert("Error", "Invalid Login!", null);
+                        MessageBox.alert("Error", "Invalid Login!", null);
                         setSubmitting(false);
                     }
                 }
@@ -156,7 +156,7 @@ public class LoginDialog extends Window
     
     private void doLoginSuccess()
     {
-    	main.doGetLoggedInUser(this);
+        main.doGetLoggedInUser(this);
     }
     
     @Override
@@ -169,7 +169,7 @@ public class LoginDialog extends Window
     @Override
     public void doGetLoginFailure()
     {
-    	MessageBox.alert("Error", "Invalid User!", null);
+        MessageBox.alert("Error", "Invalid User!", null);
     }
     
 }

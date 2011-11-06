@@ -29,52 +29,52 @@ import org.springframework.ldap.core.LdapTemplate;
  */
 public class LdapAuthenticator implements Authenticator {
 
-	private LdapTemplate ldapTemplate;
-	private String filter;
-	private String base;
+    private LdapTemplate ldapTemplate;
+    private String filter;
+    private String base;
     private static Logger LOG = Logger.getLogger(LdapAuthenticator.class);
 
-	@Override
-	public boolean authenticate(String username, String password)
-	{
-		boolean valid = false;
-		try
-		{
-			String userFilter = filter.replace("$1", username);
-			LOG.debug("ldap filter="+userFilter);
-			valid = ldapTemplate.authenticate(base, userFilter, password);
-		}
-		catch (Exception e)
-		{
-			// an exception is expected when bad credentials are used
-			LOG.debug("ldap error authenticating: "+ e.getMessage());
-		}
-		LOG.debug("LdapAuthenticator: login success for "+username+"? "+valid);
-		return valid;
-	}
+    @Override
+    public boolean authenticate(String username, String password)
+    {
+        boolean valid = false;
+        try
+        {
+            String userFilter = filter.replace("$1", username);
+            LOG.debug("ldap filter="+userFilter);
+            valid = ldapTemplate.authenticate(base, userFilter, password);
+        }
+        catch (Exception e)
+        {
+            // an exception is expected when bad credentials are used
+            LOG.debug("ldap error authenticating: "+ e.getMessage());
+        }
+        LOG.debug("LdapAuthenticator: login success for "+username+"? "+valid);
+        return valid;
+    }
 
-	public LdapTemplate getLdapTemplate() {
-		return ldapTemplate;
-	}
+    public LdapTemplate getLdapTemplate() {
+        return ldapTemplate;
+    }
 
-	public void setLdapTemplate(LdapTemplate ldapTemplate) {
-		this.ldapTemplate = ldapTemplate;
-	}
+    public void setLdapTemplate(LdapTemplate ldapTemplate) {
+        this.ldapTemplate = ldapTemplate;
+    }
 
-	public String getFilter() {
-		return filter;
-	}
+    public String getFilter() {
+        return filter;
+    }
 
-	public void setFilter(String filter) {
-		this.filter = filter;
-	}
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
 
-	public String getBase() {
-		return base;
-	}
+    public String getBase() {
+        return base;
+    }
 
-	public void setBase(String base) {
-		this.base = base;
-	}
-	
+    public void setBase(String base) {
+        this.base = base;
+    }
+    
 }

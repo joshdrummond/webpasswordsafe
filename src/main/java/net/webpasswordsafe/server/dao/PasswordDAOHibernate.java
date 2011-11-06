@@ -58,7 +58,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
 
     @Override
     @SuppressWarnings("unchecked")
-	public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags)
+    public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags)
     {
         Criteria crit = getSession().createCriteria(getPersistentClass());
         crit.setFetchMode("tags", FetchMode.JOIN);

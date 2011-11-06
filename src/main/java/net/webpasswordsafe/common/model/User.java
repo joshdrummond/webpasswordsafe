@@ -46,17 +46,17 @@ import org.hibernate.annotations.Type;
 @PrimaryKeyJoinColumn(name="id")
 public class User extends Subject
 {
-	private static final long serialVersionUID = 4024780603653185462L;
+    private static final long serialVersionUID = 4024780603653185462L;
     public static final int LENGTH_USERNAME = 64;
     public static final int LENGTH_FULLNAME = 100;
     public static final int LENGTH_EMAIL = 100;
 
-	@Column(name="username", length=LENGTH_USERNAME, nullable=false, updatable=false, unique=true)
+    @Column(name="username", length=LENGTH_USERNAME, nullable=false, updatable=false, unique=true)
     private String username;
 
-	@OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true, mappedBy="user")
-	private Set<UserAuthnPassword> authnPassword;
-	
+    @OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true, mappedBy="user")
+    private Set<UserAuthnPassword> authnPassword;
+    
     @Column(name="fullname", length=LENGTH_FULLNAME, nullable=false)
     private String fullname;
 

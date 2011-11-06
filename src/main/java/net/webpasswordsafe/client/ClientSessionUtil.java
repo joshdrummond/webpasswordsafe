@@ -34,8 +34,8 @@ import net.webpasswordsafe.common.util.Constants.Function;
  */
 public class ClientSessionUtil
 {
-	private static final ClientSessionUtil clientSessionUtil = new ClientSessionUtil();
-	
+    private static final ClientSessionUtil clientSessionUtil = new ClientSessionUtil();
+    
     private User user;
     private Group everyoneGroup;
     private boolean isLoggedIn;
@@ -43,7 +43,7 @@ public class ClientSessionUtil
     
     public static ClientSessionUtil getInstance()
     {
-    	return clientSessionUtil;
+        return clientSessionUtil;
     }
     
     private ClientSessionUtil()
@@ -55,20 +55,20 @@ public class ClientSessionUtil
 
     public boolean isAuthorized(Function function)
     {
-    	boolean isAuthorized = false;
-    	if (isLoggedIn())
-    	{
-    		if (authorizations.containsKey(function))
-    		{
-    			isAuthorized = authorizations.get(function);
-    		}
-    	}
-    	return isAuthorized;
+        boolean isAuthorized = false;
+        if (isLoggedIn())
+        {
+            if (authorizations.containsKey(function))
+            {
+                isAuthorized = authorizations.get(function);
+            }
+        }
+        return isAuthorized;
     }
     
     public void setAuthorizations(Map<Function, Boolean> authorizations)
     {
-    	this.authorizations = authorizations;
+        this.authorizations = authorizations;
     }
     
     public boolean isLoggedIn()

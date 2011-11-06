@@ -26,5 +26,5 @@ package net.webpasswordsafe.common.model;
  */
 public enum AccessLevel 
 {
-	READ, WRITE, GRANT;
+    READ, WRITE, GRANT;
 }

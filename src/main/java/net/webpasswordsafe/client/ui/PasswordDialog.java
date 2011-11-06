@@ -102,11 +102,11 @@ public class PasswordDialog extends Window implements PermissionListener
         passwordTextBox.setSize("331px", "22px");
 
         Button generateButton = new Button("Generate Password", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doGeneratePassword();
-			}
-		});
+            }
+        });
         generateButton.setEnabled(!isPasswordReadOnly);
         add(generateButton, new AbsoluteData(82, 90));
         generateButton.setSize("127px", "22px");
@@ -170,11 +170,11 @@ public class PasswordDialog extends Window implements PermissionListener
         
         Button editPermissionsButton = new Button(isPasswordGrantable ? 
                 "Edit Permissions" : "View Permissions", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doEditPermissions();
-			}
-		});
+            }
+        });
         add(editPermissionsButton, new AbsoluteData(82, 283));
         editPermissionsButton.setSize("260px", "22px");
         
@@ -191,19 +191,19 @@ public class PasswordDialog extends Window implements PermissionListener
         accessAuditButton.setEnabled(password.getId() > 0);
 
         Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doSave();
-			}
-		});
+            }
+        });
         saveButton.setEnabled(!isPasswordReadOnly);
 
         Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doCancel();
-			}
-		});
+            }
+        });
         
         setButtonAlign(HorizontalAlignment.CENTER);
         addButton(saveButton);

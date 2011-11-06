@@ -42,10 +42,10 @@ import javax.persistence.Table;
 @PrimaryKeyJoinColumn(name="id")
 public class Group extends Subject
 {
-	private static final long serialVersionUID = 5845591346545424763L;
-	public static final int LENGTH_NAME = 100;
+    private static final long serialVersionUID = 5845591346545424763L;
+    public static final int LENGTH_NAME = 100;
 
-	@Column(name="name", length=LENGTH_NAME, nullable=false, unique=true)
+    @Column(name="name", length=LENGTH_NAME, nullable=false, unique=true)
     private String name;
 
     @ManyToMany(cascade={CascadeType.ALL})

@@ -64,53 +64,53 @@ public class SimpleRandomPasswordGenerator implements PasswordGenerator
 
     private char[] getAllowedChars()
     {
-    	int allowedCharSize = 0;
-    	if (allowLowercase)
-    	{
-    		allowedCharSize += 26;
-    	}
-    	if (allowUppercase)
-    	{
-    		allowedCharSize += 26;
-    	}
-    	if (allowNumeric)
-    	{
-    		allowedCharSize += 10;
-    	}
-    	allowedCharSize += specialChars.length();
-    	char[] allowedChars = new char[allowedCharSize];
-    	int i = 0;
-    	if (allowLowercase)
-    	{
-    		for (int c = 97; c <= 122; c++)
-    		{
-    			allowedChars[i] = (char)c;
-    			i++;
-    		}
-    	}
-    	if (allowUppercase)
-    	{
-    		for (int c = 65; c <= 90; c++)
-    		{
-    			allowedChars[i] = (char)c;
-    			i++;
-    		}
-    	}
-    	if (allowNumeric)
-    	{
-    		for (int c = 48; c <= 57; c++)
-    		{
-    			allowedChars[i] = (char)c;
-    			i++;
-    		}
-    	}
-    	for (int c = 0; c < specialChars.length(); c++)
-    	{
-    		allowedChars[i] = specialChars.charAt(c);
-    		i++;
-    	}
+        int allowedCharSize = 0;
+        if (allowLowercase)
+        {
+            allowedCharSize += 26;
+        }
+        if (allowUppercase)
+        {
+            allowedCharSize += 26;
+        }
+        if (allowNumeric)
+        {
+            allowedCharSize += 10;
+        }
+        allowedCharSize += specialChars.length();
+        char[] allowedChars = new char[allowedCharSize];
+        int i = 0;
+        if (allowLowercase)
+        {
+            for (int c = 97; c <= 122; c++)
+            {
+                allowedChars[i] = (char)c;
+                i++;
+            }
+        }
+        if (allowUppercase)
+        {
+            for (int c = 65; c <= 90; c++)
+            {
+                allowedChars[i] = (char)c;
+                i++;
+            }
+        }
+        if (allowNumeric)
+        {
+            for (int c = 48; c <= 57; c++)
+            {
+                allowedChars[i] = (char)c;
+                i++;
+            }
+        }
+        for (int c = 0; c < specialChars.length(); c++)
+        {
+            allowedChars[i] = specialChars.charAt(c);
+            i++;
+        }
         LOG.debug("allowedChars="+String.valueOf(allowedChars));
-    	return allowedChars;
+        return allowedChars;
     }
     
     public int getPasswordLength()
@@ -123,36 +123,36 @@ public class SimpleRandomPasswordGenerator implements PasswordGenerator
         this.passwordLength = passwordLength;
     }
 
-	public boolean isAllowLowercase() {
-		return allowLowercase;
-	}
+    public boolean isAllowLowercase() {
+        return allowLowercase;
+    }
 
-	public void setAllowLowercase(boolean allowLowercase) {
-		this.allowLowercase = allowLowercase;
-	}
+    public void setAllowLowercase(boolean allowLowercase) {
+        this.allowLowercase = allowLowercase;
+    }
 
-	public boolean isAllowUppercase() {
-		return allowUppercase;
-	}
+    public boolean isAllowUppercase() {
+        return allowUppercase;
+    }
 
-	public void setAllowUppercase(boolean allowUppercase) {
-		this.allowUppercase = allowUppercase;
-	}
+    public void setAllowUppercase(boolean allowUppercase) {
+        this.allowUppercase = allowUppercase;
+    }
 
-	public boolean isAllowNumeric() {
-		return allowNumeric;
-	}
+    public boolean isAllowNumeric() {
+        return allowNumeric;
+    }
 
-	public void setAllowNumeric(boolean allowNumeric) {
-		this.allowNumeric = allowNumeric;
-	}
+    public void setAllowNumeric(boolean allowNumeric) {
+        this.allowNumeric = allowNumeric;
+    }
 
-	public String getSpecialChars() {
-		return specialChars;
-	}
+    public String getSpecialChars() {
+        return specialChars;
+    }
 
-	public void setSpecialChars(String specialChars) {
-		this.specialChars = specialChars;
-	}
+    public void setSpecialChars(String specialChars) {
+        this.specialChars = specialChars;
+    }
 
 }
