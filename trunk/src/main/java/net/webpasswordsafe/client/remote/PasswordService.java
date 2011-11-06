@@ -55,19 +55,19 @@ public interface PasswordService extends RemoteService {
     public Template getTemplateWithDetails(long templateId);
     public boolean isTemplateTaken(String templateName, long ignoreTemplateId);
     
-	/**
-	 * Utility class for simplifying access to the instance of async service.
-	 */
-	public static class Util {
-		private static PasswordServiceAsync instance;
-		public static PasswordServiceAsync getInstance(){
-			if (instance == null) {
-				instance = (PasswordServiceAsync) GWT.create(PasswordService.class);
-				ServiceDefTarget target = (ServiceDefTarget) instance;
-				target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/PasswordService");
+    /**
+     * Utility class for simplifying access to the instance of async service.
+     */
+    public static class Util {
+        private static PasswordServiceAsync instance;
+        public static PasswordServiceAsync getInstance(){
+            if (instance == null) {
+                instance = (PasswordServiceAsync) GWT.create(PasswordService.class);
+                ServiceDefTarget target = (ServiceDefTarget) instance;
+                target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/PasswordService");
                 target.setRpcRequestBuilder(new CSRFAwareRpcRequestBuilder());
-			}
-			return instance;
-		}
-	}
+            }
+            return instance;
+        }
+    }
 }

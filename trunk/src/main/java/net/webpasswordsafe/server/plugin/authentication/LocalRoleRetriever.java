@@ -53,12 +53,12 @@ public class LocalRoleRetriever implements RoleRetriever
         return roles;
     }
 
-	public Set<String> getAdminUsers() {
-		return adminUsers;
-	}
+    public Set<String> getAdminUsers() {
+        return adminUsers;
+    }
 
-	public void setAdminUsers(Set<String> adminUsers) {
-		this.adminUsers = adminUsers;
-	}
+    public void setAdminUsers(Set<String> adminUsers) {
+        this.adminUsers = adminUsers;
+    }
 
 }

@@ -80,7 +80,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 
     public void onModuleLoad()
     {
-    	// menu panel
+        // menu panel
         menuPanel = new ContentPanel(new FillLayout());
         menuPanel.setHeaderVisible(false);
         menuPanel.setBorders(false);
@@ -114,7 +114,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 
     private void refreshTopPanel()
     {
-    	topPanel.removeAll();
+        topPanel.removeAll();
         Text headerGwtLabel = new Text(TITLE);
         Text loggedInLabel = null;
         if (clientSessionUtil.isLoggedIn())
@@ -177,8 +177,8 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         Menu userSettingsMenu = new Menu();
         //userSettingsMenu.add(new MenuItem("General"));
         userSettingsMenu.add(new MenuItem("Change Password", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
+            @Override
+            public void componentSelected(MenuEvent ce) {
                 doChangePassword();
             }
         }));
@@ -193,8 +193,8 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 //        userMenu.add(userRole);
 
         userMenu.add(new MenuItem("Logout", new SelectionListener<MenuEvent>() {
-			@Override
-			public void componentSelected(MenuEvent ce) {
+            @Override
+            public void componentSelected(MenuEvent ce) {
                 doLogout();
             }
         }));
@@ -207,12 +207,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         Menu passwordMenu = new Menu();
         if (clientSessionUtil.isAuthorized(Function.ADD_PASSWORD))
         {
-	        passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
-				@Override
-				public void componentSelected(MenuEvent ce) {
-	                doNewPassword();
-	            }
-	        }));
+            passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
+                @Override
+                public void componentSelected(MenuEvent ce) {
+                    doNewPassword();
+                }
+            }));
         }
         MenuItem passwordSearch = new MenuItem("Search");
         Menu passwordSearchMenu = new Menu();
@@ -247,21 +247,21 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         Menu passwordTemplateMenu = new Menu();
         if (clientSessionUtil.isAuthorized(Function.ADD_TEMPLATE))
         {
-	        passwordTemplateMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
-	            @Override
-	            public void componentSelected(MenuEvent ce) {
-	                doAddTemplate();
-	            }
-	        }));
+            passwordTemplateMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
+                @Override
+                public void componentSelected(MenuEvent ce) {
+                    doAddTemplate();
+                }
+            }));
         }
         if (clientSessionUtil.isAuthorized(Function.UPDATE_TEMPLATE))
         {
-	        passwordTemplateMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
-	            @Override
-	            public void componentSelected(MenuEvent ce) {
-	                doEditTemplate();
-	            }
-	        }));
+            passwordTemplateMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+                @Override
+                public void componentSelected(MenuEvent ce) {
+                    doEditTemplate();
+                }
+            }));
         }
         passwordTemplate.setSubMenu(passwordTemplateMenu);
         passwordMenu.add(passwordTemplate);
@@ -273,59 +273,59 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     {
         // only create admin menu item if submenus allowed
         if (clientSessionUtil.isAuthorized(Function.ADD_USER) ||
-        	clientSessionUtil.isAuthorized(Function.UPDATE_USER) ||
-        	clientSessionUtil.isAuthorized(Function.ADD_GROUP) ||
-        	clientSessionUtil.isAuthorized(Function.UPDATE_GROUP) ||
-        	clientSessionUtil.isAuthorized(Function.UNBLOCK_IP))
+            clientSessionUtil.isAuthorized(Function.UPDATE_USER) ||
+            clientSessionUtil.isAuthorized(Function.ADD_GROUP) ||
+            clientSessionUtil.isAuthorized(Function.UPDATE_GROUP) ||
+            clientSessionUtil.isAuthorized(Function.UNBLOCK_IP))
         {
-	        Menu adminMenu = new Menu();
-	        //adminMenu.add(new MenuItem("Settings"));
-	
-	        MenuItem adminUser = new MenuItem("Users");
-	        Menu adminUserMenu = new Menu();
-	        if (clientSessionUtil.isAuthorized(Function.ADD_USER))
-	        {
-		        adminUserMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
-					@Override
-					public void componentSelected(MenuEvent ce) {
-		                doAddUser();
-		            }
-		        }));
-	        }
-	        if (clientSessionUtil.isAuthorized(Function.UPDATE_USER))
-	        {
-		        adminUserMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
-					@Override
-					public void componentSelected(MenuEvent ce) {
-		                doEditUser();
-		            }
-		        }));
-	        }
-	        adminUser.setSubMenu(adminUserMenu);
-	        adminMenu.add(adminUser);
-	        
-	        MenuItem adminGroup = new MenuItem("Groups");
-	        Menu adminGroupMenu = new Menu();
-	        if (clientSessionUtil.isAuthorized(Function.ADD_GROUP))
-	        {
-		        adminGroupMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
-					@Override
-					public void componentSelected(MenuEvent ce) {
-		                doAddGroup();
-		            }
-		        }));
-	        }
-	        if (clientSessionUtil.isAuthorized(Function.UPDATE_GROUP))
-	        {
-		        adminGroupMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
-					@Override
-					public void componentSelected(MenuEvent ce) {
-		                doEditGroup();
-		            }
-		        }));
-	        }
-	        adminGroup.setSubMenu(adminGroupMenu);
-	        adminMenu.add(adminGroup);
+            Menu adminMenu = new Menu();
+            //adminMenu.add(new MenuItem("Settings"));
+    
+            MenuItem adminUser = new MenuItem("Users");
+            Menu adminUserMenu = new Menu();
+            if (clientSessionUtil.isAuthorized(Function.ADD_USER))
+            {
+                adminUserMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
+                    @Override
+                    public void componentSelected(MenuEvent ce) {
+                        doAddUser();
+                    }
+                }));
+            }
+            if (clientSessionUtil.isAuthorized(Function.UPDATE_USER))
+            {
+                adminUserMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+                    @Override
+                    public void componentSelected(MenuEvent ce) {
+                        doEditUser();
+                    }
+                }));
+            }
+            adminUser.setSubMenu(adminUserMenu);
+            adminMenu.add(adminUser);
+            
+            MenuItem adminGroup = new MenuItem("Groups");
+            Menu adminGroupMenu = new Menu();
+            if (clientSessionUtil.isAuthorized(Function.ADD_GROUP))
+            {
+                adminGroupMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
+                    @Override
+                    public void componentSelected(MenuEvent ce) {
+                        doAddGroup();
+                    }
+                }));
+            }
+            if (clientSessionUtil.isAuthorized(Function.UPDATE_GROUP))
+            {
+                adminGroupMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+                    @Override
+                    public void componentSelected(MenuEvent ce) {
+                        doEditGroup();
+                    }
+                }));
+            }
+            adminGroup.setSubMenu(adminGroupMenu);
+            adminMenu.add(adminGroup);
 
             MenuItem adminTools = new MenuItem("Tools");
             Menu adminToolsMenu = new Menu();
@@ -340,8 +340,8 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             }
             adminTools.setSubMenu(adminToolsMenu);
             adminMenu.add(adminTools);
-	        
-	        mainMenu.add(new MenuBarItem("Admin", adminMenu));
+            
+            mainMenu.add(new MenuBarItem("Admin", adminMenu));
         }
 //        MenuItem adminRole = new MenuItem("Roles");
 //        adminMenu.add(adminRole);
@@ -356,19 +356,19 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Groups))
         {
-        	reportsMenu.add(buildReportMenuItem("Groups", Report.Groups));
+            reportsMenu.add(buildReportMenuItem("Groups", Report.Groups));
         }
         if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordAccessAudit))
         {
-        	reportsMenu.add(buildReportMenuItem("Access Audit", Report.PasswordAccessAudit));
+            reportsMenu.add(buildReportMenuItem("Access Audit", Report.PasswordAccessAudit));
         }
         if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordPermissions))
         {
-        	reportsMenu.add(buildReportMenuItem("Permissions", Report.PasswordPermissions));
+            reportsMenu.add(buildReportMenuItem("Permissions", Report.PasswordPermissions));
         }
         if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_CurrentPasswordExport))
         {
-        	reportsMenu.add(buildReportMenuItem("Password Export", Report.CurrentPasswordExport));
+            reportsMenu.add(buildReportMenuItem("Password Export", Report.CurrentPasswordExport));
         }
         mainMenu.add(new MenuBarItem("Reports", reportsMenu));
 
@@ -601,7 +601,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                 }
                 else
                 {
-                	loginWindow.doGetLoginFailure();
+                    loginWindow.doGetLoginFailure();
                 }
             }
         };
@@ -622,7 +622,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             {
                 getClientModel().setAuthorizations(result);
                 refreshLoginStatus();
-            	loginWindow.doGetLoginSuccess();
+                loginWindow.doGetLoginSuccess();
             }
         };
         LoginService.Util.getInstance().getLoginAuthorizations(null, callback);
@@ -708,7 +708,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     @Override
     public void doGetLoginSuccess()
     {
-    	Info.display("Status", Format.htmlEncode(getClientModel().getLoggedInUser().getUsername()) + " logged in");
+        Info.display("Status", Format.htmlEncode(getClientModel().getLoggedInUser().getUsername()) + " logged in");
     }
     
     @Override

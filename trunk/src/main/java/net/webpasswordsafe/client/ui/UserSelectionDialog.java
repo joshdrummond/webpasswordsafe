@@ -85,18 +85,18 @@ public class UserSelectionDialog extends Window
         form.add(userListBox);
 
         Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doOkay();
-			}
-		});
+            }
+        });
 
         Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doCancel();
-			}
-		});
+            }
+        });
         
         form.setButtonAlign(HorizontalAlignment.CENTER);
         form.addButton(okayButton);
@@ -109,7 +109,7 @@ public class UserSelectionDialog extends Window
 
     private void setFields()
     {
-    	store.removeAll();
+        store.removeAll();
         for (User user : users)
         {
             store.add(new UserData(user));
@@ -124,24 +124,24 @@ public class UserSelectionDialog extends Window
 
     private void doOkay()
     {
-    	List<UserData> dataSelected = userListBox.getSelection();
+        List<UserData> dataSelected = userListBox.getSelection();
         List<User> usersSelected = new ArrayList<User>(dataSelected.size());
-    	for (UserData ud : dataSelected)
-    	{
-    		usersSelected.add((User)ud.get("user"));
-    	}
+        for (UserData ud : dataSelected)
+        {
+            usersSelected.add((User)ud.get("user"));
+        }
         userListener.doUsersChosen(usersSelected);
         hide();
     }
 
     private class UserData extends BaseModel
     {
-    	private static final long serialVersionUID = 1L;
-    	public UserData(User user)
-    	{
-    		set("id", user.getId());
-    		set("fullname", Format.htmlEncode(user.getFullname()));
-    		set("user", user);
-    	}
+        private static final long serialVersionUID = 1L;
+        public UserData(User user)
+        {
+            set("id", user.getId());
+            set("fullname", Format.htmlEncode(user.getFullname()));
+            set("user", user);
+        }
     }
 }

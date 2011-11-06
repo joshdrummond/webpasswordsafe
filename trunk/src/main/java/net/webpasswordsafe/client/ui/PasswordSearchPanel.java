@@ -86,46 +86,46 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
 
     public PasswordSearchPanel()
     {
-    	setLayout(new BorderLayout());
-    	setHeaderVisible(false);
-    	
-    	ContentPanel northPanel = new ContentPanel();
-    	northPanel.setHeading("Password Search");
-    	ContentPanel westPanel = new ContentPanel(new FillLayout());
-    	westPanel.setHeading("Tag(s)");
-    	ContentPanel centerPanel = new ContentPanel(new FillLayout());
-    	centerPanel.setHeading("Password(s)");
-    	
-    	HBoxLayout northLayout = new HBoxLayout();  
-    	northLayout.setPadding(new Padding(5));  
-    	northLayout.setHBoxLayoutAlign(HBoxLayoutAlign.MIDDLE);  
-    	northLayout.setPack(BoxLayoutPack.CENTER);  
-    	northPanel.setLayout(northLayout);  
+        setLayout(new BorderLayout());
+        setHeaderVisible(false);
+        
+        ContentPanel northPanel = new ContentPanel();
+        northPanel.setHeading("Password Search");
+        ContentPanel westPanel = new ContentPanel(new FillLayout());
+        westPanel.setHeading("Tag(s)");
+        ContentPanel centerPanel = new ContentPanel(new FillLayout());
+        centerPanel.setHeading("Password(s)");
+        
+        HBoxLayout northLayout = new HBoxLayout();  
+        northLayout.setPadding(new Padding(5));  
+        northLayout.setHBoxLayoutAlign(HBoxLayoutAlign.MIDDLE);  
+        northLayout.setPack(BoxLayoutPack.CENTER);  
+        northPanel.setLayout(northLayout);  
 
-    	searchTextBox = new TextField<String>();
+        searchTextBox = new TextField<String>();
         searchTextBox.addKeyListener(new KeyListener() {
-        	@Override
-        	public void componentKeyPress(ComponentEvent event) {
-        		if (event.getKeyCode() == KeyCodes.KEY_ENTER)
-        		{
+            @Override
+            public void componentKeyPress(ComponentEvent event) {
+                if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+                {
                     doSearch();
-        		}
-        	}
+                }
+            }
         });
         searchTextBox.setWidth(300);
         searchTextBox.setMaxLength(1000);
         searchTextBox.focus();
 
         Button searchButton = new Button("Search", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doSearch();
-			}
-		});
+            }
+        });
         activeOnlyCheckBox = new CheckBox();
         activeOnlyCheckBox.setBoxLabel("Active Only");
         activeOnlyCheckBox.setValue(true);
-    	northPanel.add(searchTextBox, new HBoxLayoutData(new Margins(0, 5, 0, 0)));  
+        northPanel.add(searchTextBox, new HBoxLayoutData(new Margins(0, 5, 0, 0)));  
         northPanel.add(searchButton, new HBoxLayoutData(new Margins(0, 5, 0, 0)));  
         northPanel.add(activeOnlyCheckBox, new HBoxLayoutData(new Margins(0, 5, 0, 5)));  
         
@@ -192,26 +192,26 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         });
         centerPanel.add(passwordGrid);
         
-    	BorderLayoutData northData = new BorderLayoutData(LayoutRegion.NORTH, 100);  
-    	northData.setCollapsible(true);  
-    	northData.setFloatable(false);  
-    	northData.setHideCollapseTool(false);  
-    	northData.setSplit(true);
-    	northData.setMargins(new Margins(5, 5, 0, 5));  
-    	
-    	BorderLayoutData westData = new BorderLayoutData(LayoutRegion.WEST, 150);  
-    	westData.setSplit(true);  
-    	westData.setCollapsible(true);  
-    	westData.setMargins(new Margins(5));  
-    	
-    	BorderLayoutData centerData = new BorderLayoutData(LayoutRegion.CENTER);  
-    	centerData.setMargins(new Margins(5, 0, 5, 0));  
-    	
-    	add(northPanel, northData);
-    	add(westPanel, westData);
-    	add(centerPanel, centerData);
-    	
-    	doLoadTags();
+        BorderLayoutData northData = new BorderLayoutData(LayoutRegion.NORTH, 100);  
+        northData.setCollapsible(true);  
+        northData.setFloatable(false);  
+        northData.setHideCollapseTool(false);  
+        northData.setSplit(true);
+        northData.setMargins(new Margins(5, 5, 0, 5));  
+        
+        BorderLayoutData westData = new BorderLayoutData(LayoutRegion.WEST, 150);  
+        westData.setSplit(true);  
+        westData.setCollapsible(true);  
+        westData.setMargins(new Margins(5));  
+        
+        BorderLayoutData centerData = new BorderLayoutData(LayoutRegion.CENTER);  
+        centerData.setMargins(new Margins(5, 0, 5, 0));  
+        
+        add(northPanel, northData);
+        add(westPanel, westData);
+        add(centerPanel, centerData);
+        
+        doLoadTags();
     }
 
     public void openSelectedPassword()
@@ -316,10 +316,10 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
 
     private void refreshTable(List<Password> passwords)
     {
-    	gridStore.removeAll();
+        gridStore.removeAll();
         for (Password password : passwords)
         {
-        	gridStore.add(new PasswordSearchData(password.getId(), password.getName(), password.getUsername(), password.getTagsAsString(), password.getNotes()));
+            gridStore.add(new PasswordSearchData(password.getId(), password.getName(), password.getUsername(), password.getTagsAsString(), password.getNotes()));
         }
     }
 
@@ -331,17 +331,17 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
     
     private class PasswordSearchData extends BaseModel
     {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-    	public PasswordSearchData(long id, String title, String username, String tags, String notes)
-    	{
-    		set("id", id);
-    		set("title", Format.htmlEncode(title));
-    		set("username", Format.htmlEncode(username));
-    		set("password", "******");
+        public PasswordSearchData(long id, String title, String username, String tags, String notes)
+        {
+            set("id", id);
+            set("title", Format.htmlEncode(title));
+            set("username", Format.htmlEncode(username));
+            set("password", "******");
             set("tags", Format.htmlEncode(tags));
             set("notes", Format.htmlEncode(notes));
-    	}
+        }
     }
 
     private void doShowPasswordPopup(long passwordId)

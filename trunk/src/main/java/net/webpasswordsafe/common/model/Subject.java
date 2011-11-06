@@ -42,9 +42,9 @@ import net.sf.gilead.pojo.gwt.LightEntity;
 @Inheritance(strategy=InheritanceType.JOINED)
 public abstract class Subject extends LightEntity implements Serializable
 {
-	private static final long serialVersionUID = -4007345820647655599L;
+    private static final long serialVersionUID = -4007345820647655599L;
 
-	@Id
+    @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Column(name="id", insertable=false)
     private long id;
@@ -73,7 +73,7 @@ public abstract class Subject extends LightEntity implements Serializable
 
     public void setId(long id)
     {
-    	this.id = id;
+        this.id = id;
     }
     
     public long getId()

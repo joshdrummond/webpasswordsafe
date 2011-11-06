@@ -42,9 +42,9 @@ import net.sf.gilead.pojo.gwt.LightEntity;
 public class PasswordAccessAudit extends LightEntity implements Serializable
 {
 
-	private static final long serialVersionUID = -8259517394743959516L;
+    private static final long serialVersionUID = -8259517394743959516L;
 
-	@Id
+    @Id
     @GeneratedValue
     @Column(name="id")
     private long id;

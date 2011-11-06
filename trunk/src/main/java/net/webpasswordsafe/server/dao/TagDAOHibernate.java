@@ -46,7 +46,7 @@ public class TagDAOHibernate extends GenericHibernateDAO<Tag, Long> implements T
     }
 
     @SuppressWarnings("unchecked")
-	public List<Tag> findTagsInUse()
+    public List<Tag> findTagsInUse()
     {
         Query hqlQuery = getSession().createQuery("select distinct t from Tag t join t.passwords p order by t.name asc");
         return hqlQuery.list();

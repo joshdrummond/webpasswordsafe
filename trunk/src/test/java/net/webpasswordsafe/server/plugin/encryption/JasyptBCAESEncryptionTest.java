@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
 public class JasyptBCAESEncryptionTest
 {
 
-	@Test
+    @Test
     public void testEncrypt()
     {
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();

@@ -128,18 +128,18 @@ public class UserDialog extends Window
         to.setStore(toGroupStore);
 
         Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doSave();
-			}
-		});
+            }
+        });
 
         Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doCancel();
-			}
-		});
+            }
+        });
 
         setButtonAlign(HorizontalAlignment.CENTER);
         addButton(saveButton);

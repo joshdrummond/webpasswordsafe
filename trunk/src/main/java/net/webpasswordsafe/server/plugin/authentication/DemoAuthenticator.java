@@ -26,19 +26,19 @@ package net.webpasswordsafe.server.plugin.authentication;
  */
 public class DemoAuthenticator implements Authenticator {
 
-	private String demoPassword = "";
-	
-	@Override
-	public boolean authenticate(String username, String password) {
-		return password.equals(demoPassword);
-	}
+    private String demoPassword = "";
+    
+    @Override
+    public boolean authenticate(String username, String password) {
+        return password.equals(demoPassword);
+    }
 
-	public String getDemoPassword() {
-		return demoPassword;
-	}
+    public String getDemoPassword() {
+        return demoPassword;
+    }
 
-	public void setDemoPassword(String demoPassword) {
-		this.demoPassword = demoPassword;
-	}
+    public void setDemoPassword(String demoPassword) {
+        this.demoPassword = demoPassword;
+    }
 
 }

@@ -213,7 +213,7 @@ public class PasswordServiceImpl implements PasswordService
                 }
                 else
                 {
-                	LOG.debug("no access to grant permissions");
+                    LOG.debug("no access to grant permissions");
                 }
                 auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update password", updatePassword.getName(), true, "");
             }
@@ -233,8 +233,8 @@ public class PasswordServiceImpl implements PasswordService
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags)
     {
-    	query = Utils.safeString(query);
-    	Date now = new Date();
+        query = Utils.safeString(query);
+        Date now = new Date();
         User loggedInUser = getLoggedInUser();
         List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly, tags);
         auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "search password", "query=["+query+"] activeOnly=["+activeOnly+"] tags=["+tags+"]", true, "found "+passwords.size());

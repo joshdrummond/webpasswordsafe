@@ -54,12 +54,12 @@ import org.hibernate.annotations.Type;
 @Table(name="passwords")
 public class Password extends LightEntity implements Serializable
 {
-	private static final long serialVersionUID = 7174192307771387126L;
+    private static final long serialVersionUID = 7174192307771387126L;
     public static final int LENGTH_NAME = 100;
     public static final int LENGTH_USERNAME = 64;
     public static final int LENGTH_TARGET = 64;
 
-	@Id
+    @Id
     @GeneratedValue
     @Column(name="id")
     private long id;
@@ -128,34 +128,34 @@ public class Password extends LightEntity implements Serializable
     
     public void addPermission(Permission permission)
     {
-    	permission.setPassword(this);
-    	this.permissions.add(permission);
+        permission.setPassword(this);
+        this.permissions.add(permission);
     }
     
     public void clearPermissions()
     {
-    	this.permissions.clear();
+        this.permissions.clear();
     }
     
     public void removePermission(Permission permission)
     {
-    	this.permissions.remove(permission);
+        this.permissions.remove(permission);
     }
     
     public Set<Permission> getPermissions() {
-		return this.permissions;
-	}
+        return this.permissions;
+    }
 
-	protected void setPermissions(Set<Permission> permissions) {
-		this.permissions = permissions;
-	}
-	
+    protected void setPermissions(Set<Permission> permissions) {
+        this.permissions = permissions;
+    }
+    
     public Set<Tag> getTags()
     {
         return this.tags;
     }
 
-	protected void setTags(Set<Tag> tags)
+    protected void setTags(Set<Tag> tags)
     {
         this.tags = tags;
     }
@@ -262,7 +262,7 @@ public class Password extends LightEntity implements Serializable
     }
     public void addPasswordData(PasswordData passwordDataItem)
     {
-    	passwordDataItem.setParent(this);
+        passwordDataItem.setParent(this);
         this.passwordData.add(0, passwordDataItem);
     }
     
@@ -297,7 +297,7 @@ public class Password extends LightEntity implements Serializable
 
     public void addTag(Tag tag)
     {
-    	tag.getPasswords().add(this);
+        tag.getPasswords().add(this);
         tags.add(tag);
     }
     

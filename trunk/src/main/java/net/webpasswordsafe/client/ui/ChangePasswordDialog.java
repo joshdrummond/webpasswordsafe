@@ -52,7 +52,7 @@ public class ChangePasswordDialog extends Window
     
     public ChangePasswordDialog()
     {
-    	this.setHeading("Change Password");
+        this.setHeading("Change Password");
         this.setModal(true);
         
         FormPanel form = new FormPanel();
@@ -90,17 +90,17 @@ public class ChangePasswordDialog extends Window
         form.add(password2, formData);
         
         Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doOkay();
-			}
-		});
+            }
+        });
         Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
-			@Override
-			public void componentSelected(ButtonEvent ce) {
+            @Override
+            public void componentSelected(ButtonEvent ce) {
                 doCancel();
-			}
-		});
+            }
+        });
         form.setButtonAlign(HorizontalAlignment.CENTER);
         form.addButton(okayButton);
         form.addButton(cancelButton);

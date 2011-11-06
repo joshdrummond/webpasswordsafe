@@ -21,6 +21,6 @@ package net.webpasswordsafe.client.ui;
 
 
 public interface LoginWindow {
-	public void doGetLoginSuccess();
-	public void doGetLoginFailure();
+    public void doGetLoginSuccess();
+    public void doGetLoginFailure();
 }

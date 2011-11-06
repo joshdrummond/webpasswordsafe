@@ -46,9 +46,9 @@ import org.hibernate.annotations.Type;
 public class Template extends LightEntity implements Serializable
 {
     private static final long serialVersionUID = 4904231831095270401L;
-	public static final int LENGTH_NAME = 100;
+    public static final int LENGTH_NAME = 100;
 
-	@Id
+    @Id
     @GeneratedValue
     @Column(name="id")
     private long id;

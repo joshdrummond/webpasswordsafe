@@ -41,9 +41,9 @@ import net.sf.gilead.pojo.gwt.LightEntity;
 public class Permission extends LightEntity implements Serializable
 {
 
-	private static final long serialVersionUID = 4513050098482215994L;
+    private static final long serialVersionUID = 4513050098482215994L;
 
-	@Id
+    @Id
     @GeneratedValue
     @Column(name="id")
     private long id;
@@ -65,8 +65,8 @@ public class Permission extends LightEntity implements Serializable
     
     public Permission(Subject subject, AccessLevel accessLevel)
     {
-    	this.subject = subject;
-    	this.accessLevel = accessLevel.name();
+        this.subject = subject;
+        this.accessLevel = accessLevel.name();
     }
     
     public long getId()

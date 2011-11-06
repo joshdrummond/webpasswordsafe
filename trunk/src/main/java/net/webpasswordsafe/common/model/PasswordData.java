@@ -45,7 +45,7 @@ public class PasswordData extends LightEntity implements Serializable
     public static final int LENGTH_PASSWORD = 64;
     public static final int LENGTH_PASSWORD_CRYPTED = 250;
 
-	@Id
+    @Id
     @GeneratedValue
     @Column(name="id")
     private long id;

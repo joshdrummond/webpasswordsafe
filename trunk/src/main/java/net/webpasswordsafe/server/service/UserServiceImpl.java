@@ -200,35 +200,35 @@ public class UserServiceImpl implements UserService
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-	public void verifyInitialization()
-	{
-	    verifyEveryoneGroupExists();
-		verifyAdminUserExists();
-	}
+    public void verifyInitialization()
+    {
+        verifyEveryoneGroupExists();
+        verifyAdminUserExists();
+    }
 
     @Transactional(propagation=Propagation.REQUIRED)
-	private void verifyAdminUserExists()
-	{
-	    User adminUser = getAdminUser();
-	    if (null == adminUser)
-	    {
-	        adminUser = User.newActiveUser(ADMIN_USER_NAME, ADMIN_USER_NAME, ADMIN_USER_NAME,
-	                ADMIN_USER_NAME+"@"+ADMIN_USER_NAME+".com");
-	        adminUser.addGroup(getEveryoneGroup());
-	        addUserInternal(adminUser);
-	    }
-	}
+    private void verifyAdminUserExists()
+    {
+        User adminUser = getAdminUser();
+        if (null == adminUser)
+        {
+            adminUser = User.newActiveUser(ADMIN_USER_NAME, ADMIN_USER_NAME, ADMIN_USER_NAME,
+                    ADMIN_USER_NAME+"@"+ADMIN_USER_NAME+".com");
+            adminUser.addGroup(getEveryoneGroup());
+            addUserInternal(adminUser);
+        }
+    }
 
     @Transactional(propagation=Propagation.REQUIRED)
-	private void verifyEveryoneGroupExists()
-	{
-	    Group everyoneGroup = getEveryoneGroup();
-	    if (null == everyoneGroup)
-	    {
-	        everyoneGroup = new Group(EVERYONE_GROUP_NAME);
-	        addGroupInternal(everyoneGroup);
-	    }
-	}
+    private void verifyEveryoneGroupExists()
+    {
+        Group everyoneGroup = getEveryoneGroup();
+        if (null == everyoneGroup)
+        {
+            everyoneGroup = new Group(EVERYONE_GROUP_NAME);
+            addGroupInternal(everyoneGroup);
+        }
+    }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
@@ -318,16 +318,16 @@ public class UserServiceImpl implements UserService
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-	public Group getEveryoneGroup()
-	{
+    public Group getEveryoneGroup()
+    {
         return groupDAO.findGroupByName(EVERYONE_GROUP_NAME);
-	}
-	
+    }
+    
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-	private  User getAdminUser()
-	{
-	    return userDAO.findUserByUsername(ADMIN_USER_NAME);
-	}
+    private  User getAdminUser()
+    {
+        return userDAO.findUserByUsername(ADMIN_USER_NAME);
+    }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)

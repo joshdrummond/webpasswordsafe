@@ -35,7 +35,7 @@ public class JasyptDigesterTest
     /**
      * Test method for {@link net.webpasswordsafe.server.plugin.encryption.JasyptDigester#check(java.lang.String, java.lang.String)}.
      */
-	@Test
+    @Test
     public void testCheck()
     {
         JasyptDigester digester = new JasyptDigester();

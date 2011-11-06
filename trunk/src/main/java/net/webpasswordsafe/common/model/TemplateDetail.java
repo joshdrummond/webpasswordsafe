@@ -41,9 +41,9 @@ import net.sf.gilead.pojo.gwt.LightEntity;
 public class TemplateDetail extends LightEntity implements Serializable
 {
 
-	private static final long serialVersionUID = 8295900905712832170L;
+    private static final long serialVersionUID = 8295900905712832170L;
 
-	@Id
+    @Id
     @GeneratedValue
     @Column(name="id")
     private long id;

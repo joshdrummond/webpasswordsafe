@@ -50,7 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service("loginService")
 public class LoginServiceImpl implements LoginService {
-	
+    
     private static Logger LOG = Logger.getLogger(LoginServiceImpl.class);
     private static final long serialVersionUID = 7281742835626324457L;
     
@@ -154,13 +154,13 @@ public class LoginServiceImpl implements LoginService {
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public Map<Function, Boolean> getLoginAuthorizations(Set<Function> functions)
     {
-    	LOG.debug("inside getLoginAuthorizations");
+        LOG.debug("inside getLoginAuthorizations");
         User loggedInUser = getLogin();
         // if passed null, load everything
         if (null==functions)
         {
-        	LOG.debug("functions was passed null");
-        	functions = new HashSet<Function>(Arrays.asList(Function.values()));
+            LOG.debug("functions was passed null");
+            functions = new HashSet<Function>(Arrays.asList(Function.values()));
         }
         LOG.debug("functions="+functions.toString());
         Map<Function, Boolean> authzMap = new HashMap<Function, Boolean>(functions.size());

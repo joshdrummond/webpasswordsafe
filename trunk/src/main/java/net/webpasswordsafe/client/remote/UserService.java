@@ -51,19 +51,19 @@ public interface UserService extends RemoteService {
     public boolean isGroupTaken(String groupName, long ignoreGroupId);
     public boolean unblockIP(String ipaddress);
 
-	/**
-	 * Utility class for simplifying access to the instance of async service.
-	 */
-	public static class Util {
-		private static UserServiceAsync instance;
-		public static UserServiceAsync getInstance(){
-			if (instance == null) {
-				instance = (UserServiceAsync) GWT.create(UserService.class);
-				ServiceDefTarget target = (ServiceDefTarget) instance;
-				target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/UserService");
+    /**
+     * Utility class for simplifying access to the instance of async service.
+     */
+    public static class Util {
+        private static UserServiceAsync instance;
+        public static UserServiceAsync getInstance(){
+            if (instance == null) {
+                instance = (UserServiceAsync) GWT.create(UserService.class);
+                ServiceDefTarget target = (ServiceDefTarget) instance;
+                target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/UserService");
                 target.setRpcRequestBuilder(new CSRFAwareRpcRequestBuilder());
-			}
-			return instance;
-		}
-	}
+            }
+            return instance;
+        }
+    }
 }

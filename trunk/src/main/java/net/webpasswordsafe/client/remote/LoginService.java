@@ -40,19 +40,19 @@ public interface LoginService extends RemoteService {
     public User getLogin();
     public Map<Function, Boolean> getLoginAuthorizations(Set<Function> functions);
     
-	/**
-	 * Utility class for simplifying access to the instance of async service.
-	 */
-	public static class Util {
-		private static LoginServiceAsync instance;
-		public static LoginServiceAsync getInstance(){
-			if (instance == null) {
-				instance = (LoginServiceAsync) GWT.create(LoginService.class);
-				ServiceDefTarget target = (ServiceDefTarget) instance;
-				target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/LoginService");
-	            target.setRpcRequestBuilder(new CSRFAwareRpcRequestBuilder());
-			}
-			return instance;
-		}
-	}
+    /**
+     * Utility class for simplifying access to the instance of async service.
+     */
+    public static class Util {
+        private static LoginServiceAsync instance;
+        public static LoginServiceAsync getInstance(){
+            if (instance == null) {
+                instance = (LoginServiceAsync) GWT.create(LoginService.class);
+                ServiceDefTarget target = (ServiceDefTarget) instance;
+                target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/LoginService");
+                target.setRpcRequestBuilder(new CSRFAwareRpcRequestBuilder());
+            }
+            return instance;
+        }
+    }
 }
