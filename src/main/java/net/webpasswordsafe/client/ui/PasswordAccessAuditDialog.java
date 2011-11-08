@@ -34,10 +34,13 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import java.util.List;
 import java.util.ArrayList;
 import net.webpasswordsafe.client.WebPasswordSafe;
+import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.common.model.Password;
 import net.webpasswordsafe.common.model.PasswordAccessAudit;
+import net.webpasswordsafe.common.util.Constants;
 import com.extjs.gxt.ui.client.widget.layout.VBoxLayout.VBoxLayoutAlign;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -49,11 +52,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class PasswordAccessAuditDialog extends Window
 {
     private ListStore<PasswordAccessAuditData> gridStore;
-    
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+
     public PasswordAccessAuditDialog(Password password)
     {
         this.setSize("350", "460");
-        this.setHeading("Password Access Audit Log");
+        this.setHeading(textConstants.passwordAccessAuditLog());
         VBoxLayout boxLayout = new VBoxLayout();
         boxLayout.setVBoxLayoutAlign(VBoxLayoutAlign.CENTER);
         this.setLayout(boxLayout);
@@ -62,10 +66,10 @@ public class PasswordAccessAuditDialog extends Window
         
         gridStore = new ListStore<PasswordAccessAuditData>();
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
-        ColumnConfig columnConfigDate = new ColumnConfig("date", "Date Accessed", 130);
-        columnConfigDate.setDateTimeFormat(DateTimeFormat.getFormat("MM/dd/yyyy HH:mm:ss"));
+        ColumnConfig columnConfigDate = new ColumnConfig(Constants.DATE, textConstants.dateAccessed(), 130);
+        columnConfigDate.setDateTimeFormat(DateTimeFormat.getFormat(textConstants.displayDateFormat()));
         configs.add(columnConfigDate);
-        ColumnConfig columnConfigUser = new ColumnConfig("user", "User Accessed", 160);
+        ColumnConfig columnConfigUser = new ColumnConfig(Constants.USER, textConstants.userAccessed(), 160);
         configs.add(columnConfigUser);
         
         Grid<PasswordAccessAuditData> grid = new Grid<PasswordAccessAuditData>(gridStore, new ColumnModel(configs));
@@ -74,7 +78,7 @@ public class PasswordAccessAuditDialog extends Window
         grid.setSize("320px", "390px");
         grid.setBorders(true);
         
-        Button closeButton = new Button("Close", new SelectionListener<ButtonEvent>() {
+        Button closeButton = new Button(textConstants.close(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doClose();
@@ -125,9 +129,9 @@ public class PasswordAccessAuditDialog extends Window
 
         public PasswordAccessAuditData(PasswordAccessAudit passwordAccessAudit)
         {
-            set("id", passwordAccessAudit.getId());
-            set("date", passwordAccessAudit.getDateAccessed());
-            set("user", Format.htmlEncode(passwordAccessAudit.getUser().getName()));
+            set(Constants.ID, passwordAccessAudit.getId());
+            set(Constants.DATE, passwordAccessAudit.getDateAccessed());
+            set(Constants.USER, Format.htmlEncode(passwordAccessAudit.getUser().getName()));
         }
     }
 

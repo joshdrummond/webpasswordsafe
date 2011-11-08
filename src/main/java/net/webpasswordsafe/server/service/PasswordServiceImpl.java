@@ -64,7 +64,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("passwordService")
 public class PasswordServiceImpl implements PasswordService
 {
-    private static final long serialVersionUID = -9164403179286398287L;
     private static Logger LOG = Logger.getLogger(PasswordServiceImpl.class);
     
     @Autowired

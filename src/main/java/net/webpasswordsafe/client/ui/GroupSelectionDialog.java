@@ -21,7 +21,10 @@ package net.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.common.model.Group;
+import net.webpasswordsafe.common.util.Constants;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
@@ -37,6 +40,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
+import com.google.gwt.core.client.GWT;
 
 
 /**
@@ -49,10 +53,12 @@ public class GroupSelectionDialog extends Window
     private ListStore<GroupData> store;
     private GroupListener groupListener;
     private List<Group> groups;
-    
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
+
     public GroupSelectionDialog(GroupListener groupListener, List<Group> groups, boolean allowMultiple)
     {
-        this.setHeading("Groups");
+        this.setHeading(textConstants.groups());
         this.setModal(true);
         this.groupListener = groupListener;
         this.groups = groups;
@@ -64,11 +70,11 @@ public class GroupSelectionDialog extends Window
         form.setLabelAlign(LabelAlign.TOP);
         form.setButtonAlign(HorizontalAlignment.CENTER);
         
-        String selectLabelText = allowMultiple ? "Please select groups(s)" : "Please select a group";
+        String selectLabelText = allowMultiple ? textMessages.pleaseSelectGroups() : textMessages.pleaseSelectGroup();
         store = new ListStore<GroupData>();
         groupListBox = new ListField<GroupData>();
         groupListBox.setSize(300, 150);
-        groupListBox.setDisplayField("name");
+        groupListBox.setDisplayField(Constants.NAME);
         groupListBox.setFieldLabel(selectLabelText);
         groupListBox.getListView().getSelectionModel().setSelectionMode(allowMultiple ? SelectionMode.MULTI : SelectionMode.SINGLE);
         groupListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
@@ -84,14 +90,14 @@ public class GroupSelectionDialog extends Window
         });
         form.add(groupListBox);
 
-        Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
+        Button okayButton = new Button(textConstants.okay(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doOkay();
             }
         });
 
-        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
@@ -128,7 +134,7 @@ public class GroupSelectionDialog extends Window
         List<Group> groupsSelected = new ArrayList<Group>(dataSelected.size());
         for (GroupData gd : dataSelected)
         {
-            groupsSelected.add((Group)gd.get("group"));
+            groupsSelected.add((Group)gd.get(Constants.GROUP));
         }
         groupListener.doGroupsChosen(groupsSelected);
         hide();
@@ -139,9 +145,9 @@ public class GroupSelectionDialog extends Window
         private static final long serialVersionUID = 1L;
         public GroupData(Group group)
         {
-            set("id", group.getId());
-            set("name", Format.htmlEncode(group.getName()));
-            set("group", group);
+            set(Constants.ID, group.getId());
+            set(Constants.NAME, Format.htmlEncode(group.getName()));
+            set(Constants.GROUP, group);
         }
     }
 }

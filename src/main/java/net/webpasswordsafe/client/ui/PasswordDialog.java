@@ -22,6 +22,8 @@ package net.webpasswordsafe.client.ui;
 import java.util.List;
 import java.util.Set;
 import net.webpasswordsafe.client.WebPasswordSafe;
+import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.AccessLevel;
@@ -42,6 +44,7 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
@@ -54,6 +57,8 @@ import com.extjs.gxt.ui.client.widget.form.LabelField;
  */
 public class PasswordDialog extends Window implements PermissionListener
 {
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
     private Password password;
     private TextField<String> nameTextBox;
     private TextField<String> usernameTextBox;
@@ -71,13 +76,13 @@ public class PasswordDialog extends Window implements PermissionListener
         boolean isPasswordReadOnly = password.getMaxEffectiveAccessLevel().equals(AccessLevel.READ);
         boolean isPasswordGrantable = password.getMaxEffectiveAccessLevel().equals(AccessLevel.GRANT);
 
-        this.setHeading("Password");
+        this.setHeading(textConstants.password());
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
         this.setSize(430, 415);
         this.setResizable(false);
         
-        LabelField lblfldName = new LabelField("Title:");
+        LabelField lblfldName = new LabelField(textConstants.title_());
         add(lblfldName, new AbsoluteData(7, 6));
 
         nameTextBox = new TextField<String>();
@@ -85,7 +90,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(nameTextBox, new AbsoluteData(82, 6));
         nameTextBox.setSize("331px", "22px");
 
-        LabelField lblfldUsername = new LabelField("Username:");
+        LabelField lblfldUsername = new LabelField(textConstants.username_());
         add(lblfldUsername, new AbsoluteData(7, 34));
         
         usernameTextBox = new TextField<String>();
@@ -93,7 +98,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(usernameTextBox, new AbsoluteData(82, 34));
         usernameTextBox.setSize("331px", "22px");
 
-        LabelField lblfldPassword = new LabelField("Password:");
+        LabelField lblfldPassword = new LabelField(textConstants.password_());
         add(lblfldPassword, new AbsoluteData(7, 62));
         
         passwordTextBox = new TextField<String>();
@@ -101,7 +106,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(passwordTextBox, new AbsoluteData(82, 62));
         passwordTextBox.setSize("331px", "22px");
 
-        Button generateButton = new Button("Generate Password", new SelectionListener<ButtonEvent>() {
+        Button generateButton = new Button(textConstants.generatePassword(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doGeneratePassword();
@@ -111,7 +116,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(generateButton, new AbsoluteData(82, 90));
         generateButton.setSize("127px", "22px");
         
-        Button currentButton = new Button("Current Password", new SelectionListener<ButtonEvent>()
+        Button currentButton = new Button(textConstants.currentPassword(), new SelectionListener<ButtonEvent>()
         {
             @Override
             public void componentSelected(ButtonEvent ce)
@@ -123,7 +128,7 @@ public class PasswordDialog extends Window implements PermissionListener
         currentButton.setSize("127px", "22px");
         currentButton.setEnabled(password.getId() > 0);
 
-        Button historyButton = new Button("View Password History", new SelectionListener<ButtonEvent>()
+        Button historyButton = new Button(textConstants.viewPasswordHistory(), new SelectionListener<ButtonEvent>()
         {
             @Override
             public void componentSelected(ButtonEvent ce)
@@ -135,7 +140,7 @@ public class PasswordDialog extends Window implements PermissionListener
         historyButton.setSize("127px", "22px");
         historyButton.setEnabled(password.getId() > 0);
 
-        LabelField lblfldTags = new LabelField("Tags:");
+        LabelField lblfldTags = new LabelField(textConstants.tags_());
         add(lblfldTags, new AbsoluteData(6, 118));
             
         tagsTextBox = new TextField<String>();
@@ -143,7 +148,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(tagsTextBox, new AbsoluteData(82, 118));
         tagsTextBox.setSize("331px", "22px");
 
-        LabelField lblfldNotes = new LabelField("Notes:");
+        LabelField lblfldNotes = new LabelField(textConstants.notes_());
         add(lblfldNotes, new AbsoluteData(6, 146));
         
         notesTextArea = new TextArea();
@@ -151,7 +156,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(notesTextArea, new AbsoluteData(82, 146));
         notesTextArea.setSize("331px", "75px");
         
-        LabelField lblfldMaxHistory = new LabelField("Max History:");
+        LabelField lblfldMaxHistory = new LabelField(textConstants.maxHistory_());
         add(lblfldMaxHistory, new AbsoluteData(6, 227));
         
         maxHistoryTextBox = new NumberField();
@@ -160,16 +165,18 @@ public class PasswordDialog extends Window implements PermissionListener
         add(maxHistoryTextBox, new AbsoluteData(82, 227));
         maxHistoryTextBox.setSize("76px", "22px");
 
-        LabelField lblfldInfinite = new LabelField("(-1 infinite)");
+        LabelField lblfldInfinite = new LabelField(textConstants.infinite());
         add(lblfldInfinite, new AbsoluteData(164, 227));
         
         activeCheckBox = new CheckBox();
         activeCheckBox.setReadOnly(isPasswordReadOnly);
-        activeCheckBox.setBoxLabel("Active");
+        activeCheckBox.setBoxLabel(textConstants.active());
         add(activeCheckBox, new AbsoluteData(82, 255));
         
         Button editPermissionsButton = new Button(isPasswordGrantable ? 
-                "Edit Permissions" : "View Permissions", new SelectionListener<ButtonEvent>() {
+                textConstants.editPermissions() : textConstants.viewPermissions(),
+                new SelectionListener<ButtonEvent>()
+        {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doEditPermissions();
@@ -178,7 +185,8 @@ public class PasswordDialog extends Window implements PermissionListener
         add(editPermissionsButton, new AbsoluteData(82, 283));
         editPermissionsButton.setSize("260px", "22px");
         
-        Button accessAuditButton = new Button("View Access Audit Log", new SelectionListener<ButtonEvent>()
+        Button accessAuditButton = new Button(textConstants.viewAccessAuditLog(), 
+                new SelectionListener<ButtonEvent>()
         {
             @Override
             public void componentSelected(ButtonEvent ce)
@@ -190,7 +198,7 @@ public class PasswordDialog extends Window implements PermissionListener
         accessAuditButton.setSize("127px", "22px");
         accessAuditButton.setEnabled(password.getId() > 0);
 
-        Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
+        Button saveButton = new Button(textConstants.save(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doSave();
@@ -198,7 +206,7 @@ public class PasswordDialog extends Window implements PermissionListener
         });
         saveButton.setEnabled(!isPasswordReadOnly);
 
-        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
@@ -296,7 +304,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 @Override
                 public void onSuccess(Void result)
                 {
-                    Info.display("Status", "Password saved");
+                    Info.display(textConstants.status(), textMessages.passwordSaved());
                     tagLoadListener.reloadTags();
                     hide();
                 }
@@ -316,7 +324,7 @@ public class PasswordDialog extends Window implements PermissionListener
                         // true => password title already taken, else go ahead and save
                         if (result)
                         {
-                            MessageBox.alert("Error", "Password title already exists", null);
+                            MessageBox.alert(textConstants.error(), textMessages.passwordTitleExists(), null);
                         }
                         else
                         {
@@ -337,32 +345,32 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         if (Utils.safeString(nameTextBox.getValue()).equals(""))
         {
-            MessageBox.alert("Error", "Must enter Title", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustEnterTitle(), null);
             return false;
         }
         if (Utils.safeString(nameTextBox.getValue()).length() > Password.LENGTH_NAME)
         {
-            MessageBox.alert("Error", "Title too long", null);
+            MessageBox.alert(textConstants.error(), textMessages.tooLongTitle(), null);
             return false;
         }
         if (Utils.safeString(usernameTextBox.getValue()).equals(""))
         {
-            MessageBox.alert("Error", "Must enter Username", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustEnterUsername(), null);
             return false;
         }
         if (Utils.safeString(usernameTextBox.getValue()).length() > Password.LENGTH_USERNAME)
         {
-            MessageBox.alert("Error", "Username too long", null);
+            MessageBox.alert(textConstants.error(), textMessages.tooLongUsername(), null);
             return false;
         }
         if ((password.getId() < 1) && (Utils.safeString(passwordTextBox.getValue()).equals("")))
         {
-            MessageBox.alert("Error", "Must enter Password", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustEnterPassword(), null);
             return false;
         }
         if (Utils.safeString(passwordTextBox.getValue()).length() > PasswordData.LENGTH_PASSWORD)
         {
-            MessageBox.alert("Error", "Password too long", null);
+            MessageBox.alert(textConstants.error(), textMessages.tooLongPassword(), null);
             return false;
         }
         String[] tagNames = Utils.safeString(tagsTextBox.getValue()).replaceAll(",", " ").split(" ");
@@ -373,7 +381,7 @@ public class PasswordDialog extends Window implements PermissionListener
             {
                 if (tagName.length() > Tag.LENGTH_NAME)
                 {
-                    MessageBox.alert("Error", "Tag Name too long", null);
+                    MessageBox.alert(textConstants.error(), textMessages.tooLongTag(), null);
                     return false;
                 }
             }

@@ -52,7 +52,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoginServiceImpl implements LoginService {
     
     private static Logger LOG = Logger.getLogger(LoginServiceImpl.class);
-    private static final long serialVersionUID = 7281742835626324457L;
     
     @Resource
     private Authenticator authenticator;

@@ -57,7 +57,6 @@ import static net.webpasswordsafe.common.util.Constants.*;
 public class UserServiceImpl implements UserService
 {
     private static Logger LOG = Logger.getLogger(UserServiceImpl.class);
-    private static final long serialVersionUID = -8656307779047768662L;
     
     @Autowired
     private UserDAO userDAO;

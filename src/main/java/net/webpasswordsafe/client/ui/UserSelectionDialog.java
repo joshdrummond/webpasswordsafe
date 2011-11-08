@@ -21,7 +21,9 @@ package net.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.util.Constants;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
@@ -37,6 +39,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
+import com.google.gwt.core.client.GWT;
 
 
 /**
@@ -45,6 +48,7 @@ import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
  */
 public class UserSelectionDialog extends Window
 {
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
     private ListField<UserData> userListBox;
     private ListStore<UserData> store;
     private UserListener userListener;
@@ -52,7 +56,7 @@ public class UserSelectionDialog extends Window
     
     public UserSelectionDialog(UserListener userListener, List<User> users, boolean allowMultiple)
     {
-        this.setHeading("Users");
+        this.setHeading(textConstants.users());
         this.setModal(true);
         this.userListener = userListener;
         this.users = users;
@@ -64,11 +68,11 @@ public class UserSelectionDialog extends Window
         form.setLabelAlign(LabelAlign.TOP);
         form.setButtonAlign(HorizontalAlignment.CENTER);
         
-        String selectLabelText = allowMultiple ? "Please select user(s)" : "Please select a user";
+        String selectLabelText = allowMultiple ? textConstants.pleaseSelectUsers() : textConstants.pleaseSelectUser();
         store = new ListStore<UserData>();
         userListBox = new ListField<UserData>();
         userListBox.setSize(300, 150);
-        userListBox.setDisplayField("fullname");
+        userListBox.setDisplayField(Constants.FULLNAME);
         userListBox.setFieldLabel(selectLabelText);
         userListBox.getListView().getSelectionModel().setSelectionMode(allowMultiple ? SelectionMode.MULTI : SelectionMode.SINGLE);
         userListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
@@ -84,14 +88,14 @@ public class UserSelectionDialog extends Window
         });
         form.add(userListBox);
 
-        Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
+        Button okayButton = new Button(textConstants.okay(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doOkay();
             }
         });
 
-        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
@@ -128,7 +132,7 @@ public class UserSelectionDialog extends Window
         List<User> usersSelected = new ArrayList<User>(dataSelected.size());
         for (UserData ud : dataSelected)
         {
-            usersSelected.add((User)ud.get("user"));
+            usersSelected.add((User)ud.get(Constants.USER));
         }
         userListener.doUsersChosen(usersSelected);
         hide();
@@ -139,9 +143,9 @@ public class UserSelectionDialog extends Window
         private static final long serialVersionUID = 1L;
         public UserData(User user)
         {
-            set("id", user.getId());
-            set("fullname", Format.htmlEncode(user.getFullname()));
-            set("user", user);
+            set(Constants.ID, user.getId());
+            set(Constants.FULLNAME, Format.htmlEncode(user.getFullname()));
+            set(Constants.USER, user);
         }
     }
 }

@@ -21,6 +21,8 @@ package net.webpasswordsafe.client.ui;
 
 import java.util.List;
 import net.webpasswordsafe.client.WebPasswordSafe;
+import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.User;
@@ -42,6 +44,7 @@ import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.DualListField;
 import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
@@ -54,6 +57,8 @@ import com.extjs.gxt.ui.client.widget.form.LabelField;
  */
 public class UserDialog extends Window
 {
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
     private User user;
     private TextField<String> usernameTextBox;
     private TextField<String> fullnameTextBox;
@@ -67,29 +72,29 @@ public class UserDialog extends Window
     public UserDialog(User pUser)
     {
         this.user = pUser;
-        this.setHeading("User");
+        this.setHeading(textConstants.user());
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
         this.setSize("455", "475");
         this.setResizable(false);
         
-        LabelField lblfldUsername = new LabelField("Username:");
+        LabelField lblfldUsername = new LabelField(textConstants.username_());
         add(lblfldUsername, new AbsoluteData(6, 6));
         usernameTextBox = new TextField<String>();
         usernameTextBox.setReadOnly(user.getId() > 0);
         add(usernameTextBox, new AbsoluteData(144, 6));
         usernameTextBox.setSize("271px", "22px");
-        LabelField lblfldFullName = new LabelField("Full Name:");
+        LabelField lblfldFullName = new LabelField(textConstants.fullname_());
         add(lblfldFullName, new AbsoluteData(6, 34));
         fullnameTextBox = new TextField<String>();
         add(fullnameTextBox, new AbsoluteData(144, 34));
         fullnameTextBox.setSize("271px", "22px");
-        LabelField lblfldEmail = new LabelField("Email:");
+        LabelField lblfldEmail = new LabelField(textConstants.email_());
         add(lblfldEmail, new AbsoluteData(6, 62));
         emailTextBox = new TextField<String>();
         add(emailTextBox, new AbsoluteData(144, 62));
         emailTextBox.setSize("271px", "22px");
-        LabelField lblfldPassword = new LabelField("Password:");
+        LabelField lblfldPassword = new LabelField(textConstants.password_());
         add(lblfldPassword, new AbsoluteData(6, 90));
         password1TextBox = new TextField<String>();
         password1TextBox.setPassword(true);
@@ -100,15 +105,15 @@ public class UserDialog extends Window
         add(password2TextBox, new AbsoluteData(144, 118));
         password2TextBox.setSize("271px", "22px");
         enabledCheckBox = new CheckBox();
-        enabledCheckBox.setBoxLabel("Enabled");
+        enabledCheckBox.setBoxLabel(textConstants.enabled());
         add(enabledCheckBox, new AbsoluteData(144, 146));
         enabledCheckBox.setSize("76px", "22px");
 
-        LabelField lblfldGroups = new LabelField("Groups:");
+        LabelField lblfldGroups = new LabelField(textConstants.groups_());
         add(lblfldGroups, new AbsoluteData(6, 170));
-        LabelField lblfldAvailable = new LabelField("Available");
+        LabelField lblfldAvailable = new LabelField(textConstants.available());
         add(lblfldAvailable, new AbsoluteData(6, 195));
-        LabelField lblfldMembers = new LabelField("Member Of");
+        LabelField lblfldMembers = new LabelField(textConstants.memberOf());
         add(lblfldMembers, new AbsoluteData(233, 195));
 
         DualListField<GroupData> membersListBox = new DualListField<GroupData>();
@@ -117,24 +122,24 @@ public class UserDialog extends Window
         ListField<GroupData> from = membersListBox.getFromList();
         ListField<GroupData> to = membersListBox.getToList();
         from.setSize(300, 100);
-        from.setDisplayField("name");
+        from.setDisplayField(Constants.NAME);
         fromGroupStore = new ListStore<GroupData>();
-        fromGroupStore.sort("name", SortDir.ASC);
+        fromGroupStore.sort(Constants.NAME, SortDir.ASC);
         from.setStore(fromGroupStore);
-        to.setDisplayField("name");
+        to.setDisplayField(Constants.NAME);
         to.setSize(300, 100);
         toGroupStore = new ListStore<GroupData>();
-        toGroupStore.sort("name", SortDir.ASC);
+        toGroupStore.sort(Constants.NAME, SortDir.ASC);
         to.setStore(toGroupStore);
 
-        Button saveButton = new Button("Save", new SelectionListener<ButtonEvent>() {
+        Button saveButton = new Button(textConstants.save(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doSave();
             }
         });
 
-        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
@@ -168,47 +173,47 @@ public class UserDialog extends Window
     {
         if (!(Utils.safeString(password2TextBox.getValue())).equals(Utils.safeString(password1TextBox.getValue())))
         {
-            MessageBox.alert("Error", "Passwords don't match", null);
+            MessageBox.alert(textConstants.error(), textMessages.passwordsNotMatch(), null);
             return false;
         }
         if (Utils.safeString(password1TextBox.getValue()).length() > UserAuthnPassword.LENGTH_PASSWORD)
         {
-            MessageBox.alert("Error", "Password too long", null);
+            MessageBox.alert(textConstants.error(), textMessages.tooLongPassword(), null);
             return false;
         }
         if (Utils.safeString(usernameTextBox.getValue()).equals(""))
         {
-            MessageBox.alert("Error", "Must enter Username", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustEnterUsername(), null);
             return false;
         }
         if (Utils.safeString(usernameTextBox.getValue()).length() > User.LENGTH_USERNAME)
         {
-            MessageBox.alert("Error", "Username too long", null);
+            MessageBox.alert(textConstants.error(), textMessages.tooLongUsername(), null);
             return false;
         }
         if (Utils.safeString(fullnameTextBox.getValue()).equals(""))
         {
-            MessageBox.alert("Error", "Must enter Full Name", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustEnterFullName(), null);
             return false;
         }
         if (Utils.safeString(fullnameTextBox.getValue()).length() > User.LENGTH_FULLNAME)
         {
-            MessageBox.alert("Error", "Full Name too long", null);
+            MessageBox.alert(textConstants.error(), textMessages.tooLongFullName(), null);
             return false;
         }
         if (Utils.safeString(emailTextBox.getValue()).equals(""))
         {
-            MessageBox.alert("Error", "Must enter Email", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustEnterEmail(), null);
             return false;
         }
         if (Utils.safeString(emailTextBox.getValue()).length() > User.LENGTH_EMAIL)
         {
-            MessageBox.alert("Error", "Email too long", null);
+            MessageBox.alert(textConstants.error(), textMessages.tooLongEmail(), null);
             return false;
         }
         if (!Utils.isValidEmail(Utils.safeString(emailTextBox.getValue())))
         {
-            MessageBox.alert("Error", "Email invalid", null);
+            MessageBox.alert(textConstants.error(), textMessages.invalidEmail(), null);
             return false;
         }
         return true;
@@ -226,7 +231,7 @@ public class UserDialog extends Window
             user.removeGroups();
             for (GroupData groupData : toGroupStore.getModels())
             {
-                Group group = (Group)groupData.get("group");
+                Group group = (Group)groupData.get(Constants.GROUP);
                 user.addGroup(group);
             }
             
@@ -240,7 +245,7 @@ public class UserDialog extends Window
                 @Override
                 public void onSuccess(Void result)
                 {
-                    Info.display("Status", "User saved");
+                    Info.display(textConstants.status(), textMessages.userSaved());
                     hide();
                 }
             };
@@ -259,7 +264,7 @@ public class UserDialog extends Window
                         // true => username already taken, else go ahead and save
                         if (result)
                         {
-                            MessageBox.alert("Error", "Username already exists", null);
+                            MessageBox.alert(textConstants.error(), textMessages.usernameAlreadyExists(), null);
                         }
                         else
                         {
@@ -316,15 +321,15 @@ public class UserDialog extends Window
 
         public GroupData(Group group)
         {
-            set("id", group.getId());
-            set("name", Format.htmlEncode(group.getName()));
-            set("group", group);
+            set(Constants.ID, group.getId());
+            set(Constants.NAME, Format.htmlEncode(group.getName()));
+            set(Constants.GROUP, group);
         }
 
         @Override
         public String toString()
         {
-            return get("name");
+            return get(Constants.NAME);
         }
     }
 }

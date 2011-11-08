@@ -21,6 +21,8 @@ package net.webpasswordsafe.client;
 
 import java.util.List;
 import java.util.Map;
+import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.client.remote.UserService;
@@ -71,9 +73,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 {
     private ClientSessionUtil clientSessionUtil = ClientSessionUtil.getInstance();
-    private final static String NOT_LOGGED_IN = "Not Logged In";
-    private final static String LOGGED_IN = "Logged In As: ";
-    private final static String TITLE = "WebPasswordSafe v"+Constants.VERSION;
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
     private Viewport viewport; 
     private ContentPanel mainPanel, topPanel, menuPanel;
     private PasswordSearchPanel passwordSearchPanel;
@@ -115,15 +116,15 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     private void refreshTopPanel()
     {
         topPanel.removeAll();
-        Text headerGwtLabel = new Text(TITLE);
+        Text headerGwtLabel = new Text(textMessages.webpasswordsafeTitle(Constants.VERSION));
         Text loggedInLabel = null;
         if (clientSessionUtil.isLoggedIn())
         {
-            loggedInLabel = new Text(LOGGED_IN + Format.htmlEncode(clientSessionUtil.getLoggedInUser().getFullname()));
+            loggedInLabel = new Text(textMessages.loggedInAs(Format.htmlEncode(clientSessionUtil.getLoggedInUser().getFullname())));
         }
         else
         {
-            loggedInLabel = new Text(NOT_LOGGED_IN);
+            loggedInLabel = new Text(textMessages.notLoggedIn());
         }
         topPanel.add(headerGwtLabel, new HBoxLayoutData(0, 5, 0, 0));
         HBoxLayoutData flex = new HBoxLayoutData(new Margins(0, 5, 0, 0));
@@ -173,10 +174,10 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     private void buildUserMenu(MenuBar mainMenu)
     {
         Menu userMenu = new Menu();
-        MenuItem userSettings = new MenuItem("Settings");
+        MenuItem userSettings = new MenuItem(textConstants.settings());
         Menu userSettingsMenu = new Menu();
         //userSettingsMenu.add(new MenuItem("General"));
-        userSettingsMenu.add(new MenuItem("Change Password", new SelectionListener<MenuEvent>() {
+        userSettingsMenu.add(new MenuItem(textConstants.changePassword(), new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
                 doChangePassword();
@@ -192,14 +193,14 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 //        userRole.setSubMenu(userRoleMenu);
 //        userMenu.add(userRole);
 
-        userMenu.add(new MenuItem("Logout", new SelectionListener<MenuEvent>() {
+        userMenu.add(new MenuItem(textConstants.logout(), new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
                 doLogout();
             }
         }));
 
-        mainMenu.add(new MenuBarItem("User", userMenu));
+        mainMenu.add(new MenuBarItem(textConstants.user(), userMenu));
     }
     
     private void buildPasswordMenu(MenuBar mainMenu)
@@ -207,16 +208,16 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         Menu passwordMenu = new Menu();
         if (clientSessionUtil.isAuthorized(Function.ADD_PASSWORD))
         {
-            passwordMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
+            passwordMenu.add(new MenuItem(textConstants.add(), new SelectionListener<MenuEvent>() {
                 @Override
                 public void componentSelected(MenuEvent ce) {
                     doNewPassword();
                 }
             }));
         }
-        MenuItem passwordSearch = new MenuItem("Search");
+        MenuItem passwordSearch = new MenuItem(textConstants.search());
         Menu passwordSearchMenu = new Menu();
-        passwordSearchMenu.add(new MenuItem("Open Selected Password", new SelectionListener<MenuEvent>() {
+        passwordSearchMenu.add(new MenuItem(textConstants.openSelectedPassword(), new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
                 if (null != passwordSearchPanel)
@@ -225,7 +226,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                 }
             }
         }));
-        passwordSearchMenu.add(new MenuItem("Get Selected Password Value", new SelectionListener<MenuEvent>() {
+        passwordSearchMenu.add(new MenuItem(textConstants.getSelectedPasswordValue(), new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
                 if (null != passwordSearchPanel)
@@ -234,7 +235,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                 }
             }
         }));
-        passwordSearchMenu.add(new MenuItem("Refresh Search", new SelectionListener<MenuEvent>() {
+        passwordSearchMenu.add(new MenuItem(textConstants.refreshSearch(), new SelectionListener<MenuEvent>() {
             @Override
             public void componentSelected(MenuEvent ce) {
                 refreshPasswordSearch();
@@ -243,11 +244,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         passwordSearch.setSubMenu(passwordSearchMenu);
         passwordMenu.add(passwordSearch);
 
-        MenuItem passwordTemplate = new MenuItem("Template");
+        MenuItem passwordTemplate = new MenuItem(textConstants.template());
         Menu passwordTemplateMenu = new Menu();
         if (clientSessionUtil.isAuthorized(Function.ADD_TEMPLATE))
         {
-            passwordTemplateMenu.add(new MenuItem("New", new SelectionListener<MenuEvent>() {
+            passwordTemplateMenu.add(new MenuItem(textConstants.add(), new SelectionListener<MenuEvent>() {
                 @Override
                 public void componentSelected(MenuEvent ce) {
                     doAddTemplate();
@@ -256,7 +257,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         if (clientSessionUtil.isAuthorized(Function.UPDATE_TEMPLATE))
         {
-            passwordTemplateMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+            passwordTemplateMenu.add(new MenuItem(textConstants.edit(), new SelectionListener<MenuEvent>() {
                 @Override
                 public void componentSelected(MenuEvent ce) {
                     doEditTemplate();
@@ -266,7 +267,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         passwordTemplate.setSubMenu(passwordTemplateMenu);
         passwordMenu.add(passwordTemplate);
 
-        mainMenu.add(new MenuBarItem("Password", passwordMenu));
+        mainMenu.add(new MenuBarItem(textConstants.password(), passwordMenu));
     }
     
     private void buildAdminMenu(MenuBar mainMenu)
@@ -281,11 +282,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             Menu adminMenu = new Menu();
             //adminMenu.add(new MenuItem("Settings"));
     
-            MenuItem adminUser = new MenuItem("Users");
+            MenuItem adminUser = new MenuItem(textConstants.users());
             Menu adminUserMenu = new Menu();
             if (clientSessionUtil.isAuthorized(Function.ADD_USER))
             {
-                adminUserMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
+                adminUserMenu.add(new MenuItem(textConstants.add(), new SelectionListener<MenuEvent>() {
                     @Override
                     public void componentSelected(MenuEvent ce) {
                         doAddUser();
@@ -294,7 +295,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             }
             if (clientSessionUtil.isAuthorized(Function.UPDATE_USER))
             {
-                adminUserMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+                adminUserMenu.add(new MenuItem(textConstants.edit(), new SelectionListener<MenuEvent>() {
                     @Override
                     public void componentSelected(MenuEvent ce) {
                         doEditUser();
@@ -304,11 +305,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             adminUser.setSubMenu(adminUserMenu);
             adminMenu.add(adminUser);
             
-            MenuItem adminGroup = new MenuItem("Groups");
+            MenuItem adminGroup = new MenuItem(textConstants.groups());
             Menu adminGroupMenu = new Menu();
             if (clientSessionUtil.isAuthorized(Function.ADD_GROUP))
             {
-                adminGroupMenu.add(new MenuItem("Add", new SelectionListener<MenuEvent>() {
+                adminGroupMenu.add(new MenuItem(textConstants.add(), new SelectionListener<MenuEvent>() {
                     @Override
                     public void componentSelected(MenuEvent ce) {
                         doAddGroup();
@@ -317,7 +318,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             }
             if (clientSessionUtil.isAuthorized(Function.UPDATE_GROUP))
             {
-                adminGroupMenu.add(new MenuItem("Edit", new SelectionListener<MenuEvent>() {
+                adminGroupMenu.add(new MenuItem(textConstants.edit(), new SelectionListener<MenuEvent>() {
                     @Override
                     public void componentSelected(MenuEvent ce) {
                         doEditGroup();
@@ -327,11 +328,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             adminGroup.setSubMenu(adminGroupMenu);
             adminMenu.add(adminGroup);
 
-            MenuItem adminTools = new MenuItem("Tools");
+            MenuItem adminTools = new MenuItem(textConstants.tools());
             Menu adminToolsMenu = new Menu();
             if (clientSessionUtil.isAuthorized(Function.UNBLOCK_IP))
             {
-                adminToolsMenu.add(new MenuItem("Unblock IP", new SelectionListener<MenuEvent>() {
+                adminToolsMenu.add(new MenuItem(textConstants.unblockIP(), new SelectionListener<MenuEvent>() {
                     @Override
                     public void componentSelected(MenuEvent ce) {
                         doUnblockIP();
@@ -341,7 +342,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             adminTools.setSubMenu(adminToolsMenu);
             adminMenu.add(adminTools);
             
-            mainMenu.add(new MenuBarItem("Admin", adminMenu));
+            mainMenu.add(new MenuBarItem(textConstants.admin(), adminMenu));
         }
 //        MenuItem adminRole = new MenuItem("Roles");
 //        adminMenu.add(adminRole);
@@ -352,32 +353,32 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         Menu reportsMenu = new Menu();
         if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Users))
         {
-            reportsMenu.add(buildReportMenuItem("Users", Report.Users));
+            reportsMenu.add(buildReportMenuItem(textConstants.users(), Report.Users));
         }
         if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Groups))
         {
-            reportsMenu.add(buildReportMenuItem("Groups", Report.Groups));
+            reportsMenu.add(buildReportMenuItem(textConstants.groups(), Report.Groups));
         }
         if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordAccessAudit))
         {
-            reportsMenu.add(buildReportMenuItem("Access Audit", Report.PasswordAccessAudit));
+            reportsMenu.add(buildReportMenuItem(textConstants.accessAudit(), Report.PasswordAccessAudit));
         }
         if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordPermissions))
         {
-            reportsMenu.add(buildReportMenuItem("Permissions", Report.PasswordPermissions));
+            reportsMenu.add(buildReportMenuItem(textConstants.permissions(), Report.PasswordPermissions));
         }
         if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_CurrentPasswordExport))
         {
-            reportsMenu.add(buildReportMenuItem("Password Export", Report.CurrentPasswordExport));
+            reportsMenu.add(buildReportMenuItem(textConstants.passwordExport(), Report.CurrentPasswordExport));
         }
-        mainMenu.add(new MenuBarItem("Reports", reportsMenu));
+        mainMenu.add(new MenuBarItem(textConstants.reports(), reportsMenu));
 
     }
     
     private void buildAboutMenu(MenuBar mainMenu)
     {
         Menu aboutMenu = new Menu();
-        aboutMenu.add(new MenuItem("Help", new SelectionListener<MenuEvent>()
+        aboutMenu.add(new MenuItem(textConstants.help(), new SelectionListener<MenuEvent>()
         {
             @Override
             public void componentSelected(MenuEvent ce)
@@ -385,7 +386,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                 doShowHelp();
             }
         }));
-        aboutMenu.add(new MenuItem("About", new SelectionListener<MenuEvent>()
+        aboutMenu.add(new MenuItem(textConstants.about(), new SelectionListener<MenuEvent>()
         {
             @Override
             public void componentSelected(MenuEvent ce)
@@ -394,15 +395,15 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             }
         }));
         
-        mainMenu.add(new MenuBarItem("About", aboutMenu));
+        mainMenu.add(new MenuBarItem(textConstants.about(), aboutMenu));
     }
     
     private MenuItem buildReportMenuItem(String menuName, Constants.Report reportName)
     {
         MenuItem menuItem = new MenuItem(menuName);
         Menu subMenu =  new Menu();
-        subMenu.add(buildReportMenuItemType(reportName.name(), "pdf"));
-        subMenu.add(buildReportMenuItemType(reportName.name(), "csv"));
+        subMenu.add(buildReportMenuItemType(reportName.name(), Constants.REPORT_TYPE_PDF));
+        subMenu.add(buildReportMenuItemType(reportName.name(), Constants.REPORT_TYPE_CSV));
         menuItem.setSubMenu(subMenu);
         return menuItem;
     }
@@ -430,7 +431,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         else
         {
-            MessageBox.alert("Error", "Not Authorized!", null);
+            MessageBox.alert(textConstants.error(), textConstants.notAuthorized(), null);
         }
     }
 
@@ -455,7 +456,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         else
         {
-            MessageBox.alert("Error", "Not Authorized!", null);
+            MessageBox.alert(textConstants.error(), textConstants.notAuthorized(), null);
         }
     }
 
@@ -467,7 +468,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         else
         {
-            MessageBox.alert("Error", "Not Authorized!", null);
+            MessageBox.alert(textConstants.error(), textConstants.notAuthorized(), null);
         }
     }
 
@@ -479,7 +480,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         else
         {
-            MessageBox.alert("Error", "Not Authorized!", null);
+            MessageBox.alert(textConstants.error(), textConstants.notAuthorized(), null);
         }
     }
 
@@ -509,7 +510,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         else
         {
-            MessageBox.alert("Error", "Not Authorized!", null);
+            MessageBox.alert(textConstants.error(), textConstants.notAuthorized(), null);
         }
     }
 
@@ -534,7 +535,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         else
         {
-            MessageBox.alert("Error", "Not Authorized!", null);
+            MessageBox.alert(textConstants.error(), textConstants.notAuthorized(), null);
         }
     }
     
@@ -546,7 +547,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         else
         {
-            MessageBox.alert("Error", "Not Authorized!", null);
+            MessageBox.alert(textConstants.error(), textConstants.notAuthorized(), null);
         }
     }
 
@@ -571,7 +572,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         }
         else
         {
-            MessageBox.alert("Error", "Not Authorized!", null);
+            MessageBox.alert(textConstants.error(), textConstants.notAuthorized(), null);
         }
     }
     
@@ -708,7 +709,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     @Override
     public void doGetLoginSuccess()
     {
-        Info.display("Status", Format.htmlEncode(getClientModel().getLoggedInUser().getUsername()) + " logged in");
+        Info.display(textConstants.status(), textMessages.loggedIn(Format.htmlEncode(getClientModel().getLoggedInUser().getUsername())));
     }
     
     @Override
@@ -724,7 +725,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     
     private void doShowHelp()
     {
-        Window.open("http://code.google.com/p/webpasswordsafe/w/list?q=label:help", "_blank", "");
+        Window.open(Constants.URL_HELP, "_blank", "");
     }
     
     private class EditUserListener implements UserListener
@@ -811,9 +812,9 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     
     public static void handleServerFailure(Throwable caught, boolean showDetails)
     {
-        String message = "Session Timeout. Please login again." + 
+        String message = textMessages.sessionTimeout() + 
             (showDetails ? "<br>"+caught.getMessage() : "");
-        MessageBox.alert("Error", message, new ServerErrorListener());
+        MessageBox.alert(textConstants.error(), message, new ServerErrorListener());
     }
     
 }

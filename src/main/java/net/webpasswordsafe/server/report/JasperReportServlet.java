@@ -102,7 +102,7 @@ public class JasperReportServlet extends HttpServlet
                 JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jdbcConnection);
                 JRExporter exporter = null;
                 
-                if (type.equals("pdf"))
+                if (type.equals(Constants.REPORT_TYPE_PDF))
                 {
                     res.setContentType("application/pdf");
                     exporter = new JRPdfExporter();
@@ -112,7 +112,7 @@ public class JasperReportServlet extends HttpServlet
                     res.setContentType("application/rtf");
                     exporter = new JRRtfExporter();
                 }
-                else if (type.equals("csv"))
+                else if (type.equals(Constants.REPORT_TYPE_CSV))
                 {
                     res.setContentType("text/csv");
                     exporter = new JRCsvExporter();
