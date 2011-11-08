@@ -21,7 +21,9 @@ package net.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.common.model.Template;
+import net.webpasswordsafe.common.util.Constants;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
@@ -37,6 +39,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.ListField;
 import com.extjs.gxt.ui.client.widget.form.FormPanel.LabelAlign;
+import com.google.gwt.core.client.GWT;
 
 
 /**
@@ -49,10 +52,11 @@ public class TemplateSelectionDialog extends Window
     private ListStore<TemplateData> store;
     private TemplateListener templateListener;
     private List<Template> templates;
-    
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+
     public TemplateSelectionDialog(TemplateListener templateListener, List<Template> templates, boolean allowMultiple)
     {
-        this.setHeading("Templates");
+        this.setHeading(textConstants.templates());
         this.setModal(true);
         this.templateListener = templateListener;
         this.templates = templates;
@@ -64,11 +68,11 @@ public class TemplateSelectionDialog extends Window
         form.setLabelAlign(LabelAlign.TOP);
         form.setButtonAlign(HorizontalAlignment.CENTER);
         
-        String selectLabelText = allowMultiple ? "Please select template(s)" : "Please select a template";
+        String selectLabelText = allowMultiple ? textConstants.pleaseSelectTemplates() : textConstants.pleaseSelectTemplate();
         store = new ListStore<TemplateData>();
         templateListBox = new ListField<TemplateData>();
         templateListBox.setSize(300, 150);
-        templateListBox.setDisplayField("name");
+        templateListBox.setDisplayField(Constants.NAME);
         templateListBox.setFieldLabel(selectLabelText);
         templateListBox.getListView().getSelectionModel().setSelectionMode(allowMultiple ? SelectionMode.MULTI : SelectionMode.SINGLE);
         templateListBox.getListView().addListener(Events.OnDoubleClick, new Listener<BaseEvent>()
@@ -84,14 +88,14 @@ public class TemplateSelectionDialog extends Window
         });
         form.add(templateListBox);
 
-        Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
+        Button okayButton = new Button(textConstants.okay(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doOkay();
             }
         });
 
-        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
@@ -128,7 +132,7 @@ public class TemplateSelectionDialog extends Window
         List<Template> templatesSelected = new ArrayList<Template>(dataSelected.size());
         for (TemplateData td : dataSelected)
         {
-            templatesSelected.add((Template)td.get("template"));
+            templatesSelected.add((Template)td.get(Constants.TEMPLATE));
         }
         templateListener.doTemplatesChosen(templatesSelected);
         hide();
@@ -139,9 +143,9 @@ public class TemplateSelectionDialog extends Window
         private static final long serialVersionUID = 1L;
         public TemplateData(Template template)
         {
-            set("id", template.getId());
-            set("name", Format.htmlEncode(template.getName()));
-            set("template", template);
+            set(Constants.ID, template.getId());
+            set(Constants.NAME, Format.htmlEncode(template.getName()));
+            set(Constants.TEMPLATE, template);
         }
     }
 }

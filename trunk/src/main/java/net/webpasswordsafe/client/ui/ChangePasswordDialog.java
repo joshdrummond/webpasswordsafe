@@ -20,6 +20,8 @@
 package net.webpasswordsafe.client.ui;
 
 import net.webpasswordsafe.client.WebPasswordSafe;
+import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.UserAuthnPassword;
 import net.webpasswordsafe.common.util.Utils;
@@ -35,6 +37,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -49,17 +52,19 @@ public class ChangePasswordDialog extends Window
     private TextField<String> password1;
     private TextField<String> password2;
     private FormData formData = new FormData("-20"); 
-    
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
+
     public ChangePasswordDialog()
     {
-        this.setHeading("Change Password");
+        this.setHeading(textConstants.changePassword());
         this.setModal(true);
         
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);
         form.setFrame(true);
         password1 = new TextField<String>();
-        password1.setFieldLabel("New Password");
+        password1.setFieldLabel(textConstants.newPassword());
         password1.setPassword(true);
         password1.addKeyListener(new KeyListener()
         {
@@ -74,7 +79,7 @@ public class ChangePasswordDialog extends Window
         });
         form.add(password1, formData);
         password2 = new TextField<String>();
-        password2.setFieldLabel("Re-enter Password");
+        password2.setFieldLabel(textConstants.reenterPassword());
         password2.setPassword(true);
         password2.addKeyListener(new KeyListener()
         {
@@ -89,13 +94,13 @@ public class ChangePasswordDialog extends Window
         });
         form.add(password2, formData);
         
-        Button okayButton = new Button("Okay", new SelectionListener<ButtonEvent>() {
+        Button okayButton = new Button(textConstants.okay(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doOkay();
             }
         });
-        Button cancelButton = new Button("Cancel", new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
@@ -131,17 +136,17 @@ public class ChangePasswordDialog extends Window
     {
         if (!(Utils.safeString(password2.getValue())).equals(Utils.safeString(password1.getValue())))
         {
-            MessageBox.alert("Error", "Passwords must match", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustMatchPasswords(), null);
             return false;
         }
         if (Utils.safeString(password1.getValue()).equals(""))
         {
-            MessageBox.alert("Error", "Must enter a password", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustEnterPassword(), null);
             return false;
         }
         if (Utils.safeString(password1.getValue()).length() > UserAuthnPassword.LENGTH_PASSWORD)
         {
-            MessageBox.alert("Error", "Password too long", null);
+            MessageBox.alert(textConstants.error(), textMessages.tooLongPassword(), null);
             return false;
         }
         return true;
@@ -163,7 +168,7 @@ public class ChangePasswordDialog extends Window
             public void onSuccess(Void result)
             {
                 hide();
-                Info.display("Status", "Password changed");
+                Info.display(textConstants.status(), textMessages.passwordChanged());
             }
         };
         UserService.Util.getInstance().changePassword(password, callback);

@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.webpasswordsafe.client.WebPasswordSafe;
+import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.common.model.AccessLevel;
 import net.webpasswordsafe.common.model.Password;
@@ -32,6 +34,7 @@ import net.webpasswordsafe.common.model.Permission;
 import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.Template;
 import net.webpasswordsafe.common.model.TemplateDetail;
+import net.webpasswordsafe.common.util.Constants;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
@@ -56,6 +59,7 @@ import com.extjs.gxt.ui.client.widget.grid.EditorGrid;
 import com.extjs.gxt.ui.client.widget.grid.GridSelectionModel;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -71,6 +75,8 @@ public class PermissionDialog extends Window
     private ComboBox<SubjectData> comboSubjects;
     private PermissionData selectedPermission;
     private PermissionListener permissionListener;
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public PermissionDialog(PermissionListener permissionListener,
             Password password, List<Subject> subjects)
@@ -81,7 +87,7 @@ public class PermissionDialog extends Window
         this.permissionListener = permissionListener;
         boolean isPasswordGrantable = password.getMaxEffectiveAccessLevel().equals(AccessLevel.GRANT);
         
-        this.setHeading("Permissions");
+        this.setHeading(textConstants.permissions());
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
         permissionStore = new ListStore<PermissionData>();
@@ -108,7 +114,7 @@ public class PermissionDialog extends Window
             @SuppressWarnings("unchecked")
             public Object postProcessValue(Object v)
             {
-                return ((SimpleComboValue<AccessLevel>) v).get("value");
+                return ((SimpleComboValue<AccessLevel>) v).get(Constants.VALUE);
             }
         };
 
@@ -120,13 +126,13 @@ public class PermissionDialog extends Window
 
         List<ColumnConfig> config = new ArrayList<ColumnConfig>(2);
         ColumnConfig column = new ColumnConfig();
-        column.setId("subject");
-        column.setHeader("User/Group");
+        column.setId(Constants.SUBJECT);
+        column.setHeader(textConstants.userGroup());
         column.setWidth(216);
         config.add(column);
         column = new ColumnConfig();
-        column.setId("accessLevel");
-        column.setHeader("Access Level");
+        column.setId(Constants.ACCESSLEVEL);
+        column.setHeader(textConstants.accessLevel());
         column.setWidth(113);
         column.setEditor(accessLevelEditor);
         config.add(column);
@@ -148,7 +154,7 @@ public class PermissionDialog extends Window
         add(permissionGrid, new AbsoluteData(3, 3));
         permissionGrid.setSize("360px", "221px");
 
-        Button removeButton = new Button("Remove Selected",
+        Button removeButton = new Button(textConstants.removeSelected(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -161,7 +167,7 @@ public class PermissionDialog extends Window
         add(removeButton, new AbsoluteData(258, 230));
         removeButton.setSize("105px", "22px");
 
-        Button addUserButton = new Button("Add",
+        Button addUserButton = new Button(textConstants.add(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -176,14 +182,14 @@ public class PermissionDialog extends Window
 
         comboSubjects = new ComboBox<SubjectData>();
         add(comboSubjects, new AbsoluteData(3, 230));
-        comboSubjects.setEmptyText("Select a User/Group...");
-        comboSubjects.setDisplayField("name");
+        comboSubjects.setEmptyText(textConstants.selectUserGroup());
+        comboSubjects.setDisplayField(Constants.NAME);
         comboSubjects.setStore(subjectStore);
         comboSubjects.setTypeAhead(true);
         comboSubjects.setTriggerAction(TriggerAction.ALL);
         comboSubjects.setEnabled(isPasswordGrantable);
 
-        Button btnRemoveAll = new Button("Remove All");
+        Button btnRemoveAll = new Button(textConstants.removeAll());
         btnRemoveAll.addSelectionListener(new SelectionListener<ButtonEvent>()
         {
             @Override
@@ -196,7 +202,7 @@ public class PermissionDialog extends Window
         add(btnRemoveAll, new AbsoluteData(258, 254));
         btnRemoveAll.setSize("105px", "22px");
         
-        Button btnAddTemplate = new Button("Add Template",
+        Button btnAddTemplate = new Button(textConstants.addTemplate(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -209,7 +215,7 @@ public class PermissionDialog extends Window
         add(btnAddTemplate, new AbsoluteData(126, 254));
         btnAddTemplate.setSize("85px", "22px");
 
-        Button okayButton = new Button("Okay",
+        Button okayButton = new Button(textConstants.okay(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -220,7 +226,7 @@ public class PermissionDialog extends Window
                 });
         okayButton.setEnabled(isPasswordGrantable);
 
-        Button cancelButton = new Button("Cancel",
+        Button cancelButton = new Button(textConstants.cancel(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -284,7 +290,7 @@ public class PermissionDialog extends Window
         SubjectData data = comboSubjects.getValue();
         if (null != data)
         {
-            permissionStore.add(new PermissionData(new Permission((Subject)data.get("subject"), AccessLevel.READ)));
+            permissionStore.add(new PermissionData(new Permission((Subject)data.get(Constants.SUBJECT), AccessLevel.READ)));
         }
     }
 
@@ -311,8 +317,8 @@ public class PermissionDialog extends Window
             Set<Permission> permissions = new HashSet<Permission>(permissionStore.getCount());
             for (PermissionData data : permissionStore.getModels())
             {
-                Permission permission = (Permission)data.get("permission");
-                String newAccessLevel = ((AccessLevel)data.get("accessLevel")).name();
+                Permission permission = (Permission)data.get(Constants.PERMISSION);
+                String newAccessLevel = ((AccessLevel)data.get(Constants.ACCESSLEVEL)).name();
                 if (!newAccessLevel.equals(permission.getAccessLevel()))
                 {
                     // if user changed the access level value in the GUI, treat it like a new permission
@@ -325,7 +331,7 @@ public class PermissionDialog extends Window
         }
         else
         {
-            MessageBox.alert("Error", "Must have at least one permission", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustHaveOnePermission(), null);
         }
     }
     
@@ -360,10 +366,10 @@ public class PermissionDialog extends Window
 
         public PermissionData(Permission permission)
         {
-            set("id", permission.getId());
-            set("subject", Format.htmlEncode(permission.getSubject().getName()));
-            set("accessLevel", permission.getAccessLevelObj());
-            set("permission", permission);
+            set(Constants.ID, permission.getId());
+            set(Constants.SUBJECT, Format.htmlEncode(permission.getSubject().getName()));
+            set(Constants.ACCESSLEVEL, permission.getAccessLevelObj());
+            set(Constants.PERMISSION, permission);
         }
     }
 
@@ -373,9 +379,9 @@ public class PermissionDialog extends Window
 
         public SubjectData(Subject subject)
         {
-            set("id", subject.getId());
-            set("name", Format.htmlEncode(subject.getName()));
-            set("subject", subject);
+            set(Constants.ID, subject.getId());
+            set(Constants.NAME, Format.htmlEncode(subject.getName()));
+            set(Constants.SUBJECT, subject);
         }
     }
 }

@@ -19,9 +19,12 @@
 */
 package net.webpasswordsafe.client.ui;
 
+import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.common.util.Constants;
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.widget.Dialog;
+import com.google.gwt.core.client.GWT;
 
 
 /**
@@ -30,17 +33,30 @@ import com.extjs.gxt.ui.client.widget.Dialog;
  */
 public class AboutDialog extends Dialog
 {
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public AboutDialog()
     {
         StringBuilder aboutText = new StringBuilder();
-        aboutText.append("<br><center><b>WebPasswordSafe</b><br><b>Version ");
-        aboutText.append(Constants.VERSION);
-        aboutText.append("</b><br><a target=\"_blank\" href=\"http://www.webpasswordsafe.net\">http://www.webpasswordsafe.net</a><br><br>");
-        aboutText.append("Copyright &#169; 2008-2011 Josh Drummond.");
-        aboutText.append("<br>All rights reserved. <a target=\"_blank\" href=\"http://webpasswordsafe.googlecode.com/svn/trunk/docs/license.txt\">");
-        aboutText.append("GNU General Public License v2</a></center><br><br>");
-        setHeading("About");
+        aboutText.append("<br><center><b>");
+        aboutText.append(textConstants.webpasswordsafe());
+        aboutText.append("</b><br><b>");
+        aboutText.append(textMessages.version(Constants.VERSION));
+        aboutText.append("</b><br><a target=\"_blank\" href=\"");
+        aboutText.append(Constants.URL_WEBPASSWORDSAFE);
+        aboutText.append("\">");
+        aboutText.append(Constants.URL_WEBPASSWORDSAFE);
+        aboutText.append("</a><br><br>");
+        aboutText.append(textMessages.copyrightBy(Constants.COPYRIGHT));
+        aboutText.append("<br>");
+        aboutText.append(textConstants.allRightsReserved());
+        aboutText.append(" <a target=\"_blank\" href=\"");
+        aboutText.append(Constants.URL_LICENSE);
+        aboutText.append("\">");
+        aboutText.append(textConstants.gpl2());
+        aboutText.append("</a></center><br><br>");
+        setHeading(textConstants.about());
         setButtons(Dialog.CLOSE);
         addText(aboutText.toString());
         setScrollMode(Scroll.AUTO);

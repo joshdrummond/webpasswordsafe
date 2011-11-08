@@ -22,6 +22,8 @@ package net.webpasswordsafe.client.ui;
 import net.webpasswordsafe.client.ClientSessionUtil;
 import net.webpasswordsafe.client.MainWindow;
 import net.webpasswordsafe.client.WebPasswordSafe;
+import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.common.util.Utils;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -37,6 +39,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -54,11 +57,13 @@ public class LoginDialog extends Window
     private Button enterButton;
     private MainWindow main;
     private boolean isSubmitting;
-    
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
+
     public LoginDialog(MainWindow main)
     {
         this.main = main;
-        this.setHeading("Login");
+        this.setHeading(textConstants.login());
         this.setModal(true);
         this.setClosable(false);
         this.setOnEsc(false);
@@ -69,7 +74,7 @@ public class LoginDialog extends Window
         form.setHeaderVisible(false);
         form.setFrame(true);
         usernameTextBox = new TextField<String>();
-        usernameTextBox.setFieldLabel("Username");
+        usernameTextBox.setFieldLabel(textConstants.username());
         usernameTextBox.addKeyListener(new KeyListener()
         {
             @Override
@@ -83,7 +88,7 @@ public class LoginDialog extends Window
         });
         form.add(usernameTextBox, new FormData("-20"));
         passwordTextBox = new TextField<String>();
-        passwordTextBox.setFieldLabel("Password");
+        passwordTextBox.setFieldLabel(textConstants.password());
         passwordTextBox.setPassword(true);
         passwordTextBox.addKeyListener(new KeyListener()
         {
@@ -98,7 +103,7 @@ public class LoginDialog extends Window
         });
         form.add(passwordTextBox, new FormData("-20"));
         
-        enterButton = new Button("Submit", new SelectionListener<ButtonEvent>() {
+        enterButton = new Button(textConstants.submit(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doSubmit();
@@ -144,7 +149,7 @@ public class LoginDialog extends Window
                     }
                     else
                     {
-                        MessageBox.alert("Error", "Invalid Login!", null);
+                        MessageBox.alert(textConstants.error(), textMessages.invalidLogin(), null);
                         setSubmitting(false);
                     }
                 }
@@ -162,14 +167,14 @@ public class LoginDialog extends Window
     @Override
     public void doGetLoginSuccess()
     {
-        Info.display("Status", Format.htmlEncode(ClientSessionUtil.getInstance().getLoggedInUser().getUsername()) + " logged in");
+        Info.display(textConstants.status(), textMessages.loggedIn(Format.htmlEncode(ClientSessionUtil.getInstance().getLoggedInUser().getUsername())));
         hide();
     }
     
     @Override
     public void doGetLoginFailure()
     {
-        MessageBox.alert("Error", "Invalid User!", null);
+        MessageBox.alert(textConstants.error(), textMessages.invalidUser(), null);
     }
     
 }

@@ -21,9 +21,12 @@ package net.webpasswordsafe.client.ui;
 
 import java.util.List;
 import net.webpasswordsafe.client.WebPasswordSafe;
+import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Utils;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -42,6 +45,7 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -55,17 +59,19 @@ public class GroupDialog extends Window
     private TextField<String> nameTextBox;
     private ListStore<UserData> fromUserStore;
     private ListStore<UserData> toUserStore;
+    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public GroupDialog(Group pGroup)
     {
         this.group = pGroup;
-        this.setHeading("Group");
+        this.setHeading(textConstants.group());
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
         this.setSize("455", "355");
         this.setResizable(false);
 
-        LabelField lblfldName = new LabelField("Name:");
+        LabelField lblfldName = new LabelField(textConstants.name_());
         add(lblfldName, new AbsoluteData(6, 13));
         lblfldName.setSize("82px", "19px");
 
@@ -73,15 +79,15 @@ public class GroupDialog extends Window
         add(nameTextBox, new AbsoluteData(128, 13));
         nameTextBox.setSize("306px", "22px");
 
-        LabelField lblfldUsers = new LabelField("Users:");
+        LabelField lblfldUsers = new LabelField(textConstants.users_());
         add(lblfldUsers, new AbsoluteData(6, 49));
         lblfldUsers.setSize("54px", "19px");
         
-        LabelField lblfldAvailable = new LabelField("Available");
+        LabelField lblfldAvailable = new LabelField(textConstants.available());
         add(lblfldAvailable, new AbsoluteData(6, 74));
         lblfldAvailable.setSize("67px", "19px");
 
-        LabelField lblfldMembers = new LabelField("Members");
+        LabelField lblfldMembers = new LabelField(textConstants.members());
         add(lblfldMembers, new AbsoluteData(232, 74));
         lblfldMembers.setSize("74px", "19px");
 
@@ -92,17 +98,17 @@ public class GroupDialog extends Window
         ListField<UserData> to = membersListBox.getToList();
 
         from.setSize(300, 100);
-        from.setDisplayField("fullname");
+        from.setDisplayField(Constants.FULLNAME);
         fromUserStore = new ListStore<UserData>();
-        fromUserStore.sort("fullname", SortDir.ASC);
+        fromUserStore.sort(Constants.FULLNAME, SortDir.ASC);
         from.setStore(fromUserStore);
-        to.setDisplayField("fullname");
+        to.setDisplayField(Constants.FULLNAME);
         to.setSize(300, 100);
         toUserStore = new ListStore<UserData>();
-        toUserStore.sort("fullname", SortDir.ASC);
+        toUserStore.sort(Constants.FULLNAME, SortDir.ASC);
         to.setStore(toUserStore);
 
-        Button saveButton = new Button("Save",
+        Button saveButton = new Button(textConstants.save(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -112,7 +118,7 @@ public class GroupDialog extends Window
                     }
                 });
 
-        Button cancelButton = new Button("Cancel",
+        Button cancelButton = new Button(textConstants.cancel(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -137,7 +143,7 @@ public class GroupDialog extends Window
             group.removeUsers();
             for (UserData userData : toUserStore.getModels())
             {
-                group.addUser((User)userData.get("user"));
+                group.addUser((User)userData.get(Constants.USER));
             }
             
             final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
@@ -153,7 +159,7 @@ public class GroupDialog extends Window
                     // true => group name already taken, else go ahead and save
                     if (result)
                     {
-                        MessageBox.alert("Error", "Group name already exists", null);
+                        MessageBox.alert(textConstants.error(), textMessages.groupNameAlreadyExists(), null);
                     }
                     else
                     {
@@ -167,7 +173,7 @@ public class GroupDialog extends Window
                             @Override
                             public void onSuccess(Void result)
                             {
-                                Info.display("Status", "Group saved");
+                                Info.display(textConstants.status(), textMessages.groupSaved());
                                 hide();
                             }
                         };
@@ -190,12 +196,12 @@ public class GroupDialog extends Window
     {
         if (Utils.safeString(nameTextBox.getValue()).equals(""))
         {
-            MessageBox.alert("Error", "Must enter Name", null);
+            MessageBox.alert(textConstants.error(), textMessages.mustEnterName(), null);
             return false;
         }
         if (Utils.safeString(nameTextBox.getValue()).length() > Group.LENGTH_NAME)
         {
-            MessageBox.alert("Error", "Name too long", null);
+            MessageBox.alert(textConstants.error(), textMessages.tooLongName(), null);
             return false;
         }
         return true;
@@ -252,15 +258,15 @@ public class GroupDialog extends Window
 
         public UserData(User user)
         {
-            set("id", user.getId());
-            set("fullname", Format.htmlEncode(user.getFullname()));
-            set("user", user);
+            set(Constants.ID, user.getId());
+            set(Constants.FULLNAME, Format.htmlEncode(user.getFullname()));
+            set(Constants.USER, user);
         }
 
         @Override
         public String toString()
         {
-            return get("fullname");
+            return get(Constants.FULLNAME);
         }
     }
 }
