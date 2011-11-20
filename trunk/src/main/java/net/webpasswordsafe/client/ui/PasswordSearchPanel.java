@@ -45,6 +45,7 @@ import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.event.TreePanelEvent;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.store.TreeStore;
 import com.extjs.gxt.ui.client.util.Format;
@@ -74,6 +75,7 @@ import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.CheckNodes;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.CheckCascade;
@@ -145,11 +147,26 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         
         treeStore = new TreeStore<TagData>();
         tagTree = new TreePanel<TagData>(treeStore);
+        tagTree.setBorders(true);
+        tagTree.sinkEvents(Event.ONDBLCLICK);
+        tagTree.addListener(Events.OnDoubleClick, new Listener<TreePanelEvent<TagData>>() {
+           public void handleEvent(TreePanelEvent<TagData> be)
+           {
+               TagData clickedTag = be.getItem();
+               List<TagData> checkedTags = tagTree.getCheckedSelection();
+               for (TagData checkedTag : checkedTags)
+               {
+                   tagTree.setChecked(checkedTag, false);
+               }
+               tagTree.setChecked(clickedTag, true);
+               doSearch();
+           }
+        });
         tagTree.setCheckStyle(CheckCascade.NONE);
         tagTree.setCheckNodes(CheckNodes.LEAF);
         tagTree.setCheckable(true);
         tagTree.setDisplayProperty(Constants.NAME);
-        tagTree.setWidth(250);  
+        tagTree.setWidth(250);
         
         centerPanel.setScrollMode(Scroll.AUTOX);
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>(4);
@@ -223,6 +240,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         radioAll = new Radio();
         radioAll.setBoxLabel(textConstants.all());
         tagMatchRG = new RadioGroup();
+        tagMatchRG.setBorders(true);
         tagMatchRG.add(radioAny);
         tagMatchRG.add(radioAll);
         
