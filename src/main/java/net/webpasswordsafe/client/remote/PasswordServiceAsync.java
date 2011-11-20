@@ -26,6 +26,7 @@ import net.webpasswordsafe.common.model.PasswordAccessAudit;
 import net.webpasswordsafe.common.model.PasswordData;
 import net.webpasswordsafe.common.model.Tag;
 import net.webpasswordsafe.common.model.Template;
+import net.webpasswordsafe.common.util.Constants.Match;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -38,7 +39,7 @@ public interface PasswordServiceAsync {
     
     public void addPassword(Password password, AsyncCallback<Void> callback);
     public void updatePassword(Password password, AsyncCallback<Void> callback);
-    public void searchPassword(String query, boolean activeOnly, Collection<Tag> tags, AsyncCallback<List<Password>> callback);
+    public void searchPassword(String query, boolean activeOnly, Collection<Tag> tags, Match tagMatch, AsyncCallback<List<Password>> callback);
     public void generatePassword(AsyncCallback<String> callback);
     public void getCurrentPassword(long passwordId, AsyncCallback<String> callback);
     public void getAvailableTags(AsyncCallback<List<Tag>> callback);

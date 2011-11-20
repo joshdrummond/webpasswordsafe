@@ -29,10 +29,12 @@ import net.webpasswordsafe.common.model.Password;
 import net.webpasswordsafe.common.model.Tag;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants.Function;
+import net.webpasswordsafe.common.util.Constants.Match;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -58,7 +60,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags)
+    public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags, Match tagMatch)
     {
         Criteria crit = getSession().createCriteria(getPersistentClass());
         crit.setFetchMode("tags", FetchMode.JOIN);
@@ -69,10 +71,20 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         {
             crit.add(Restrictions.eq("active", true));
         }
+        Criterion tagsCriterion = null;
         for (Tag tag : tags)
         {
-            crit.add(Restrictions.sqlRestriction("? in (select tag_id from password_tags where password_id = {alias}.id)", tag.getId(), StandardBasicTypes.LONG));
+            Criterion tc = Restrictions.sqlRestriction("? in (select tag_id from password_tags where password_id = {alias}.id)", tag.getId(), StandardBasicTypes.LONG); 
+            if (null == tagsCriterion)
+            {
+                tagsCriterion = tc;
+            }
+            else
+            {
+                tagsCriterion = tagMatch.equals(Match.ALL) ? Restrictions.and(tagsCriterion, tc) : Restrictions.or(tagsCriterion, tc);
+            }
         }
+        if (tagsCriterion != null) crit.add(tagsCriterion);
         crit.createAlias("permissions", "pm");
         crit.add(Restrictions.in("pm.accessLevel", 
                 new String[] {AccessLevel.READ.name(), AccessLevel.WRITE.name(), AccessLevel.GRANT.name()}));

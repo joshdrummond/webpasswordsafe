@@ -300,4 +300,10 @@ public interface TextConstants extends Constants
     @DefaultStringValue("WebPasswordSafe")
     String webpasswordsafe();
 
+    @DefaultStringValue("Any")
+    String any();
+
+    @DefaultStringValue("All")
+    String all();
+
 }

@@ -70,6 +70,7 @@ public class Constants
     public static final String VALUE = "value";
     
     // enums
+    public enum Match { ANY, ALL };
     public enum Role { ROLE_USER, ROLE_ADMIN };
     public enum Report { CurrentPasswordExport, Groups, PasswordAccessAudit, PasswordPermissions, Users };
     public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, ADD_PASSWORD,

@@ -37,6 +37,7 @@ import net.webpasswordsafe.common.model.Tag;
 import net.webpasswordsafe.common.model.Template;
 import net.webpasswordsafe.common.model.TemplateDetail;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.util.Constants.Match;
 import net.webpasswordsafe.common.util.Utils;
 import net.webpasswordsafe.common.util.Constants.Function;
 import net.webpasswordsafe.server.ServerSessionUtil;
@@ -230,13 +231,13 @@ public class PasswordServiceImpl implements PasswordService
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags)
+    public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags, Match tagMatch)
     {
         query = Utils.safeString(query);
         Date now = new Date();
         User loggedInUser = getLoggedInUser();
-        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly, tags);
-        auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "search password", "query=["+query+"] activeOnly=["+activeOnly+"] tags=["+tags+"]", true, "found "+passwords.size());
+        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly, tags, tagMatch);
+        auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "search password", "query=["+query+"] activeOnly=["+activeOnly+"] tags=["+tags+"] tagMatch=["+tagMatch+"]", true, "found "+passwords.size());
         return passwords;
     }
  
