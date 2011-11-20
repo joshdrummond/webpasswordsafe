@@ -26,6 +26,7 @@ import net.webpasswordsafe.common.model.PasswordAccessAudit;
 import net.webpasswordsafe.common.model.PasswordData;
 import net.webpasswordsafe.common.model.Tag;
 import net.webpasswordsafe.common.model.Template;
+import net.webpasswordsafe.common.util.Constants.Match;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -40,7 +41,7 @@ public interface PasswordService extends RemoteService {
     
     public void addPassword(Password password);
     public void updatePassword(Password password);
-    public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags);
+    public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags, Match tagMatch);
     public String generatePassword();
     public String getCurrentPassword(long passwordId);
     public List<Tag> getAvailableTags();

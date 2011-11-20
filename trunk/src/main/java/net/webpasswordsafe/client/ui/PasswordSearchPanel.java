@@ -30,8 +30,10 @@ import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.common.model.Password;
 import net.webpasswordsafe.common.model.Tag;
 import net.webpasswordsafe.common.util.Constants;
+import net.webpasswordsafe.common.util.Constants.Match;
 import net.webpasswordsafe.common.util.Utils;
 import com.extjs.gxt.ui.client.Style.LayoutRegion;
+import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.Style.SelectionMode;
 import com.extjs.gxt.ui.client.data.BaseModel;
@@ -54,6 +56,8 @@ import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.Radio;
+import com.extjs.gxt.ui.client.widget.form.RadioGroup;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.extjs.gxt.ui.client.widget.grid.ColumnModel;
@@ -65,6 +69,8 @@ import com.extjs.gxt.ui.client.widget.layout.HBoxLayout;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayoutData;
 import com.extjs.gxt.ui.client.widget.layout.BoxLayout.BoxLayoutPack;
 import com.extjs.gxt.ui.client.widget.layout.HBoxLayout.HBoxLayoutAlign;
+import com.extjs.gxt.ui.client.widget.layout.RowData;
+import com.extjs.gxt.ui.client.widget.layout.RowLayout;
 import com.extjs.gxt.ui.client.widget.treepanel.TreePanel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -85,6 +91,8 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
     private ListStore<PasswordSearchData> gridStore;
     private TreeStore<TagData> treeStore;
     private TreePanel<TagData> tagTree;
+    private RadioGroup tagMatchRG;
+    private Radio radioAny, radioAll;
     private TextField<String> searchTextBox;
     private CheckBox activeOnlyCheckBox;
     //private static final String TOOLTIP_VIEW_PASSWORD_VALUE = "Click to view current password value.";
@@ -142,7 +150,6 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         tagTree.setCheckable(true);
         tagTree.setDisplayProperty(Constants.NAME);
         tagTree.setWidth(250);  
-        westPanel.add(tagTree);
         
         centerPanel.setScrollMode(Scroll.AUTOX);
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>(4);
@@ -210,6 +217,19 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         westData.setCollapsible(true);  
         westData.setMargins(new Margins(5));  
         
+        radioAny = new Radio();
+        radioAny.setBoxLabel(textConstants.any());
+        radioAny.setValue(true);
+        radioAll = new Radio();
+        radioAll.setBoxLabel(textConstants.all());
+        tagMatchRG = new RadioGroup();
+        tagMatchRG.add(radioAny);
+        tagMatchRG.add(radioAll);
+        
+        westPanel.setLayout(new RowLayout(Orientation.VERTICAL));
+        westPanel.add(tagMatchRG, new RowData(1, -1));
+        westPanel.add(tagTree, new RowData(1, 1));
+
         BorderLayoutData centerData = new BorderLayoutData(LayoutRegion.CENTER);  
         centerData.setMargins(new Margins(5, 0, 5, 0));  
         
@@ -317,7 +337,8 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
                 refreshTable(result);
             }
         };
-        PasswordService.Util.getInstance().searchPassword(Utils.safeString(searchTextBox.getValue()), activeOnlyCheckBox.getValue(), selectedTags, callback);
+        Match match = tagMatchRG.getValue().equals(radioAll) ? Match.ALL : Match.ANY;
+        PasswordService.Util.getInstance().searchPassword(Utils.safeString(searchTextBox.getValue()), activeOnlyCheckBox.getValue(), selectedTags, match, callback);
     }
 
     private void refreshTable(List<Password> passwords)
