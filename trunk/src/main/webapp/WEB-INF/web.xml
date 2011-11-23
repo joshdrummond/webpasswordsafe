@@ -40,6 +40,14 @@
     </servlet>
 
     <servlet>
+        <servlet-name>xsrf</servlet-name>
+        <servlet-class>
+            com.google.gwt.user.server.rpc.XsrfTokenServiceServlet
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
         <servlet-name>webservice</servlet-name>
         <servlet-class>
             org.springframework.ws.transport.http.MessageDispatcherServlet
@@ -60,6 +68,11 @@
         <url-pattern>/webpasswordsafe/rpc/*</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>xsrf</servlet-name>
+        <url-pattern>/webpasswordsafe/xsrf</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>webservice</servlet-name>
         <url-pattern>/webservice/*</url-pattern>
@@ -86,6 +99,11 @@
         <param-value>
             /WEB-INF/webpasswordsafe-service.xml,/WEB-INF/webpasswordsafe-data.xml
         </param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>gwt.xsrf.session_cookie_name</param-name>
+        <param-value>JSESSIONID</param-value>
     </context-param>
 
 </web-app>

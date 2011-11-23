@@ -25,6 +25,7 @@ import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.client.remote.PasswordService;
+import net.webpasswordsafe.client.remote.ServiceHelper;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.client.ui.*;
 import net.webpasswordsafe.common.model.AccessLevel;
@@ -61,6 +62,10 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.rpc.XsrfToken;
+import com.google.gwt.user.client.rpc.XsrfTokenService;
+import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 import com.google.gwt.user.client.ui.RootPanel;
 
 
@@ -110,7 +115,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         
         RootPanel.get().add(viewport);
 
-        doGetLoggedInUser(this);
+        pingServer(this);
     }
 
     private void refreshTopPanel()
@@ -579,6 +584,43 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     private void displayTemplateDialog(Template template)
     {
         new TemplateDialog(template).show();
+    }
+
+    private void pingServer(final LoginWindow loginWindow)
+    {
+        AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                WebPasswordSafe.handleServerFailure(caught);
+            }
+            @Override
+            public void onSuccess(Boolean result)
+            {
+                initXsrfProtection(loginWindow);
+            }
+        };
+        LoginService.Util.getInstance().ping(callback);
+    }
+    
+    private void initXsrfProtection(final LoginWindow loginWindow)
+    {
+        XsrfTokenServiceAsync xsrf = (XsrfTokenServiceAsync)GWT.create(XsrfTokenService.class);
+        ((ServiceDefTarget)xsrf).setServiceEntryPoint(GWT.getModuleBaseURL() + "xsrf");
+        xsrf.getNewXsrfToken(new AsyncCallback<XsrfToken>() {
+            @Override
+            public void onSuccess(XsrfToken token)
+            {
+                ServiceHelper.setXsrfToken(token);
+                doGetLoggedInUser(loginWindow);
+            }
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                WebPasswordSafe.handleServerFailure(caught);
+            }
+        });
     }
     
     @Override

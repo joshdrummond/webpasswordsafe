@@ -42,7 +42,6 @@ public class Constants
     // unique tokens
     public static final String SESSION_KEY_USERNAME = "X-WPS-Username";
     public static final String SESSION_KEY_ROLES = "X-WPS-Roles";
-    public static final String CSRF_TOKEN_KEY = "X-WPS-CSRFToken";
 
     // reports
     public static final String VIEW_REPORT_PREFIX = "VIEW_REPORT_";

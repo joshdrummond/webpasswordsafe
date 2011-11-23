@@ -24,8 +24,9 @@ import java.util.Set;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants.Function;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.rpc.XsrfProtectedService;
+import com.google.gwt.user.server.rpc.NoXsrfProtect;
 
 
 /**
@@ -33,8 +34,10 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
  * @author Josh Drummond
  *
  */
-public interface LoginService extends RemoteService {
+public interface LoginService extends XsrfProtectedService {
     
+    @NoXsrfProtect
+    public boolean ping();
     public boolean login(String username, String password);
     public boolean logout();
     public User getLogin();
@@ -45,12 +48,12 @@ public interface LoginService extends RemoteService {
      */
     public static class Util {
         private static LoginServiceAsync instance;
-        public static LoginServiceAsync getInstance(){
+        public static LoginServiceAsync getInstance()
+        {
             if (instance == null) {
                 instance = (LoginServiceAsync) GWT.create(LoginService.class);
                 ServiceDefTarget target = (ServiceDefTarget) instance;
                 target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/LoginService");
-                target.setRpcRequestBuilder(new CSRFAwareRpcRequestBuilder());
             }
             return instance;
         }
