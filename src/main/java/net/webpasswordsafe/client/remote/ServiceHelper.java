@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2011 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,10 +19,8 @@
 */
 package net.webpasswordsafe.client.remote;
 
-import net.webpasswordsafe.common.util.Constants;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.rpc.RpcRequestBuilder;
+import com.google.gwt.user.client.rpc.HasRpcToken;
+import com.google.gwt.user.client.rpc.XsrfToken;
 
 
 /**
@@ -30,15 +28,14 @@ import com.google.gwt.user.client.rpc.RpcRequestBuilder;
  * @author Josh Drummond
  *
  */
-public class CSRFAwareRpcRequestBuilder extends RpcRequestBuilder
+public class ServiceHelper
 {
-    @Override
-    protected void doFinish(RequestBuilder rb)
+
+    public static void setXsrfToken(XsrfToken token)
     {
-        String sessionId = Cookies.getCookie(Constants.CSRF_TOKEN_KEY);
-        if (sessionId != null) {
-            rb.setHeader(Constants.CSRF_TOKEN_KEY, sessionId);
-        }
-        super.doFinish(rb);
+        ((HasRpcToken)LoginService.Util.getInstance()).setRpcToken(token);
+        ((HasRpcToken)PasswordService.Util.getInstance()).setRpcToken(token);
+        ((HasRpcToken)UserService.Util.getInstance()).setRpcToken(token);
     }
+    
 }

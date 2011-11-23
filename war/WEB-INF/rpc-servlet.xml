@@ -31,22 +31,19 @@
         </property>
     </bean>
     
-    <bean id="loginServiceExporter" class="net.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
+    <bean id="loginServiceExporter" class="org.gwtwidgets.server.spring.gilead.GileadRPCServiceExporter">
         <property name="beanManager" ref="persistentBeanManager" />
-        <property name="strongCsrfProtection" value="true" />
         <property name="service" ref="loginService" />
     </bean>
     
-    <bean id="userServiceExporter" class="net.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
+    <bean id="userServiceExporter" class="org.gwtwidgets.server.spring.gilead.GileadRPCServiceExporter">
         <property name="beanManager" ref="persistentBeanManager" />
-        <property name="strongCsrfProtection" value="true" />
         <property name="service" ref="userService" />
     </bean>
     
-    <bean id="passwordServiceExporter" class="net.webpasswordsafe.server.CSRFProtectedGileadRPCServiceExporter">
+    <bean id="passwordServiceExporter" class="org.gwtwidgets.server.spring.gilead.GileadRPCServiceExporter">
         <property name="beanManager" ref="persistentBeanManager" />
-        <property name="strongCsrfProtection" value="true" />
         <property name="service" ref="passwordService" />
     </bean>
-    
+
 </beans>

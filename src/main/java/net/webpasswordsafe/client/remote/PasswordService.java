@@ -28,8 +28,8 @@ import net.webpasswordsafe.common.model.Tag;
 import net.webpasswordsafe.common.model.Template;
 import net.webpasswordsafe.common.util.Constants.Match;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.rpc.XsrfProtectedService;
 
 
 /**
@@ -37,7 +37,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
  * @author Josh Drummond
  *
  */
-public interface PasswordService extends RemoteService {
+public interface PasswordService extends XsrfProtectedService {
     
     public void addPassword(Password password);
     public void updatePassword(Password password);
@@ -61,12 +61,12 @@ public interface PasswordService extends RemoteService {
      */
     public static class Util {
         private static PasswordServiceAsync instance;
-        public static PasswordServiceAsync getInstance(){
+        public static PasswordServiceAsync getInstance()
+        {
             if (instance == null) {
                 instance = (PasswordServiceAsync) GWT.create(PasswordService.class);
                 ServiceDefTarget target = (ServiceDefTarget) instance;
                 target.setServiceEntryPoint(GWT.getModuleBaseURL() + "rpc/PasswordService");
-                target.setRpcRequestBuilder(new CSRFAwareRpcRequestBuilder());
             }
             return instance;
         }

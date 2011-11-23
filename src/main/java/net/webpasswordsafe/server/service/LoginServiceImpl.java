@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
 
 
 /**
@@ -49,8 +50,9 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Service("loginService")
-public class LoginServiceImpl implements LoginService {
-    
+public class LoginServiceImpl extends XsrfProtectedServiceServlet implements LoginService
+{
+    private static final long serialVersionUID = 185624826328067937L;
     private static Logger LOG = Logger.getLogger(LoginServiceImpl.class);
     
     @Resource
@@ -169,5 +171,11 @@ public class LoginServiceImpl implements LoginService {
         }
         LOG.debug("authzMap="+authzMap.toString());
         return authzMap;
+    }
+
+    @Override
+    public boolean ping()
+    {
+        return true;
     }
 }

@@ -54,6 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional; 
+import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
 
 
 /**
@@ -63,8 +64,9 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @Service("passwordService")
-public class PasswordServiceImpl implements PasswordService
+public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements PasswordService
 {
+    private static final long serialVersionUID = -2328314230839034189L;
     private static Logger LOG = Logger.getLogger(PasswordServiceImpl.class);
     
     @Autowired
