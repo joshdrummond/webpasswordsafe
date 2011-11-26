@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.webpasswordsafe.client.WebPasswordSafe;
-import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.common.model.AccessLevel;
@@ -75,7 +74,6 @@ public class PermissionDialog extends Window
     private ComboBox<SubjectData> comboSubjects;
     private PermissionData selectedPermission;
     private PermissionListener permissionListener;
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public PermissionDialog(PermissionListener permissionListener,
@@ -87,7 +85,7 @@ public class PermissionDialog extends Window
         this.permissionListener = permissionListener;
         boolean isPasswordGrantable = password.getMaxEffectiveAccessLevel().equals(AccessLevel.GRANT);
         
-        this.setHeading(textConstants.permissions());
+        this.setHeading(textMessages.permissions());
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
         permissionStore = new ListStore<PermissionData>();
@@ -127,12 +125,12 @@ public class PermissionDialog extends Window
         List<ColumnConfig> config = new ArrayList<ColumnConfig>(2);
         ColumnConfig column = new ColumnConfig();
         column.setId(Constants.SUBJECT);
-        column.setHeader(textConstants.userGroup());
+        column.setHeader(textMessages.userGroup());
         column.setWidth(216);
         config.add(column);
         column = new ColumnConfig();
         column.setId(Constants.ACCESSLEVEL);
-        column.setHeader(textConstants.accessLevel());
+        column.setHeader(textMessages.accessLevel());
         column.setWidth(113);
         column.setEditor(accessLevelEditor);
         config.add(column);
@@ -154,7 +152,7 @@ public class PermissionDialog extends Window
         add(permissionGrid, new AbsoluteData(3, 3));
         permissionGrid.setSize("360px", "221px");
 
-        Button removeButton = new Button(textConstants.removeSelected(),
+        Button removeButton = new Button(textMessages.removeSelected(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -167,7 +165,7 @@ public class PermissionDialog extends Window
         add(removeButton, new AbsoluteData(258, 230));
         removeButton.setSize("105px", "22px");
 
-        Button addUserButton = new Button(textConstants.add(),
+        Button addUserButton = new Button(textMessages.add(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -182,14 +180,14 @@ public class PermissionDialog extends Window
 
         comboSubjects = new ComboBox<SubjectData>();
         add(comboSubjects, new AbsoluteData(3, 230));
-        comboSubjects.setEmptyText(textConstants.selectUserGroup());
+        comboSubjects.setEmptyText(textMessages.selectUserGroup());
         comboSubjects.setDisplayField(Constants.NAME);
         comboSubjects.setStore(subjectStore);
         comboSubjects.setTypeAhead(true);
         comboSubjects.setTriggerAction(TriggerAction.ALL);
         comboSubjects.setEnabled(isPasswordGrantable);
 
-        Button btnRemoveAll = new Button(textConstants.removeAll());
+        Button btnRemoveAll = new Button(textMessages.removeAll());
         btnRemoveAll.addSelectionListener(new SelectionListener<ButtonEvent>()
         {
             @Override
@@ -202,7 +200,7 @@ public class PermissionDialog extends Window
         add(btnRemoveAll, new AbsoluteData(258, 254));
         btnRemoveAll.setSize("105px", "22px");
         
-        Button btnAddTemplate = new Button(textConstants.addTemplate(),
+        Button btnAddTemplate = new Button(textMessages.addTemplate(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -215,7 +213,7 @@ public class PermissionDialog extends Window
         add(btnAddTemplate, new AbsoluteData(126, 254));
         btnAddTemplate.setSize("85px", "22px");
 
-        Button okayButton = new Button(textConstants.okay(),
+        Button okayButton = new Button(textMessages.okay(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -226,7 +224,7 @@ public class PermissionDialog extends Window
                 });
         okayButton.setEnabled(isPasswordGrantable);
 
-        Button cancelButton = new Button(textConstants.cancel(),
+        Button cancelButton = new Button(textMessages.cancel(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -331,7 +329,7 @@ public class PermissionDialog extends Window
         }
         else
         {
-            MessageBox.alert(textConstants.error(), textMessages.mustHaveOnePermission(), null);
+            MessageBox.alert(textMessages.error(), textMessages.mustHaveOnePermission(), null);
         }
     }
     

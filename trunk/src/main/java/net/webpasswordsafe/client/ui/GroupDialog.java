@@ -21,7 +21,6 @@ package net.webpasswordsafe.client.ui;
 
 import java.util.List;
 import net.webpasswordsafe.client.WebPasswordSafe;
-import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.Group;
@@ -59,19 +58,18 @@ public class GroupDialog extends Window
     private TextField<String> nameTextBox;
     private ListStore<UserData> fromUserStore;
     private ListStore<UserData> toUserStore;
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public GroupDialog(Group pGroup)
     {
         this.group = pGroup;
-        this.setHeading(textConstants.group());
+        this.setHeading(textMessages.group());
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
         this.setSize("455", "355");
         this.setResizable(false);
 
-        LabelField lblfldName = new LabelField(textConstants.name_());
+        LabelField lblfldName = new LabelField(textMessages.name_());
         add(lblfldName, new AbsoluteData(6, 13));
         lblfldName.setSize("82px", "19px");
 
@@ -79,15 +77,15 @@ public class GroupDialog extends Window
         add(nameTextBox, new AbsoluteData(128, 13));
         nameTextBox.setSize("306px", "22px");
 
-        LabelField lblfldUsers = new LabelField(textConstants.users_());
+        LabelField lblfldUsers = new LabelField(textMessages.users_());
         add(lblfldUsers, new AbsoluteData(6, 49));
         lblfldUsers.setSize("54px", "19px");
         
-        LabelField lblfldAvailable = new LabelField(textConstants.available());
+        LabelField lblfldAvailable = new LabelField(textMessages.available());
         add(lblfldAvailable, new AbsoluteData(6, 74));
         lblfldAvailable.setSize("67px", "19px");
 
-        LabelField lblfldMembers = new LabelField(textConstants.members());
+        LabelField lblfldMembers = new LabelField(textMessages.members());
         add(lblfldMembers, new AbsoluteData(232, 74));
         lblfldMembers.setSize("74px", "19px");
 
@@ -108,7 +106,7 @@ public class GroupDialog extends Window
         toUserStore.sort(Constants.FULLNAME, SortDir.ASC);
         to.setStore(toUserStore);
 
-        Button saveButton = new Button(textConstants.save(),
+        Button saveButton = new Button(textMessages.save(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -118,7 +116,7 @@ public class GroupDialog extends Window
                     }
                 });
 
-        Button cancelButton = new Button(textConstants.cancel(),
+        Button cancelButton = new Button(textMessages.cancel(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -159,7 +157,7 @@ public class GroupDialog extends Window
                     // true => group name already taken, else go ahead and save
                     if (result)
                     {
-                        MessageBox.alert(textConstants.error(), textMessages.groupNameAlreadyExists(), null);
+                        MessageBox.alert(textMessages.error(), textMessages.groupNameAlreadyExists(), null);
                     }
                     else
                     {
@@ -173,7 +171,7 @@ public class GroupDialog extends Window
                             @Override
                             public void onSuccess(Void result)
                             {
-                                Info.display(textConstants.status(), textMessages.groupSaved());
+                                Info.display(textMessages.status(), textMessages.groupSaved());
                                 hide();
                             }
                         };
@@ -196,12 +194,12 @@ public class GroupDialog extends Window
     {
         if (Utils.safeString(nameTextBox.getValue()).equals(""))
         {
-            MessageBox.alert(textConstants.error(), textMessages.mustEnterName(), null);
+            MessageBox.alert(textMessages.error(), textMessages.mustEnterName(), null);
             return false;
         }
         if (Utils.safeString(nameTextBox.getValue()).length() > Group.LENGTH_NAME)
         {
-            MessageBox.alert(textConstants.error(), textMessages.tooLongName(), null);
+            MessageBox.alert(textMessages.error(), textMessages.tooLongName(), null);
             return false;
         }
         return true;

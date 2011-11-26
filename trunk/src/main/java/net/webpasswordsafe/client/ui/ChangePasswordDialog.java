@@ -20,7 +20,6 @@
 package net.webpasswordsafe.client.ui;
 
 import net.webpasswordsafe.client.WebPasswordSafe;
-import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.UserAuthnPassword;
@@ -52,19 +51,18 @@ public class ChangePasswordDialog extends Window
     private TextField<String> password1;
     private TextField<String> password2;
     private FormData formData = new FormData("-20"); 
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public ChangePasswordDialog()
     {
-        this.setHeading(textConstants.changePassword());
+        this.setHeading(textMessages.changePassword());
         this.setModal(true);
         
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);
         form.setFrame(true);
         password1 = new TextField<String>();
-        password1.setFieldLabel(textConstants.newPassword());
+        password1.setFieldLabel(textMessages.newPassword());
         password1.setPassword(true);
         password1.addKeyListener(new KeyListener()
         {
@@ -79,7 +77,7 @@ public class ChangePasswordDialog extends Window
         });
         form.add(password1, formData);
         password2 = new TextField<String>();
-        password2.setFieldLabel(textConstants.reenterPassword());
+        password2.setFieldLabel(textMessages.reenterPassword());
         password2.setPassword(true);
         password2.addKeyListener(new KeyListener()
         {
@@ -94,13 +92,13 @@ public class ChangePasswordDialog extends Window
         });
         form.add(password2, formData);
         
-        Button okayButton = new Button(textConstants.okay(), new SelectionListener<ButtonEvent>() {
+        Button okayButton = new Button(textMessages.okay(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doOkay();
             }
         });
-        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textMessages.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
@@ -136,17 +134,17 @@ public class ChangePasswordDialog extends Window
     {
         if (!(Utils.safeString(password2.getValue())).equals(Utils.safeString(password1.getValue())))
         {
-            MessageBox.alert(textConstants.error(), textMessages.mustMatchPasswords(), null);
+            MessageBox.alert(textMessages.error(), textMessages.mustMatchPasswords(), null);
             return false;
         }
         if (Utils.safeString(password1.getValue()).equals(""))
         {
-            MessageBox.alert(textConstants.error(), textMessages.mustEnterPassword(), null);
+            MessageBox.alert(textMessages.error(), textMessages.mustEnterPassword(), null);
             return false;
         }
         if (Utils.safeString(password1.getValue()).length() > UserAuthnPassword.LENGTH_PASSWORD)
         {
-            MessageBox.alert(textConstants.error(), textMessages.tooLongPassword(), null);
+            MessageBox.alert(textMessages.error(), textMessages.tooLongPassword(), null);
             return false;
         }
         return true;
@@ -168,7 +166,7 @@ public class ChangePasswordDialog extends Window
             public void onSuccess(Void result)
             {
                 hide();
-                Info.display(textConstants.status(), textMessages.passwordChanged());
+                Info.display(textMessages.status(), textMessages.passwordChanged());
             }
         };
         UserService.Util.getInstance().changePassword(password, callback);

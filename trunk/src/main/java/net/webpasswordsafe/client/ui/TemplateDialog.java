@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import net.webpasswordsafe.client.ClientSessionUtil;
 import net.webpasswordsafe.client.WebPasswordSafe;
-import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.client.remote.UserService;
@@ -82,7 +81,6 @@ public class TemplateDialog extends Window
     private CheckBox chkbxShared;
     private ListStore<SubjectData> subjectStore;
     private ClientSessionUtil clientSessionUtil = ClientSessionUtil.getInstance();
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public TemplateDialog(Template template)
@@ -90,7 +88,7 @@ public class TemplateDialog extends Window
         this.template = template;
         setSize("380", "385");
         this.setResizable(false);
-        this.setHeading(textConstants.template());
+        this.setHeading(textMessages.template());
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
         permissionStore = new ListStore<TemplateData>();
@@ -122,7 +120,7 @@ public class TemplateDialog extends Window
 
         subjectStore = new ListStore<SubjectData>();
 
-        LabelField lblfldTemplateName = new LabelField(textConstants.name_());
+        LabelField lblfldTemplateName = new LabelField(textMessages.name_());
         add(lblfldTemplateName, new AbsoluteData(6, 6));
         templateNameTextBox = new TextField<String>();
         add(templateNameTextBox, new AbsoluteData(87, 6));
@@ -131,12 +129,12 @@ public class TemplateDialog extends Window
         List<ColumnConfig> config = new ArrayList<ColumnConfig>(2);
         ColumnConfig column = new ColumnConfig();
         column.setId(Constants.SUBJECT);
-        column.setHeader(textConstants.userGroup());
+        column.setHeader(textMessages.userGroup());
         column.setWidth(216);
         config.add(column);
         column = new ColumnConfig();
         column.setId(Constants.ACCESSLEVEL);
-        column.setHeader(textConstants.accessLevel());
+        column.setHeader(textMessages.accessLevel());
         column.setWidth(113);
         column.setEditor(accessLevelEditor);
         config.add(column);
@@ -158,7 +156,7 @@ public class TemplateDialog extends Window
         add(permissionGrid, new AbsoluteData(3, 33));
         permissionGrid.setSize("360px", "221px");
 
-        Button removeButton = new Button(textConstants.removeSelected(),
+        Button removeButton = new Button(textMessages.removeSelected(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -170,7 +168,7 @@ public class TemplateDialog extends Window
         add(removeButton, new AbsoluteData(258, 260));
         removeButton.setSize("105px", "22px");
 
-        Button addUserButton = new Button(textConstants.add(),
+        Button addUserButton = new Button(textMessages.add(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -184,13 +182,13 @@ public class TemplateDialog extends Window
 
         comboSubjects = new ComboBox<SubjectData>();
         add(comboSubjects, new AbsoluteData(3, 260));
-        comboSubjects.setEmptyText(textConstants.selectUserGroup());
+        comboSubjects.setEmptyText(textMessages.selectUserGroup());
         comboSubjects.setDisplayField(Constants.NAME);
         comboSubjects.setStore(subjectStore);
         comboSubjects.setTypeAhead(true);
         comboSubjects.setTriggerAction(TriggerAction.ALL);
 
-        Button btnRemoveAll = new Button(textConstants.removeAll());
+        Button btnRemoveAll = new Button(textMessages.removeAll());
         btnRemoveAll.addSelectionListener(new SelectionListener<ButtonEvent>()
         {
             @Override
@@ -204,7 +202,7 @@ public class TemplateDialog extends Window
         
         chkbxShared = new CheckBox();
         add(chkbxShared, new AbsoluteData(6, 284));
-        chkbxShared.setBoxLabel(textConstants.shared_());
+        chkbxShared.setBoxLabel(textMessages.shared_());
         chkbxShared.setHideLabel(true);
         if (template.getId() != 0)
         {
@@ -215,7 +213,7 @@ public class TemplateDialog extends Window
             }
         }
         
-        Button saveButton = new Button(textConstants.save(),
+        Button saveButton = new Button(textMessages.save(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -225,7 +223,7 @@ public class TemplateDialog extends Window
                     }
                 });
 
-        Button cancelButton = new Button(textConstants.cancel(),
+        Button cancelButton = new Button(textMessages.cancel(),
                 new SelectionListener<ButtonEvent>()
                 {
                     @Override
@@ -313,12 +311,12 @@ public class TemplateDialog extends Window
     {
         if ("".equals(Utils.safeString(templateNameTextBox.getValue())))
         {
-            MessageBox.alert(textConstants.error(), textMessages.mustEnterName(), null);
+            MessageBox.alert(textMessages.error(), textMessages.mustEnterName(), null);
             return false;
         }
         if (Utils.safeString(templateNameTextBox.getValue()).length() > Template.LENGTH_NAME)
         {
-            MessageBox.alert(textConstants.error(), textMessages.tooLongName(), null);
+            MessageBox.alert(textMessages.error(), textMessages.tooLongName(), null);
             return false;
         }
         return true;
@@ -357,7 +355,7 @@ public class TemplateDialog extends Window
                     // true => template name already taken, else go ahead and save
                     if (result)
                     {
-                        MessageBox.alert(textConstants.error(), textMessages.templateNameExists(), null);
+                        MessageBox.alert(textMessages.error(), textMessages.templateNameExists(), null);
                     }
                     else
                     {
@@ -371,7 +369,7 @@ public class TemplateDialog extends Window
                             @Override
                             public void onSuccess(Void result)
                             {
-                                Info.display(textConstants.status(), textMessages.templateSaved());
+                                Info.display(textMessages.status(), textMessages.templateSaved());
                                 hide();
                             }
                         };

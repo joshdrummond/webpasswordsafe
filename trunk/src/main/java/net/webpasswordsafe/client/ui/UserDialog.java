@@ -21,7 +21,6 @@ package net.webpasswordsafe.client.ui;
 
 import java.util.List;
 import net.webpasswordsafe.client.WebPasswordSafe;
-import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.Group;
@@ -57,7 +56,6 @@ import com.extjs.gxt.ui.client.widget.form.LabelField;
  */
 public class UserDialog extends Window
 {
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
     private User user;
     private TextField<String> usernameTextBox;
@@ -72,29 +70,29 @@ public class UserDialog extends Window
     public UserDialog(User pUser)
     {
         this.user = pUser;
-        this.setHeading(textConstants.user());
+        this.setHeading(textMessages.user());
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
         this.setSize("455", "475");
         this.setResizable(false);
         
-        LabelField lblfldUsername = new LabelField(textConstants.username_());
+        LabelField lblfldUsername = new LabelField(textMessages.username_());
         add(lblfldUsername, new AbsoluteData(6, 6));
         usernameTextBox = new TextField<String>();
         usernameTextBox.setReadOnly(user.getId() > 0);
         add(usernameTextBox, new AbsoluteData(144, 6));
         usernameTextBox.setSize("271px", "22px");
-        LabelField lblfldFullName = new LabelField(textConstants.fullname_());
+        LabelField lblfldFullName = new LabelField(textMessages.fullname_());
         add(lblfldFullName, new AbsoluteData(6, 34));
         fullnameTextBox = new TextField<String>();
         add(fullnameTextBox, new AbsoluteData(144, 34));
         fullnameTextBox.setSize("271px", "22px");
-        LabelField lblfldEmail = new LabelField(textConstants.email_());
+        LabelField lblfldEmail = new LabelField(textMessages.email_());
         add(lblfldEmail, new AbsoluteData(6, 62));
         emailTextBox = new TextField<String>();
         add(emailTextBox, new AbsoluteData(144, 62));
         emailTextBox.setSize("271px", "22px");
-        LabelField lblfldPassword = new LabelField(textConstants.password_());
+        LabelField lblfldPassword = new LabelField(textMessages.password_());
         add(lblfldPassword, new AbsoluteData(6, 90));
         password1TextBox = new TextField<String>();
         password1TextBox.setPassword(true);
@@ -105,15 +103,15 @@ public class UserDialog extends Window
         add(password2TextBox, new AbsoluteData(144, 118));
         password2TextBox.setSize("271px", "22px");
         enabledCheckBox = new CheckBox();
-        enabledCheckBox.setBoxLabel(textConstants.enabled());
+        enabledCheckBox.setBoxLabel(textMessages.enabled());
         add(enabledCheckBox, new AbsoluteData(144, 146));
         enabledCheckBox.setSize("76px", "22px");
 
-        LabelField lblfldGroups = new LabelField(textConstants.groups_());
+        LabelField lblfldGroups = new LabelField(textMessages.groups_());
         add(lblfldGroups, new AbsoluteData(6, 170));
-        LabelField lblfldAvailable = new LabelField(textConstants.available());
+        LabelField lblfldAvailable = new LabelField(textMessages.available());
         add(lblfldAvailable, new AbsoluteData(6, 195));
-        LabelField lblfldMembers = new LabelField(textConstants.memberOf());
+        LabelField lblfldMembers = new LabelField(textMessages.memberOf());
         add(lblfldMembers, new AbsoluteData(233, 195));
 
         DualListField<GroupData> membersListBox = new DualListField<GroupData>();
@@ -132,14 +130,14 @@ public class UserDialog extends Window
         toGroupStore.sort(Constants.NAME, SortDir.ASC);
         to.setStore(toGroupStore);
 
-        Button saveButton = new Button(textConstants.save(), new SelectionListener<ButtonEvent>() {
+        Button saveButton = new Button(textMessages.save(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doSave();
             }
         });
 
-        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textMessages.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
@@ -173,47 +171,47 @@ public class UserDialog extends Window
     {
         if (!(Utils.safeString(password2TextBox.getValue())).equals(Utils.safeString(password1TextBox.getValue())))
         {
-            MessageBox.alert(textConstants.error(), textMessages.passwordsNotMatch(), null);
+            MessageBox.alert(textMessages.error(), textMessages.passwordsNotMatch(), null);
             return false;
         }
         if (Utils.safeString(password1TextBox.getValue()).length() > UserAuthnPassword.LENGTH_PASSWORD)
         {
-            MessageBox.alert(textConstants.error(), textMessages.tooLongPassword(), null);
+            MessageBox.alert(textMessages.error(), textMessages.tooLongPassword(), null);
             return false;
         }
         if (Utils.safeString(usernameTextBox.getValue()).equals(""))
         {
-            MessageBox.alert(textConstants.error(), textMessages.mustEnterUsername(), null);
+            MessageBox.alert(textMessages.error(), textMessages.mustEnterUsername(), null);
             return false;
         }
         if (Utils.safeString(usernameTextBox.getValue()).length() > User.LENGTH_USERNAME)
         {
-            MessageBox.alert(textConstants.error(), textMessages.tooLongUsername(), null);
+            MessageBox.alert(textMessages.error(), textMessages.tooLongUsername(), null);
             return false;
         }
         if (Utils.safeString(fullnameTextBox.getValue()).equals(""))
         {
-            MessageBox.alert(textConstants.error(), textMessages.mustEnterFullName(), null);
+            MessageBox.alert(textMessages.error(), textMessages.mustEnterFullName(), null);
             return false;
         }
         if (Utils.safeString(fullnameTextBox.getValue()).length() > User.LENGTH_FULLNAME)
         {
-            MessageBox.alert(textConstants.error(), textMessages.tooLongFullName(), null);
+            MessageBox.alert(textMessages.error(), textMessages.tooLongFullName(), null);
             return false;
         }
         if (Utils.safeString(emailTextBox.getValue()).equals(""))
         {
-            MessageBox.alert(textConstants.error(), textMessages.mustEnterEmail(), null);
+            MessageBox.alert(textMessages.error(), textMessages.mustEnterEmail(), null);
             return false;
         }
         if (Utils.safeString(emailTextBox.getValue()).length() > User.LENGTH_EMAIL)
         {
-            MessageBox.alert(textConstants.error(), textMessages.tooLongEmail(), null);
+            MessageBox.alert(textMessages.error(), textMessages.tooLongEmail(), null);
             return false;
         }
         if (!Utils.isValidEmail(Utils.safeString(emailTextBox.getValue())))
         {
-            MessageBox.alert(textConstants.error(), textMessages.invalidEmail(), null);
+            MessageBox.alert(textMessages.error(), textMessages.invalidEmail(), null);
             return false;
         }
         return true;
@@ -245,7 +243,7 @@ public class UserDialog extends Window
                 @Override
                 public void onSuccess(Void result)
                 {
-                    Info.display(textConstants.status(), textMessages.userSaved());
+                    Info.display(textMessages.status(), textMessages.userSaved());
                     hide();
                 }
             };
@@ -264,7 +262,7 @@ public class UserDialog extends Window
                         // true => username already taken, else go ahead and save
                         if (result)
                         {
-                            MessageBox.alert(textConstants.error(), textMessages.usernameAlreadyExists(), null);
+                            MessageBox.alert(textMessages.error(), textMessages.usernameAlreadyExists(), null);
                         }
                         else
                         {

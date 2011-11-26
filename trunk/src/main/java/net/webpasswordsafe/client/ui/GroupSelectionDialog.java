@@ -21,7 +21,6 @@ package net.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.util.Constants;
@@ -53,12 +52,11 @@ public class GroupSelectionDialog extends Window
     private ListStore<GroupData> store;
     private GroupListener groupListener;
     private List<Group> groups;
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public GroupSelectionDialog(GroupListener groupListener, List<Group> groups, boolean allowMultiple)
     {
-        this.setHeading(textConstants.groups());
+        this.setHeading(textMessages.groups());
         this.setModal(true);
         this.groupListener = groupListener;
         this.groups = groups;
@@ -90,14 +88,14 @@ public class GroupSelectionDialog extends Window
         });
         form.add(groupListBox);
 
-        Button okayButton = new Button(textConstants.okay(), new SelectionListener<ButtonEvent>() {
+        Button okayButton = new Button(textMessages.okay(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doOkay();
             }
         });
 
-        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textMessages.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
