@@ -36,7 +36,7 @@ import com.extjs.gxt.ui.client.widget.button.Button;
 import java.util.List;
 import java.util.ArrayList;
 import net.webpasswordsafe.client.WebPasswordSafe;
-import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.common.model.Password;
 import net.webpasswordsafe.common.model.PasswordData;
@@ -54,12 +54,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class PasswordHistoryDialog extends Window
 {
     private ListStore<PasswordHistoryData> gridStore;
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public PasswordHistoryDialog(Password password)
     {
         this.setSize("430", "460");
-        this.setHeading(textConstants.passwordHistory());
+        this.setHeading(textMessages.passwordHistory());
         VBoxLayout boxLayout = new VBoxLayout();
         boxLayout.setVBoxLayoutAlign(VBoxLayoutAlign.CENTER);
         this.setLayout(boxLayout);
@@ -68,7 +68,7 @@ public class PasswordHistoryDialog extends Window
         
         gridStore = new ListStore<PasswordHistoryData>();
         List<ColumnConfig> configs = new ArrayList<ColumnConfig>();
-        ColumnConfig columnConfigPassword = new ColumnConfig(Constants.PASSWORD, textConstants.passwordValue(), 110);
+        ColumnConfig columnConfigPassword = new ColumnConfig(Constants.PASSWORD, textMessages.passwordValue(), 110);
         TextField<String> text = new TextField<String>();
         text.setSelectOnFocus(true);
         text.setReadOnly(true);
@@ -86,10 +86,10 @@ public class PasswordHistoryDialog extends Window
             }
         });
         configs.add(columnConfigPassword);
-        ColumnConfig columnConfigDate = new ColumnConfig(Constants.DATE, textConstants.dateCreated(), 120);
-        columnConfigDate.setDateTimeFormat(DateTimeFormat.getFormat(textConstants.displayDateFormat()));
+        ColumnConfig columnConfigDate = new ColumnConfig(Constants.DATE, textMessages.dateCreated(), 120);
+        columnConfigDate.setDateTimeFormat(DateTimeFormat.getFormat(textMessages.displayDateFormat()));
         configs.add(columnConfigDate);
-        ColumnConfig columnConfigUser = new ColumnConfig(Constants.USER, textConstants.userCreated(), 150);
+        ColumnConfig columnConfigUser = new ColumnConfig(Constants.USER, textMessages.userCreated(), 150);
         configs.add(columnConfigUser);
         
         EditorGrid<PasswordHistoryData> grid = new EditorGrid<PasswordHistoryData>(gridStore, new ColumnModel(configs));
@@ -98,7 +98,7 @@ public class PasswordHistoryDialog extends Window
         grid.setSize("400px", "390px");
         grid.setBorders(true);
         
-        Button closeButton = new Button(textConstants.close(), new SelectionListener<ButtonEvent>() {
+        Button closeButton = new Button(textMessages.close(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doClose();

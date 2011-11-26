@@ -20,7 +20,6 @@
 package net.webpasswordsafe.client.ui;
 
 import net.webpasswordsafe.client.WebPasswordSafe;
-import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.IPLockout;
@@ -51,19 +50,18 @@ public class IPUnblockDialog extends Window
 
     private TextField<String> ipaddress;
     private FormData formData = new FormData("-20"); 
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public IPUnblockDialog()
     {
-        this.setHeading(textConstants.unblockIP());
+        this.setHeading(textMessages.unblockIP());
         this.setModal(true);
         
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);
         form.setFrame(true);
         ipaddress = new TextField<String>();
-        ipaddress.setFieldLabel(textConstants.ipAddress());
+        ipaddress.setFieldLabel(textMessages.ipAddress());
         ipaddress.addKeyListener(new KeyListener()
         {
             @Override
@@ -77,13 +75,13 @@ public class IPUnblockDialog extends Window
         });
         form.add(ipaddress, formData);
         
-        Button okayButton = new Button(textConstants.okay(), new SelectionListener<ButtonEvent>() {
+        Button okayButton = new Button(textMessages.okay(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doOkay();
             }
         });
-        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textMessages.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();
@@ -119,12 +117,12 @@ public class IPUnblockDialog extends Window
     {
         if (Utils.safeString(ipaddress.getValue()).equals(""))
         {
-            MessageBox.alert(textConstants.error(), textMessages.mustEnterIPAddress(), null);
+            MessageBox.alert(textMessages.error(), textMessages.mustEnterIPAddress(), null);
             return false;
         }
         if (Utils.safeString(ipaddress.getValue()).length() > IPLockout.LENGTH_IPADDRESS)
         {
-            MessageBox.alert(textConstants.error(), textMessages.tooLongIPAddress(), null);
+            MessageBox.alert(textMessages.error(), textMessages.tooLongIPAddress(), null);
             return false;
         }
         return true;
@@ -145,11 +143,11 @@ public class IPUnblockDialog extends Window
                 hide();
                 if (result)
                 {
-                    Info.display(textConstants.status(), textMessages.ipAddressUnblocked());
+                    Info.display(textMessages.status(), textMessages.ipAddressUnblocked());
                 }
                 else
                 {
-                    Info.display(textConstants.status(), textMessages.ipAddressNotExist());
+                    Info.display(textMessages.status(), textMessages.ipAddressNotExist());
                 }
             }
         };

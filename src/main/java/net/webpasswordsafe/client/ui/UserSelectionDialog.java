@@ -21,7 +21,7 @@ package net.webpasswordsafe.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.webpasswordsafe.client.i18n.TextConstants;
+import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
@@ -48,7 +48,7 @@ import com.google.gwt.core.client.GWT;
  */
 public class UserSelectionDialog extends Window
 {
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
+    private final static TextMessages textMessages = GWT.create(TextMessages.class);
     private ListField<UserData> userListBox;
     private ListStore<UserData> store;
     private UserListener userListener;
@@ -56,7 +56,7 @@ public class UserSelectionDialog extends Window
     
     public UserSelectionDialog(UserListener userListener, List<User> users, boolean allowMultiple)
     {
-        this.setHeading(textConstants.users());
+        this.setHeading(textMessages.users());
         this.setModal(true);
         this.userListener = userListener;
         this.users = users;
@@ -68,7 +68,7 @@ public class UserSelectionDialog extends Window
         form.setLabelAlign(LabelAlign.TOP);
         form.setButtonAlign(HorizontalAlignment.CENTER);
         
-        String selectLabelText = allowMultiple ? textConstants.pleaseSelectUsers() : textConstants.pleaseSelectUser();
+        String selectLabelText = allowMultiple ? textMessages.pleaseSelectUsers() : textMessages.pleaseSelectUser();
         store = new ListStore<UserData>();
         userListBox = new ListField<UserData>();
         userListBox.setSize(300, 150);
@@ -88,14 +88,14 @@ public class UserSelectionDialog extends Window
         });
         form.add(userListBox);
 
-        Button okayButton = new Button(textConstants.okay(), new SelectionListener<ButtonEvent>() {
+        Button okayButton = new Button(textMessages.okay(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doOkay();
             }
         });
 
-        Button cancelButton = new Button(textConstants.cancel(), new SelectionListener<ButtonEvent>() {
+        Button cancelButton = new Button(textMessages.cancel(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doCancel();

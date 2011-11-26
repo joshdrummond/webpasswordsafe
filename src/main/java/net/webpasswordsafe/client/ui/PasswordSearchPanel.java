@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import net.webpasswordsafe.client.WebPasswordSafe;
-import net.webpasswordsafe.client.i18n.TextConstants;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.common.model.Password;
@@ -87,7 +86,6 @@ import com.extjs.gxt.ui.client.widget.treepanel.TreePanel.CheckCascade;
  */
 public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
 {
-    private final static TextConstants textConstants = GWT.create(TextConstants.class);
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
     private Grid<PasswordSearchData> passwordGrid;
     private ListStore<PasswordSearchData> gridStore;
@@ -106,11 +104,11 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         setHeaderVisible(false);
         
         ContentPanel northPanel = new ContentPanel();
-        northPanel.setHeading(textConstants.passwordSearch());
+        northPanel.setHeading(textMessages.passwordSearch());
         ContentPanel westPanel = new ContentPanel(new FillLayout());
-        westPanel.setHeading(textConstants.tags());
+        westPanel.setHeading(textMessages.tags());
         ContentPanel centerPanel = new ContentPanel(new FillLayout());
-        centerPanel.setHeading(textConstants.passwords());
+        centerPanel.setHeading(textMessages.passwords());
         
         HBoxLayout northLayout = new HBoxLayout();  
         northLayout.setPadding(new Padding(5));  
@@ -132,14 +130,14 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         searchTextBox.setMaxLength(1000);
         searchTextBox.focus();
 
-        Button searchButton = new Button(textConstants.search(), new SelectionListener<ButtonEvent>() {
+        Button searchButton = new Button(textMessages.search(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doSearch();
             }
         });
         activeOnlyCheckBox = new CheckBox();
-        activeOnlyCheckBox.setBoxLabel(textConstants.activeOnly());
+        activeOnlyCheckBox.setBoxLabel(textMessages.activeOnly());
         activeOnlyCheckBox.setValue(true);
         northPanel.add(searchTextBox, new HBoxLayoutData(new Margins(0, 5, 0, 0)));  
         northPanel.add(searchButton, new HBoxLayoutData(new Margins(0, 5, 0, 0)));  
@@ -173,28 +171,28 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         ColumnConfig column = new ColumnConfig();
         //column.setToolTip(TOOLTIP_EDIT_PASSWORD);
         column.setId(Constants.TITLE);
-        column.setHeader(textConstants.title());
+        column.setHeader(textMessages.title());
         column.setWidth(200);
         configs.add(column);
         column = new ColumnConfig();
         column.setId(Constants.USERNAME);
-        column.setHeader(textConstants.username());
+        column.setHeader(textMessages.username());
         column.setWidth(100);
         configs.add(column);
         column = new ColumnConfig();
         //column.setToolTip(TOOLTIP_VIEW_PASSWORD_VALUE);
         column.setId(Constants.PASSWORD);
-        column.setHeader(textConstants.password());
+        column.setHeader(textMessages.password());
         column.setWidth(100);
         configs.add(column);
         column = new ColumnConfig();
         column.setId(Constants.TAGS);
-        column.setHeader(textConstants.tags());
+        column.setHeader(textMessages.tags());
         column.setWidth(200);
         configs.add(column);
         column = new ColumnConfig();
         column.setId(Constants.NOTES);
-        column.setHeader(textConstants.notes());
+        column.setHeader(textMessages.notes());
         column.setWidth(300);
         configs.add(column);
         
@@ -235,10 +233,10 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         westData.setMargins(new Margins(5));  
         
         radioAny = new Radio();
-        radioAny.setBoxLabel(textConstants.any());
+        radioAny.setBoxLabel(textMessages.any());
         radioAny.setValue(true);
         radioAll = new Radio();
-        radioAll.setBoxLabel(textConstants.all());
+        radioAll.setBoxLabel(textMessages.all());
         tagMatchRG = new RadioGroup();
         tagMatchRG.setBorders(true);
         tagMatchRG.add(radioAny);
@@ -312,7 +310,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
                 }
                 else
                 {
-                    MessageBox.alert(textConstants.error(), textMessages.noAccessPasswordRead(), null);
+                    MessageBox.alert(textMessages.error(), textMessages.noAccessPasswordRead(), null);
                 }
             }
         };
@@ -351,7 +349,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
             @Override
             public void onSuccess(List<Password> result)
             {
-                Info.display(textConstants.status(), textMessages.foundPasswords(result.size()));
+                Info.display(textMessages.status(), textMessages.foundPasswords(result.size()));
                 refreshTable(result);
             }
         };
@@ -383,7 +381,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
             set(Constants.ID, id);
             set(Constants.TITLE, Format.htmlEncode(title));
             set(Constants.USERNAME, Format.htmlEncode(username));
-            set(Constants.PASSWORD, textConstants.displayCensored());
+            set(Constants.PASSWORD, textMessages.displayCensored());
             set(Constants.TAGS, Format.htmlEncode(tags));
             set(Constants.NOTES, Format.htmlEncode(notes));
         }
@@ -402,7 +400,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
             public void onSuccess(String result)
             {
                 Dialog popup = new Dialog();
-                popup.setHeading(textConstants.currentPassword());
+                popup.setHeading(textMessages.currentPassword());
                 popup.setButtons(Dialog.CLOSE);
                 popup.addText(Format.htmlEncode(result));
                 popup.setScrollMode(Scroll.AUTO);
