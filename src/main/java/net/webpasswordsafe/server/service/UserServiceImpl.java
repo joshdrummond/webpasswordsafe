@@ -113,7 +113,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
         }
         else
         {
-            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add user", newUser.getUsername(), false, "not authorized");
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add user", userTarget(newUser), false, "not authorized");
             throw new RuntimeException("Not Authorized!");
         }
     }
@@ -142,7 +142,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
             Group group = groupDAO.findById(newGroup.getId());
             group.addUser(user);
         }
-        auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add user", user.getUsername(), true, "");
+        auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add user", userTarget(user), true, "");
     }
 
     @Override
@@ -150,6 +150,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
     public void updateUser(User updateUser)
     {
         Date now = new Date();
+        String action = "update user";
         User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_USER))
         {
@@ -181,11 +182,11 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
                 group.addUser(user);
             }
             
-            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "update user", updateUser.getUsername(), true, "");
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, userTarget(updateUser), true, "");
         }
         else
         {
-            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "update user", updateUser.getUsername(), false, "not authorized");
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, userTarget(updateUser), false, "not authorized");
             throw new RuntimeException("Not Authorized!");
         }
     }
@@ -243,7 +244,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
         }
         else
         {
-            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add group", group.getName(), false, "not authorized");
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add group", groupTarget(group), false, "not authorized");
             throw new RuntimeException("Not Authorized!");
         }
     }
@@ -262,7 +263,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
         }
 
         groupDAO.makePersistent(group);
-        auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add group", group.getName(), true, "");
+        auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add group", groupTarget(group), true, "");
     }
     
     @Override
@@ -270,11 +271,12 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
     public void updateGroup(Group updateGroup)
     {
         Date now = new Date();
+        String action = "update group";
         User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_GROUP))
         {
             Group group = groupDAO.findById(updateGroup.getId());
-            String groupMessage = (updateGroup.getName().equals(group.getName())) ? "" : ("was: "+group.getName());
+            String groupMessage = (updateGroup.getName().equals(group.getName())) ? "" : ("was: "+groupTarget(group));
             group.setName(updateGroup.getName());
             group.removeUsers();
             for (User user : updateGroup.getUsers())
@@ -282,11 +284,11 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
                 User pUser = userDAO.findById(user.getId());
                 group.addUser(pUser);
             }
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update group", updateGroup.getName(), true, groupMessage);
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, groupTarget(updateGroup), true, groupMessage);
         }
         else
         {
-            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "update group", updateGroup.getName(), false, "not authorized");
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, groupTarget(updateGroup), false, "not authorized");
             throw new RuntimeException("Not Authorized!");
         }
     }
@@ -382,6 +384,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
     {
         boolean isUnblocked = false;
         Date now = new Date();
+        String action = "unblock ip";
         User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.UNBLOCK_IP))
         {
@@ -391,16 +394,16 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
                 ipLockout.setLockoutDate(null);
                 ipLockout.setFailCount(0);
                 isUnblocked = true;
-                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "unblock ip", ipaddress, true, "");
+                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, ipaddress, true, "");
             }
             else
             {
-                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "unblock ip", ipaddress, false, "doesn't exist");
+                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, ipaddress, false, "doesn't exist");
             }
         }
         else
         {
-            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "unblock ip", ipaddress, false, "not authorized");
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, ipaddress, false, "not authorized");
             throw new RuntimeException("Not Authorized!");
         }
  
@@ -415,6 +418,16 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
             throw new RuntimeException("Not Logged In!");
         }
         return loggedInUser;
+    }
+
+    private String userTarget(User user)
+    {
+        return user.getUsername() + " (userId="+user.getId()+")";
+    }
+
+    private String groupTarget(Group group)
+    {
+        return group.getName() + " (groupId="+group.getId()+")";
     }
 
 }

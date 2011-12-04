@@ -47,7 +47,7 @@ public interface PasswordService extends XsrfProtectedService {
     public List<Tag> getAvailableTags();
     public Password getPassword(long passwordId);
     public Password getPassword(String passwordName);
-    public boolean isPasswordTaken(String passwordName);
+    public boolean isPasswordTaken(String passwordName, long ignorePasswordId);
     public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId);
     public List<PasswordData> getPasswordHistoryData(long passwordId);
     public void addTemplate(Template template);
