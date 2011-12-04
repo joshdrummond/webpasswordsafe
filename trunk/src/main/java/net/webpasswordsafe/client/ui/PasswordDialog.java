@@ -84,7 +84,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldName, new AbsoluteData(7, 6));
 
         nameTextBox = new TextField<String>();
-        nameTextBox.setReadOnly(password.getId() > 0);
+        nameTextBox.setReadOnly(isPasswordReadOnly);
         add(nameTextBox, new AbsoluteData(82, 6));
         nameTextBox.setSize("331px", "22px");
 
@@ -92,7 +92,7 @@ public class PasswordDialog extends Window implements PermissionListener
         add(lblfldUsername, new AbsoluteData(7, 34));
         
         usernameTextBox = new TextField<String>();
-        usernameTextBox.setReadOnly(password.getId() > 0);
+        usernameTextBox.setReadOnly(isPasswordReadOnly);
         add(usernameTextBox, new AbsoluteData(82, 34));
         usernameTextBox.setSize("331px", "22px");
 
@@ -292,7 +292,7 @@ public class PasswordDialog extends Window implements PermissionListener
             password.setMaxHistory((password.getMaxHistory() < -1) ? -1 : password.getMaxHistory());
             password.setActive(activeCheckBox.getValue());
 
-            final AsyncCallback<Void> callback = new AsyncCallback<Void>()
+            final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
             {
                 @Override
                 public void onFailure(Throwable caught)
@@ -300,42 +300,42 @@ public class PasswordDialog extends Window implements PermissionListener
                     WebPasswordSafe.handleServerFailure(caught);
                 }
                 @Override
-                public void onSuccess(Void result)
+                public void onSuccess(Boolean result)
                 {
-                    Info.display(textMessages.status(), textMessages.passwordSaved());
-                    tagLoadListener.reloadTags();
-                    hide();
-                }
-            };
-            if (password.getId() == 0)
-            {
-                final AsyncCallback<Boolean> callbackCheck = new AsyncCallback<Boolean>()
-                {
-                    @Override
-                    public void onFailure(Throwable caught)
+                    // true => password title already taken, else go ahead and save
+                    if (result)
                     {
-                        WebPasswordSafe.handleServerFailure(caught);
+                        MessageBox.alert(textMessages.error(), textMessages.passwordTitleExists(), null);
                     }
-                    @Override
-                    public void onSuccess(Boolean result)
+                    else
                     {
-                        // true => password title already taken, else go ahead and save
-                        if (result)
+                        final AsyncCallback<Void> callback = new AsyncCallback<Void>()
                         {
-                            MessageBox.alert(textMessages.error(), textMessages.passwordTitleExists(), null);
-                        }
-                        else
+                            @Override
+                            public void onFailure(Throwable caught)
+                            {
+                                WebPasswordSafe.handleServerFailure(caught);
+                            }
+                            @Override
+                            public void onSuccess(Void result)
+                            {
+                                Info.display(textMessages.status(), textMessages.passwordSaved());
+                                tagLoadListener.reloadTags();
+                                hide();
+                            }
+                        };
+                        if (password.getId() == 0)
                         {
                             PasswordService.Util.getInstance().addPassword(password, callback);
                         }
+                        else
+                        {
+                            PasswordService.Util.getInstance().updatePassword(password, callback);
+                        }
                     }
-                };
-                PasswordService.Util.getInstance().isPasswordTaken(password.getName(), callbackCheck);
-            }
-            else
-            {
-                PasswordService.Util.getInstance().updatePassword(password, callback);
-            }
+                }
+            };
+            PasswordService.Util.getInstance().isPasswordTaken(password.getName(), password.getId(), callbackCheck);
         }
     }
 

@@ -45,7 +45,7 @@ public interface PasswordServiceAsync {
     public void getAvailableTags(AsyncCallback<List<Tag>> callback);
     public void getPassword(long passwordId, AsyncCallback<Password> callback);
     public void getPassword(String passwordName, AsyncCallback<Password> callback);
-    public void isPasswordTaken(String passwordName, AsyncCallback<Boolean> callback);
+    public void isPasswordTaken(String passwordName, long ignorePasswordId, AsyncCallback<Boolean> callback);
     public void getPasswordAccessAuditData(long passwordId, AsyncCallback<List<PasswordAccessAudit>> callback);
     public void getPasswordHistoryData(long passwordId, AsyncCallback<List<PasswordData>> callback);
     public void addTemplate(Template template, AsyncCallback<Void> callback);

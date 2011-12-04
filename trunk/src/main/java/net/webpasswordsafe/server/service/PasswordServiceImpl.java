@@ -102,6 +102,7 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     public void addPassword(Password password)
     {
         Date now = new Date();
+        String action = "add password";
         User loggedInUser = getLoggedInUser();
         if (authorizer.isAuthorized(loggedInUser, Function.ADD_PASSWORD))
         {
@@ -132,17 +133,17 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
                 }
                 
                 passwordDAO.makePersistent(password);
-                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "add password", password.getName(), true, "");
+                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(password), true, "");
             }
             else
             {
-                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add password", password.getName(), false, "missing permissions");
+                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(password), false, "missing permissions");
                 throw new RuntimeException("Missing Permissions");
             }
         }
         else
         {
-            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), "add password", password.getName(), false, "not authorized");
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(password), false, "not authorized");
             throw new RuntimeException("Not Authorized!");
         }
     }
@@ -153,13 +154,17 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     {
         LOG.debug("updating password");
         Date now = new Date();
+        String action = "update password";
         User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(updatePassword.getId(), loggedInUser, AccessLevel.WRITE);
         if (password != null)
         {
             if (updatePassword.getPermissions().size() > 0)
             {
+                String passwordMessage = (updatePassword.getName().equals(password.getName())) ? "" : ("was: "+passwordTarget(password));
                 // update simple fields
+                password.setName(updatePassword.getName());
+                password.setUsername(updatePassword.getUsername());
                 password.setNotes(updatePassword.getNotes());
                 password.setDateLastUpdate(now);
                 password.setUserLastUpdate(loggedInUser);
@@ -217,17 +222,17 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
                 {
                     LOG.debug("no access to grant permissions");
                 }
-                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update password", updatePassword.getName(), true, "");
+                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(updatePassword), true, passwordMessage);
             }
             else
             {
-                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update password", updatePassword.getName(), false, "missing permissions");
+                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(updatePassword), false, "missing permissions");
                 throw new RuntimeException("Missing Permissions");
             }
         }
         else
         {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update password", updatePassword.getName(), false, "write access denied");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(updatePassword), false, "write access denied");
         }
     }
 
@@ -257,17 +262,18 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     {
         String currentPasswordValue = "";
         Date now = new Date();
+        String action = "get current password value";
         User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get current password value", password.getName(), true, "");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(password), true, "");
             currentPasswordValue = encryptor.decrypt(password.getCurrentPasswordData().getPassword());
             createPasswordAccessAuditEntry(password, loggedInUser);
         }
         else
         {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get current password value", String.valueOf(passwordId), false, "invalid id or no access");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(passwordId), false, "invalid id or no access");
         }
         return currentPasswordValue;
     }
@@ -288,16 +294,17 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     public Password getPassword(long passwordId)
     {
         Date now = new Date();
+        String action = "get password";
         User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
             password.setMaxEffectiveAccessLevel(passwordDAO.getMaxEffectiveAccessLevel(password, loggedInUser));
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password", password.getName(), true, "");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(password), true, "");
         }
         else
         {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password", String.valueOf(passwordId), false, "invalid id or no access");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(passwordId), false, "invalid id or no access");
         }
         return password;
     }
@@ -307,15 +314,16 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     public Password getPassword(String passwordName)
     {
         Date now = new Date();
+        String action = "get password";
         User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordByName(passwordName, loggedInUser, AccessLevel.READ);
         if (password != null)
         {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password", passwordName, true, "");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(password), true, "");
         }
         else
         {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password", passwordName, false, "invalid name or no access");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordName, false, "invalid name or no access");
         }
         return password;
     }
@@ -325,17 +333,18 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId)
     {
         Date now = new Date();
+        String action = "get password access audit data";
         List<PasswordAccessAudit> accessAuditList = new ArrayList<PasswordAccessAudit>(0);
         User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
         if (null != password)
         {
             accessAuditList = passwordAccessAuditDAO.findAccessAuditByPassword(password);
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password access audit data", password.getName(), true, "");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(password), true, "");
         }
         else
         {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password access audit data", String.valueOf(passwordId), false, "invalid id or no access");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(passwordId), false, "invalid id or no access");
         }
         LOG.debug("found "+accessAuditList.size() + " password access audit entries");
         return accessAuditList;
@@ -346,6 +355,7 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     public List<PasswordData> getPasswordHistoryData(long passwordId)
     {
         Date now = new Date();
+        String action = "get password history data";
         List<PasswordData> decryptedPasswordDataList = new ArrayList<PasswordData>(0);
         User loggedInUser = getLoggedInUser();
         Password password = passwordDAO.findAllowedPasswordById(passwordId, loggedInUser, AccessLevel.READ);
@@ -358,11 +368,11 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
                         passwordData.getDateCreated(), passwordData.getUserCreated()));
             }
             createPasswordAccessAuditEntry(password, loggedInUser);
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password history data", password.getName(), true, "");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(password), true, "");
         }
         else
         {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "get password history data", String.valueOf(passwordId), false, "invalid id or no access");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(passwordId), false, "invalid id or no access");
         }
         LOG.debug("found "+decryptedPasswordDataList.size() + " password history values");
         return decryptedPasswordDataList;
@@ -382,10 +392,11 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     public void addTemplate(Template template)
     {
         Date now = new Date();
+        String action = "add template";
         User loggedInUser = getLoggedInUser();
         template.setUser(loggedInUser);
         templateDAO.makePersistent(template);
-        auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "add template", template.getName(), true, "");
+        auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, templateTarget(template), true, "");
     }
 
     @Override
@@ -394,11 +405,12 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     {
         LOG.debug("updating template");
         Date now = new Date();
+        String action = "update template";
         User loggedInUser = getLoggedInUser();
         Template template = templateDAO.findUpdatableTemplateById(updateTemplate.getId(), loggedInUser);
         if (template != null)
         {
-            String templateMessage = (updateTemplate.getName().equals(template.getName())) ? "" : ("was: "+template.getName());
+            String templateMessage = (updateTemplate.getName().equals(template.getName())) ? "" : ("was: "+templateTarget(template));
             // update simple fields
             template.setName(updateTemplate.getName());
             // only change sharing status if original owner is updating or special bypass authz
@@ -419,11 +431,11 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
                     template.addDetail(templateDetail);
                 }
             }
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update template", updateTemplate.getName(), true, templateMessage);
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, templateTarget(updateTemplate), true, templateMessage);
         }
         else
         {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "update template", updateTemplate.getName(), false, "invalid id or no access");
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, templateTarget(updateTemplate), false, "invalid id or no access");
         }
     }
 
@@ -449,10 +461,18 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public boolean isPasswordTaken(String passwordName)
+    public boolean isPasswordTaken(String passwordName, long ignorePasswordId)
     {
+        boolean isPasswordTaken = false;
         Password password = passwordDAO.findPasswordByName(passwordName);
-        return (null != password);
+        if (password != null)
+        {
+            if (password.getId() != ignorePasswordId)
+            {
+                isPasswordTaken = true;
+            }
+        }
+        return isPasswordTaken;
     }
 
     @Override
@@ -479,6 +499,21 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
             throw new RuntimeException("Not Logged In!");
         }
         return loggedInUser;
+    }
+
+    private String passwordTarget(Password password)
+    {
+        return password.getName() + " (passwordId="+password.getId()+")";
+    }
+
+    private String passwordTarget(long passwordId)
+    {
+        return "passwordId="+passwordId;
+    }
+    
+    private String templateTarget(Template template)
+    {
+        return template.getName() + " (templateId="+template.getId()+")";
     }
 
 }
