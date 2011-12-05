@@ -203,7 +203,7 @@
   <dependency>
     <groupId>net.sf.jasperreports</groupId>
     <artifactId>jasperreports</artifactId>
-    <version>3.7.6</version>
+    <version>4.1.2</version>
     <exclusions>
       <exclusion>
         <groupId>eclipse</groupId>

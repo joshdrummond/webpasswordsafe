@@ -291,7 +291,7 @@ public interface TextMessages extends Messages
     @DefaultMessage("Please select a group")
     String pleaseSelectGroup();
 
-    @DefaultMessage("Please select groups(s)")
+    @DefaultMessage("Please select group(s)")
     String pleaseSelectGroups();
 
     @DefaultMessage("Re-enter Password")
