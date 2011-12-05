@@ -27,6 +27,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletException;
@@ -38,6 +39,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -89,13 +91,15 @@ public class JasperReportServlet extends HttpServlet
         {
             String reportName = req.getParameter("name");
             String type = req.getParameter("type").trim().toLowerCase();
+            String locale = req.getParameter("locale");
             setNoCache(res);
             if (isAuthorized(req, reportName))
             {
                 JasperDesign jasperDesign = JRXmlLoader.load(getServletConfig().getServletContext().getResourceAsStream(
                         "/WEB-INF/reports/"+reportName+".jrxml"));
                 JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-                Map<String, String> parameters = new HashMap<String, String>();
+                Map<String, Object> parameters = new HashMap<String, Object>();
+                if (null != locale) parameters.put(JRParameter.REPORT_LOCALE, new Locale(locale));
                 encryptorRef.set((Encryptor)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("encryptor"));
                 DataSource dataSource = (DataSource)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("dataSource");
                 jdbcConnection = dataSource.getConnection();
