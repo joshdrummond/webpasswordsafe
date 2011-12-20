@@ -18,7 +18,7 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Groups" language="groovy" pageWidth="612" pageHeight="792" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Groups" language="groovy" pageWidth="612" pageHeight="792" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="i18n">
     <property name="ireport.zoom" value="1.0"/>
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
@@ -49,11 +49,11 @@ order by g.name, u.fullname]]>
     </background>
     <title>
         <band height="33" splitType="Stretch">
-            <staticText>
+            <textField>
                 <reportElement style="Title" x="0" y="0" width="572" height="33"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Groups Report]]></text>
-            </staticText>
+                <textFieldExpression><![CDATA[$R{groupsReport}]]></textFieldExpression>
+            </textField>
         </band>
     </title>
     <pageHeader>
@@ -61,36 +61,36 @@ order by g.name, u.fullname]]>
     </pageHeader>
     <columnHeader>
         <band height="55" splitType="Stretch">
-            <staticText>
+            <textField>
                 <reportElement style="Column header" x="0" y="33" width="177" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Name]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{name}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="177" y="33" width="176" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Full Name]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{fullname}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="353" y="33" width="149" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Username]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{username}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="502" y="33" width="70" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Active]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{active}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="0" y="13" width="177" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Groups]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{groups}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="177" y="13" width="395" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Users]]></text>
-            </staticText>
+                <textFieldExpression><![CDATA[$R{users}]]></textFieldExpression>
+            </textField>
             <line>
                 <reportElement positionType="FixRelativeToBottom" x="0" y="53" width="572" height="1"/>
                 <graphicElement>
