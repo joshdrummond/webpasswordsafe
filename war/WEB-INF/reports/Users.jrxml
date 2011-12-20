@@ -18,7 +18,7 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Users" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Users" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="i18n">
     <property name="ireport.zoom" value="1.0"/>
     <property name="ireport.x" value="0"/>
     <property name="ireport.y" value="0"/>
@@ -52,11 +52,11 @@
     </background>
     <title>
         <band height="34" splitType="Stretch">
-            <staticText>
+            <textField>
                 <reportElement style="Title" x="0" y="0" width="752" height="33"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Users Report]]></text>
-            </staticText>
+                <textFieldExpression><![CDATA[$R{usersReport}]]></textFieldExpression>
+            </textField>
         </band>
     </title>
     <pageHeader>
@@ -70,36 +70,36 @@
                     <pen lineWidth="0.5" lineColor="#999999"/>
                 </graphicElement>
             </line>
-            <staticText>
+            <textField>
                 <reportElement style="Column header" x="0" y="14" width="120" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Username]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{username}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="120" y="14" width="171" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Full Name]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{fullname}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="291" y="14" width="170" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Email]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{email}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="461" y="14" width="47" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Active]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{active}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="508" y="14" width="122" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Date Created]]></text>
-            </staticText>
-            <staticText>
+                <textFieldExpression><![CDATA[$R{dateCreated}]]></textFieldExpression>
+            </textField>
+            <textField>
                 <reportElement style="Column header" x="630" y="14" width="122" height="20"/>
                 <textElement verticalAlignment="Middle"/>
-                <text><![CDATA[Date Last Login]]></text>
-            </staticText>
+                <textFieldExpression><![CDATA[$R{dateLastLogin}]]></textFieldExpression>
+            </textField>
         </band>
     </columnHeader>
     <detail>
