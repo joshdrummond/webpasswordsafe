@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -64,8 +64,8 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     {
         Criteria crit = getSession().createCriteria(getPersistentClass());
         crit.setFetchMode("tags", FetchMode.JOIN);
-        crit.add(Restrictions.or(Restrictions.or(Restrictions.like("name", query, MatchMode.ANYWHERE), 
-                Restrictions.like("username", query, MatchMode.ANYWHERE)),
+        crit.add(Restrictions.or(Restrictions.or(Restrictions.ilike("name", query, MatchMode.ANYWHERE), 
+                Restrictions.ilike("username", query, MatchMode.ANYWHERE)),
                 Restrictions.like("notes", query, MatchMode.ANYWHERE)));
         if (activeOnly)
         {
