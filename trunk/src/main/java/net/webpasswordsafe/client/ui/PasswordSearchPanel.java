@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -92,7 +92,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
     private TreeStore<TagData> treeStore;
     private TreePanel<TagData> tagTree;
     private RadioGroup tagMatchRG;
-    private Radio radioAny, radioAll;
+    private Radio radioOR, radioAND;
     private TextField<String> searchTextBox;
     private CheckBox activeOnlyCheckBox;
     //private static final String TOOLTIP_VIEW_PASSWORD_VALUE = "Click to view current password value.";
@@ -232,19 +232,19 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
         westData.setCollapsible(true);  
         westData.setMargins(new Margins(5));  
         
-        radioAny = new Radio();
-        radioAny.setBoxLabel(textMessages.any());
-        radioAny.setValue(true);
-        radioAll = new Radio();
-        radioAll.setBoxLabel(textMessages.all());
+        radioOR = new Radio();
+        radioOR.setBoxLabel(textMessages.or());
+        radioOR.setValue(true);
+        radioAND = new Radio();
+        radioAND.setBoxLabel(textMessages.and());
         tagMatchRG = new RadioGroup();
         tagMatchRG.setBorders(true);
-        tagMatchRG.add(radioAny);
-        tagMatchRG.add(radioAll);
+        tagMatchRG.add(radioOR);
+        tagMatchRG.add(radioAND);
         
         westPanel.setLayout(new RowLayout(Orientation.VERTICAL));
-        westPanel.add(tagMatchRG, new RowData(1, -1));
         westPanel.add(tagTree, new RowData(1, 1));
+        westPanel.add(tagMatchRG, new RowData(1, -1));
 
         BorderLayoutData centerData = new BorderLayoutData(LayoutRegion.CENTER);  
         centerData.setMargins(new Margins(5, 0, 5, 0));  
@@ -353,7 +353,7 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
                 refreshTable(result);
             }
         };
-        Match match = tagMatchRG.getValue().equals(radioAll) ? Match.ALL : Match.ANY;
+        Match match = tagMatchRG.getValue().equals(radioAND) ? Match.AND : Match.OR;
         PasswordService.Util.getInstance().searchPassword(Utils.safeString(searchTextBox.getValue()), activeOnlyCheckBox.getValue(), selectedTags, match, callback);
     }
 

@@ -85,7 +85,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
             }
             else
             {
-                tagsCriterion = tagMatch.equals(Match.ALL) ? Restrictions.and(tagsCriterion, tc) : Restrictions.or(tagsCriterion, tc);
+                tagsCriterion = tagMatch.equals(Match.AND) ? Restrictions.and(tagsCriterion, tc) : Restrictions.or(tagsCriterion, tc);
             }
         }
         if (tagsCriterion != null) crit.add(tagsCriterion);
