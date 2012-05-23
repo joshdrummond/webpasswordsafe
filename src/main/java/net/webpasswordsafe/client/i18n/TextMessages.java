@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 Josh Drummond
+    Copyright 2011-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -59,6 +59,9 @@ public interface TextMessages extends Messages
 
     @DefaultMessage("All rights reserved.")
     String allRightsReserved();
+
+    @DefaultMessage("AND")
+    String and();
 
     @DefaultMessage("Any")
     String any();
@@ -236,6 +239,9 @@ public interface TextMessages extends Messages
 
     @DefaultMessage("Open Selected Password")
     String openSelectedPassword();
+
+    @DefaultMessage("OR")
+    String or();
 
     @DefaultMessage("Password")
     String password();

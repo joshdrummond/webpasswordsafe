@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2011 Josh Drummond
+    Copyright 2009-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -30,7 +30,7 @@ public class Constants
 {
     // versioning
     public static final String VERSION = "1.2";
-    public static final String COPYRIGHT = "2008-2011 Josh Drummond";
+    public static final String COPYRIGHT = "2008-2012 Josh Drummond";
     public static final String URL_WEBPASSWORDSAFE = "http://www.webpasswordsafe.net";
     public static final String URL_HELP = "http://code.google.com/p/webpasswordsafe/w/list?q=label:help";
     public static final String URL_LICENSE = "http://webpasswordsafe.googlecode.com/svn/trunk/docs/license.txt";
@@ -69,7 +69,7 @@ public class Constants
     public static final String VALUE = "value";
     
     // enums
-    public enum Match { ANY, ALL };
+    public enum Match { OR, AND };
     public enum Role { ROLE_USER, ROLE_ADMIN };
     public enum Report { CurrentPasswordExport, Groups, PasswordAccessAudit, PasswordPermissions, Users };
     public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, ADD_PASSWORD,

@@ -1,5 +1,5 @@
 <!--
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -212,7 +212,8 @@ This plugin is configured using the <b>bean id="passwordGenerator"</b> tag and c
 <p>
 The SimpleRandomPasswordGenerator class implementation allows for the changing of some basic parameters.  Change "passwordLength" value to length of 
 passwords it should generate, "allowLowercase"/"allowUppercase"/"allowNumeric" to either "true"/"false" based on whether to include those types of characters in 
-the generated password, and "specialChars" to a string which contains any other characters not included in the above sets in the generated password (i.e. "!@#$%^*()").
+the generated password, "specialChars" to a string which contains any other characters not included in the above sets in the generated password (i.e. "!@#$%^*()"),
+and "excludeChars" to a string which contains any characters to exclude from the above sets in the generated password (useful for "look-a-like" characters like O/0 and l/1").
 </p>
 
 <h4>vi. Encryption - Digester Plugin</h4>

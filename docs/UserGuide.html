@@ -1,5 +1,5 @@
 <!--
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -123,7 +123,7 @@ clicking on "Password" in the main menu, then "Search", then "Refresh Search".
 <h4>i. Search Query</h4>
 <p>
 Enter a search query to filter results using term(s) associated with the password entries 
-(including title, username, and notes)  you are looking for in the text box, 
+(including title, username, and notes)  you are looking for in the text box (case insensitive), 
 using the '*' character for wildcards, or leave empty to return all passwords the logged in user 
 has access to read.  Uncheck the "Active Only" checkbox to include disabled (deleted) passwords in your search.
 Click the "Search" button to initiate a search and results will be returned in the table below.  Results can be
@@ -133,9 +133,11 @@ sorted using the column header controls of the table.
 <h4>ii. Filter By Tags</h4>
 <p>
 Search queries can be further refined by selecting one or more "Tag(s)" from the checkboxes on the left
-of the screen which will only return passwords with those tag(s) associated to them.  Multiple tags selected
-are treated as an 'AND' query, meaning a password is only returned if it has all selected tags associated
-with it.
+of the screen which will only return passwords with those tag(s) associated to them.  You can choose how
+multiple tags checked are treated by selecting the "OR" (meaning a password is only returned if it has any 
+of the checked tags associated with it) or "AND" (meaning a password is only returned if it has all 
+of the checked tags associated with it) radiobox on the bottom.  You can also double-click a tag and a 
+search is immediately invoked returning all passwords matching just that tag (and any text in the search box).
 </p>
 
 <h3>6. View Current Password Value</h3>
@@ -180,7 +182,7 @@ it as needed.
 <h3>7. Update Password</h3>
 <p>
 If you have WRITE access to a password, you can update it by searching for and viewing the password as described above.
-Once on the Password window, edit the values you want to change (Title and Username cannot be changed). 
+Once on the Password window, edit the values you want to change. 
 For audit reasons you cannot "delete" a password, but instead you may "disable" it by unchecking the "Active" checkbox 
 which will no longer include it in searches by default.  If you have GRANT access to a password you may also edit the
 permissions by clicking the "Edit Permissions" button.  Once changes have been made, click the "Save" button.
