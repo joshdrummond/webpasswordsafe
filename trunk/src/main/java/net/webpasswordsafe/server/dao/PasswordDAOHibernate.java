@@ -41,6 +41,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -62,11 +63,14 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     @SuppressWarnings("unchecked")
     public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags, Match tagMatch)
     {
+        //kludge to not use ilike on text column if MSSQL
+        boolean isMSSQL = ((SessionFactoryImpl)getSessionFactory()).getDialect().toString().contains("SQLServer");
         Criteria crit = getSession().createCriteria(getPersistentClass());
         crit.setFetchMode("tags", FetchMode.JOIN);
         crit.add(Restrictions.or(Restrictions.or(Restrictions.ilike("name", query, MatchMode.ANYWHERE), 
-                Restrictions.ilike("username", query, MatchMode.ANYWHERE)),
-                Restrictions.like("notes", query, MatchMode.ANYWHERE)));
+                Restrictions.ilike("username", query, MatchMode.ANYWHERE)), isMSSQL ? 
+                Restrictions.like("notes", query, MatchMode.ANYWHERE) : 
+                Restrictions.ilike("notes", query, MatchMode.ANYWHERE)));
         if (activeOnly)
         {
             crit.add(Restrictions.eq("active", true));
