@@ -70,42 +70,42 @@ public class SimpleRandomPasswordGenerator implements PasswordGenerator
         {
             for (int c = 97; c <= 122; c++)
             {
-            	String s = String.valueOf((char)c);
-            	if (!excludeChars.contains(s))
-            	{
-            		allowedChars.append(s);
-            	}
+                String s = String.valueOf((char)c);
+                if (!excludeChars.contains(s))
+                {
+                    allowedChars.append(s);
+                }
             }
         }
         if (allowUppercase)
         {
             for (int c = 65; c <= 90; c++)
             {
-            	String s = String.valueOf((char)c);
-            	if (!excludeChars.contains(s))
-            	{
-            		allowedChars.append(s);
-            	}
+                String s = String.valueOf((char)c);
+                if (!excludeChars.contains(s))
+                {
+                    allowedChars.append(s);
+                }
             }
         }
         if (allowNumeric)
         {
             for (int c = 48; c <= 57; c++)
             {
-            	String s = String.valueOf((char)c);
-            	if (!excludeChars.contains(s))
-            	{
-            		allowedChars.append(s);
-            	}
+                String s = String.valueOf((char)c);
+                if (!excludeChars.contains(s))
+                {
+                    allowedChars.append(s);
+                }
             }
         }
         for (int c = 0; c < specialChars.length(); c++)
         {
-        	String s = String.valueOf(specialChars.charAt(c));
-        	if (!excludeChars.contains(s))
-        	{
-        		allowedChars.append(s);
-        	}
+            String s = String.valueOf(specialChars.charAt(c));
+            if (!excludeChars.contains(s))
+            {
+                allowedChars.append(s);
+            }
         }
         LOG.debug("allowedChars="+String.valueOf(allowedChars));
         return allowedChars;
