@@ -1,5 +1,5 @@
 <!--
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -124,6 +124,23 @@ the data contained in them.  Be careful however that the look-and-feel customiza
 CSV format doesn't break the other format (if you care).  If you change data, be careful that the appropriate
 security controls and authorization are in place.
 </p>
+
+
+<h2>VI. Internationalization (i18n)</h2>
+<p>
+All text strings in the WebPasswordSafe client-side GUI are extracted out into reusable
+property bundles for easy customization and flexibility adding new language support.
+The default is US English.  
+</p>
+<p>To add a new language:</p>
+<ol>
+<li>Create new file /webpasswordsafe/src/main/java/net/webpasswordsafe/client/i18n/TextMessages_{locale code}.properties using UTF-8 charset file format</li>
+<li>Edit file to include all key=value pairs for each tag representing a specific text string used in the application as the key and the value being the localized text string or date format (use TextMessages_zh.properties as a template)</li>
+<li>For reports do the same with /webpasswordsafe/src/main/resources/i18n_{locale code}.properties</li>
+<li>Edit /webpasswordsafe/src/main/java/net/webpasswordsafe/WebPasswordSafe.gwt.xml uncommenting the "locale" extended-property setting the values to the locale code(s) above</li>
+<li>Follow Build and Deploy directions as in Administrator Guide</li>
+<li>To override the default locale when using WebPasswordSafe, add ?locale={locale code} to the end of the URL</li>
+</ol> 
 
 
 <br/>
