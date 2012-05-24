@@ -3,6 +3,6 @@
 
 =WebPasswordSafe Administration Guides=
 
-[http://webpasswordsafe.googlecode.com/svn/tags/v1.1/docs/AdministratorGuide.html Administrator Guide - Latest Version]
+[http://webpasswordsafe.googlecode.com/svn/trunk/docs/AdministratorGuide.html Administrator Guide - Latest Version]
 
-[http://webpasswordsafe.googlecode.com/svn/tags/v1.1/docs/DeveloperGuide.html Developer Guide - Latest Version]
+[http://webpasswordsafe.googlecode.com/svn/trunk/docs/DeveloperGuide.html Developer Guide - Latest Version]
