@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,6 +20,8 @@
 package net.webpasswordsafe.server;
 
 import java.util.Set;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Constants.Role;
 import org.gwtwidgets.server.spring.ServletUtils;
@@ -107,6 +109,19 @@ public class ServerSessionUtil
             {
                 ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_ROLES);
             }
+        }
+    }
+    
+    public static void initCsrfSession()
+    {
+        HttpSession session = ServletUtils.getRequest().getSession(false);
+        if (session.isNew() || (session.getAttribute(Constants.CSRF_TOKEN_KEY) == null))
+        {
+            // either new session or old session without csrf token set, so set it
+            session.setAttribute(Constants.CSRF_TOKEN_KEY, session.getId());
+            Cookie cookie = new Cookie(Constants.CSRF_TOKEN_KEY, session.getId());
+            cookie.setPath(ServletUtils.getRequest().getContextPath());
+            ServletUtils.getResponse().addCookie(cookie);
         }
     }
 }

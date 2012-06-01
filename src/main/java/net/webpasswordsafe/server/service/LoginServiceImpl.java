@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -176,6 +176,7 @@ public class LoginServiceImpl extends XsrfProtectedServiceServlet implements Log
     @Override
     public boolean ping()
     {
+        ServerSessionUtil.initCsrfSession();
         return true;
     }
 }
