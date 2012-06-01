@@ -29,7 +29,7 @@ package net.webpasswordsafe.common.util;
 public class Constants
 {
     // versioning
-    public static final String VERSION = "1.2";
+    public static final String VERSION = "1.2.1";
     public static final String COPYRIGHT = "2008-2012 Josh Drummond";
     public static final String URL_WEBPASSWORDSAFE = "http://www.webpasswordsafe.net";
     public static final String URL_HELP = "http://code.google.com/p/webpasswordsafe/w/list?q=label:help";
@@ -42,6 +42,7 @@ public class Constants
     // unique tokens
     public static final String SESSION_KEY_USERNAME = "X-WPS-Username";
     public static final String SESSION_KEY_ROLES = "X-WPS-Roles";
+    public static final String CSRF_TOKEN_KEY = "X-WPS-CSRFToken";
 
     // reports
     public static final String VIEW_REPORT_PREFIX = "VIEW_REPORT_";

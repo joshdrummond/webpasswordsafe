@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
     
     This file is part of WebPasswordSafe.
     
@@ -103,7 +103,7 @@
     
     <context-param>
         <param-name>gwt.xsrf.session_cookie_name</param-name>
-        <param-value>JSESSIONID</param-value>
+        <param-value>X-WPS-CSRFToken</param-value>
     </context-param>
 
 </web-app>
