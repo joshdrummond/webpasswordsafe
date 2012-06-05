@@ -402,14 +402,42 @@ public class PasswordSearchPanel extends ContentPanel implements TagLoadListener
                 Dialog popup = new Dialog();
                 popup.setHeading(textMessages.currentPassword());
                 popup.setButtons(Dialog.CLOSE);
+                Button copyButton = new Button("Copy", new SelectionListener<ButtonEvent>() {
+                    @Override
+                    public void componentSelected(ButtonEvent ce) {
+                        Info.display("Copy", "");
+                    }
+                });
+                copyButton.getElement().setId("copyId");
                 popup.addText(Format.htmlEncode(result));
+                popup.add(copyButton);
                 popup.setScrollMode(Scroll.AUTO);
                 popup.setHideOnButtonClick(true);
+                Object _clip = zeroClipAttach("copyId");
+                zeroClipSetText(_clip, result);
                 popup.show();
             }
         };
         PasswordService.Util.getInstance().getCurrentPassword(passwordId, callback);
     }
+    
+    private static native Object zeroClipAttach(String widgetId) /*-{
+        var clip = new $wnd.ZeroClipboard.Client();
+        clip.glue(widgetId);
+        return clip;
+    }-*/;
+    
+    private static native void zeroClipDetach(Object clip) /*-{
+        clip.destroy()
+    }-*/;
+    
+    private static native void zeroClipSetText(Object clip, String text) /*-{
+        clip.setText(text)
+    }-*/;
+    
+    private static native void zeroClipReposition(Object clip) /*-{
+        clip.reposition();
+    }-*/;
     
     private class TagData extends BaseTreeModel
     {

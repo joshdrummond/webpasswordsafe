@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 Josh Drummond
+    Copyright 2011-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,9 +21,10 @@ package net.webpasswordsafe.client.ui;
 
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.common.util.Constants;
-import com.extjs.gxt.ui.client.Style.Scroll;
-import com.extjs.gxt.ui.client.widget.Dialog;
+//import com.extjs.gxt.ui.client.Style.Scroll;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.HTML;
 
 
 /**
@@ -54,10 +55,10 @@ public class AboutDialog extends Dialog
         aboutText.append("\">");
         aboutText.append(textMessages.gpl2());
         aboutText.append("</a></center><br><br>");
-        setHeading(textMessages.about());
-        setButtons(Dialog.CLOSE);
-        addText(aboutText.toString());
-        setScrollMode(Scroll.AUTO);
+        setHeadingText(textMessages.about());
+        setPredefinedButtons(PredefinedButton.CLOSE);
+        setWidget(new HTML(aboutText.toString()));
+//        setScrollMode(Scroll.AUTO);
         setHideOnButtonClick(true);
         setModal(true);
     }

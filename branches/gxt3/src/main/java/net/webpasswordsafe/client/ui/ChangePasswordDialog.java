@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -24,20 +24,21 @@ import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.UserAuthnPassword;
 import net.webpasswordsafe.common.util.Utils;
-import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
-import com.extjs.gxt.ui.client.event.ButtonEvent;
-import com.extjs.gxt.ui.client.event.ComponentEvent;
-import com.extjs.gxt.ui.client.event.KeyListener;
-import com.extjs.gxt.ui.client.event.SelectionListener;
-import com.extjs.gxt.ui.client.widget.Info;
-import com.extjs.gxt.ui.client.widget.MessageBox;
-import com.extjs.gxt.ui.client.widget.Window;
-import com.extjs.gxt.ui.client.widget.button.Button;
-import com.extjs.gxt.ui.client.widget.form.FormPanel;
-import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.layout.FormData;
+import com.sencha.gxt.widget.core.client.info.Info;
+import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutPack;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.FramedPanel;
+import com.sencha.gxt.widget.core.client.Window;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.form.FieldLabel;
+import com.sencha.gxt.widget.core.client.form.PasswordField;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -48,66 +49,70 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class ChangePasswordDialog extends Window
 {
 
-    private TextField<String> password1;
-    private TextField<String> password2;
-    private FormData formData = new FormData("-20"); 
+    private PasswordField password1;
+    private PasswordField password2;
+//    private FormData formData = new FormData("-20"); 
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public ChangePasswordDialog()
     {
-        this.setHeading(textMessages.changePassword());
+        this.setHeadingText(textMessages.changePassword());
         this.setModal(true);
         
-        FormPanel form = new FormPanel();
-        form.setHeaderVisible(false);
-        form.setFrame(true);
-        password1 = new TextField<String>();
-        password1.setFieldLabel(textMessages.newPassword());
-        password1.setPassword(true);
-        password1.addKeyListener(new KeyListener()
+        FramedPanel panel = new FramedPanel();
+        panel.setHeaderVisible(false);
+        VerticalLayoutContainer p = new VerticalLayoutContainer();
+        panel.add(p);
+//        form.setFrame(true);
+        password1 = new PasswordField();
+        p.add(new FieldLabel(password1, textMessages.newPassword()));//, new VerticalLayoutData(1, -1));
+        password1.addKeyPressHandler(new KeyPressHandler()
         {
             @Override
-            public void componentKeyPress(ComponentEvent event)
+            public void onKeyPress(KeyPressEvent event)
             {
-                if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+                if (event.getCharCode() == KeyCodes.KEY_ENTER)
                 {
                     password2.focus();
                 }
             }
         });
-        form.add(password1, formData);
-        password2 = new TextField<String>();
-        password2.setFieldLabel(textMessages.reenterPassword());
-        password2.setPassword(true);
-        password2.addKeyListener(new KeyListener()
+//        form.add(password1, formData);
+        password2 = new PasswordField();
+        p.add(new FieldLabel(password2, textMessages.reenterPassword()));//, new VerticalLayoutData(1, -1));
+        password2.addKeyPressHandler(new KeyPressHandler()
         {
             @Override
-            public void componentKeyPress(ComponentEvent event)
+            public void onKeyPress(KeyPressEvent event)
             {
-                if (event.getKeyCode() == KeyCodes.KEY_ENTER)
+                if (event.getCharCode() == KeyCodes.KEY_ENTER)
                 {
                     doOkay();
                 }
             }
         });
-        form.add(password2, formData);
+//        form.add(password2, formData);
         
-        Button okayButton = new Button(textMessages.okay(), new SelectionListener<ButtonEvent>() {
+        TextButton okayButton = new TextButton(textMessages.okay(), new SelectHandler()
+        {
             @Override
-            public void componentSelected(ButtonEvent ce) {
+            public void onSelect(SelectEvent event)
+            {
                 doOkay();
             }
         });
-        Button cancelButton = new Button(textMessages.cancel(), new SelectionListener<ButtonEvent>() {
+        TextButton cancelButton = new TextButton(textMessages.cancel(), new SelectHandler()
+        {
             @Override
-            public void componentSelected(ButtonEvent ce) {
+            public void onSelect(SelectEvent event)
+            {
                 doCancel();
             }
         });
-        form.setButtonAlign(HorizontalAlignment.CENTER);
-        form.addButton(okayButton);
-        form.addButton(cancelButton);
-        this.add(form);
+        panel.setButtonAlign(BoxLayoutPack.CENTER);
+        panel.addButton(okayButton);
+        panel.addButton(cancelButton);
+        this.add(panel);
     }
 
     @Override
@@ -134,17 +139,17 @@ public class ChangePasswordDialog extends Window
     {
         if (!(Utils.safeString(password2.getValue())).equals(Utils.safeString(password1.getValue())))
         {
-            MessageBox.alert(textMessages.error(), textMessages.mustMatchPasswords(), null);
+            (new AlertMessageBox(textMessages.error(), textMessages.mustMatchPasswords())).show();
             return false;
         }
         if (Utils.safeString(password1.getValue()).equals(""))
         {
-            MessageBox.alert(textMessages.error(), textMessages.mustEnterPassword(), null);
+            (new AlertMessageBox(textMessages.error(), textMessages.mustEnterPassword())).show();
             return false;
         }
         if (Utils.safeString(password1.getValue()).length() > UserAuthnPassword.LENGTH_PASSWORD)
         {
-            MessageBox.alert(textMessages.error(), textMessages.tooLongPassword(), null);
+            (new AlertMessageBox(textMessages.error(), textMessages.tooLongPassword())).show();
             return false;
         }
         return true;

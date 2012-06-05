@@ -25,7 +25,7 @@
  <artifactId>webpasswordsafe</artifactId>
  <packaging>war</packaging>
  <name>WebPasswordSafe</name>
- <version>1.2.1</version>
+ <version>1.3</version>
  <description>Web-based, multi-user, secure password safe with delegated access controls</description>
  <url>http://www.webpasswordsafe.net</url>
  <issueManagement>
@@ -55,6 +55,11 @@
     <id>jboss-public-repository-group</id>
     <name>JBoss Public Repository Group</name>
     <url>http://repository.jboss.org/nexus/content/groups/public</url>
+  </repository>
+  <repository>
+    <id>Sencha Maven Repository</id>
+    <name>Sencha Maven Repository-releases</name>
+    <url>https://maven.sencha.com/repo/gxt-gpl-release</url>
   </repository>
  </repositories>
  
@@ -271,11 +276,23 @@
     <version>1.0.0.GA</version>
     <classifier>sources</classifier>
     <scope>provided</scope>
-  </dependency> 
+  </dependency>
   <dependency>
    <groupId>com.extjs</groupId>
    <artifactId>gxt</artifactId>
    <version>${gxt.version}</version>
+   <scope>provided</scope>
+  </dependency>
+  <dependency>
+   <groupId>com.sencha.gxt</groupId>
+   <artifactId>gxt</artifactId>
+   <version>3.0.0</version>
+   <scope>provided</scope>
+  </dependency>
+  <dependency>
+   <groupId>com.sencha.gxt</groupId>
+   <artifactId>gxt-legacy</artifactId>
+   <version>3.0.0</version>
    <scope>provided</scope>
   </dependency>
 
