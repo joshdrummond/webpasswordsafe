@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -31,15 +31,21 @@ import net.webpasswordsafe.common.model.PasswordData;
 import net.webpasswordsafe.common.model.Permission;
 import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.Tag;
+import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Utils;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
+import com.extjs.gxt.ui.client.data.BaseModel;
+import com.extjs.gxt.ui.client.data.ModelData;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.util.Format;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
 import com.extjs.gxt.ui.client.widget.form.TextArea;
 import com.extjs.gxt.ui.client.widget.form.TextField;
@@ -61,7 +67,8 @@ public class PasswordDialog extends Window implements PermissionListener
     private TextField<String> nameTextBox;
     private TextField<String> usernameTextBox;
     private TextField<String> passwordTextBox;
-    private TextField<String> tagsTextBox;
+    private TextHelperComboBox<TagData> tagsComboBox;
+    private ListStore<TagData> tagStore;
     private NumberField maxHistoryTextBox;
     private TextArea notesTextArea;
     private CheckBox activeCheckBox;
@@ -141,10 +148,16 @@ public class PasswordDialog extends Window implements PermissionListener
         LabelField lblfldTags = new LabelField(textMessages.tags_());
         add(lblfldTags, new AbsoluteData(6, 118));
             
-        tagsTextBox = new TextField<String>();
-        tagsTextBox.setReadOnly(isPasswordReadOnly);
-        add(tagsTextBox, new AbsoluteData(82, 118));
-        tagsTextBox.setSize("331px", "22px");
+        tagsComboBox = new TextHelperComboBox<TagData>();
+        tagsComboBox.setReadOnly(isPasswordReadOnly);
+        add(tagsComboBox, new AbsoluteData(82, 118));
+        tagsComboBox.setSize("331px", "22px");
+        tagsComboBox.setEditable(true);
+        tagsComboBox.setForceSelection(false);
+        tagsComboBox.setHideTrigger(true);
+        tagStore = new ListStore<TagData>();
+        tagsComboBox.setStore(tagStore);
+        tagsComboBox.setDisplayField(Constants.NAME);
 
         LabelField lblfldNotes = new LabelField(textMessages.notes_());
         add(lblfldNotes, new AbsoluteData(6, 146));
@@ -215,9 +228,15 @@ public class PasswordDialog extends Window implements PermissionListener
         addButton(saveButton);
         addButton(cancelButton);
         
-        setFields();
+        doLoadTags();
     }
 
+    @Override
+    public void show()
+    {
+        super.show();
+        setFields();
+    }
     
     private void doViewPasswordHistory()
     {
@@ -276,7 +295,7 @@ public class PasswordDialog extends Window implements PermissionListener
             PasswordData passwordDataItem = new PasswordData();
             passwordDataItem.setPassword(Utils.safeString(passwordTextBox.getValue()));
             password.addPasswordData(passwordDataItem);
-            String[] tagNames = Utils.safeString(tagsTextBox.getValue()).replaceAll(",", " ").split(" ");
+            String[] tagNames = Utils.safeString(tagsComboBox.getRawValue()).replaceAll(",", " ").split(" ");
             password.removeTags();
             for (String tagName : tagNames)
             {
@@ -371,7 +390,7 @@ public class PasswordDialog extends Window implements PermissionListener
             MessageBox.alert(textMessages.error(), textMessages.tooLongPassword(), null);
             return false;
         }
-        String[] tagNames = Utils.safeString(tagsTextBox.getValue()).replaceAll(",", " ").split(" ");
+        String[] tagNames = Utils.safeString(tagsComboBox.getRawValue()).replaceAll(",", " ").split(" ");
         for (String tagName : tagNames)
         {
             tagName = tagName.trim();
@@ -415,7 +434,7 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         nameTextBox.setValue(password.getName());
         usernameTextBox.setValue(password.getUsername());
-        tagsTextBox.setValue(password.getTagsAsString());
+        tagsComboBox.setRawValue(password.getTagsAsString());
         notesTextArea.setValue(password.getNotes());
         activeCheckBox.setValue(password.isActive());
         maxHistoryTextBox.setValue(password.getMaxHistory());
@@ -436,6 +455,100 @@ public class PasswordDialog extends Window implements PermissionListener
         for (Permission permission : permissions)
         {
             password.addPermission(permission);
+        }
+    }
+    
+    private void doLoadTags()
+    {
+        AsyncCallback<List<Tag>> callback = new AsyncCallback<List<Tag>>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                WebPasswordSafe.handleServerFailure(caught);
+            }
+            @Override
+            public void onSuccess(List<Tag> result)
+            {
+                refreshTags(result);
+            }
+        };
+        PasswordService.Util.getInstance().getAvailableTags(callback);
+    }
+    
+    private void refreshTags(List<Tag> tags)
+    {
+        tagStore.removeAll();
+        for (Tag tag : tags)
+        {
+            tagStore.add(new TagData(tag));
+        }
+    }
+    
+    private class TagData extends BaseModel
+    {
+        private static final long serialVersionUID = 1L;
+
+        public TagData(Tag tag)
+        {
+            set(Constants.ID, tag.getId());
+            set(Constants.NAME, Format.htmlEncode(tag.getName()));
+            set(Constants.TAG, tag);
+        }
+    }
+    
+    private class TextHelperComboBox<D extends ModelData> extends ComboBox<D>
+    {
+        @Override
+        public void doQuery(String q, boolean forceAll)
+        {
+            if (q == null)
+            {
+                q = "";
+            }
+            else if (q.endsWith(" "))
+            {
+                q = "";
+            }
+            else
+            {
+                q = q.replaceAll(",", " ");
+                int space = q.lastIndexOf(" ");
+                if ((space >= 0) && (space < q.length()))
+                {
+                    q = q.substring(space+1);
+                }
+            }
+
+            super.doQuery(q, forceAll);
+        }
+        
+        @Override
+        public void setValue(D value)
+        {
+            String s = getRawValue();
+            String sf = s.replaceAll(",", " ");
+            if (!"".equals(sf) && !sf.endsWith(" "))
+            {
+                //then we need to chop off the partial typed value we are replacing
+                int space = sf.lastIndexOf(" ");
+                if (space >= 0)
+                {
+                    s = s.substring(0, space+1);
+                }
+                else
+                {
+                    s = "";
+                }
+            }
+            s += value.get(Constants.NAME);
+            super.setRawValue(s);
+        }
+        
+        @Override
+        public void selectAll()
+        {
+            // override to disable text selectall during popup
         }
     }
 }

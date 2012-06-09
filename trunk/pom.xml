@@ -25,7 +25,7 @@
  <artifactId>webpasswordsafe</artifactId>
  <packaging>war</packaging>
  <name>WebPasswordSafe</name>
- <version>1.2.1</version>
+ <version>1.3</version>
  <description>Web-based, multi-user, secure password safe with delegated access controls</description>
  <url>http://www.webpasswordsafe.net</url>
  <issueManagement>
