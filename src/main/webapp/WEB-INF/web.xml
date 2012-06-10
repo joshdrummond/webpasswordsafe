@@ -97,7 +97,7 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            /WEB-INF/webpasswordsafe-service.xml,/WEB-INF/webpasswordsafe-data.xml
+            /WEB-INF/webpasswordsafe-service.xml,/WEB-INF/webpasswordsafe-data.xml,/WEB-INF/webpasswordsafe-reports.xml
         </param-value>
     </context-param>
     

@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2011 Josh Drummond
+    Copyright 2009-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -89,8 +89,8 @@ public class JasperReportServlet extends HttpServlet
         Connection jdbcConnection = null;
         try
         {
-            String reportName = req.getParameter("name");
-            String type = req.getParameter("type").trim().toLowerCase();
+            String reportName = req.getParameter(Constants.NAME);
+            String type = req.getParameter(Constants.TYPE).trim().toLowerCase();
             String locale = req.getParameter("locale");
             setNoCache(res);
             if (isAuthorized(req, reportName))
@@ -193,7 +193,7 @@ public class JasperReportServlet extends HttpServlet
         
         try
         {
-            isAuthorized = authorizer.isAuthorized(user, Constants.Function.valueOf(Constants.VIEW_REPORT_PREFIX+reportName));
+            isAuthorized = authorizer.isAuthorized(user, Constants.VIEW_REPORT_PREFIX+reportName);
         }
         catch (Exception e)
         {

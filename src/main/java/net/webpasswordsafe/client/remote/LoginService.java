@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,6 +19,7 @@
 */
 package net.webpasswordsafe.client.remote;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.webpasswordsafe.common.model.User;
@@ -42,6 +43,7 @@ public interface LoginService extends XsrfProtectedService {
     public boolean logout();
     public User getLogin();
     public Map<Function, Boolean> getLoginAuthorizations(Set<Function> functions);
+    public List<Map<String, Object>> getLoginReports();
     
     /**
      * Utility class for simplifying access to the instance of async service.

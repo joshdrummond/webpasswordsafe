@@ -19,15 +19,18 @@
 */
 package net.webpasswordsafe.server.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Resource;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Constants.Function;
 import net.webpasswordsafe.server.ServerSessionUtil;
 import net.webpasswordsafe.server.dao.UserDAO;
@@ -35,6 +38,7 @@ import net.webpasswordsafe.server.plugin.audit.AuditLogger;
 import net.webpasswordsafe.server.plugin.authentication.Authenticator;
 import net.webpasswordsafe.server.plugin.authentication.RoleRetriever;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
+import net.webpasswordsafe.server.report.ReportConfig;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,6 +65,9 @@ public class LoginServiceImpl extends XsrfProtectedServiceServlet implements Log
     @Autowired
     private UserDAO userDAO;
     
+    @Autowired
+    private ReportConfig reportConfig;
+
     @Resource
     private AuditLogger auditLogger;
     
@@ -167,7 +174,7 @@ public class LoginServiceImpl extends XsrfProtectedServiceServlet implements Log
         Map<Function, Boolean> authzMap = new HashMap<Function, Boolean>(functions.size());
         for (Function function : functions)
         {
-            authzMap.put(function, authorizer.isAuthorized(loggedInUser, function));
+            authzMap.put(function, authorizer.isAuthorized(loggedInUser, function.name()));
         }
         LOG.debug("authzMap="+authzMap.toString());
         return authzMap;
@@ -179,4 +186,22 @@ public class LoginServiceImpl extends XsrfProtectedServiceServlet implements Log
         ServerSessionUtil.initCsrfSession();
         return true;
     }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public List<Map<String, Object>> getLoginReports()
+    {
+        LOG.debug("inside getLoginReports");
+        User loggedInUser = getLogin();
+        List<Map<String, Object>> reportList = new ArrayList<Map<String,Object>>();
+        for (Map<String, Object> report : reportConfig.getReports())
+        {
+            if (authorizer.isAuthorized(loggedInUser, Constants.VIEW_REPORT_PREFIX+(String)report.get(Constants.NAME)))
+            {
+                reportList.add(report);
+            }
+        }
+        return reportList;
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,7 +19,9 @@
 */
 package net.webpasswordsafe.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.User;
@@ -40,6 +42,7 @@ public class ClientSessionUtil
     private Group everyoneGroup;
     private boolean isLoggedIn;
     private Map<Function, Boolean> authorizations;
+    private List<Map<String, Object>> reports;
     
     public static ClientSessionUtil getInstance()
     {
@@ -51,6 +54,7 @@ public class ClientSessionUtil
         user = new User();
         isLoggedIn = false;
         authorizations = new HashMap<Function, Boolean>();
+        reports = new ArrayList<Map<String,Object>>();
     }
 
     public boolean isAuthorized(Function function)
@@ -64,6 +68,16 @@ public class ClientSessionUtil
             }
         }
         return isAuthorized;
+    }
+    
+    public void setAvailableReports(List<Map<String, Object>> reports)
+    {
+        this.reports = reports;
+    }
+    
+    public List<Map<String, Object>> getAvailableReports()
+    {
+        return reports;
     }
     
     public void setAuthorizations(Map<Function, Boolean> authorizations)

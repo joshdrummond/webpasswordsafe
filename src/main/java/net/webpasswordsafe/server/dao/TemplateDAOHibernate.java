@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2011 Josh Drummond
+    Copyright 2009-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -45,7 +45,7 @@ public class TemplateDAOHibernate extends GenericHibernateDAO<Template, Long> im
     @Override
     public List<Template> findTemplatesByUser(User user, boolean includeShared)
     {
-        if (authorizer.isAuthorized(user, Function.BYPASS_TEMPLATE_SHARING))
+        if (authorizer.isAuthorized(user, Function.BYPASS_TEMPLATE_SHARING.name()))
         {
             return findByCriteria(Order.asc("name"));
         }
@@ -66,7 +66,7 @@ public class TemplateDAOHibernate extends GenericHibernateDAO<Template, Long> im
     public Template findUpdatableTemplateById(long templateId, User user)
     {
         List<Template> templates = null;
-        if (authorizer.isAuthorized(user, Function.BYPASS_TEMPLATE_SHARING))
+        if (authorizer.isAuthorized(user, Function.BYPASS_TEMPLATE_SHARING.name()))
         {
             templates = findByCriteria(Restrictions.eq("id", templateId));
         }

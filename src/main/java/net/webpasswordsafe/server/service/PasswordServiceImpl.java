@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -104,7 +104,7 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
         Date now = new Date();
         String action = "add password";
         User loggedInUser = getLoggedInUser();
-        if (authorizer.isAuthorized(loggedInUser, Function.ADD_PASSWORD))
+        if (authorizer.isAuthorized(loggedInUser, Function.ADD_PASSWORD.name()))
         {
             if (password.getPermissions().size() > 0)
             {
@@ -415,7 +415,7 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
             template.setName(updateTemplate.getName());
             // only change sharing status if original owner is updating or special bypass authz
             if ((template.getUser().getId() == loggedInUser.getId()) || 
-                authorizer.isAuthorized(loggedInUser, Function.BYPASS_TEMPLATE_SHARING))
+                authorizer.isAuthorized(loggedInUser, Function.BYPASS_TEMPLATE_SHARING.name()))
             {
                 template.setShared(updateTemplate.isShared());
             }

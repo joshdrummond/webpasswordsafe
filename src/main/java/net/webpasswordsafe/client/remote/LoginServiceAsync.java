@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,6 +19,7 @@
 */
 package net.webpasswordsafe.client.remote;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.webpasswordsafe.common.model.User;
@@ -38,5 +39,6 @@ public interface LoginServiceAsync {
     public void logout(AsyncCallback<Boolean> callback);
     public void getLogin(AsyncCallback<User> callback);
     public void getLoginAuthorizations(Set<Function> functions, AsyncCallback<Map<Function, Boolean>> callback);
+    public void getLoginReports(AsyncCallback<List<Map<String, Object>>> callback);
 
 }
