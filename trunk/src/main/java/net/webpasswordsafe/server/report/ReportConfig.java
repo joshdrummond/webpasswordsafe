@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2012 Josh Drummond
+    Copyright 2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -17,16 +17,40 @@
     along with WebPasswordSafe; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-package net.webpasswordsafe.server.plugin.authorization;
+package net.webpasswordsafe.server.report;
 
-import net.webpasswordsafe.common.model.User;
+import java.util.List;
+import java.util.Map;
+import net.webpasswordsafe.common.util.Constants;
 
 
 /**
  * @author Josh Drummond
  *
  */
-public interface Authorizer
+public class ReportConfig
 {
-    public boolean isAuthorized(User user, String action);
+    private List<Map<String, Object>> reports;
+
+    public List<Map<String, Object>> getReports()
+    {
+        return reports;
+    }
+
+    public void setReports(List<Map<String, Object>> reports)
+    {
+        this.reports = reports;
+    }
+    
+    public Map<String, Object> getReport(String name)
+    {
+        for (Map<String, Object> report : reports)
+        {
+            if (name.equals((String)report.get(Constants.NAME)))
+            {
+                return report;
+            }
+        }
+        return null;
+    }
 }

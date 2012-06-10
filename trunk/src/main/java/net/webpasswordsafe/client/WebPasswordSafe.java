@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,6 +21,7 @@ package net.webpasswordsafe.client;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.client.remote.PasswordService;
@@ -35,7 +36,6 @@ import net.webpasswordsafe.common.model.Template;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Constants.Function;
-import net.webpasswordsafe.common.util.Constants.Report;
 import com.extjs.gxt.ui.client.Style.Orientation;
 import com.extjs.gxt.ui.client.event.MenuEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
@@ -76,6 +76,7 @@ import com.google.gwt.user.client.ui.RootPanel;
  */
 public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
 {
+    private Logger log = Logger.getLogger(WebPasswordSafe.class.getName());
     private ClientSessionUtil clientSessionUtil = ClientSessionUtil.getInstance();
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
     private Viewport viewport; 
@@ -113,6 +114,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         
         RootPanel.get().add(viewport);
 
+        log.info(textMessages.webpasswordsafeTitle(Constants.VERSION));
         pingServer(this);
     }
 
@@ -137,11 +139,6 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         topPanel.layout();
     }
     
-    private void doShowReport(String reportName, String reportType)
-    {
-        Window.open(GWT.getHostPageBaseURL()+"report?name="+reportName+"&type="+reportType, "_blank", "");
-    }
-
     private void doChangePassword()
     {
         new ChangePasswordDialog().show();
@@ -354,30 +351,27 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     private void buildReportsMenu(MenuBar mainMenu)
     {
         Menu reportsMenu = new Menu();
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Users))
+        List<Map<String, Object>> reports = getClientModel().getAvailableReports();
+        for (final Map<String, Object> report : reports)
         {
-            reportsMenu.add(buildReportMenuItem(textMessages.users(), Report.Users));
-        }
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_Groups))
-        {
-            reportsMenu.add(buildReportMenuItem(textMessages.groups(), Report.Groups));
-        }
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordAccessAudit))
-        {
-            reportsMenu.add(buildReportMenuItem(textMessages.accessAudit(), Report.PasswordAccessAudit));
-        }
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_PasswordPermissions))
-        {
-            reportsMenu.add(buildReportMenuItem(textMessages.permissions(), Report.PasswordPermissions));
-        }
-        if (clientSessionUtil.isAuthorized(Function.VIEW_REPORT_CurrentPasswordExport))
-        {
-            reportsMenu.add(buildReportMenuItem(textMessages.passwordExport(), Report.CurrentPasswordExport));
+            MenuItem menuItem = new MenuItem((String)report.get(Constants.NAME), new SelectionListener<MenuEvent>()
+            {
+                @Override
+                public void componentSelected(MenuEvent ce)
+                {
+                    displayReportDialog(report);
+                }
+            });
+            reportsMenu.add(menuItem);
         }
         mainMenu.add(new MenuBarItem(textMessages.reports(), reportsMenu));
-
     }
     
+    private void displayReportDialog(Map<String, Object> report)
+    {
+        new ReportDialog(report).show();
+    }
+
     private void buildAboutMenu(MenuBar mainMenu)
     {
         Menu aboutMenu = new Menu();
@@ -401,28 +395,6 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         mainMenu.add(new MenuBarItem(textMessages.about(), aboutMenu));
     }
     
-    private MenuItem buildReportMenuItem(String menuName, Constants.Report reportName)
-    {
-        MenuItem menuItem = new MenuItem(menuName);
-        Menu subMenu =  new Menu();
-        subMenu.add(buildReportMenuItemType(reportName.name(), Constants.REPORT_TYPE_PDF));
-        subMenu.add(buildReportMenuItemType(reportName.name(), Constants.REPORT_TYPE_CSV));
-        menuItem.setSubMenu(subMenu);
-        return menuItem;
-    }
-
-    private MenuItem buildReportMenuItemType(final String name, final String type)
-    {
-        return new MenuItem(type.toUpperCase(), new SelectionListener<MenuEvent>()
-        {
-            @Override
-            public void componentSelected(MenuEvent ce)
-            {
-                doShowReport(name, type.toLowerCase());
-            }
-        });
-    }
-
     private void doNewPassword()
     {
         if (clientSessionUtil.isAuthorized(Function.ADD_PASSWORD))
@@ -662,11 +634,30 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             public void onSuccess(Map<Function, Boolean> result)
             {
                 getClientModel().setAuthorizations(result);
+                getLoginReports(loginWindow);
+            }
+        };
+        LoginService.Util.getInstance().getLoginAuthorizations(null, callback);
+    }
+
+    private void getLoginReports(final LoginWindow loginWindow)
+    {
+        AsyncCallback<List<Map<String, Object>>> callback = new AsyncCallback<List<Map<String, Object>>>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                WebPasswordSafe.handleServerFailure(caught);
+            }
+            @Override
+            public void onSuccess(List<Map<String, Object>> result)
+            {
+                getClientModel().setAvailableReports(result);
                 refreshLoginStatus();
                 loginWindow.doGetLoginSuccess();
             }
         };
-        LoginService.Util.getInstance().getLoginAuthorizations(null, callback);
+        LoginService.Util.getInstance().getLoginReports(callback);
     }
 
     private void verifyInitialization()

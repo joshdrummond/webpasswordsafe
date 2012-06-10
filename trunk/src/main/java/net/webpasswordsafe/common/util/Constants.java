@@ -49,7 +49,7 @@ public class Constants
     public static final String REPORT_TYPE_PDF = "pdf";
     public static final String REPORT_TYPE_CSV = "csv";
     
-    // widget fields
+    // widget/report fields
     public static final String ID = "id";
     public static final String FULLNAME = "fullname";
     public static final String NAME = "name";
@@ -68,15 +68,18 @@ public class Constants
     public static final String TEMPLATE = "template";
     public static final String TEMPLATEDETAIL = "templateDetail";
     public static final String VALUE = "value";
+    public static final String I18N = "i18n";
+    public static final String TYPES = "types";
+    public static final String ROLE = "role";
+    public static final String PARAMETERS = "parameters";
+    public static final String REQUIRED = "required";
+    public static final String TYPE = "type";
     
     // enums
     public enum Match { OR, AND };
     public enum Role { ROLE_USER, ROLE_ADMIN };
-    public enum Report { CurrentPasswordExport, Groups, PasswordAccessAudit, PasswordPermissions, Users };
     public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, ADD_PASSWORD,
         BYPASS_PASSWORD_PERMISSIONS, ADD_TEMPLATE, UPDATE_TEMPLATE, BYPASS_TEMPLATE_SHARING,
-        UNBLOCK_IP,
-        VIEW_REPORT_CurrentPasswordExport, VIEW_REPORT_Groups, VIEW_REPORT_PasswordAccessAudit, 
-        VIEW_REPORT_PasswordPermissions, VIEW_REPORT_Users };
+        UNBLOCK_IP };
 
 }

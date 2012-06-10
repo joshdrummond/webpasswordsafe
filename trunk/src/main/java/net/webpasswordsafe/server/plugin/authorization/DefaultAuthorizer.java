@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,10 +19,14 @@
 */
 package net.webpasswordsafe.server.plugin.authorization;
 
+import java.util.Map;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Constants.Function;
 import net.webpasswordsafe.common.util.Constants.Role;
+import net.webpasswordsafe.server.report.ReportConfig;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
@@ -33,38 +37,45 @@ public class DefaultAuthorizer implements Authorizer
 {
     private static Logger LOG = Logger.getLogger(DefaultAuthorizer.class);
 
+    @Autowired
+    private ReportConfig reportConfig;
+
     @Override
-    public boolean isAuthorized(User user, Function function)
+    public boolean isAuthorized(User user, String action)
     {
         boolean isAuthorized = false;
         
-        if (user != null)
+        if ((user != null) && (action != null))
         {
-            switch (function)
+            if (action.equals(Function.ADD_GROUP.name()) ||
+                action.equals(Function.UPDATE_GROUP.name()) ||
+                action.equals(Function.ADD_USER.name()) ||
+                action.equals(Function.UPDATE_USER.name()) ||
+                action.equals(Function.BYPASS_PASSWORD_PERMISSIONS.name()) ||
+                action.equals(Function.BYPASS_TEMPLATE_SHARING.name()) ||
+                action.equals(Function.UNBLOCK_IP.name()))
             {
-                case ADD_GROUP:
-                case UPDATE_GROUP:
-                case ADD_USER:
-                case UPDATE_USER:
-                case BYPASS_PASSWORD_PERMISSIONS:
-                case BYPASS_TEMPLATE_SHARING:
-                case UNBLOCK_IP:
-                case VIEW_REPORT_PasswordPermissions:
-                case VIEW_REPORT_CurrentPasswordExport:
-                case VIEW_REPORT_PasswordAccessAudit:
-                    isAuthorized = user.getRoles().contains(Role.ROLE_ADMIN);
-                    break;
-                case ADD_PASSWORD:
-                case ADD_TEMPLATE:
-                case UPDATE_TEMPLATE:
-                case VIEW_REPORT_Groups:
-                case VIEW_REPORT_Users:
-                    isAuthorized = user.getRoles().contains(Role.ROLE_USER);
-                    break;
+                isAuthorized = user.getRoles().contains(Role.ROLE_ADMIN);
+            }
+            else if (action.equals(Function.ADD_PASSWORD.name()) ||
+                action.equals(Function.ADD_TEMPLATE.name()) ||
+                action.equals(Function.UPDATE_TEMPLATE.name()))
+            {
+                isAuthorized = user.getRoles().contains(Role.ROLE_USER);
+            }
+            else if (action.startsWith(Constants.VIEW_REPORT_PREFIX))
+            {
+                String reportName = action.substring(Constants.VIEW_REPORT_PREFIX.length());
+                Map<String, Object> report = reportConfig.getReport(reportName);
+                if (report != null)
+                {
+                    Role reportRole = Role.valueOf((String)report.get(Constants.ROLE));
+                    isAuthorized = user.getRoles().contains(reportRole);
+                }
             }
         }
 
-        LOG.debug("user=["+((user==null)?"":user.getUsername())+"] function=["+function+"] authorized? "+isAuthorized);
+        LOG.debug("user=["+((user==null)?"":user.getUsername())+"] action=["+action+"] authorized? "+isAuthorized);
         return isAuthorized;
     }
 }

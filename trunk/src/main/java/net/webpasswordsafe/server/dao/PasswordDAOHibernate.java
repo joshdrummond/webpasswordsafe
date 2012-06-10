@@ -92,7 +92,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         crit.createAlias("permissions", "pm");
         crit.add(Restrictions.in("pm.accessLevel", 
                 new String[] {AccessLevel.READ.name(), AccessLevel.WRITE.name(), AccessLevel.GRANT.name()}));
-        if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS))
+        if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS.name()))
         {
             DetachedCriteria groupQuery = DetachedCriteria.forClass(Group.class);
             groupQuery.setProjection(Projections.id());
@@ -129,7 +129,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         StringBuilder hqlString = new StringBuilder();
         hqlString.append("select distinct pw.id from Password pw join pw.permissions pm where ");
         hqlString.append(isPasswordId ? "pw.id = :passwordId " : "pw.name = :passwordName ");
-        if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS))
+        if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS.name()))
         {
             hqlString.append(" and pm.accessLevel in ");
             hqlString.append(sqlAccessLevelIn);
@@ -144,7 +144,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
         {
             hqlQuery.setString("passwordName", password);
         }
-        if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS))
+        if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS.name()))
         {
             hqlQuery.setEntity("user", user);
             if (accessLevel.equals(AccessLevel.GRANT) || accessLevel.equals(AccessLevel.WRITE) || accessLevel.equals(AccessLevel.READ))
@@ -175,7 +175,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     public AccessLevel getMaxEffectiveAccessLevel(Password password, User user)
     {
         AccessLevel maxEffectiveAccessLevel = null;
-        if (authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS))
+        if (authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS.name()))
         {
             maxEffectiveAccessLevel = AccessLevel.GRANT;
         }

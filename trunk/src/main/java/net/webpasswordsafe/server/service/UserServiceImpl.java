@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2012 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -107,7 +107,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
     {
         Date now = new Date();
         User loggedInUser = getLoggedInUser();
-        if (authorizer.isAuthorized(loggedInUser, Function.ADD_USER))
+        if (authorizer.isAuthorized(loggedInUser, Function.ADD_USER.name()))
         {
             addUserInternal(newUser);
         }
@@ -152,7 +152,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
         Date now = new Date();
         String action = "update user";
         User loggedInUser = getLoggedInUser();
-        if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_USER))
+        if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_USER.name()))
         {
             // update base user
             User user = userDAO.findById(updateUser.getId());
@@ -238,7 +238,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
     {
         Date now = new Date();
         User loggedInUser = getLoggedInUser();
-        if (authorizer.isAuthorized(loggedInUser, Function.ADD_GROUP))
+        if (authorizer.isAuthorized(loggedInUser, Function.ADD_GROUP.name()))
         {
             addGroupInternal(group);
         }
@@ -273,7 +273,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
         Date now = new Date();
         String action = "update group";
         User loggedInUser = getLoggedInUser();
-        if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_GROUP))
+        if (authorizer.isAuthorized(loggedInUser, Function.UPDATE_GROUP.name()))
         {
             Group group = groupDAO.findById(updateGroup.getId());
             String groupMessage = (updateGroup.getName().equals(group.getName())) ? "" : ("was: "+groupTarget(group));
@@ -386,7 +386,7 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
         Date now = new Date();
         String action = "unblock ip";
         User loggedInUser = getLoggedInUser();
-        if (authorizer.isAuthorized(loggedInUser, Function.UNBLOCK_IP))
+        if (authorizer.isAuthorized(loggedInUser, Function.UNBLOCK_IP.name()))
         {
             IPLockout ipLockout = ipLockoutDAO.findByIP(ipaddress);
             if ((null != ipLockout) && (null != ipLockout.getLockoutDate()))
