@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2012 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -39,6 +39,7 @@ public class DefaultAuthorizer implements Authorizer
 
     @Autowired
     private ReportConfig reportConfig;
+    private boolean allowAdminBypassPasswordPermissions;
 
     @Override
     public boolean isAuthorized(User user, String action)
@@ -51,7 +52,7 @@ public class DefaultAuthorizer implements Authorizer
                 action.equals(Function.UPDATE_GROUP.name()) ||
                 action.equals(Function.ADD_USER.name()) ||
                 action.equals(Function.UPDATE_USER.name()) ||
-                action.equals(Function.BYPASS_PASSWORD_PERMISSIONS.name()) ||
+                (allowAdminBypassPasswordPermissions && action.equals(Function.BYPASS_PASSWORD_PERMISSIONS.name())) ||
                 action.equals(Function.BYPASS_TEMPLATE_SHARING.name()) ||
                 action.equals(Function.UNBLOCK_IP.name()))
             {
@@ -78,4 +79,16 @@ public class DefaultAuthorizer implements Authorizer
         LOG.debug("user=["+((user==null)?"":user.getUsername())+"] action=["+action+"] authorized? "+isAuthorized);
         return isAuthorized;
     }
+
+    public boolean isAllowAdminBypassPasswordPermissions()
+    {
+        return allowAdminBypassPasswordPermissions;
+    }
+
+    public void setAllowAdminBypassPasswordPermissions(
+            boolean allowAdminBypassPasswordPermissions)
+    {
+        this.allowAdminBypassPasswordPermissions = allowAdminBypassPasswordPermissions;
+    }
+    
 }
