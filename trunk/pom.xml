@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2010-2012 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
     
     This file is part of WebPasswordSafe.
     
@@ -39,7 +39,7 @@
  </scm>
 
  <properties>
-  <gwt.version>2.4.0</gwt.version>
+  <gwt.version>2.5.1</gwt.version>
   <gxt.version>2.2.5</gxt.version>
   <maven.compiler.source>1.6</maven.compiler.source>
   <maven.compiler.target>1.6</maven.compiler.target>
@@ -337,6 +337,9 @@
       </goals>
      </execution>
     </executions>
+    <configuration>
+     <style>PRETTY</style>
+    </configuration>
    </plugin>
    
    <plugin>
