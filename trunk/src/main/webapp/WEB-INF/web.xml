@@ -56,6 +56,18 @@
     </servlet>
 
     <servlet>
+        <servlet-name>rest</servlet-name>
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value></param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>report</servlet-name>
         <servlet-class>
             net.webpasswordsafe.server.report.JasperReportServlet
@@ -84,6 +96,11 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>rest</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>report</servlet-name>
         <url-pattern>/report</url-pattern>
     </servlet-mapping>
@@ -107,7 +124,7 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            /WEB-INF/webpasswordsafe-service.xml,/WEB-INF/webpasswordsafe-data.xml,/WEB-INF/webpasswordsafe-reports.xml
+            /WEB-INF/webpasswordsafe-service.xml,/WEB-INF/webpasswordsafe-data.xml,/WEB-INF/webpasswordsafe-reports.xml,/WEB-INF/webpasswordsafe-rest.xml
         </param-value>
     </context-param>
     
