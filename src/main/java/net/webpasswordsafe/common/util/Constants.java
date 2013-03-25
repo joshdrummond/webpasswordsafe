@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2012 Josh Drummond
+    Copyright 2009-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -30,7 +30,7 @@ public class Constants
 {
     // versioning
     public static final String VERSION = "1.3";
-    public static final String COPYRIGHT = "2008-2012 Josh Drummond";
+    public static final String COPYRIGHT = "2008-2013 Josh Drummond";
     public static final String URL_WEBPASSWORDSAFE = "http://www.webpasswordsafe.net";
     public static final String URL_HELP = "http://code.google.com/p/webpasswordsafe/w/list?q=label:help";
     public static final String URL_LICENSE = "http://webpasswordsafe.googlecode.com/svn/trunk/docs/license.txt";
@@ -43,13 +43,15 @@ public class Constants
     public static final String SESSION_KEY_USERNAME = "X-WPS-Username";
     public static final String SESSION_KEY_ROLES = "X-WPS-Roles";
     public static final String CSRF_TOKEN_KEY = "X-WPS-CSRFToken";
+    public static final String REST_AUTHN_USERNAME = "X-WPS-Username";
+    public static final String REST_AUTHN_PASSWORD = "X-WPS-Password";
 
     // reports
     public static final String VIEW_REPORT_PREFIX = "VIEW_REPORT_";
     public static final String REPORT_TYPE_PDF = "pdf";
     public static final String REPORT_TYPE_CSV = "csv";
     
-    // widget/report fields
+    // widget/report/rest fields
     public static final String ID = "id";
     public static final String FULLNAME = "fullname";
     public static final String NAME = "name";

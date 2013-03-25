@@ -1,5 +1,5 @@
 /*
-    Copyright 2011-2012 Josh Drummond
+    Copyright 2011-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -273,7 +273,7 @@ public interface TextMessages extends Messages
     @DefaultMessage("Password Search")
     String passwordSearch();
 
-    @DefaultMessage("Password title already exists")
+    @DefaultMessage("Password title and username already exists")
     String passwordTitleExists();
 
     @DefaultMessage("Password Value")

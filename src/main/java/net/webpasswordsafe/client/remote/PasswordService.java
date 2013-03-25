@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -46,8 +46,7 @@ public interface PasswordService extends XsrfProtectedService {
     public String getCurrentPassword(long passwordId);
     public List<Tag> getAvailableTags();
     public Password getPassword(long passwordId);
-    public Password getPassword(String passwordName);
-    public boolean isPasswordTaken(String passwordName, long ignorePasswordId);
+    public boolean isPasswordTaken(String passwordName, String username, long ignorePasswordId);
     public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId);
     public List<PasswordData> getPasswordHistoryData(long passwordId);
     public void addTemplate(Template template);

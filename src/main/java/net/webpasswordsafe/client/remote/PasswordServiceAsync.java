@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -44,8 +44,7 @@ public interface PasswordServiceAsync {
     public void getCurrentPassword(long passwordId, AsyncCallback<String> callback);
     public void getAvailableTags(AsyncCallback<List<Tag>> callback);
     public void getPassword(long passwordId, AsyncCallback<Password> callback);
-    public void getPassword(String passwordName, AsyncCallback<Password> callback);
-    public void isPasswordTaken(String passwordName, long ignorePasswordId, AsyncCallback<Boolean> callback);
+    public void isPasswordTaken(String passwordName, String username, long ignorePasswordId, AsyncCallback<Boolean> callback);
     public void getPasswordAccessAuditData(long passwordId, AsyncCallback<List<PasswordAccessAudit>> callback);
     public void getPasswordHistoryData(long passwordId, AsyncCallback<List<PasswordData>> callback);
     public void addTemplate(Template template, AsyncCallback<Void> callback);

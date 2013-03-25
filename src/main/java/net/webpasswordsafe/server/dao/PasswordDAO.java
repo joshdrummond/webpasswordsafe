@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -37,7 +37,7 @@ import net.webpasswordsafe.common.util.Constants.Match;
 public interface PasswordDAO extends GenericDAO<Password, Long> {
 
     public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags, Match tagMatch);
-    public Password findPasswordByName(String passwordName);
+    public Password findPasswordByName(String passwordName, String username);
     public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel);
     public Password findAllowedPasswordByName(String passwordName, User user, AccessLevel accessLevel);
     public AccessLevel getMaxEffectiveAccessLevel(Password password, User user);
