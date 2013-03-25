@@ -64,7 +64,7 @@ public class Password extends LightEntity implements Serializable
     @Column(name="id")
     private long id;
     
-    @Column(name="name", length=LENGTH_NAME, nullable=false, unique=true)
+    @Column(name="name", length=LENGTH_NAME, nullable=false)
     private String name;
     
     @Column(name="username", length=LENGTH_USERNAME, nullable=false)

@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -44,7 +44,7 @@ public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
     private static Logger LOG = Logger.getLogger(GetCurrentPasswordJDomEndpoint.class);
     @Autowired
     private PasswordService passwordService;
-    private XPath passwordNameXPath; 
+    private XPath passwordIdXPath; 
     
     public GetCurrentPasswordJDomEndpoint()
         throws JDOMException
@@ -56,8 +56,8 @@ public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
         throws JDOMException
     {
         setBaseXPath("GetCurrentPasswordRequest");
-        passwordNameXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:passwordName");
-        passwordNameXPath.addNamespace(namespace);
+        passwordIdXPath = XPath.newInstance("/wps:GetCurrentPasswordRequest/wps:passwordId");
+        passwordIdXPath.addNamespace(namespace);
     }
     
     @PayloadRoot(namespace=NAMESPACE_URI, localPart="GetCurrentPasswordRequest")
@@ -74,12 +74,12 @@ public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
             {
                 String authnUsername = extractAuthnUsernameFromRequest(requestDoc);
                 String authnPassword = extractAuthnPasswordFromRequest(requestDoc);
-                String passwordName = extractPasswordNameFromRequest(requestDoc);
+                String passwordId = extractPasswordNameFromRequest(requestDoc);
                 setIPAddress();
                 boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
                 if (isAuthnValid)
                 {
-                    Password password = passwordService.getPassword(passwordName);
+                    Password password = passwordService.getPassword(Long.valueOf(passwordId));
                     if (password != null)
                     {
                         currentPassword = passwordService.getCurrentPassword(password.getId());
@@ -122,7 +122,7 @@ public class GetCurrentPasswordJDomEndpoint extends BaseJDomEndpoint
     private String extractPasswordNameFromRequest(Element element)
         throws JDOMException
     {
-        return passwordNameXPath.valueOf(element);
+        return passwordIdXPath.valueOf(element);
     }
 
 }

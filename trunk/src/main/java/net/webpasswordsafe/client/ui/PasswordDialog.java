@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2012 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -354,7 +354,7 @@ public class PasswordDialog extends Window implements PermissionListener
                     }
                 }
             };
-            PasswordService.Util.getInstance().isPasswordTaken(password.getName(), password.getId(), callbackCheck);
+            PasswordService.Util.getInstance().isPasswordTaken(password.getName(), password.getUsername(), password.getId(), callbackCheck);
         }
     }
 

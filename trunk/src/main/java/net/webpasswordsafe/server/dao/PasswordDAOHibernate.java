@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2012 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -210,9 +210,9 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     }
 
     @Override
-    public Password findPasswordByName(String passwordName)
+    public Password findPasswordByName(String passwordName, String username)
     {
-        List<Password> passwords = findByCriteria(Restrictions.eq("name", passwordName));
+        List<Password> passwords = findByCriteria(Restrictions.and(Restrictions.eq("name", passwordName), Restrictions.eq("username", username)));
         return (passwords.size() > 0) ? passwords.get(0) : null;
     }
     

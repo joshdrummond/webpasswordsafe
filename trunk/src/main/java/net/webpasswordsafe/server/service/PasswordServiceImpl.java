@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2012 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -311,25 +311,6 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public Password getPassword(String passwordName)
-    {
-        Date now = new Date();
-        String action = "get password";
-        User loggedInUser = getLoggedInUser();
-        Password password = passwordDAO.findAllowedPasswordByName(passwordName, loggedInUser, AccessLevel.READ);
-        if (password != null)
-        {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordTarget(password), true, "");
-        }
-        else
-        {
-            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, passwordName, false, "invalid name or no access");
-        }
-        return password;
-    }
-
-    @Override
-    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<PasswordAccessAudit> getPasswordAccessAuditData(long passwordId)
     {
         Date now = new Date();
@@ -461,10 +442,10 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public boolean isPasswordTaken(String passwordName, long ignorePasswordId)
+    public boolean isPasswordTaken(String passwordName, String username, long ignorePasswordId)
     {
         boolean isPasswordTaken = false;
-        Password password = passwordDAO.findPasswordByName(passwordName);
+        Password password = passwordDAO.findPasswordByName(passwordName, username);
         if (password != null)
         {
             if (password.getId() != ignorePasswordId)
