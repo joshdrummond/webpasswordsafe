@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -41,7 +41,7 @@ import net.sf.gilead.pojo.gwt.LightEntity;
 public class UserAuthnPassword extends LightEntity implements Serializable
 {
     private static final long serialVersionUID = -212604787809969177L;
-    public static final int LENGTH_PASSWORD = 64;
+    public static final int LENGTH_PASSWORD = 100;
     public static final int LENGTH_PASSWORD_CRYPTED = 100;
 
     @Id

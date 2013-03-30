@@ -44,6 +44,7 @@ public interface PasswordService extends XsrfProtectedService {
     public List<Password> searchPassword(String query, boolean activeOnly, Collection<Tag> tags, Match tagMatch);
     public String generatePassword();
     public String getCurrentPassword(long passwordId);
+    public List<Tag> getAllTags();
     public List<Tag> getAvailableTags();
     public Password getPassword(long passwordId);
     public boolean isPasswordTaken(String passwordName, String username, long ignorePasswordId);
@@ -51,6 +52,7 @@ public interface PasswordService extends XsrfProtectedService {
     public List<PasswordData> getPasswordHistoryData(long passwordId);
     public void addTemplate(Template template);
     public void updateTemplate(Template template);
+    public void deleteTemplate(Template template);
     public List<Template> getTemplates(boolean includeShared);
     public Template getTemplateWithDetails(long templateId);
     public boolean isTemplateTaken(String templateName, long ignoreTemplateId);

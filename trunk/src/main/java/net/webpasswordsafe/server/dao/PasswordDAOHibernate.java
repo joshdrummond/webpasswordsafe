@@ -105,19 +105,8 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     }
 
     @Override
-    public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel)
-    {
-        return findAllowedPassword(true, String.valueOf(passwordId), user, accessLevel);
-    }
-    
-    @Override
-    public Password findAllowedPasswordByName(String passwordName, User user, AccessLevel accessLevel)
-    {
-        return findAllowedPassword(false, passwordName, user, accessLevel);
-    }
-
     @SuppressWarnings("unchecked")
-    private Password findAllowedPassword(boolean isPasswordId, String password, User user, AccessLevel accessLevel)
+    public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel)
     {
         Password foundPassword = null;
         String sqlAccessLevelIn = null;
@@ -127,8 +116,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
             case READ : sqlAccessLevelIn = "(:aclread, :aclwrite, :aclgrant) "; break;
         }
         StringBuilder hqlString = new StringBuilder();
-        hqlString.append("select distinct pw.id from Password pw join pw.permissions pm where ");
-        hqlString.append(isPasswordId ? "pw.id = :passwordId " : "pw.name = :passwordName ");
+        hqlString.append("select distinct pw.id from Password pw join pw.permissions pm where pw.id = :passwordId ");
         if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS.name()))
         {
             hqlString.append(" and pm.accessLevel in ");
@@ -136,14 +124,7 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
             hqlString.append("and ((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user)))");
         }
         Query hqlQuery = getSession().createQuery(hqlString.toString());
-        if (isPasswordId)
-        {
-            hqlQuery.setLong("passwordId", Long.valueOf(password));
-        }
-        else
-        {
-            hqlQuery.setString("passwordName", password);
-        }
+        hqlQuery.setLong("passwordId", passwordId);
         if (!authorizer.isAuthorized(user, Function.BYPASS_PASSWORD_PERMISSIONS.name()))
         {
             hqlQuery.setEntity("user", user);

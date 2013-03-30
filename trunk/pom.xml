@@ -351,6 +351,12 @@
      <warSourceDirectory>war</warSourceDirectory>
      <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
      <warSourceExcludes>**/classes/**</warSourceExcludes>
+     <webResources>
+      <resource>
+       <directory>docs</directory>
+       <targetPath>/docs</targetPath>
+      </resource>
+     </webResources>
     </configuration>
    </plugin>
 

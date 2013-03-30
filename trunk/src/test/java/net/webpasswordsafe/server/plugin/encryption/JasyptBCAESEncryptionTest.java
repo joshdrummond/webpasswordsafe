@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -41,13 +41,13 @@ public class JasyptBCAESEncryptionTest
         encryptor.setPassword("w3bp@$$w0rd$@f3k3y");
         encryptor.setKeyObtentionIterations(1000);
 
-        String clearText = "1234567890123456789012345678901234567890123456789012345678901234";
+        String clearText = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
         System.out.println("clearText.length="+clearText.length());
         System.out.println("clearText="+clearText);
         String encryptedText = encryptor.encrypt(clearText);
         System.out.println("encryptedText.length="+encryptedText.length());
         System.out.println("encryptedText="+encryptedText);
-        assertEquals(encryptedText.length(), 128);
+        assertEquals(encryptedText.length(), 172);
         String decryptedText = encryptor.decrypt(encryptedText);
         assertEquals(decryptedText, clearText);
     }

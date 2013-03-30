@@ -78,6 +78,9 @@ public interface TextMessages extends Messages
     @DefaultMessage("Close")
     String close();
 
+    @DefaultMessage("Confirm Delete")
+    String confirmDelete();
+
     @DefaultMessage("Copyright &#169; {0}.")
     String copyrightBy(String copyright);
 
@@ -89,6 +92,9 @@ public interface TextMessages extends Messages
 
     @DefaultMessage("Date Created")
     String dateCreated();
+
+    @DefaultMessage("Delete")
+    String delete();
 
     @DefaultMessage("******")
     String displayCensored();
@@ -350,6 +356,12 @@ public interface TextMessages extends Messages
 
     @DefaultMessage("Templates")
     String templates();
+
+    @DefaultMessage("Are you sure you want to permanently delete template?")
+    String templateConfirmDelete();
+
+    @DefaultMessage("Template deleted")
+    String templateDeleted();
 
     @DefaultMessage("Template name already exists")
     String templateNameExists();
