@@ -361,10 +361,28 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
     
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
-    public List<Tag> getAvailableTags()
+    public List<Tag> getAllTags()
     {
         List<Tag> tags = tagDAO.findTagsInUse();
-        LOG.debug("found "+tags.size() + " tags in use");
+        LOG.debug("found "+tags.size() + " tags");
+        return tags;
+    }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public List<Tag> getAvailableTags()
+    {
+        User loggedInUser = getLoggedInUser();
+        List<Tag> tags = null;
+        if (authorizer.isAuthorized(loggedInUser, Function.BYPASS_PASSWORD_PERMISSIONS.name()))
+        {
+            tags = getAllTags();
+        }
+        else
+        {
+            tags = tagDAO.findTagsByUser(loggedInUser);
+        }
+        LOG.debug("found "+tags.size() + " user tags");
         return tags;
     }
 
@@ -420,6 +438,35 @@ public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements 
         }
     }
 
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void deleteTemplate(Template updateTemplate)
+    {
+        LOG.debug("deleting template");
+        Date now = new Date();
+        String action = "delete template";
+        User loggedInUser = getLoggedInUser();
+        Template template = templateDAO.findUpdatableTemplateById(updateTemplate.getId(), loggedInUser);
+        if (template != null)
+        {
+            // only allow delete if original owner or special bypass authz
+            if ((template.getUser().getId() == loggedInUser.getId()) || 
+                authorizer.isAuthorized(loggedInUser, Function.BYPASS_TEMPLATE_SHARING.name()))
+            {
+                templateDAO.makeTransient(template);
+                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, templateTarget(template), true, "");
+            }
+            else
+            {
+                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, templateTarget(template), false, "no access");
+            }
+        }
+        else
+        {
+            auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, templateTarget(updateTemplate), false, "invalid id or no access");
+        }
+    }
+    
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public List<Template> getTemplates(boolean includeShared)

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -40,12 +40,17 @@ public class JasyptDigesterTest
     {
         JasyptDigester digester = new JasyptDigester();
         digester.setPasswordEncryptor(new StrongPasswordEncryptor());
-        String password1 = digester.digest("josh");
+        String clearText = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+        System.out.println("clearText="+clearText);
+        System.out.println("clearText.length="+clearText.length());
+        String password1 = digester.digest(clearText);
         System.out.println("password1="+password1);
-        String password2 = digester.digest("josh");
+        System.out.println("password1.length="+password1.length());
+        String password2 = digester.digest(clearText);
         System.out.println("password2="+password2);
-        assertTrue(digester.check("josh", password1));
-        assertTrue(digester.check("josh", password2));
+        System.out.println("password2.length="+password2.length());
+        assertTrue(digester.check(clearText, password1));
+        assertTrue(digester.check(clearText, password2));
         assertFalse(password1.equals(password2));
     }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,6 +21,7 @@ package net.webpasswordsafe.server.dao;
 
 import java.util.List;
 import net.webpasswordsafe.common.model.Tag;
+import net.webpasswordsafe.common.model.User;
 
 
 /**
@@ -33,4 +34,5 @@ public interface TagDAO extends GenericDAO<Tag, Long>
 {
     public Tag findTagByName(String name);
     public List<Tag> findTagsInUse();
+    public List<Tag> findTagsByUser(User user);
 }

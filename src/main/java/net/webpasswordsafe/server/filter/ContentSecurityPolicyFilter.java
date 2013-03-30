@@ -54,7 +54,7 @@ public class ContentSecurityPolicyFilter implements Filter
     {
         HttpServletResponse httpResponse = ((HttpServletResponse) response);
         // GWT/GXT compiled code still uses inline script/style and eval :(
-        String policy = "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'";
+        String policy = "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self'; img-src 'self'; frame-src 'self'; style-src 'self' 'unsafe-inline'";
         // Chrome
         httpResponse.addHeader("Content-Security-Policy", policy);
         // Safari

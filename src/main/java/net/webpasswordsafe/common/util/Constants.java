@@ -32,8 +32,8 @@ public class Constants
     public static final String VERSION = "1.3";
     public static final String COPYRIGHT = "2008-2013 Josh Drummond";
     public static final String URL_WEBPASSWORDSAFE = "http://www.webpasswordsafe.net";
-    public static final String URL_HELP = "http://code.google.com/p/webpasswordsafe/w/list?q=label:help";
-    public static final String URL_LICENSE = "http://webpasswordsafe.googlecode.com/svn/trunk/docs/license.txt";
+    public static final String URL_HELP =  "docs/UserGuide.html";
+    public static final String URL_LICENSE = "docs/license.txt";
     
     // hardcoded names
     public static final String ADMIN_USER_NAME = "admin";

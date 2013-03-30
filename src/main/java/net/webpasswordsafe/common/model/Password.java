@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -56,7 +56,7 @@ public class Password extends LightEntity implements Serializable
 {
     private static final long serialVersionUID = 7174192307771387126L;
     public static final int LENGTH_NAME = 100;
-    public static final int LENGTH_USERNAME = 64;
+    public static final int LENGTH_USERNAME = 100;
     public static final int LENGTH_TARGET = 64;
 
     @Id

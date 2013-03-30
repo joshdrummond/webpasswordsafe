@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2011 Josh Drummond
+    Copyright 2009-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -41,9 +41,11 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.GridEvent;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Format;
+import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
@@ -223,6 +225,16 @@ public class TemplateDialog extends Window
                     }
                 });
 
+        Button deleteButton = new Button(textMessages.delete(),
+                new SelectionListener<ButtonEvent>()
+                {
+                    @Override
+                    public void componentSelected(ButtonEvent ce)
+                    {
+                        doVerifyDelete();
+                    }
+                });
+
         Button cancelButton = new Button(textMessages.cancel(),
                 new SelectionListener<ButtonEvent>()
                 {
@@ -234,6 +246,14 @@ public class TemplateDialog extends Window
                 });
         setButtonAlign(HorizontalAlignment.CENTER);
         addButton(saveButton);
+        if (template.getId() != 0)
+        {
+            if (clientSessionUtil.isAuthorized(Function.BYPASS_TEMPLATE_SHARING) ||
+               (ClientSessionUtil.getInstance().getLoggedInUser().getId() == template.getUser().getId()))
+            {
+                addButton(deleteButton);
+            }
+        }
         addButton(cancelButton);
         
         setFields();
@@ -320,6 +340,40 @@ public class TemplateDialog extends Window
             return false;
         }
         return true;
+    }
+    
+    private void doVerifyDelete()
+    {
+        MessageBox.confirm(textMessages.confirmDelete(), textMessages.templateConfirmDelete(), new Listener<MessageBoxEvent>()
+        {
+            @Override
+            public void handleEvent(MessageBoxEvent be)
+            {
+                if (be.getButtonClicked().getItemId().equals(Dialog.YES))
+                {
+                    doDelete();
+                }
+            }
+        });
+    }
+    
+    private void doDelete()
+    {
+        AsyncCallback<Void> callback = new AsyncCallback<Void>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                WebPasswordSafe.handleServerFailure(caught);
+            }
+            @Override
+            public void onSuccess(Void result)
+            {
+                Info.display(textMessages.status(), textMessages.templateDeleted());
+                hide();
+            }
+        };
+        PasswordService.Util.getInstance().deleteTemplate(template, callback);
     }
     
     private void doSave()

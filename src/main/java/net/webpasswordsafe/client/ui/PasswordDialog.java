@@ -473,7 +473,7 @@ public class PasswordDialog extends Window implements PermissionListener
                 refreshTags(result);
             }
         };
-        PasswordService.Util.getInstance().getAvailableTags(callback);
+        PasswordService.Util.getInstance().getAllTags(callback);
     }
     
     private void refreshTags(List<Tag> tags)

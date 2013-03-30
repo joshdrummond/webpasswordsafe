@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -47,7 +47,7 @@ import org.hibernate.annotations.Type;
 public class User extends Subject
 {
     private static final long serialVersionUID = 4024780603653185462L;
-    public static final int LENGTH_USERNAME = 64;
+    public static final int LENGTH_USERNAME = 100;
     public static final int LENGTH_FULLNAME = 100;
     public static final int LENGTH_EMAIL = 100;
 

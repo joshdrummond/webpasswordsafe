@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,6 +21,7 @@ package net.webpasswordsafe.server.dao;
 
 import java.util.List;
 import net.webpasswordsafe.common.model.Tag;
+import net.webpasswordsafe.common.model.User;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -49,6 +50,14 @@ public class TagDAOHibernate extends GenericHibernateDAO<Tag, Long> implements T
     public List<Tag> findTagsInUse()
     {
         Query hqlQuery = getSession().createQuery("select distinct t from Tag t join t.passwords p order by t.name asc");
+        return hqlQuery.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Tag> findTagsByUser(User user)
+    {
+        Query hqlQuery = getSession().createQuery("select distinct t from Tag t join t.passwords p join p.permissions pm where ((pm.subject = :user) or (pm.subject in (select g from Group g join g.users u where u = :user))) order by t.name asc");
+        hqlQuery.setEntity("user", user);
         return hqlQuery.list();
     }
 

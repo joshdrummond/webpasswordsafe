@@ -42,6 +42,7 @@ public interface PasswordServiceAsync {
     public void searchPassword(String query, boolean activeOnly, Collection<Tag> tags, Match tagMatch, AsyncCallback<List<Password>> callback);
     public void generatePassword(AsyncCallback<String> callback);
     public void getCurrentPassword(long passwordId, AsyncCallback<String> callback);
+    public void getAllTags(AsyncCallback<List<Tag>> callback);
     public void getAvailableTags(AsyncCallback<List<Tag>> callback);
     public void getPassword(long passwordId, AsyncCallback<Password> callback);
     public void isPasswordTaken(String passwordName, String username, long ignorePasswordId, AsyncCallback<Boolean> callback);
@@ -49,6 +50,7 @@ public interface PasswordServiceAsync {
     public void getPasswordHistoryData(long passwordId, AsyncCallback<List<PasswordData>> callback);
     public void addTemplate(Template template, AsyncCallback<Void> callback);
     public void updateTemplate(Template template, AsyncCallback<Void> callback);
+    public void deleteTemplate(Template template, AsyncCallback<Void> callback);
     public void getTemplates(boolean includeShared, AsyncCallback<List<Template>> callback);
     public void getTemplateWithDetails(long templateId, AsyncCallback<Template> callback);
     public void isTemplateTaken(String templateName, long ignoreTemplateId, AsyncCallback<Boolean> callback);
