@@ -48,6 +48,7 @@ public class Constants
 
     // reports
     public static final String VIEW_REPORT_PREFIX = "VIEW_REPORT_";
+    public static final String REPORT_PARAM_PREFIX = "p_";
     public static final String REPORT_TYPE_PDF = "pdf";
     public static final String REPORT_TYPE_CSV = "csv";
     
@@ -76,6 +77,8 @@ public class Constants
     public static final String PARAMETERS = "parameters";
     public static final String REQUIRED = "required";
     public static final String TYPE = "type";
+    public static final String BOOLEAN = "boolean";
+    public static final String TEXT = "text";
     
     // enums
     public enum Match { OR, AND };

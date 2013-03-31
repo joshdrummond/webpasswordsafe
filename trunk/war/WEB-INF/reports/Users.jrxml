@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2009-2011 Josh Drummond
+    Copyright 2009-2013 Josh Drummond
     
     This file is part of WebPasswordSafe.
     
@@ -26,8 +26,12 @@
     <style name="SubTitle" isDefault="false" forecolor="#666666" fontName="SansSerif" fontSize="18"/>
     <style name="Column header" isDefault="false" forecolor="#666666" fontName="SansSerif" fontSize="12" isBold="true"/>
     <style name="Detail" isDefault="false" fontName="SansSerif" fontSize="12"/>
+    <parameter name="active" class="java.lang.String"/>
+    <parameter name="active_SQL" class="java.lang.String">
+        <defaultValueExpression><![CDATA[(($P{active} == null) || ($P{active}=="")) ? "or 1=1" : ""]]></defaultValueExpression>
+    </parameter>
     <queryString language="SQL">
-        <![CDATA[select * from users]]>
+        <![CDATA[select * from users where active=$P{active} $P!{active_SQL}]]>
     </queryString>
     <field name="username" class="java.lang.String">
         <fieldDescription><![CDATA[]]></fieldDescription>

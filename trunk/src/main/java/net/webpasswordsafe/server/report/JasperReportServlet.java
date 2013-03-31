@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2012 Josh Drummond
+    Copyright 2009-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -52,6 +53,7 @@ import net.sf.jasperreports.engine.export.JRXmlExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
+import net.webpasswordsafe.common.util.Utils;
 import net.webpasswordsafe.server.plugin.audit.AuditLogger;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
 import net.webpasswordsafe.server.plugin.encryption.Encryptor;
@@ -100,6 +102,17 @@ public class JasperReportServlet extends HttpServlet
                 JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 if (null != locale) parameters.put(JRParameter.REPORT_LOCALE, new Locale(locale));
+                parameters.put(Constants.SESSION_KEY_USERNAME, (String)req.getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
+                @SuppressWarnings("unchecked")
+                Enumeration<String> e = req.getParameterNames();
+                while (e.hasMoreElements())
+                {
+                    String param = e.nextElement();
+                    if (param.startsWith(Constants.REPORT_PARAM_PREFIX))
+                    {
+                        parameters.put(param.substring(Constants.REPORT_PARAM_PREFIX.length()), Utils.safeString(req.getParameter(param)));
+                    }
+                }
                 encryptorRef.set((Encryptor)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("encryptor"));
                 DataSource dataSource = (DataSource)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("dataSource");
                 jdbcConnection = dataSource.getConnection();
