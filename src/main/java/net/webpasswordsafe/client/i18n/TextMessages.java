@@ -153,6 +153,9 @@ public interface TextMessages extends Messages
     @DefaultMessage("(-1 infinite)")
     String infinite();
 
+    @DefaultMessage("Date invalid (yyyy-MM-dd HH:mm)")
+    String invalidDate();
+
     @DefaultMessage("Email invalid")
     String invalidEmail();
 
@@ -401,6 +404,9 @@ public interface TextMessages extends Messages
 
     @DefaultMessage("Username too long")
     String tooLongUsername();
+
+    @DefaultMessage("Type")
+    String type();
 
     @DefaultMessage("Unblock IP")
     String unblockIP();
