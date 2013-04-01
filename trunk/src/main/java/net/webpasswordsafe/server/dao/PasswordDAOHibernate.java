@@ -26,6 +26,7 @@ import java.util.Set;
 import net.webpasswordsafe.common.model.AccessLevel;
 import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.Password;
+import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.Tag;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants.Function;
@@ -195,6 +196,15 @@ public class PasswordDAOHibernate extends GenericHibernateDAO<Password, Long> im
     {
         List<Password> passwords = findByCriteria(Restrictions.and(Restrictions.eq("name", passwordName), Restrictions.eq("username", username)));
         return (passwords.size() > 0) ? passwords.get(0) : null;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Password> findPasswordsByPermissionSubject(Subject subject)
+    {
+        Query hqlQuery = getSession().createQuery("select distinct p from Password p join p.permissions pm where pm.subject = :subject");
+        hqlQuery.setEntity("subject", subject);
+        return hqlQuery.list();
     }
     
 }

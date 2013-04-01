@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -48,6 +48,7 @@ public interface UserService extends XsrfProtectedService {
     public User getUserWithGroups(long userId);
     public void addGroup(Group group);
     public void updateGroup(Group group);
+    public void deleteGroup(Group group);
     public boolean isGroupTaken(String groupName, long ignoreGroupId);
     public boolean unblockIP(String ipaddress);
 

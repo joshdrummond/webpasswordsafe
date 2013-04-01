@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2012 Josh Drummond
+    Copyright 2009-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,10 +20,12 @@
 package net.webpasswordsafe.server.dao;
 
 import java.util.List;
+import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.Template;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants.Function;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
+import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +85,15 @@ public class TemplateDAOHibernate extends GenericHibernateDAO<Template, Long> im
     {
         List<Template> templates = findByCriteria(Restrictions.eq("name", name));
         return (templates.size() > 0) ? templates.get(0) : null;
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Template> findTemplatesByDetailSubject(Subject subject)
+    {
+        Query hqlQuery = getSession().createQuery("select distinct t from Template t join t.templateDetails td where td.subject = :subject");
+        hqlQuery.setEntity("subject", subject);
+        return hqlQuery.list();
     }
 
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,6 +20,7 @@
 package net.webpasswordsafe.client.ui;
 
 import java.util.List;
+import net.webpasswordsafe.client.ClientSessionUtil;
 import net.webpasswordsafe.client.WebPasswordSafe;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.UserService;
@@ -27,13 +28,17 @@ import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Utils;
+import net.webpasswordsafe.common.util.Constants.Function;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.MessageBoxEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.util.Format;
+import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Info;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
@@ -59,6 +64,7 @@ public class GroupDialog extends Window
     private ListStore<UserData> fromUserStore;
     private ListStore<UserData> toUserStore;
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
+    private ClientSessionUtil clientSessionUtil = ClientSessionUtil.getInstance();
 
     public GroupDialog(Group pGroup)
     {
@@ -116,6 +122,16 @@ public class GroupDialog extends Window
                     }
                 });
 
+        Button deleteButton = new Button(textMessages.delete(),
+                new SelectionListener<ButtonEvent>()
+                {
+                    @Override
+                    public void componentSelected(ButtonEvent ce)
+                    {
+                        doVerifyDelete();
+                    }
+                });
+
         Button cancelButton = new Button(textMessages.cancel(),
                 new SelectionListener<ButtonEvent>()
                 {
@@ -128,9 +144,47 @@ public class GroupDialog extends Window
 
         setButtonAlign(HorizontalAlignment.CENTER);
         addButton(saveButton);
+        if ((group.getId() != 0) && clientSessionUtil.isAuthorized(Function.DELETE_GROUP))
+        {
+            addButton(deleteButton);
+        }
         addButton(cancelButton);
         
         setFields();
+    }
+
+    private void doVerifyDelete()
+    {
+        MessageBox.confirm(textMessages.confirmDelete(), textMessages.groupConfirmDelete(), new Listener<MessageBoxEvent>()
+        {
+            @Override
+            public void handleEvent(MessageBoxEvent be)
+            {
+                if (be.getButtonClicked().getItemId().equals(Dialog.YES))
+                {
+                    doDelete();
+                }
+            }
+        });
+    }
+    
+    private void doDelete()
+    {
+        AsyncCallback<Void> callback = new AsyncCallback<Void>()
+        {
+            @Override
+            public void onFailure(Throwable caught)
+            {
+                WebPasswordSafe.handleServerFailure(caught);
+            }
+            @Override
+            public void onSuccess(Void result)
+            {
+                Info.display(textMessages.status(), textMessages.groupDeleted());
+                hide();
+            }
+        };
+        UserService.Util.getInstance().deleteGroup(group, callback);
     }
 
     private void doSave()

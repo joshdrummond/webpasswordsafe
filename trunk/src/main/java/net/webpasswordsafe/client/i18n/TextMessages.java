@@ -141,6 +141,12 @@ public interface TextMessages extends Messages
     @DefaultMessage("Groups:")
     String groups_();
 
+    @DefaultMessage("Are you sure you want to permanently delete group and remove from any associated users and permissions?")
+    String groupConfirmDelete();
+
+    @DefaultMessage("Group deleted")
+    String groupDeleted();
+
     @DefaultMessage("Group name already exists")
     String groupNameAlreadyExists();
 

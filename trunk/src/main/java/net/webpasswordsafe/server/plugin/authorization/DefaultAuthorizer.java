@@ -50,6 +50,7 @@ public class DefaultAuthorizer implements Authorizer
         {
             if (action.equals(Function.ADD_GROUP.name()) ||
                 action.equals(Function.UPDATE_GROUP.name()) ||
+                action.equals(Function.DELETE_GROUP.name()) ||
                 action.equals(Function.ADD_USER.name()) ||
                 action.equals(Function.UPDATE_USER.name()) ||
                 (allowAdminBypassPasswordPermissions && action.equals(Function.BYPASS_PASSWORD_PERMISSIONS.name())) ||

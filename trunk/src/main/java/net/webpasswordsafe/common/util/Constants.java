@@ -83,7 +83,7 @@ public class Constants
     // enums
     public enum Match { OR, AND };
     public enum Role { ROLE_USER, ROLE_ADMIN };
-    public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, ADD_PASSWORD,
+    public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, DELETE_GROUP, ADD_PASSWORD,
         BYPASS_PASSWORD_PERMISSIONS, ADD_TEMPLATE, UPDATE_TEMPLATE, BYPASS_TEMPLATE_SHARING,
         UNBLOCK_IP };
 

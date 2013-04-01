@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -46,6 +46,7 @@ public interface UserServiceAsync {
     public void getUserWithGroups(long userId, AsyncCallback<User> callback);
     public void addGroup(Group group, AsyncCallback<Void> callback);
     public void updateGroup(Group group, AsyncCallback<Void> callback);
+    public void deleteGroup(Group group, AsyncCallback<Void> callback);
     public void isGroupTaken(String groupName, long ignoreGroupId, AsyncCallback<Boolean> callback);
     public void unblockIP(String ipaddress, AsyncCallback<Boolean> callback);
 }
