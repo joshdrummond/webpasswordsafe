@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -135,4 +135,16 @@ public class Template extends LightEntity implements Serializable
         this.templateDetails.clear();
     }
     
+    public void removeDetailsBySubject(Subject subject)
+    {
+        Set<TemplateDetail> removeSet = new HashSet<TemplateDetail>();
+        for (TemplateDetail detail : templateDetails)
+        {
+            if (detail.getSubject().getId() == subject.getId())
+            {
+                removeSet.add(detail);
+            }
+        }
+        templateDetails.removeAll(removeSet);
+    }
 }

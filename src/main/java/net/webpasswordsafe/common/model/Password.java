@@ -142,6 +142,19 @@ public class Password extends LightEntity implements Serializable
         this.permissions.remove(permission);
     }
     
+    public void removePermissionsBySubject(Subject subject)
+    {
+        Set<Permission> removeSet = new HashSet<Permission>();
+        for (Permission permission : permissions)
+        {
+            if (permission.getSubject().getId() == subject.getId())
+            {
+                removeSet.add(permission);
+            }
+        }
+        permissions.removeAll(removeSet);
+    }
+    
     public Set<Permission> getPermissions() {
         return this.permissions;
     }

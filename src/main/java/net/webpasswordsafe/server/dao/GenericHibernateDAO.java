@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -67,15 +67,18 @@ public abstract class GenericHibernateDAO<T, ID extends Serializable> implements
         return this.persistenceClass;
     }
 
+    @Override
     @SuppressWarnings({"unchecked"})
     public T findById(ID id) {
         return (T) getSession().load(getPersistentClass(), id);
     }
 
+    @Override
     public List<T> findAll() {
         return findByCriteria();
     }
 
+    @Override
     @SuppressWarnings({"unchecked"})
     public List<T> findByExample(T exampleInstance, String... excludeProperty) {
         Criteria crit = getSession().createCriteria(getPersistentClass());
@@ -87,20 +90,24 @@ public abstract class GenericHibernateDAO<T, ID extends Serializable> implements
         return crit.list();
     }
 
+    @Override
     public T makePersistent(T entity) {
         getSession().saveOrUpdate(entity);
         return entity;
     }
 
+    @Override
     public T makeTransient(T entity) {
         getSession().delete(entity);
         return entity;
     }
 
+    @Override
     public void flush() {
         getSession().flush();
     }
 
+    @Override
     public void clear() {
         getSession().clear();
     }

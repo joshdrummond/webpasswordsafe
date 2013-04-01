@@ -37,15 +37,14 @@ import org.springframework.stereotype.Repository;
 public class TagDAOHibernate extends GenericHibernateDAO<Tag, Long> implements TagDAO
 {
 
-    /* (non-Javadoc)
-     * @see net.webpasswordsafe.server.dao.TagDAO#findTagByName(java.lang.String)
-     */
+    @Override
     public Tag findTagByName(String name)
     {
         List<Tag> tags = findByCriteria(Restrictions.eq("name", name));
         return (tags.size() > 0) ? tags.get(0) : null;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Tag> findTagsInUse()
     {
@@ -53,6 +52,7 @@ public class TagDAOHibernate extends GenericHibernateDAO<Tag, Long> implements T
         return hqlQuery.list();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Tag> findTagsByUser(User user)
     {

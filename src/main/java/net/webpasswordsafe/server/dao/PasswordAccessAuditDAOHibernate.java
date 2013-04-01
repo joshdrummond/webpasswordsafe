@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -34,14 +34,9 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository("passwordAccessAuditDAO")
-public class PasswordAccessAuditDAOHibernate 
-    extends GenericHibernateDAO<PasswordAccessAudit, Long> 
-    implements PasswordAccessAuditDAO
-{
+public class PasswordAccessAuditDAOHibernate extends GenericHibernateDAO<PasswordAccessAudit, Long> implements PasswordAccessAuditDAO {
 
-    /* (non-Javadoc)
-     * @see net.webpasswordsafe.server.dao.PasswordAccessAuditDAO#findAccessAuditByPassword(net.webpasswordsafe.common.model.Password)
-     */
+    @Override
     public List<PasswordAccessAudit> findAccessAuditByPassword(Password password)
     {
         return findByCriteria(Order.desc("dateAccessed"), Restrictions.eq("password", password));

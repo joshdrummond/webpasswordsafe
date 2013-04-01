@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2011 Josh Drummond
+    Copyright 2009-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -20,6 +20,7 @@
 package net.webpasswordsafe.server.dao;
 
 import java.util.List;
+import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.Template;
 import net.webpasswordsafe.common.model.User;
 
@@ -35,5 +36,6 @@ public interface TemplateDAO extends GenericDAO<Template, Long> {
     public List<Template> findTemplatesByUser(User user, boolean includeShared);
     public Template findUpdatableTemplateById(long templateId, User user);
     public Template findTemplateByName(String name);
+    public List<Template> findTemplatesByDetailSubject(Subject subject);
     
 }

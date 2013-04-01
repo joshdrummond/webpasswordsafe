@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2012 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -29,12 +29,16 @@ import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.IPLockout;
+import net.webpasswordsafe.common.model.Password;
 import net.webpasswordsafe.common.model.Subject;
+import net.webpasswordsafe.common.model.Template;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants.Function;
 import net.webpasswordsafe.server.ServerSessionUtil;
 import net.webpasswordsafe.server.dao.GroupDAO;
 import net.webpasswordsafe.server.dao.IPLockoutDAO;
+import net.webpasswordsafe.server.dao.PasswordDAO;
+import net.webpasswordsafe.server.dao.TemplateDAO;
 import net.webpasswordsafe.server.dao.UserDAO;
 import net.webpasswordsafe.server.plugin.audit.AuditLogger;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
@@ -68,6 +72,12 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
     
     @Autowired
     private IPLockoutDAO ipLockoutDAO;
+    
+    @Autowired
+    private PasswordDAO passwordDAO;
+    
+    @Autowired
+    private TemplateDAO templateDAO;
     
     @Resource
     private Digester digester;
@@ -285,6 +295,51 @@ public class UserServiceImpl extends XsrfProtectedServiceServlet implements User
                 group.addUser(pUser);
             }
             auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, groupTarget(updateGroup), true, groupMessage);
+        }
+        else
+        {
+            auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, groupTarget(updateGroup), false, "not authorized");
+            throw new RuntimeException("Not Authorized!");
+        }
+    }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void deleteGroup(Group updateGroup)
+    {
+        Date now = new Date();
+        String action = "delete group";
+        User loggedInUser = getLoggedInUser();
+        if (authorizer.isAuthorized(loggedInUser, Function.DELETE_GROUP.name()))
+        {
+            Group group = groupDAO.findById(updateGroup.getId());
+            if (group != null)
+            {
+                // remove associated password permissions
+                List<Password> passwords = passwordDAO.findPasswordsByPermissionSubject(group);
+                for (Password password : passwords)
+                {
+                    password.removePermissionsBySubject(group);
+                    passwordDAO.makePersistent(password);
+                }
+                // remove associated template details
+                List<Template> templates = templateDAO.findTemplatesByDetailSubject(group);
+                for (Template template : templates)
+                {
+                    template.removeDetailsBySubject(group);
+                    templateDAO.makePersistent(template);
+                }
+                // remove associated users
+                group.removeUsers();
+                // actually remove group
+                groupDAO.flush();
+                groupDAO.makeTransient(group);
+                auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), action, groupTarget(group), true, "");
+            }
+            else
+            {
+                auditLogger.log(now, ServerSessionUtil.getUsername(), ServerSessionUtil.getIP(), action, groupTarget(updateGroup), false, "invalid id");
+            }
         }
         else
         {

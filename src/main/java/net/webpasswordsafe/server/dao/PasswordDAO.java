@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import net.webpasswordsafe.common.model.AccessLevel;
 import net.webpasswordsafe.common.model.Password;
+import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.Tag;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants.Match;
@@ -39,6 +40,7 @@ public interface PasswordDAO extends GenericDAO<Password, Long> {
     public List<Password> findPasswordByFuzzySearch(String query, User user, boolean activeOnly, Collection<Tag> tags, Match tagMatch);
     public Password findPasswordByName(String passwordName, String username);
     public Password findAllowedPasswordById(long passwordId, User user, AccessLevel accessLevel);
+    public List<Password> findPasswordsByPermissionSubject(Subject subject);
     public AccessLevel getMaxEffectiveAccessLevel(Password password, User user);
 
 }
