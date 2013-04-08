@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2012 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -354,7 +354,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         List<Map<String, Object>> reports = getClientModel().getAvailableReports();
         for (final Map<String, Object> report : reports)
         {
-            MenuItem menuItem = new MenuItem((String)report.get(Constants.NAME), new SelectionListener<MenuEvent>()
+            MenuItem menuItem = new MenuItem((String)report.get(Constants.I18N), new SelectionListener<MenuEvent>()
             {
                 @Override
                 public void componentSelected(MenuEvent ce)
