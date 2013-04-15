@@ -95,7 +95,7 @@ public class JasperReportServlet extends HttpServlet
             String type = req.getParameter(Constants.TYPE).trim().toLowerCase();
             String locale = req.getParameter("locale");
             setNoCache(res);
-            if (isAuthorized(req, reportName))
+            if (isAuthorizedReport(req, reportName))
             {
                 JasperDesign jasperDesign = JRXmlLoader.load(getServletConfig().getServletContext().getResourceAsStream(
                         "/WEB-INF/reports/"+reportName+".jrxml"));
@@ -103,6 +103,7 @@ public class JasperReportServlet extends HttpServlet
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 if (null != locale) parameters.put(JRParameter.REPORT_LOCALE, new Locale(locale));
                 parameters.put(Constants.SESSION_KEY_USERNAME, (String)req.getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
+                parameters.put(Constants.Function.BYPASS_PASSWORD_PERMISSIONS.name(), isAuthorized(req, Constants.Function.BYPASS_PASSWORD_PERMISSIONS.name()) ? "1":"0");
                 @SuppressWarnings("unchecked")
                 Enumeration<String> e = req.getParameterNames();
                 while (e.hasMoreElements())
@@ -194,25 +195,32 @@ public class JasperReportServlet extends HttpServlet
         }
     }
     
+    private boolean isAuthorizedReport(HttpServletRequest req, String reportName)
+    {
+        boolean isAuthorized = isAuthorized(req, Constants.VIEW_REPORT_PREFIX+reportName);
+        User user = new User();
+        user.setUsername((String)req.getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
+        AuditLogger auditLogger = (AuditLogger)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("auditLogger");
+        auditLogger.log(new Date(), user.getUsername(), req.getRemoteAddr(), "view report", reportName, isAuthorized, (isAuthorized ? "" : "not authorized"));
+        return isAuthorized;
+    }
+    
     @SuppressWarnings("unchecked")
-    private boolean isAuthorized(HttpServletRequest req, String reportName)
+    private boolean isAuthorized(HttpServletRequest req, String action)
     {
         boolean isAuthorized = false;
-        AuditLogger auditLogger = (AuditLogger)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("auditLogger");
         Authorizer authorizer = (Authorizer)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("authorizer");
         User user = new User();
         user.setUsername((String)req.getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
         user.setRoles((Set<Constants.Role>)req.getSession().getAttribute(Constants.SESSION_KEY_ROLES));
-        
         try
         {
-            isAuthorized = authorizer.isAuthorized(user, Constants.VIEW_REPORT_PREFIX+reportName);
+            isAuthorized = authorizer.isAuthorized(user, action);
         }
         catch (Exception e)
         {
             isAuthorized = false;
         }
-        auditLogger.log(new Date(), user.getUsername(), req.getRemoteAddr(), "view report", reportName, isAuthorized, (isAuthorized ? "" : "not authorized"));
         return isAuthorized;
     }
     
