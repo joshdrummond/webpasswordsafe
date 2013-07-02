@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2012 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -120,7 +120,7 @@ public class ServerSessionUtil
             // either new session or old session without csrf token set, so set it
             session.setAttribute(Constants.CSRF_TOKEN_KEY, session.getId());
             Cookie cookie = new Cookie(Constants.CSRF_TOKEN_KEY, session.getId());
-            cookie.setPath(ServletUtils.getRequest().getContextPath());
+            cookie.setPath("".equals(ServletUtils.getRequest().getContextPath()) ? "/" : ServletUtils.getRequest().getContextPath());
             ServletUtils.getResponse().addCookie(cookie);
         }
     }

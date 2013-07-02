@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2012 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -39,12 +39,12 @@ import net.webpasswordsafe.server.plugin.authentication.Authenticator;
 import net.webpasswordsafe.server.plugin.authentication.RoleRetriever;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
 import net.webpasswordsafe.server.report.ReportConfig;
+import net.webpasswordsafe.server.service.helper.WPSXsrfProtectedServiceServlet;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
 
 
 /**
@@ -54,7 +54,7 @@ import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
  *
  */
 @Service("loginService")
-public class LoginServiceImpl extends XsrfProtectedServiceServlet implements LoginService
+public class LoginServiceImpl extends WPSXsrfProtectedServiceServlet implements LoginService
 {
     private static final long serialVersionUID = 185624826328067937L;
     private static Logger LOG = Logger.getLogger(LoginServiceImpl.class);

@@ -43,12 +43,12 @@ import net.webpasswordsafe.server.dao.UserDAO;
 import net.webpasswordsafe.server.plugin.audit.AuditLogger;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
 import net.webpasswordsafe.server.plugin.encryption.Digester;
+import net.webpasswordsafe.server.service.helper.WPSXsrfProtectedServiceServlet;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
 import static net.webpasswordsafe.common.util.Constants.*;
 
 
@@ -59,7 +59,7 @@ import static net.webpasswordsafe.common.util.Constants.*;
  *
  */
 @Service("userService")
-public class UserServiceImpl extends XsrfProtectedServiceServlet implements UserService
+public class UserServiceImpl extends WPSXsrfProtectedServiceServlet implements UserService
 {
     private static final long serialVersionUID = 2818717240050539864L;
     private static Logger LOG = Logger.getLogger(UserServiceImpl.class);

@@ -49,12 +49,12 @@ import net.webpasswordsafe.server.plugin.audit.AuditLogger;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
 import net.webpasswordsafe.server.plugin.encryption.Encryptor;
 import net.webpasswordsafe.server.plugin.generator.PasswordGenerator;
+import net.webpasswordsafe.server.service.helper.WPSXsrfProtectedServiceServlet;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional; 
-import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
 
 
 /**
@@ -64,7 +64,7 @@ import com.google.gwt.user.server.rpc.XsrfProtectedServiceServlet;
  *
  */
 @Service("passwordService")
-public class PasswordServiceImpl extends XsrfProtectedServiceServlet implements PasswordService
+public class PasswordServiceImpl extends WPSXsrfProtectedServiceServlet implements PasswordService
 {
     private static final long serialVersionUID = -2328314230839034189L;
     private static Logger LOG = Logger.getLogger(PasswordServiceImpl.class);
