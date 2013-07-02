@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 Josh Drummond
+    Copyright 2011-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -50,7 +50,7 @@ public class AboutDialog extends Dialog
         aboutText.append("<br>");
         aboutText.append(textMessages.allRightsReserved());
         aboutText.append(" <a target=\"_blank\" href=\"");
-        aboutText.append(Constants.URL_LICENSE);
+        aboutText.append(GWT.getHostPageBaseURL() + Constants.URL_LICENSE);
         aboutText.append("\">");
         aboutText.append(textMessages.gpl2());
         aboutText.append("</a></center><br><br>");

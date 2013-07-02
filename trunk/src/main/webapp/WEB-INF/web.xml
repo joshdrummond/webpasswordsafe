@@ -42,7 +42,7 @@
     <servlet>
         <servlet-name>xsrf</servlet-name>
         <servlet-class>
-            com.google.gwt.user.server.rpc.XsrfTokenServiceServlet
+            net.webpasswordsafe.server.service.helper.WPSXsrfTokenServiceServlet
         </servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>

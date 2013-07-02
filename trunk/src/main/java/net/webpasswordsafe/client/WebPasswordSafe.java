@@ -756,7 +756,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     
     private void doShowHelp()
     {
-        Window.open(Constants.URL_HELP, "_blank", "");
+        Window.open(GWT.getHostPageBaseURL() + Constants.URL_HELP, "_blank", "");
     }
     
     private class EditUserListener implements UserListener
