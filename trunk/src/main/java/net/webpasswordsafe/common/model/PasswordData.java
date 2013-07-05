@@ -43,7 +43,7 @@ public class PasswordData extends LightEntity implements Serializable
 {
     private static final long serialVersionUID = -643822521564959563L;
     public static final int LENGTH_PASSWORD = 100;
-    public static final int LENGTH_PASSWORD_CRYPTED = 250;
+    public static final int LENGTH_PASSWORD_CRYPTED = 300;
 
     @Id
     @GeneratedValue
