@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -50,6 +52,7 @@ import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRXmlExporter;
+import net.sf.jasperreports.engine.type.WhenNoDataTypeEnum;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
@@ -100,10 +103,12 @@ public class JasperReportServlet extends HttpServlet
                 JasperDesign jasperDesign = JRXmlLoader.load(getServletConfig().getServletContext().getResourceAsStream(
                         "/WEB-INF/reports/"+reportName+".jrxml"));
                 JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+                jasperReport.setWhenNoDataType(WhenNoDataTypeEnum.ALL_SECTIONS_NO_DETAIL);
                 Map<String, Object> parameters = new HashMap<String, Object>();
                 if (null != locale) parameters.put(JRParameter.REPORT_LOCALE, new Locale(locale));
                 parameters.put(Constants.SESSION_KEY_USERNAME, (String)req.getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
                 parameters.put(Constants.Function.BYPASS_PASSWORD_PERMISSIONS.name(), isAuthorized(req, Constants.Function.BYPASS_PASSWORD_PERMISSIONS.name()) ? "1":"0");
+                ReportConfig reportConfig = (ReportConfig)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("reportConfig");
                 @SuppressWarnings("unchecked")
                 Enumeration<String> e = req.getParameterNames();
                 while (e.hasMoreElements())
@@ -111,7 +116,16 @@ public class JasperReportServlet extends HttpServlet
                     String param = e.nextElement();
                     if (param.startsWith(Constants.REPORT_PARAM_PREFIX))
                     {
-                        parameters.put(param.substring(Constants.REPORT_PARAM_PREFIX.length()), Utils.safeString(req.getParameter(param)));
+                        String pKey = param.substring(Constants.REPORT_PARAM_PREFIX.length());
+                        String pValue = Utils.safeString(req.getParameter(param));
+                        if (reportConfig.isDateParam(reportName, pKey))
+                        {
+                            parameters.put(pKey, convertToDateTime(pValue));
+                        }
+                        else
+                        {
+                            parameters.put(pKey, pValue);
+                        }
                     }
                 }
                 encryptorRef.set((Encryptor)WebApplicationContextUtils.getWebApplicationContext(getServletContext()).getBean("encryptor"));
@@ -193,6 +207,29 @@ public class JasperReportServlet extends HttpServlet
                 }
             }
         }
+    }
+    
+    private Timestamp convertToDateTime(String pValue)
+        throws ParseException
+    {
+        Timestamp pDateValue = null;
+        if (!"".equals(pValue))
+        {
+            // try with timestamp
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            try
+            {
+                pDateValue = new Timestamp(dateFormat.parse(pValue).getTime());
+            }
+            catch (ParseException pe)
+            {
+                // try without timestamp
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                pDateValue = new Timestamp(dateFormat.parse(pValue).getTime());
+                // throw exception if neither parsed
+            }
+        }
+        return pDateValue;
     }
     
     private boolean isAuthorizedReport(HttpServletRequest req, String reportName)

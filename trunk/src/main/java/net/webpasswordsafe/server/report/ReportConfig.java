@@ -1,5 +1,5 @@
 /*
-    Copyright 2012 Josh Drummond
+    Copyright 2012-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -52,5 +52,20 @@ public class ReportConfig
             }
         }
         return null;
+    }
+    
+    public boolean isDateParam(String reportName, String paramName)
+    {
+        Map<String, Object> report = getReport(reportName);
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> params = (List<Map<String, Object>>)report.get(Constants.PARAMETERS);
+        for (Map<String, Object> param : params)
+        {
+            if (((String)param.get(Constants.NAME)).equals(paramName))
+            {
+                return ((String)param.get(Constants.TYPE)).equals(Constants.DATE);
+            }
+        }
+        return false;
     }
 }
