@@ -1,5 +1,5 @@
 <!--
-    Copyright 2010-2012 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -34,7 +34,7 @@ This administrator guide covers installation, configuration, and deployment of W
 
 <h2>II. Requirements</h2>
 <ol>
-<li>Java SE 6 (JDK)</li>
+<li>Java SE 6+ (JDK)</li>
 <li>Maven 3.0+</li>
 <li>Java Servlet Container (i.e. Tomcat 5.5+, Glassfish)</li>
 <li>Database (JDBC compatible) (i.e. MySQL, MSSQL, Oracle, PostgreSQL, HSQL)</li>
@@ -44,6 +44,7 @@ This administrator guide covers installation, configuration, and deployment of W
 <ol>
 <li>Download <b>webpasswordsafe-src-[version].zip</b> and <b>webpasswordsafe-dependencies-bin-[version].zip</b> from <a href="http://code.google.com/p/webpasswordsafe/downloads/list" target="_blank">http://code.google.com/p/webpasswordsafe/downloads/list</a></li>
 <li><i>Optionally, advanced users can instead download other revisions directly from public SVN repository at <a href="http://code.google.com/p/webpasswordsafe/source/checkout" target="_blank">http://code.google.com/p/webpasswordsafe/source/checkout</a></i></li>
+<li><i>Optionally, a sample WAR file <b>webpasswordsafe-sample-[version].war</b> can be downloaded from <a href="http://code.google.com/p/webpasswordsafe/downloads/list" target="_blank">http://code.google.com/p/webpasswordsafe/downloads/list</a></i></li>
 </ol>
 
 <h2>IV. Environment Setup</h2>
@@ -199,8 +200,9 @@ This plugin is configured using the <b>bean id="authorizer"</b> tag and can poin
 
 <h5>a. DefaultAuthorizer</h5>
 <p>
-The DefaultAuthorizer class implementation is the default and doesn't have any custom parameters.  All permissions are hardcoded inside
-the plugin code using RBAC, functionality is authorized based on whether the user's role is of ADMIN or USER.
+The DefaultAuthorizer class implementation is the default which allows the defining of an "allowAdminBypassPasswordPermissions" property
+that is either true or false, depending if you want to allow users with ADMIN role to bypass password permissions. All permissions are hardcoded
+inside the plugin code using RBAC, functionality is authorized based on whether the user's role is of ADMIN or USER.
 </p>
 
 <h4>v. Password Generator Plugin</h4>
@@ -250,12 +252,7 @@ The EsapiEncryptor class implementation is an optional implementation (see Devel
 using the encryption.properties and its own configuration files.
 </p>
 
-<h3>4. webservice-servlet.xml</h3>
-<p>
-Edit <i>/webpasswordsafe/war/WEB-INF/webservice-servlet.xml</i> changing the <b>locationUri</b> value to the public URL it will be deployed as (the part before /webservice).
-</p>
-
-<h3>5. log4j.xml</h3>
+<h3>4. log4j.xml</h3>
 <p>
 Edit <i>/webpasswordsafe/src/main/resources/log4j.xml</i> changing values to suit your environment.
 </p>
@@ -271,7 +268,7 @@ to debug problems, you can change the various "priority" values from "info" or "
 see log4j's own documentation.
 </p>
 
-<h3>6. web.xml</h3>
+<h3>5. web.xml</h3>
 <p>
 Edit <i>/webpasswordsafe/src/main/webapp/WEB-INF/web.xml</i> changing the "session-timeout" parameter to be an integer value representing the number of
 minutes a server session can be idle before it timeouts and requires the user to re-authenticate.  The default is 10 minutes.
@@ -284,6 +281,7 @@ minutes a server session can be idle before it timeouts and requires the user to
    <li>mvn clean package</li>
   </ul>
 </li>
+<li>If this is an upgrade, follow special directions in <a href="UpgradeNotes.html">Upgrade Notes</a></li>
 <li>Deploy the WAR file generated in /webpasswordsafe/target/webpasswordsafe-[version].war to Java Servlet Container as WebPasswordSafe.war</li>
 <li>If using LocalAuthenticator the default <b>admin</b> user login password is <b>admin</b>, login to WebPasswordSafe according to the User Guide and change that to something stronger.</li>
 <li>Please see the User Guide for further setup and use of the WebPasswordSafe application, you are done!</li>

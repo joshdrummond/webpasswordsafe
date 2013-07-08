@@ -64,12 +64,12 @@
   </category>
 
   <category name="net.webpasswordsafe" additivity="false">
-    <priority value="info" />
+    <priority value="debug" />
     <appender-ref ref="dailyFile" />
   </category>
   
   <category name="org.hibernate.type" additivity="false">
-    <priority value="info" />
+    <priority value="debug" />
     <appender-ref ref="dailyFile" />
   </category>
 
@@ -79,7 +79,7 @@
   </category>
 
   <root>
-    <priority value="info" />
+    <priority value="debug" />
     <appender-ref ref="dailyFile" />
   </root>
 

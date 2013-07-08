@@ -1,0 +1,85 @@
+<!--
+    Copyright 2013 Josh Drummond
+
+    This file is part of WebPasswordSafe.
+
+    WebPasswordSafe is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    WebPasswordSafe is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with WebPasswordSafe; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WebPasswordSafe Upgrade Notes</title>
+</head>
+<body>
+
+<h1>WebPasswordSafe Upgrade Notes</h1>
+
+<h2>Version 1.2 to 1.3</h2>
+<ol>
+<li>Shutdown WebPasswordSafe v1.2</li>
+<li>Run the following SQL to upgrade your webpasswordsafe database schema:
+  <ul>
+   <li>MySQL/MariaDB<br>
+   <pre>
+ALTER TABLE users MODIFY username VARCHAR(100);
+ALTER TABLE passwords MODIFY username VARCHAR(100);
+ALTER TABLE audit_log MODIFY username VARCHAR(100);
+ALTER TABLE password_data MODIFY password VARCHAR(300);
+ALTER TABLE passwords DROP INDEX name;
+   </pre>
+   </li>
+   <li>MSSQL<br>
+   <pre>
+ALTER TABLE users ALTER COLUMN username VARCHAR(100);
+ALTER TABLE passwords ALTER COLUMN username VARCHAR(100);
+ALTER TABLE audit_log ALTER COLUMN username VARCHAR(100);
+ALTER TABLE password_data ALTER COLUMN password VARCHAR(300);
+SELECT d.name FROM sys.tables t 
+    JOIN sys.indexes d ON d.object_id = t.object_id AND d.type=2 AND d.is_unique=1
+    JOIN sys.index_columns ic ON d.index_id=ic.index_id AND ic.object_id=t.object_id
+    JOIN sys.columns c ON ic.column_id = c.column_id AND c.object_id=t.object_id
+    WHERE t.name = 'passwords' AND c.name='name';
+ALTER TABLE passwords DROP CONSTRAINT {d.name};
+   </pre>
+   </li>
+   <li>PostgreSQL<br>
+   <pre>
+ALTER TABLE users ALTER COLUMN username TYPE VARCHAR(100);
+ALTER TABLE passwords ALTER COLUMN username TYPE VARCHAR(100);
+ALTER TABLE audit_log ALTER COLUMN username TYPE VARCHAR(100);
+ALTER TABLE password_data ALTER COLUMN password TYPE VARCHAR(300);
+ALTER TABLE passwords DROP CONSTRAINT passwords_name_key;
+   </pre>
+   </li>
+   <li>Oracle<br>
+   <pre>
+ALTER TABLE users MODIFY (username VARCHAR2(100));
+ALTER TABLE passwords MODIFY (username VARCHAR2(100));
+ALTER TABLE audit_log MODIFY (username VARCHAR2(100));
+ALTER TABLE password_data MODIFY (password VARCHAR2(300));
+SELECT constraint_name FROM all_constraints WHERE owner='WPS' AND table_name='PASSWORDS' AND constraint_type='U';
+ALTER TABLE passwords DROP CONSTRAINT {constraint_name};
+   </pre>
+   </li>
+  </ul>
+</li>
+<li>Continue deployment of WebPasswordSafe v1.3</li>
+</ol>
+
+<br/>
+
+</body>
+</html>
