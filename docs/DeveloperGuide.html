@@ -91,7 +91,7 @@ the optional plugins (see above).  Below discusses the interface requirements of
 <h3>4. Authorization Plugin</h3>
 <ul>
 <li>Implement: <b>net.webpasswordsafe.server.plugin.authorization.Authorizer</b></li>
-<li>Override: <b>public boolean isAuthorized(User user, Function function)</b></li>
+<li>Override: <b>public boolean isAuthorized(User user, String action)</b></li>
 <li>Note: You will want to pay attention to the available roles and functions defined in net.webpasswordsafe.common.util.Constants</li>
 </ul>
 
@@ -122,7 +122,9 @@ Reports in WebPasswordSafe are developed using JasperReports.  You can find the 
 /webpasswordsafe/war/WEB-INF/reports/ from which you can edit and customize the look of them and in some cases
 the data contained in them.  Be careful however that the look-and-feel customizations you make for either PDF or
 CSV format doesn't break the other format (if you care).  If you change data, be careful that the appropriate
-security controls and authorization are in place.
+security controls and authorization are in place.  Lastly, the reports configuration can be changed in
+/webpasswordsafe/war/WEB-INF/webpasswordsafe-reports.xml including access controls, parameters, and how
+they are presented on the client-side to the user.
 </p>
 
 

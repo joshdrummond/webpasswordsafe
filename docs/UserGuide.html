@@ -1,5 +1,5 @@
 <!--
-    Copyright 2010-2012 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -71,7 +71,7 @@ information for this password and click the "Save" button.
 
 <h4>i. Basic Password Information</h4>
 <p>
-Enter the "Title" as to how this password will be identified as (for instance "system - user").
+Enter the "Title" as to how this password will be identified.
 Enter the "Username" for this password.  Enter the actual "Password" value for this entry if one 
 already exists or you can click the "Generate Password" button to generate a new random password
 that meets your environment's password strength complexity policy.  Optionally additional information
@@ -82,7 +82,8 @@ however keep in mind this data is not encrypted.
 <h4>ii. Tags</h4>
 <p>
 "Tags" are one-word keywords or metadata terms that classify the password helping to organize them and allow
-more efficient searching.  Separate multiple tags on the same line using blank space or commas.
+more efficient searching.  Separate multiple tags on the same line using blank space or commas. Autocomplete
+popup will recommend existing tags as you type.
 </p>
 
 <h4>iii. Password History</h4>
@@ -209,6 +210,14 @@ name you want to update in the Templates window and click "Okay" button or simpl
 the values just as you do when adding a new template, except that you cannot unshare the template unless you are the original creator.
 </p>
 
+<h4>iii. Delete Template</h4>
+<p>
+To delete an existing template in the system, click on "Password" in the main menu, then "Template", then "Edit".  Choose the template
+name you want to delete in the Templates window and click "Okay" button or simply double-click the template name.  Now you can click
+the "Delete" button and will be prompted to confirm your decision if you are the original creator, as this will permanently delete it
+and make it unavailable for everyone.
+</p>
+
 <h3>9. Reports</h3>
 <p>
 Reports in WebPasswordSafe can be generated as either PDF (better for printing) or CSV (better for data analysis)
@@ -217,15 +226,17 @@ formatted files.
 
 <h4>i. Users Report</h4>
 <p>
-To view this report, click on "Reports" in the main menu, then "Users", then either "PDF" or "CSV".  This will
-open a new window to either view or save the report.  The Users Report will list all users in the system including
+To view this report, click on "Reports" in the main menu, then "Users Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The Users Report will list users in the system including
 their Username, Full Name, Email, Active, Date Created, and Date Last Login fields.
 </p>
 
 <h4>ii. Groups Report</h4>
 <p>
-To view this report, click on "Reports" in the main menu, then "Groups", then either "PDF" or "CSV".  This will
-open a new window to either view or save the report.  The Groups Report will list all groups in the system including
+To view this report, click on "Reports" in the main menu, then "Groups Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The Groups Report will list groups in the system including
 a row for each user if any are members of that group. Displays Group Name, User Full Name, Username, and Active fields.
 </p>
 
@@ -277,12 +288,20 @@ the "Save" button.
 
 <h3>4. Update Group</h3>
 <p>
-To edit an existing group in the system, click on "Admin" in the main menu, then "Groups", then "Edit".  Choose the group
+To update an existing group in the system, click on "Admin" in the main menu, then "Groups", then "Edit".  Choose the group
 name you want to update in the Groups window and click "Okay" button or simply double-click the group name.  Now you can change
 the values just as you do when adding a new group. Finally, click the "Save" button.
 </p>
 
-<h3>5. Unblock IP</h3>
+<h3>5. Delete Group</h3>
+<p>
+To delete an existing group in the system, click on "Admin" in the main menu, then "Groups", then "Edit".  Choose the group
+name you want to delete in the Groups window and click "Okay" button or simply double-click the group name.  Now you can click
+the "Delete" button and will be prompted to confirm your decision, as this will permanently delete the group and remove it from
+any existing associated users and permissions.
+</p>
+
+<h3>6. Unblock IP</h3>
 <p>
 To manually unblock an IP Address that may have been auto-blocked if using the IPLockoutAuthenticator for having too many
 consecutive failed login attempts come from that IP, click on "Admin" in the main menu, then "Tools", then "Unblock IP".
@@ -290,7 +309,7 @@ Enter the IP Address you want to unblock in the textbox and click "Okay" button.
 unblocked or that it did not exist as blocked to begin with.
 </p>
 
-<h3>6. Reports</h3>
+<h3>7. Reports</h3>
 <p>
 Reports in WebPasswordSafe can be generated as either PDF (better for printing) or CSV (better for data analysis)
 formatted files.
@@ -298,48 +317,111 @@ formatted files.
 
 <h4>i. Password Access Audit Report</h4>
 <p>
-To view this report, click on "Reports" in the main menu, then "Access Audit", then either "PDF" or "CSV".  This will
+To view this report, click on "Reports" in the main menu, then "Password Access Audit Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
 open a new window to either view or save the report.  The Password Access Audit Report will list all password access audit
-events in the system sorted by date/time starting with most recent.  Displays Date/Time, User Full Name, and Password Title
-accessed.
+events in the system sorted by date/time starting with most recent within the optional date range and user.  
+Displays Date/Time, User Full Name, and Password Title and Username accessed.
 </p>
 
-<h4>ii. Permissions Report</h4>
+<h4>ii. Password Expiration Report</h4>
 <p>
-To view this report, click on "Reports" in the main menu, then "Permissions", then either "PDF" or "CSV".  This will
+To view this report, click on "Reports" in the main menu, then "Password Expiration Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The Password Expiration Report will list all passwords that haven't been
+updated since the optional before date sorted by date/time starting with the oldest.  Displays Password Title and Username,
+Last Update Date, and Last Update By.
+</p>
+
+<h4>iii. Password Permissions Report</h4>
+<p>
+To view this report, click on "Reports" in the main menu, then "Password Permissions Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
 open a new window to either view or save the report.  The Password Permissions Report will list all passwords in the system 
-with a row for each permission (Group/User and Access Level) of that password.  Displays Password Title,
+with a row for each permission (Group/User and Access Level) of that password.  Displays Password Title and Username,
 Group Name or User Full Name, and Access Level fields.
 </p>
 
-<h4>iii. Password Export Report</h4>
+<h4>iv. Current Password Export Report</h4>
 <p>
-To view this report, click on "Reports" in the main menu, then "Password Export", then either "PDF" or "CSV".  This will
+To view this report, click on "Reports" in the main menu, then "Current Password Export Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
 open a new window to either view or save the report.  The Current Password Export Report will list all active passwords
 in the system and their current values.  This is a highly sensitive report that is commonly only used to generate paper-based
-exports for disaster recovery purposes as it will decrypt all passwords in the system.  Displays Password Title,
+exports for disaster recovery purposes as it can decrypt all passwords in the system.  Displays Password Title,
 Username, Current Password Value, Tags, and Notes fields.
+</p>
+
+<h4>v. System Audit Log Report</h4>
+<p>
+To view this report, click on "Reports" in the main menu, then "System Audit Log Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The System Audit Log Report will list all system audit events sorted
+by date/time starting with most recent within the optional date range and user.  Displays Date/Time, IP Address, Username,
+Action, Target, Success, Message.
 </p>
 
 <h2>IV. Web Services</h2>
 <p>
-WebPasswordSafe also optionally offers a web services interface for automated processes to interact with the system using SOAP.
-The WSDL URL can be located by going to https://host:port/WebPasswordSafe/webservice.wsdl  Refer to the WSDL for exact details
-but all services require at least authnUsername and authnPassword fields for each request 
-and includes success and message fields in the response.
+WebPasswordSafe also offers a web services interface for automated processes to interact with the system using REST.
+Refer below for exact details for each service, but all require HTTP Headers "X-WPS-Username" and "X-WPS-Password"
+to be properly set with the username and password to authenticate with for each request, and the response is in JSON
+format and includes "success" and "message" fields.
 </p>
 
-<h3>1. AddUser Endpoint</h3>
+<h3>1. Search Password</h3>
 <p>
-Allows a user with proper authorization to add a new user to the system.  Requires username, fullname, email, password, active fields 
-to be sent, refer to WSDL for details.
+Returns a list of passwords based on search criteria that the authenticated user has access to.  Optional parameter "query" includes search
+term, or if empty or missing returns all passwords.
+</p>
+<p>
+<i>Request API:</i><br>
+GET /rest/passwords?query={query}
+</p>
+<p>
+<i>Response API:</i><br>
+{"message":"","success":true,"passwordList":[{"tags":"","id":"115","username":"test","title":"test1","notes":""},{"tags":"","id":"124","username":"test","title":"test2","notes":""}]}
+</p>
+<p>
+<i>Example:</i><br>
+curl -H "X-WPS-Username: admin" -H "X-WPS-Password: admin" https://hostname/WebPasswordSafe/rest/passwords?query=test
 </p>
 
-<h3>2. GetCurrentPassword Endpoint</h3>
+<h3>2. Get Password</h3>
 <p>
-Allows a user with proper read permissions to get the current password value of a password in the system. Requires passwordName field
-to be sent, returns password field in response, refer to WSDL for details.
+Returns a password by id that the authenticated user has access to.  Required passwordId field.
 </p>
+<p>
+<i>Request API:</i><br>
+GET /rest/passwords/{passwordId}
+</p>
+<p>
+<i>Response API:</i><br>
+{"message":"","success":true,"password":{"tags":"","id":"124","username":"test","title":"test2","notes":""}}
+</p>
+<p>
+<i>Example:</i><br>
+curl -H "X-WPS-Username: admin" -H "X-WPS-Password: admin" https://hostname/WebPasswordSafe/rest/passwords/124
+</p>
+
+<h3>3. Get Current Password Value</h3>
+<p>
+Returns the current password value by id that the authenticated user has access to.  Required passwordId field.
+</p>
+<p>
+<i>Request API:</i><br>
+GET /rest/passwords/{passwordId}/currentValue
+</p>
+<p>
+<i>Response API:</i><br>
+{"message":"","success":true,"currentPassword":"SNZijWE6x4MTNcIhgs2G"}
+</p>
+<p>
+<i>Example:</i><br>
+curl -H "X-WPS-Username: admin" -H "X-WPS-Password: admin" https://hostname/WebPasswordSafe/rest/passwords/124/currentValue
+</p>
+
+<br/>
 
 </body>
 </html>
