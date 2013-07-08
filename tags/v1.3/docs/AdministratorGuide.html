@@ -1,0 +1,293 @@
+<!--
+    Copyright 2010-2013 Josh Drummond
+
+    This file is part of WebPasswordSafe.
+
+    WebPasswordSafe is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    WebPasswordSafe is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with WebPasswordSafe; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WebPasswordSafe Administrator Guide</title>
+</head>
+<body>
+
+<h1>WebPasswordSafe Administrator Guide</h1>
+
+<h2>I. Introduction</h2>
+<p>
+This administrator guide covers installation, configuration, and deployment of WebPasswordSafe into your environment.
+</p>
+
+<h2>II. Requirements</h2>
+<ol>
+<li>Java SE 6+ (JDK)</li>
+<li>Maven 3.0+</li>
+<li>Java Servlet Container (i.e. Tomcat 5.5+, Glassfish)</li>
+<li>Database (JDBC compatible) (i.e. MySQL, MSSQL, Oracle, PostgreSQL, HSQL)</li>
+</ol>
+
+<h2>III. Download</h2>
+<ol>
+<li>Download <b>webpasswordsafe-src-[version].zip</b> and <b>webpasswordsafe-dependencies-bin-[version].zip</b> from <a href="http://code.google.com/p/webpasswordsafe/downloads/list" target="_blank">http://code.google.com/p/webpasswordsafe/downloads/list</a></li>
+<li><i>Optionally, advanced users can instead download other revisions directly from public SVN repository at <a href="http://code.google.com/p/webpasswordsafe/source/checkout" target="_blank">http://code.google.com/p/webpasswordsafe/source/checkout</a></i></li>
+<li><i>Optionally, a sample WAR file <b>webpasswordsafe-sample-[version].war</b> can be downloaded from <a href="http://code.google.com/p/webpasswordsafe/downloads/list" target="_blank">http://code.google.com/p/webpasswordsafe/downloads/list</a></i></li>
+</ol>
+
+<h2>IV. Environment Setup</h2>
+<ol>
+<li>Verify Java and Maven are installed properly, JAVA_HOME and MAVEN_HOME environment variables are set, and their bin directories are in your PATH.</li>
+<li>Verify Java Servlet Container installed properly, optionally Web Server also installed properly and forwarding appropriate requests to container, and SSL enforcement is configured properly.</li>
+<li>Verify you have Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files installed for your Java Servlet Container's Java VM.</li>
+<li>Create new database (i.e. "webpasswordsafe") and user (i.e. "wps") in database server.  Verify only that user (with dbo privileges) has access to that database.</li>
+<li>Extract contents of webpasswordsafe-src-[version].zip to create /webpasswordsafe directory.</li>
+<li>Copy your database vendor's JDBC driver .jar file(s) into /webpasswordsafe/war/WEB-INF/lib directory.</li>
+<li>Extract contents of webpasswordsafe-dependencies-bin-[version].zip into a temporary /tmp directory.</li>
+<li>Copy the <i>contents</i> of the /tmp/webpasswordsafe-dependencies-bin/resources/ directory into the /webpasswordsafe/war/gxt/ directory.</li>
+<li>From inside the /tmp/webpasswordsafe-dependencies-bin directory, execute the following Maven commands:
+  <ul>
+   <li>mvn install:install-file -DgroupId=com.extjs -DartifactId=gxt -Dversion=2.2.5 -Dpackaging=jar -Dfile=gxt-2.2.5-gwt22.jar</li>
+   <li>mvn install:install-file -DgroupId=net.sf.gwt-widget -DartifactId=gwt-sl -Dversion=1.1 -Dpackaging=jar -Dfile=gwt-sl-1.1.jar</li>
+   <li>mvn install:install-file -DgroupId=trove -DartifactId=trove -Dversion=2.0.4 -Dpackaging=jar -Dfile=trove-2.0.4.jar</li>
+  </ul>
+</li>
+</ol>
+
+<h2>V. Configuration</h2>
+
+<h3>1. encryption.properties</h3>
+<p>
+Edit <i>/webpasswordsafe/war/WEB-INF/encryption.properties</i> changing values specific to your encryption environment.  You absolutely should change the <b>encryptor.jasypt.password</b> value
+to a new random value as this is your secret encryption key/passphrase.  It is also important it is protected properly and not changed after initial deployment, doing so will render your data unreadable.
+</p>
+
+<h3>2. jdbc.properties</h3>
+<p>
+Edit <i>/webpasswordsafe/war/WEB-INF/jdbc.properties</i> changing values specific to your database environment.  Commonly you'll need to change <b>jdbc.username</b> and <b>jdbc.password</b>, as well as
+uncomment (remove # at beginning of line) the <b>hibernate.dialect</b>, <b>jdbc.driverClassName</b>, <b>jdbc.url</b>, <b>jdbc.validationQuery</b> lines that relate to your database server vendor and 
+delete the others.  Finally change the <b>jdbc.url</b> value to point to your database server.
+</p>
+
+<h3>3. webpasswordsafe-service.xml</h3>
+<p>
+Edit <i>/webpasswordsafe/war/WEB-INF/webpasswordsafe-service.xml</i> to customize the plugins to fit your environment via standard Spring Framework configuration XML format.  
+In all cases you will want to set the appropriate bean definition to the implementation you want (and either deleting or commenting out all other unused implementations) and
+also set any other custom parameters for that implementation as needed.  See Developer Guide for how to write and integrate your own implementation of these plugins.
+</p>
+
+<h4>i. Audit Logger Plugin</h4>
+<p>
+This plugin is configured using the <b>bean id="auditLogger"</b> tag and can point to any class that implements the AuditLogger interface.
+</p>
+
+<h5>a. DatabaseAuditLogger</h5>
+<p>
+The DatabaseAuditLogger class implementation doesn't have any custom parameters to configure, it simply records all audit events into the 
+audit_log table of the WebPasswordSafe database.
+</p>
+
+<h5>b. Log4jAuditLogger</h5>
+<p>
+The Log4jAuditLogger class implementation has one parameter "delimiter" which is the text used to separate the different audit event fields
+when writing to a log.  This plugin will send all audit events to a log4j implementation category for that class.  From there log4j can be 
+configured (see log4j.xml section) to write those logs to a file, console, syslog, or any other output log4j supports.
+</p>
+
+<h5>c. CompositeAuditLogger</h5>
+<p>
+The CompositeAuditLogger class implementation allows for the logging to multiple AuditLogger implementations at the same time.  It has one property
+"auditLoggers" that can take a list of references to other beans that implement AuditLogger.  By default it sends to both DatabaseAuditLogger and
+Log4jAuditLogger.
+</p>
+
+<h4>ii. Authentication Plugin</h4>
+<p>
+This plugin is configured using the <b>bean id="authenticator"</b> tag and can point to any class that implements the Authenticator interface.
+Note that these plugins will only successfully authenticate users that have already been added to the WebPasswordSafe application.  If
+authenticating with an external source, make sure the usernames match.  In many cases multiple authenticators can be chained together to achieve
+additional functionality, details are below.
+</p>
+
+<h5>a. LocalAuthenticator</h5>
+<p>
+The LocalAuthenticator class implementation is the default and authenticates users against the password setup internally for them inside of
+the WebPasswordSafe application.
+</p>
+
+<h5>b. LdapAuthenticator</h5>
+<p>
+The LdapAuthenticator class implementation allows you to authenticate users against an LDAP server.  It takes multiple parameters and depends on
+other beans.  Most often you must change the "filter" parameter based on how to find people in your LDAP schema (the $1 token will get replaced
+by the username of user trying to authenticate, so that is important) and the "base" parameter is the base DN for your LDAP tree.  Furthermore,
+you must configure the authnContextSource bean, setting the "url" parameter to the URL of your LDAP server, the "userDn" parameter to the DN of
+the user that can bind to the LDAP server, and the "password" parameter to the password of that user that can bind to the LDAP server.
+</p>
+
+<h5>c. DemoAuthenticator</h5>
+<p>
+The DemoAuthenticator class implementation is used mostly just for testing or demonstration purposes.  When used it hardcodes the password of all
+users to be the same value (configured by setting the "demoPassword" parameter) that cannot be changed.
+</p>
+
+<h5>d. CompositeAuthenticator</h5>
+<p>
+The CompositeAuthenticator class implementation allows for using multiple Authenticator implementations for different sets of users.  It takes a list
+of maps that represent "authenticators".  Each map entry in the list must have an entry key "authenticator" that references another Authenticator bean.
+Each map entry must also have either an entry key "users" and/or "anyUser".  The "users" entry itself contains a list of string values, one value tag
+for each username that should be authenticated using this plugin entry.  The "anyUser" entry contains a boolean value "true"/"false" that if true will
+attempt to authenticate any user.  The plugins are attempted in the order they are listed.  The example contained in the default configuration shows
+that the admin user gets authenticated with the localAuthenticator implementation, while all other users get authenticated with the ldapAuthenticator
+implementation.
+</p>
+
+<h5>e. RsaSecurIdAuthenticator</h5>
+<p>
+The RsaSecurIdAuthenticator class implementation is an optional Authenticator implementation (see Developer Guide) that authenticates against an
+RSA SecurID server for multi-factor authentication.  Since RSA SecurID has its own configuration file for setup, this plugin simply has on parameter
+"configPath" that contains the full directory and file path to the rsa_api.properties file that defines that setup.
+</p>
+
+<h5>f. UserLockoutAuthenticator</h5>
+<p>
+The UserLockoutAuthenticator class implementation is used by default to chain another Authenticator implementation adding extra functionality to it.
+It this case, it will disable a user after a given number of consecutive failed login attempts from the chained authenticator.  The "authenticator" 
+parameter must be set to reference another valid configured Authenticator bean instance it will chain with.  The "failedLoginThreshold" parameter
+is set to an integer, the number of consecutive failed authenticator attempts at which the user will get disabled.  Finally the "whitelist"
+entry contains a list of string values, one value tag for each username that can be whitelisted and bypass ever getting disabled by this plugin.
+Typically you'll want at least one administrator role user to be whitelisted, so they can always login and enable other users who've been disabled,
+however best practice is to not use the default "admin" user for this, use a non-obvious username which makes a denial of service attack less likely.
+</p>
+
+<h5>g. IPLockoutAuthenticator</h5>
+<p>
+The IPLockoutAuthenticator class implementation is used by default to chain another Authenticator implementation adding extra functionality to it.
+It this case, it will block an IP address after a given number of consecutive failed login attempts from the chained authenticator.  The "authenticator" 
+parameter must be set to reference another valid configured Authenticator bean instance it will chain with.  The "failedLoginThreshold" parameter
+is set to an integer, the number of consecutive failed authenticator attempts at which the IP address will be blocked.  The "lockoutLength" parameter
+is set to an integer, the number of minutes that an IP address should be blocked to prevent or slow down brute-force attacks of multiple users
+from the same IP address.  Finally the "whitelist" entry contains a list of string values, one value tag for each IP address that can be whitelisted 
+and bypass ever getting blocked by this plugin, you may want to set this to an internal IP address you know will never be used to stage an attack.
+</p>
+
+<h4>iii. Role Retriever Plugin</h4>
+<p>
+This plugin is configured using the <b>bean id="roleRetriever"</b> tag and can point to any class that implements the RoleRetriever interface.
+</p>
+
+<h5>a. LocalRoleRetriever</h5>
+<p>
+The LocalRoleRetriever class implementation is the default which allows the defining of an "adminUsers" property that is a set of usernames 
+(each username with its own value tag) that are given the ADMIN role.  It is inferred all users get the USER role.
+</p>
+
+<h4>iv. Authorization Plugin</h4>
+<p>
+This plugin is configured using the <b>bean id="authorizer"</b> tag and can point to any class that implements the Authorizer interface.
+</p>
+
+<h5>a. DefaultAuthorizer</h5>
+<p>
+The DefaultAuthorizer class implementation is the default which allows the defining of an "allowAdminBypassPasswordPermissions" property
+that is either true or false, depending if you want to allow users with ADMIN role to bypass password permissions. All permissions are hardcoded
+inside the plugin code using RBAC, functionality is authorized based on whether the user's role is of ADMIN or USER.
+</p>
+
+<h4>v. Password Generator Plugin</h4>
+<p>
+This plugin is configured using the <b>bean id="passwordGenerator"</b> tag and can point to any class that implements the PasswordGenerator interface.
+</p>
+
+<h5>a. SimpleRandomPasswordGenerator</h5>
+<p>
+The SimpleRandomPasswordGenerator class implementation allows for the changing of some basic parameters.  Change "passwordLength" value to length of 
+passwords it should generate, "allowLowercase"/"allowUppercase"/"allowNumeric" to either "true"/"false" based on whether to include those types of characters in 
+the generated password, "specialChars" to a string which contains any other characters not included in the above sets in the generated password (i.e. "!@#$%^*()"),
+and "excludeChars" to a string which contains any characters to exclude from the above sets in the generated password (useful for "look-a-like" characters like O/0 and l/1").
+</p>
+
+<h4>vi. Encryption - Digester Plugin</h4>
+<p>
+This plugin is configured using the <b>bean id="digester"</b> tag and can point to any class that implements the Digester interface and handles
+one-way encryption of authentication passwords.
+</p>
+
+<h5>a. JasyptDigester</h5>
+<p>
+The JasyptDigester class implementation is the default using the Jasypt encryption library and is configured using the encryption.properties file.
+</p>
+
+<h5>b. EsapiDigester</h5>
+<p>
+The EsapiDigester class implementation is an optional implementation (see Developer Guide) using the OWASP-ESAPI encryption library and is configured 
+using the encryption.properties and its own configuration files.
+</p>
+
+<h4>vii. Encryption - Encryptor Plugin</h4>
+<p>
+This plugin is configured using the <b>bean id="encryptor"</b> tag and can point to any class that implements the Encryptor interface and handles
+two-way encryption of password data.
+</p>
+
+<h5>a. JasyptEncryptor</h5>
+<p>
+The JasyptEncryptor class implementation is the default using the Jasypt encryption library and is configured using the encryption.properties file.
+</p>
+
+<h5>b. EsapiEncryptor</h5>
+<p>
+The EsapiEncryptor class implementation is an optional implementation (see Developer Guide) using the OWASP-ESAPI encryption library and is configured 
+using the encryption.properties and its own configuration files.
+</p>
+
+<h3>4. log4j.xml</h3>
+<p>
+Edit <i>/webpasswordsafe/src/main/resources/log4j.xml</i> changing values to suit your environment.
+</p>
+<p>
+If using the Log4jAuditLogger, you will want to pay special attention to the appenders defined to the Log4jAuditLogger category, by default using the auditLog 
+appender, but can also use the auditSyslog appender to send logs to Syslog.  You may want to customize the "File" parameter to point the file to a different 
+directory path or filename.  For Syslog you will want to change the "SyslogHost" and "Facility" parameters specific to the IP/Host and Facility of your Syslog server.
+</p>
+<p>
+Besides audit logging, this log4j configuration file also handles debug logging of the WebPasswordSafe application itself.  You can change the "File" 
+parameter of the "dailyFile" appender to point the debug log file to a different directory path or filename.  To make the logs more verbose, helpful when trying 
+to debug problems, you can change the various "priority" values from "info" or "error" to "debug" or "trace" instead.  For further customization options please 
+see log4j's own documentation.
+</p>
+
+<h3>5. web.xml</h3>
+<p>
+Edit <i>/webpasswordsafe/src/main/webapp/WEB-INF/web.xml</i> changing the "session-timeout" parameter to be an integer value representing the number of
+minutes a server session can be idle before it timeouts and requires the user to re-authenticate.  The default is 10 minutes.
+</p>
+
+<h2>VI. Build and Deploy</h2>
+<ol>
+<li>From inside the /webpasswordsafe directory, execute the following Maven command:
+  <ul>
+   <li>mvn clean package</li>
+  </ul>
+</li>
+<li>If this is an upgrade, follow special directions in <a href="UpgradeNotes.html">Upgrade Notes</a></li>
+<li>Deploy the WAR file generated in /webpasswordsafe/target/webpasswordsafe-[version].war to Java Servlet Container as WebPasswordSafe.war</li>
+<li>If using LocalAuthenticator the default <b>admin</b> user login password is <b>admin</b>, login to WebPasswordSafe according to the User Guide and change that to something stronger.</li>
+<li>Please see the User Guide for further setup and use of the WebPasswordSafe application, you are done!</li>
+</ol>
+
+<br/>
+
+</body>
+</html>

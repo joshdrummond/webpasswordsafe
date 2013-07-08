@@ -1,0 +1,427 @@
+<!--
+    Copyright 2010-2013 Josh Drummond
+
+    This file is part of WebPasswordSafe.
+
+    WebPasswordSafe is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    WebPasswordSafe is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with WebPasswordSafe; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WebPasswordSafe User Guide</title>
+</head>
+<body>
+
+<h1>WebPasswordSafe User Guide</h1>
+
+<h2>I. Introduction</h2>
+<p>
+WebPasswordSafe is an open-source, web-based secure password safe for the enterprise that supports multiple users with delegated 
+access controls. Simple to use, you can manage passwords and other sensitive secrets centrally in a secure database with industry standard 
+strong encryption. Fine-grained access controls can be defined on passwords to share with other authorized users in view only, view and 
+update, or delegated granting modes. Reusable permission templates can be defined. Ability to organize passwords using friendly tags. 
+Configurable strong password generation tool. Full audit trail of all password access events, many useful and configurable reports, 
+as well as pluggable modules for external logging all audit events. History of old passwords can be kept. Exports can be done for disaster 
+recovery purposes. Password retrieval also exposed via Web Services for automated processes.
+<br/><br/>
+This user guide was written to cover the common default environment, however much of the power
+of WebPasswordSafe comes through its ease of customization and integration into existing environments
+so consult your system administrator for specific details especially in regard to authentication, roles, and authorization.
+</p>
+
+<h2>II. Basic Features</h2>
+
+<h3>1. Login</h3>
+<p>
+Using your web-browser, go to the WebPasswordSafe URL.  Ask your system administrator how you should authenticate in your environment.
+Enter your username and password and click the "Submit" button or press Enter.  If the login attempt fails you will get an error message
+and need to try again. If it is successful the WebPasswordSafe main screen will load and show your name as "Logged In As" at the top right.
+</p> 
+
+<h3>2. Logout</h3>
+<p>
+To logout of WebPasswordSafe and end your current session, click on "User" in the main menu, then "Logout".
+</p>
+
+<h3>3. Change Your Authentication Password</h3>
+<p>
+To change the password you use to login (if using default WebPasswordSafe authentication), click on "User"
+in the main menu, then "Settings", then "Change Password".  Type your new password in each of the text boxes
+(they must match and not be blank) and click the "Okay" button.
+</p>
+
+<h3>4. Add Password</h3>
+<p>
+To add a new password into the system, click on "Password" in the main menu, then "Add".  Enter the appropriate
+information for this password and click the "Save" button.
+</p>
+
+<h4>i. Basic Password Information</h4>
+<p>
+Enter the "Title" as to how this password will be identified.
+Enter the "Username" for this password.  Enter the actual "Password" value for this entry if one 
+already exists or you can click the "Generate Password" button to generate a new random password
+that meets your environment's password strength complexity policy.  Optionally additional information
+about this password entry can be stored in the "Notes" field (URL, vendor contact info, etc), 
+however keep in mind this data is not encrypted.  
+</p>
+
+<h4>ii. Tags</h4>
+<p>
+"Tags" are one-word keywords or metadata terms that classify the password helping to organize them and allow
+more efficient searching.  Separate multiple tags on the same line using blank space or commas. Autocomplete
+popup will recommend existing tags as you type.
+</p>
+
+<h4>iii. Password History</h4>
+<p>
+The "Max History" field can be changed to a number that represents the number of historical 
+past passwords to store for this entry, or leave as the default of -1 which means keep infinite generations.
+</p>
+
+<h4>iv. Password Permissions</h4>
+<p>
+To apply the proper access control permissions for this password, click on the "Edit Permissions" button.
+By default, passwords are initially created giving permission to the currently logged in user with GRANT access.
+You may add additional permission rows by choosing a user or group from the "Select a User/Group" drop-down box
+and clicking the "Add" button.  You can also begin typing a user/group name in the drop-down box to jump to
+an entry that matches what you are typing.  Once a user/group permission row is added, you can adjust the access
+level by selecting the appropriate value (READ/WRITE/GRANT) from the drop-down in that row of table.  You can
+remove a row by selecting an entry and clicking the "Remove Selected" button.  You can remove all rows
+from the table by clicking the "Remove All" button.  If you accidently alter permissions, click the "Cancel" button
+and "Edit Permissions" again.  Each password is required to have at least one permission assigned in order to save
+it.  Once finished, click the "Okay" button to return to the Password window. 
+</p>
+
+<h4>v. Apply Permission Template</h4>
+<p>
+You can bulk add permissions to passwords by applying permission templates if templates have been created.
+From the Permissions window, click the "Apply Template" button.  On the Templates window, select the template
+name you want to apply and click the "Okay" button.  The permissions of that template will then be added to
+the permissions table.
+</p>
+
+<h3>5. Search For Passwords</h3>
+<p>
+Searching for passwords is probably the most frequent activity when using WebPasswordSafe, and as such the
+Password Search window is the default one displayed.  One can also clear and refresh this screen by
+clicking on "Password" in the main menu, then "Search", then "Refresh Search". 
+</p>
+
+<h4>i. Search Query</h4>
+<p>
+Enter a search query to filter results using term(s) associated with the password entries 
+(including title, username, and notes)  you are looking for in the text box (case insensitive), 
+using the '*' character for wildcards, or leave empty to return all passwords the logged in user 
+has access to read.  Uncheck the "Active Only" checkbox to include disabled (deleted) passwords in your search.
+Click the "Search" button to initiate a search and results will be returned in the table below.  Results can be
+sorted using the column header controls of the table.
+</p>
+
+<h4>ii. Filter By Tags</h4>
+<p>
+Search queries can be further refined by selecting one or more "Tag(s)" from the checkboxes on the left
+of the screen which will only return passwords with those tag(s) associated to them.  You can choose how
+multiple tags checked are treated by selecting the "OR" (meaning a password is only returned if it has any 
+of the checked tags associated with it) or "AND" (meaning a password is only returned if it has all 
+of the checked tags associated with it) radiobox on the bottom.  You can also double-click a tag and a 
+search is immediately invoked returning all passwords matching just that tag (and any text in the search box).
+</p>
+
+<h3>6. View Current Password Value</h3>
+<p>
+Once password results are found and filled in the "Password(s)" table, there are multiple ways to actually
+view the current password value.  The quickest is to double-click the data cell under the Password column 
+of the row of the password value you want (which has ****** displayed), this will bring up a new
+"Current Password" window that displays the current password value.  You can select that text and copy/paste
+it as needed and click "Close" button.  You can also double-click any other data cell of the row of the password you
+want which will bring up the "Password" window.  From this window to display the current password value click
+the "Current Password" button which will fill the Password textbox with the current password value and click "Cancel" 
+button.  Alternatively, rather than double-clicking (i.e. on mobile device) you can select a password row and click
+on "Password" in the main menu, then "Search", then either on "Open Selected Password" to bring up the "Password" window
+or on "Get Selected Password Value" to bring up the "Current Password" window.
+</p>
+
+<h4>i. View Password Permissions</h4>
+<p>
+Also from the Password window you may notice some features and controls are disabled or unchangable depending on the access
+level of permission you have to that password.  The current permissions assigned to that password can be
+viewed by clicking the "View Permissions" or "Edit Permissions" button depending on whether you have READ, WRITE, or
+GRANT access to that password.
+</p>
+
+<h4>ii. View Access Audit Log</h4>
+<p>
+The access audit log for a password can be viewed by clicking the "View Access Audit Log" button from the Password window.
+This will bring up the "Password Access Audit Log" window which shows date/time and user for each time the password
+value was returned and viewed by a user (with the exception of complete data export report by administrator).  The results
+can be sorted using the column header controls of the table.
+</p>
+
+<h4>iii. View Password History</h4>
+<p>
+The history of password values for a password can be viewed by clicking the "View Password History" button from the Password window.
+This will bring up the "Password History" window which shows password value(s) (including the current one),
+date/time it was created, and user who created it for each time the password value was changed. The results
+can be sorted using the column header controls of the table.  You can select the text in the Password Value column and copy/paste
+it as needed.
+</p>
+
+<h3>7. Update Password</h3>
+<p>
+If you have WRITE access to a password, you can update it by searching for and viewing the password as described above.
+Once on the Password window, edit the values you want to change. 
+For audit reasons you cannot "delete" a password, but instead you may "disable" it by unchecking the "Active" checkbox 
+which will no longer include it in searches by default.  If you have GRANT access to a password you may also edit the
+permissions by clicking the "Edit Permissions" button.  Once changes have been made, click the "Save" button.
+</p>
+
+<h3>8. Templates</h3>
+<p>Reusable permission templates can be defined that bundle together commonly applied permissions to make bulk adding
+of permissions to passwords faster.
+</p>
+
+<h4>i. Add Template</h4>
+<p>
+To add a new template into the system, click on "Password" in the main menu, then "Template", then "Add".  Enter a unique
+Name to identify the template, then add the appropriate permissions by using the "Select a User/Group" drop-down box and "Add" button.
+Change the Access Level of permission by selecting READ/WRITE/GRANT in the row's drop-down box.  Finally decide if this template
+should be shared with other users in the system (meaning they can use and edit the template, but not unshare it) by checking the 
+"Shared" checkbox and click the "Save" button.
+</p>
+
+<h4>ii. Update Template</h4>
+<p>
+To update an existing template in the system, click on "Password" in the main menu, then "Template", then "Edit".  Choose the template
+name you want to update in the Templates window and click "Okay" button or simply double-click the template name.  Now you can change
+the values just as you do when adding a new template, except that you cannot unshare the template unless you are the original creator.
+</p>
+
+<h4>iii. Delete Template</h4>
+<p>
+To delete an existing template in the system, click on "Password" in the main menu, then "Template", then "Edit".  Choose the template
+name you want to delete in the Templates window and click "Okay" button or simply double-click the template name.  Now you can click
+the "Delete" button and will be prompted to confirm your decision if you are the original creator, as this will permanently delete it
+and make it unavailable for everyone.
+</p>
+
+<h3>9. Reports</h3>
+<p>
+Reports in WebPasswordSafe can be generated as either PDF (better for printing) or CSV (better for data analysis)
+formatted files.
+</p>
+
+<h4>i. Users Report</h4>
+<p>
+To view this report, click on "Reports" in the main menu, then "Users Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The Users Report will list users in the system including
+their Username, Full Name, Email, Active, Date Created, and Date Last Login fields.
+</p>
+
+<h4>ii. Groups Report</h4>
+<p>
+To view this report, click on "Reports" in the main menu, then "Groups Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The Groups Report will list groups in the system including
+a row for each user if any are members of that group. Displays Group Name, User Full Name, Username, and Active fields.
+</p>
+
+<h3>10. Help</h3>
+<p>
+To view online help documentation (including the document you are reading now), click on "About" in the main menu,
+then "Help".  A new window will be displayed with help documentation.
+</p>
+
+<h3>11. About</h3>
+<p>
+To view information about this installation of WebPasswordSafe, click on "About" in the main menu,
+then "About".  A new window will be displayed with version number and copyright information.
+</p>
+
+
+<h2>III. Advanced Features</h2>
+<p>
+The following features are only available to users with the "administrator" role in the default environment
+of WebPasswordSafe.  In addition to these features, by default the "administrator" role can also bypass
+all password permissions and template sharing settings.
+</p>
+
+<h3>1. Add User</h3>
+<p>
+To add a new user into the system, click on "Admin" in the main menu, then "Users", then "Add".  Enter a unique
+Username (this cannot change), Full Name, Email address, and Password (if using default WebPasswordSafe authentication).
+Make sure "Enabled" checkbox is checked if this is an active user (meaning they are allowed to login), and
+move the appropriate "Group" names from the "Available" list to the "Member Of" list as appropriate. Finally, click
+the "Save" button.
+</p>
+
+<h3>2. Update User</h3>
+<p>
+To edit an existing user in the system, click on "Admin" in the main menu, then "Users", then "Edit".  Choose the user
+full name you want to update in the Users window and click "Okay" button or simply double-click the user full name.  Now you can change
+the values just as you do when adding a new user (except the username for audit reasons).  You cannot really "delete" a user
+from the system for audit reasons, however you can uncheck the "Enabled" checkbox to deactivate them so they cannot login
+and use the system anymore. Also by checking the "Enabled" checkbox, you can re-enable a user that was auto-disabled if using the 
+UserLockoutAuthenticator because of too many consecutive failed login attempts by that user.  Finally, click the "Save" button.
+</p>
+
+<h3>3. Add Group</h3>
+<p>
+To add a new group into the system, click on "Admin" in the main menu, then "Groups", then "Add".  Enter a unique
+Group Name, and move the appropriate "Users" names from the "Available" list to the "Members" list as appropriate. Finally, click
+the "Save" button.
+</p>
+
+<h3>4. Update Group</h3>
+<p>
+To update an existing group in the system, click on "Admin" in the main menu, then "Groups", then "Edit".  Choose the group
+name you want to update in the Groups window and click "Okay" button or simply double-click the group name.  Now you can change
+the values just as you do when adding a new group. Finally, click the "Save" button.
+</p>
+
+<h3>5. Delete Group</h3>
+<p>
+To delete an existing group in the system, click on "Admin" in the main menu, then "Groups", then "Edit".  Choose the group
+name you want to delete in the Groups window and click "Okay" button or simply double-click the group name.  Now you can click
+the "Delete" button and will be prompted to confirm your decision, as this will permanently delete the group and remove it from
+any existing associated users and permissions.
+</p>
+
+<h3>6. Unblock IP</h3>
+<p>
+To manually unblock an IP Address that may have been auto-blocked if using the IPLockoutAuthenticator for having too many
+consecutive failed login attempts come from that IP, click on "Admin" in the main menu, then "Tools", then "Unblock IP".
+Enter the IP Address you want to unblock in the textbox and click "Okay" button.  A message will pop-up saying it has been
+unblocked or that it did not exist as blocked to begin with.
+</p>
+
+<h3>7. Reports</h3>
+<p>
+Reports in WebPasswordSafe can be generated as either PDF (better for printing) or CSV (better for data analysis)
+formatted files.
+</p>
+
+<h4>i. Password Access Audit Report</h4>
+<p>
+To view this report, click on "Reports" in the main menu, then "Password Access Audit Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The Password Access Audit Report will list all password access audit
+events in the system sorted by date/time starting with most recent within the optional date range and user.  
+Displays Date/Time, User Full Name, and Password Title and Username accessed.
+</p>
+
+<h4>ii. Password Expiration Report</h4>
+<p>
+To view this report, click on "Reports" in the main menu, then "Password Expiration Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The Password Expiration Report will list all passwords that haven't been
+updated since the optional before date sorted by date/time starting with the oldest.  Displays Password Title and Username,
+Last Update Date, and Last Update By.
+</p>
+
+<h4>iii. Password Permissions Report</h4>
+<p>
+To view this report, click on "Reports" in the main menu, then "Password Permissions Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The Password Permissions Report will list all passwords in the system 
+with a row for each permission (Group/User and Access Level) of that password.  Displays Password Title and Username,
+Group Name or User Full Name, and Access Level fields.
+</p>
+
+<h4>iv. Current Password Export Report</h4>
+<p>
+To view this report, click on "Reports" in the main menu, then "Current Password Export Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The Current Password Export Report will list all active passwords
+in the system and their current values.  This is a highly sensitive report that is commonly only used to generate paper-based
+exports for disaster recovery purposes as it can decrypt all passwords in the system.  Displays Password Title,
+Username, Current Password Value, Tags, and Notes fields.
+</p>
+
+<h4>v. System Audit Log Report</h4>
+<p>
+To view this report, click on "Reports" in the main menu, then "System Audit Log Report".  Optionally enter report-specific
+parameters and then choose either "pdf" or "csv" type and click the "Submit" button.  This will
+open a new window to either view or save the report.  The System Audit Log Report will list all system audit events sorted
+by date/time starting with most recent within the optional date range and user.  Displays Date/Time, IP Address, Username,
+Action, Target, Success, Message.
+</p>
+
+<h2>IV. Web Services</h2>
+<p>
+WebPasswordSafe also offers a web services interface for automated processes to interact with the system using REST.
+Refer below for exact details for each service, but all require HTTP Headers "X-WPS-Username" and "X-WPS-Password"
+to be properly set with the username and password to authenticate with for each request, and the response is in JSON
+format and includes "success" and "message" fields.
+</p>
+
+<h3>1. Search Password</h3>
+<p>
+Returns a list of passwords based on search criteria that the authenticated user has access to.  Optional parameter "query" includes search
+term, or if empty or missing returns all passwords.
+</p>
+<p>
+<i>Request API:</i><br>
+GET /rest/passwords?query={query}
+</p>
+<p>
+<i>Response API:</i><br>
+{"message":"","success":true,"passwordList":[{"tags":"","id":"115","username":"test","title":"test1","notes":""},{"tags":"","id":"124","username":"test","title":"test2","notes":""}]}
+</p>
+<p>
+<i>Example:</i><br>
+curl -H "X-WPS-Username: admin" -H "X-WPS-Password: admin" https://hostname/WebPasswordSafe/rest/passwords?query=test
+</p>
+
+<h3>2. Get Password</h3>
+<p>
+Returns a password by id that the authenticated user has access to.  Required passwordId field.
+</p>
+<p>
+<i>Request API:</i><br>
+GET /rest/passwords/{passwordId}
+</p>
+<p>
+<i>Response API:</i><br>
+{"message":"","success":true,"password":{"tags":"","id":"124","username":"test","title":"test2","notes":""}}
+</p>
+<p>
+<i>Example:</i><br>
+curl -H "X-WPS-Username: admin" -H "X-WPS-Password: admin" https://hostname/WebPasswordSafe/rest/passwords/124
+</p>
+
+<h3>3. Get Current Password Value</h3>
+<p>
+Returns the current password value by id that the authenticated user has access to.  Required passwordId field.
+</p>
+<p>
+<i>Request API:</i><br>
+GET /rest/passwords/{passwordId}/currentValue
+</p>
+<p>
+<i>Response API:</i><br>
+{"message":"","success":true,"currentPassword":"SNZijWE6x4MTNcIhgs2G"}
+</p>
+<p>
+<i>Example:</i><br>
+curl -H "X-WPS-Username: admin" -H "X-WPS-Password: admin" https://hostname/WebPasswordSafe/rest/passwords/124/currentValue
+</p>
+
+<br/>
+
+</body>
+</html>

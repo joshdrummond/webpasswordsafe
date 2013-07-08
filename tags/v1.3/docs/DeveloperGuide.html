@@ -1,0 +1,151 @@
+<!--
+    Copyright 2010-2013 Josh Drummond
+
+    This file is part of WebPasswordSafe.
+
+    WebPasswordSafe is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    WebPasswordSafe is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with WebPasswordSafe; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WebPasswordSafe Developer Guide</title>
+</head>
+<body>
+
+<h1>WebPasswordSafe Developer Guide</h1>
+
+<h2>I. Introduction</h2>
+<p>
+This developer guide covers customizing reports, internationalization, using optional plugins, developing custom plugins, and integrating these into the build process of WebPasswordSafe.
+</p>
+
+<h2>II. General Integrating Source Code Into Build Process</h2>
+<ul>
+<li>Copy main source code under /webpasswordsafe/src/main/java/* using full package/directory structure</li>
+<li>Copy JTest source code under /webpasswordsafe/src/test/java/* using full package/directory structure</li>
+<li>Follow Build and Deploy directions as in Administrator Guide</li>
+</ul>
+
+<h2>III. Optional Plugins</h2>
+<p>
+RsaSecurIDAuthenticator, EsapiDigester, and EsapiEncryptor are some optional plugins that are included in the download.  If you want to
+use any of these, you need to copy from /webpasswordsafe/src/optional/java/* into the appropriate source directories (see above) as well
+as edit the /webpasswordsafe/pom.xml file to include their dependencies.  Lastly edit the various configuration files to reference them 
+(see Administrator Guide).
+</p>
+<p>Here is the appropriate Maven command to integrate the RSA plugin:</p>
+  <ul>
+   <li>mvn install:install-file -DgroupId=com.rsa.authagent -DartifactId=authapi -Dversion=8.1.0 -Dpackaging=jar -Dfile=authapi.jar</li>
+  </ul>
+<p>If using ESAPI for encryption:</p>
+<ol>
+<li>Copy the contents of your /configuration/esapi resources directory (downloaded from esapi-2.0.1-configuration.zip) into /webpasswordsafe/src/main/resources/esapi 
+or if directory is kept outside the web application, edit /webpasswordsafe/war/WEB-INF/encryption.properties and change encryptor.esapi.useClasspath=false and 
+encryptor.esapi.resourceDir=&lt;full path to directory&gt;</li>
+<li>Edit ESAPI.properties and verify all of the Encryptor.* values, notably EncryptionKeyLength (128 or 256) and MasterKey and MasterSalt values</li>
+<li>Generate new MasterKey and MasterSalt values by invoking from the /webpasswordsafe directory:
+<ul>
+<li>mvn exec:java -Dexec.mainClass=&quot;org.owasp.esapi.reference.crypto.JavaEncryptor&quot; -Dexec.classpathScope=runtime -Dorg.owasp.esapi.resources=src/main/resources/esapi</li>
+</ul>
+</li>
+</ol>        
+            
+<h2>IV. Custom Plugins</h2>
+<p>
+You can write your own implementations to the WebPasswordSafe plugins using Java and integrate them into the build process similar to
+the optional plugins (see above).  Below discusses the interface requirements of each plugin.
+</p>
+
+<h3>1. Audit Logger Plugin</h3>
+<ul>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.audit.AuditLogger</b></li>
+<li>Override: <b>public void log(Date eventdate, String username, String ipaddress, String action, String target, boolean status, String message)</b></li>
+</ul>
+
+<h3>2. Authentication Plugin</h3>
+<ul>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.authentication.Authenticator</b></li>
+<li>Override: <b>public boolean authenticate(String username, String password)</b></li>
+</ul>
+
+<h3>3. Role Retriever Plugin</h3>
+<ul>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.authentication.RoleRetriever</b></li>
+<li>Override: <b>public Set&lt;Role&gt; retrieveRoles(User user)</b></li>
+<li>Note: You will want to pay attention to the available roles defined in net.webpasswordsafe.common.util.Constants</li>
+</ul>
+
+<h3>4. Authorization Plugin</h3>
+<ul>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.authorization.Authorizer</b></li>
+<li>Override: <b>public boolean isAuthorized(User user, String action)</b></li>
+<li>Note: You will want to pay attention to the available roles and functions defined in net.webpasswordsafe.common.util.Constants</li>
+</ul>
+
+<h3>5. Password Generator Plugin</h3>
+<ul>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.generator.PasswordGenerator</b></li>
+<li>Override: <b>public String generatePassword()</b></li>
+</ul>
+
+<h3>6. Encryption - Digester Plugin</h3>
+<ul>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.encryption.Digester</b></li>
+<li>Override: <b>public String digest(String clearText)</b></li>
+<li>Override: <b>public boolean check(String clearText, String cryptedText)</b></li>
+</ul>
+
+<h3>7. Encryption - Encryptor Plugin</h3>
+<ul>
+<li>Implement: <b>net.webpasswordsafe.server.plugin.encryption.Encryptor</b></li>
+<li>Override: <b>public String encrypt(String clearText)</b></li>
+<li>Override: <b>public String decrypt(String cryptedText)</b></li>
+</ul>
+
+
+<h2>V. Customizing Reports</h2>
+<p>
+Reports in WebPasswordSafe are developed using JasperReports.  You can find the .jrxml files in
+/webpasswordsafe/war/WEB-INF/reports/ from which you can edit and customize the look of them and in some cases
+the data contained in them.  Be careful however that the look-and-feel customizations you make for either PDF or
+CSV format doesn't break the other format (if you care).  If you change data, be careful that the appropriate
+security controls and authorization are in place.  Lastly, the reports configuration can be changed in
+/webpasswordsafe/war/WEB-INF/webpasswordsafe-reports.xml including access controls, parameters, and how
+they are presented on the client-side to the user.
+</p>
+
+
+<h2>VI. Internationalization (i18n)</h2>
+<p>
+All text strings in the WebPasswordSafe client-side GUI are extracted out into reusable
+property bundles for easy customization and flexibility adding new language support.
+The default is US English.  
+</p>
+<p>To add a new language:</p>
+<ol>
+<li>Create new file /webpasswordsafe/src/main/java/net/webpasswordsafe/client/i18n/TextMessages_{locale code}.properties using UTF-8 charset file format</li>
+<li>Edit file to include all key=value pairs for each tag representing a specific text string used in the application as the key and the value being the localized text string or date format (use TextMessages_zh.properties as a template)</li>
+<li>For reports do the same with /webpasswordsafe/src/main/resources/i18n_{locale code}.properties</li>
+<li>Edit /webpasswordsafe/src/main/java/net/webpasswordsafe/WebPasswordSafe.gwt.xml uncommenting the "locale" extended-property setting the values to the locale code(s) above</li>
+<li>Follow Build and Deploy directions as in Administrator Guide</li>
+<li>To override the default locale when using WebPasswordSafe, add ?locale={locale code} to the end of the URL</li>
+</ol> 
+
+
+<br/>
+
+</body>
+</html>

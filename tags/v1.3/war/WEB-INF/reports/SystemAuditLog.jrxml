@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2013 Josh Drummond
+    
+    This file is part of WebPasswordSafe.
+    
+    WebPasswordSafe is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+    
+    WebPasswordSafe is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with WebPasswordSafe; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SystemAuditLog" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="i18n">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <style name="Title" isDefault="false" fontName="SansSerif" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+    <style name="SubTitle" isDefault="false" forecolor="#666666" fontName="SansSerif" fontSize="18"/>
+    <style name="Column header" isDefault="false" forecolor="#666666" fontName="SansSerif" fontSize="12" isBold="true"/>
+    <style name="Detail" isDefault="false" fontName="SansSerif" fontSize="12"/>
+    <parameter name="fromDate" class="java.sql.Timestamp"/>
+    <parameter name="fromDate_SQL" class="java.lang.String">
+        <defaultValueExpression><![CDATA[(($P{fromDate} == null) || ($P{fromDate}=="")) ? "or 1=1" : ""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="toDate" class="java.sql.Timestamp"/>
+    <parameter name="toDate_SQL" class="java.lang.String">
+        <defaultValueExpression><![CDATA[(($P{toDate} == null) || ($P{toDate}=="")) ? "or 1=1" : ""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="username" class="java.lang.String"/>
+    <parameter name="username_SQL" class="java.lang.String">
+        <defaultValueExpression><![CDATA[(($P{username} == null) || ($P{username}=="")) ? "or 1=1" : ""]]></defaultValueExpression>
+    </parameter>
+    <queryString>
+        <![CDATA[select eventdate, ipaddress, username, action, target, success, message from audit_log where (eventdate >= $P{fromDate} $P!{fromDate_SQL}) and (eventdate <= $P{toDate} $P!{toDate_SQL}) and (username = $P{username} $P!{username_SQL}) order by eventdate desc]]>
+    </queryString>
+    <field name="eventdate" class="java.sql.Timestamp">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="ipaddress" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="username" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="action" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="target" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="success" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="message" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="33" splitType="Stretch">
+            <textField>
+                <reportElement style="Title" x="0" y="0" width="752" height="33"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{systemAuditLogReport}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    <pageHeader>
+        <band splitType="Stretch"/>
+    </pageHeader>
+    <columnHeader>
+        <band height="36" splitType="Stretch">
+            <line>
+                <reportElement positionType="FixRelativeToBottom" x="0" y="34" width="752" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#999999"/>
+                </graphicElement>
+            </line>
+            <textField>
+                <reportElement style="Column header" x="0" y="14" width="134" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{date}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="134" y="14" width="107" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{ipaddress}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="443" y="14" width="137" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{target}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="241" y="14" width="99" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{username}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="340" y="14" width="103" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{action}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="580" y="14" width="76" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{success}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="656" y="14" width="96" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{message}]]></textFieldExpression>
+            </textField>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="16" splitType="Stretch">
+            <line>
+                <reportElement positionType="FixRelativeToBottom" x="0" y="15" width="752" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#999999"/>
+                </graphicElement>
+            </line>
+            <textField isStretchWithOverflow="true" pattern="MM/dd/yyyy hh:mm a" isBlankWhenNull="true">
+                <reportElement style="Detail" x="0" y="0" width="134" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{eventdate}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="134" y="0" width="107" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{ipaddress}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="443" y="0" width="137" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{target}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="241" y="0" width="99" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{username}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="340" y="0" width="103" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{action}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="580" y="0" width="76" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{success}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="656" y="0" width="96" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{message}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <columnFooter>
+        <band splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band splitType="Stretch"/>
+    </pageFooter>
+    <summary>
+        <band splitType="Stretch"/>
+    </summary>
+</jasperReport>

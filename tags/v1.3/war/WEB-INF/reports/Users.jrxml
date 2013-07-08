@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2009-2013 Josh Drummond
+    
+    This file is part of WebPasswordSafe.
+    
+    WebPasswordSafe is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+    
+    WebPasswordSafe is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    
+    You should have received a copy of the GNU General Public License
+    along with WebPasswordSafe; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Users" language="groovy" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="i18n">
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <style name="Title" isDefault="false" fontName="SansSerif" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+    <style name="SubTitle" isDefault="false" forecolor="#666666" fontName="SansSerif" fontSize="18"/>
+    <style name="Column header" isDefault="false" forecolor="#666666" fontName="SansSerif" fontSize="12" isBold="true"/>
+    <style name="Detail" isDefault="false" fontName="SansSerif" fontSize="12"/>
+    <parameter name="active" class="java.lang.String"/>
+    <parameter name="active_SQL" class="java.lang.String">
+        <defaultValueExpression><![CDATA[(($P{active} == null) || ($P{active}=="")) ? "or 1=1" : ""]]></defaultValueExpression>
+    </parameter>
+    <queryString language="SQL">
+        <![CDATA[select * from users where active=$P{active} $P!{active_SQL}]]>
+    </queryString>
+    <field name="username" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="fullname" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="email" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="active" class="java.lang.String">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="date_created" class="java.sql.Timestamp">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <field name="last_login" class="java.sql.Timestamp">
+        <fieldDescription><![CDATA[]]></fieldDescription>
+    </field>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="34" splitType="Stretch">
+            <textField>
+                <reportElement style="Title" x="0" y="0" width="752" height="33"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{usersReport}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    <pageHeader>
+        <band splitType="Stretch"/>
+    </pageHeader>
+    <columnHeader>
+        <band height="36" splitType="Stretch">
+            <line>
+                <reportElement positionType="FixRelativeToBottom" x="0" y="35" width="752" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#999999"/>
+                </graphicElement>
+            </line>
+            <textField>
+                <reportElement style="Column header" x="0" y="14" width="120" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{username}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="120" y="14" width="171" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{fullname}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="291" y="14" width="170" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{email}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="461" y="14" width="47" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{active}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="508" y="14" width="122" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{dateCreated}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement style="Column header" x="630" y="14" width="122" height="20"/>
+                <textElement verticalAlignment="Middle"/>
+                <textFieldExpression><![CDATA[$R{dateLastLogin}]]></textFieldExpression>
+            </textField>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="16" splitType="Stretch">
+            <line>
+                <reportElement positionType="FixRelativeToBottom" x="0" y="15" width="752" height="1"/>
+                <graphicElement>
+                    <pen lineWidth="0.5" lineColor="#999999"/>
+                </graphicElement>
+            </line>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="0" y="0" width="120" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{username}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="120" y="0" width="171" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{fullname}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="291" y="0" width="170" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{email}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="461" y="0" width="47" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{active}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="630" y="0" width="122" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{last_login}]]></textFieldExpression>
+            </textField>
+            <textField isStretchWithOverflow="true" isBlankWhenNull="true">
+                <reportElement style="Detail" x="508" y="0" width="122" height="15"/>
+                <textElement/>
+                <textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{date_created}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <columnFooter>
+        <band splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band splitType="Stretch"/>
+    </pageFooter>
+    <summary>
+        <band splitType="Stretch"/>
+    </summary>
+</jasperReport>
