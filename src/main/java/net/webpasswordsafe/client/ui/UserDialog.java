@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -151,6 +151,20 @@ public class UserDialog extends Window
         setFields();
     }
     
+    @Override
+    public void show()
+    {
+        super.show();
+        if (user.getId() == 0)
+        {
+            setFocusWidget(usernameTextBox);
+        }
+        else
+        {
+            setFocusWidget(fullnameTextBox);
+        }
+    }
+
     private void setFields()
     {
         usernameTextBox.setValue(user.getUsername());

@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 Josh Drummond
+    Copyright 2011-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -97,7 +97,7 @@ public class IPUnblockDialog extends Window
     public void show()
     {
         super.show();
-        ipaddress.focus();
+        setFocusWidget(ipaddress);
     }
 
     private void doCancel()

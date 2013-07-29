@@ -236,6 +236,7 @@ public class PasswordDialog extends Window implements PermissionListener
     {
         super.show();
         setFields();
+        setFocusWidget(nameTextBox);
     }
     
     private void doViewPasswordHistory()

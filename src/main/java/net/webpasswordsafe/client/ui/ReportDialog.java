@@ -72,6 +72,7 @@ public class ReportDialog extends Window
         // display parameter inputs
         List<Map<String, Object>> params = (List<Map<String, Object>>)report.get(Constants.PARAMETERS);
         paramFields = new HashMap<String, Map<String,Object>>(params.size());
+        boolean isFirstInput = true;
         for (Map<String, Object> param : params)
         {
             Map<String, Object> paramField = new HashMap<String, Object>();
@@ -90,6 +91,7 @@ public class ReportDialog extends Window
                 input.setFieldLabel((String)param.get(Constants.I18N));
                 form.add(input);
                 paramField.put(FIELD, input);
+                if (isFirstInput) setFocusWidget(input);
             }
             else //if (type.equals(Constants.DATE) || type.equals(Constants.TEXT))
             {
@@ -98,8 +100,10 @@ public class ReportDialog extends Window
                 input.setFieldLabel((String)param.get(Constants.I18N));
                 form.add(input);
                 paramField.put(FIELD, input);
+                if (isFirstInput) setFocusWidget(input);
             }
             paramFields.put((String)param.get(Constants.NAME), paramField);
+            isFirstInput = false;
         }
         // create type choice
         Radio radioPDF = new Radio();
