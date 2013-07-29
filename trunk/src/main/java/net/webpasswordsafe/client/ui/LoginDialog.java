@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -116,7 +116,7 @@ public class LoginDialog extends Window
     public void show()
     {
         super.show();
-        usernameTextBox.focus();
+        setFocusWidget(usernameTextBox);
     }
     
     private void setSubmitting(boolean isSubmit)

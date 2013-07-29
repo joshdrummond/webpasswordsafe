@@ -259,6 +259,13 @@ public class TemplateDialog extends Window
         setFields();
     }
 
+    @Override
+    public void show()
+    {
+        super.show();
+        setFocusWidget(templateNameTextBox);
+    }
+
     private void doRemoveAll()
     {
         permissionStore.removeAll();

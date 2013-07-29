@@ -153,6 +153,13 @@ public class GroupDialog extends Window
         setFields();
     }
 
+    @Override
+    public void show()
+    {
+        super.show();
+        setFocusWidget(nameTextBox);
+    }
+
     private void doVerifyDelete()
     {
         MessageBox.confirm(textMessages.confirmDelete(), textMessages.groupConfirmDelete(), new Listener<MessageBoxEvent>()
