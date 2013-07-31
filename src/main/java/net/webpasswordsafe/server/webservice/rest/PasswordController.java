@@ -27,15 +27,21 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.client.remote.PasswordService;
+import net.webpasswordsafe.common.model.AccessLevel;
 import net.webpasswordsafe.common.model.Password;
+import net.webpasswordsafe.common.model.PasswordData;
+import net.webpasswordsafe.common.model.Permission;
 import net.webpasswordsafe.common.model.Tag;
+import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Constants.Match;
+import net.webpasswordsafe.common.util.Utils;
 import net.webpasswordsafe.server.ServerSessionUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -129,6 +135,7 @@ public class PasswordController
                     passwordMap.put("username", password.getUsername());
                     passwordMap.put("notes", password.getNotes());
                     passwordMap.put("tags", password.getTagsAsString());
+                    passwordMap.put("active", password.isActive() ? "Y" : "N");
                     isSuccess = true;
                 }
                 else
@@ -193,6 +200,129 @@ public class PasswordController
         return createModelAndView(isSuccess, message, "currentPassword", currentPassword);
     }
     
+    
+    @RequestMapping(value = "/passwords", method = RequestMethod.POST)
+    public ModelAndView addPassword(@RequestBody Map<String, Object> passwordMap,
+            HttpServletRequest request,
+            @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword)
+    {
+        boolean isSuccess = false;
+        String message = "";
+        String passwordId = "";
+        try
+        {
+            ServerSessionUtil.setIP(request.getRemoteAddr());
+            boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
+            if (isAuthnValid)
+            {
+                User loggedInUser = loginService.getLogin();
+                Password password = new Password();
+                password.setName(Utils.safeString(passwordMap.get("title")));
+                password.setUsername(Utils.safeString(passwordMap.get("username")));
+                PasswordData passwordDataItem = new PasswordData();
+                passwordDataItem.setPassword(Utils.safeString(passwordMap.get("password")));
+                password.addPasswordData(passwordDataItem);
+                password.setNotes(Utils.safeString(passwordMap.get("notes")));
+                password.setMaxHistory(-1);
+                String active = Utils.safeString(passwordMap.get("active")).toLowerCase();
+                password.setActive(active.equals("") || active.equals("true") || active.equals("yes") || active.equals("y"));
+                password.addPermission(new Permission(loggedInUser, AccessLevel.GRANT));
+                password.addTagsAsString(Utils.safeString(passwordMap.get("tags")));
+                if (passwordService.isPasswordTaken(password.getName(), password.getUsername(), password.getId()))
+                {
+                    message = "Password title and username already exists";
+                }
+                else
+                {
+                    passwordService.addPassword(password);
+                    passwordId = String.valueOf(password.getId());
+                    isSuccess = true;
+                }
+            }
+            else
+            {
+                message = "Invalid authentication";
+            }
+            loginService.logout();
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
+            isSuccess = false;
+            message = e.getMessage();
+        }
+        return createModelAndView(isSuccess, message, "passwordId", passwordId);
+    }
+    
+    
+    @RequestMapping(value = "/passwords", method = RequestMethod.PUT)
+    public ModelAndView updatePassword(@RequestBody Map<String, Object> passwordMap,
+            HttpServletRequest request,
+            @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword)
+    {
+        boolean isSuccess = false;
+        String message = "";
+        String passwordId = "";
+        try
+        {
+            ServerSessionUtil.setIP(request.getRemoteAddr());
+            boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
+            if (isAuthnValid)
+            {
+                passwordId = Utils.safeString(passwordMap.get("id"));
+                int iPasswordId = Utils.safeInt(passwordId);
+                if (iPasswordId > 0)
+                {
+                    Password password = passwordService.getPassword(iPasswordId);
+                    if (null != password)
+                    {
+                        Password updatePassword = password.cloneCopy();
+                        updatePassword.setName(Utils.safeString(passwordMap.get("title")));
+                        updatePassword.setUsername(Utils.safeString(passwordMap.get("username")));
+                        PasswordData passwordDataItem = new PasswordData();
+                        passwordDataItem.setPassword(Utils.safeString(passwordMap.get("password")));
+                        updatePassword.addPasswordData(passwordDataItem);
+                        updatePassword.setNotes(Utils.safeString(passwordMap.get("notes")));
+                        String active = Utils.safeString(passwordMap.get("active")).toLowerCase();
+                        updatePassword.setActive(active.equals("") || active.equals("true") || active.equals("yes") || active.equals("y"));
+                        updatePassword.addTagsAsString(Utils.safeString(passwordMap.get("tags")));
+                        if (passwordService.isPasswordTaken(updatePassword.getName(), updatePassword.getUsername(), updatePassword.getId()))
+                        {
+                            message = "Password title and username already exists";
+                        }
+                        else
+                        {
+                            passwordService.updatePassword(updatePassword);
+                            isSuccess = true;
+                        }
+                    }
+                    else
+                    {
+                        message = "invalid id or no access";
+                    }
+                }
+                else
+                {
+                    message = "invalid id or no access";
+                }
+            }
+            else
+            {
+                message = "Invalid authentication";
+            }
+            loginService.logout();
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
+            isSuccess = false;
+            message = e.getMessage();
+        }
+        return createModelAndView(isSuccess, message, "passwordId", passwordId);
+    }
+
     
     private ModelAndView createModelAndView(boolean isSuccess, String message, String dataKey, Object dataValue)
     {

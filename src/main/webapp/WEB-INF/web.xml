@@ -48,14 +48,6 @@
     </servlet>
     
     <servlet>
-        <servlet-name>webservice</servlet-name>
-        <servlet-class>
-            org.springframework.ws.transport.http.MessageDispatcherServlet
-        </servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>rest</servlet-name>
         <servlet-class>
             org.springframework.web.servlet.DispatcherServlet
@@ -85,16 +77,6 @@
         <url-pattern>/webpasswordsafe/xsrf</url-pattern>
     </servlet-mapping>
     
-    <servlet-mapping>
-        <servlet-name>webservice</servlet-name>
-        <url-pattern>/webservice/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>webservice</servlet-name>
-        <url-pattern>*.wsdl</url-pattern>
-    </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>rest</servlet-name>
         <url-pattern>/rest/*</url-pattern>
