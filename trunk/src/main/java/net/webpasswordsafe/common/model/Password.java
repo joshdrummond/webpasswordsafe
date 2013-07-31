@@ -307,6 +307,21 @@ public class Password extends LightEntity implements Serializable
         }
         return tagString.toString().trim();
     }
+    
+    public void addTagsAsString(String tags)
+    {
+        removeTags();
+        String[] tagNames = tags.replaceAll(",", " ").split(" ");
+        for (String tagName : tagNames)
+        {
+            tagName = tagName.trim();
+            if (!"".equals(tagName))
+            {
+                Tag tag = new Tag(tagName);
+                addTag(tag);
+            }
+        }
+    }
 
     public void addTag(Tag tag)
     {
@@ -331,6 +346,20 @@ public class Password extends LightEntity implements Serializable
     public void setMaxEffectiveAccessLevel(AccessLevel maxEffectiveAccessLevel)
     {
         this.maxEffectiveAccessLevel = maxEffectiveAccessLevel;
+    }
+
+    public Password cloneCopy()
+    {
+        Password p = new Password();
+        p.setId(this.getId());
+        p.setName(this.getName());
+        p.setUsername(this.getUsername());
+        p.setNotes(this.getNotes());
+        p.setActive(this.isActive());
+        p.setMaxHistory(this.getMaxHistory());
+        p.setPermissions(this.getPermissions());
+        p.setTags(this.getTags());
+        return p;
     }
 
 }

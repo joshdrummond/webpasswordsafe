@@ -296,17 +296,7 @@ public class PasswordDialog extends Window implements PermissionListener
             PasswordData passwordDataItem = new PasswordData();
             passwordDataItem.setPassword(Utils.safeString(passwordTextBox.getValue()));
             password.addPasswordData(passwordDataItem);
-            String[] tagNames = Utils.safeString(tagsComboBox.getRawValue()).replaceAll(",", " ").split(" ");
-            password.removeTags();
-            for (String tagName : tagNames)
-            {
-                tagName = tagName.trim();
-                if (!"".equals(tagName))
-                {
-                    Tag tag = new Tag(tagName);
-                    password.addTag(tag);
-                }
-            }
+            password.addTagsAsString(Utils.safeString(tagsComboBox.getRawValue()));
             password.setNotes(Utils.safeString(notesTextArea.getValue()));
             password.setMaxHistory(Utils.safeInt(String.valueOf(maxHistoryTextBox.getValue())));
             password.setMaxHistory((password.getMaxHistory() < -1) ? -1 : password.getMaxHistory());

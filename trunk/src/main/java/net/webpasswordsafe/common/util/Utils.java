@@ -1,5 +1,5 @@
 /*
-    Copyright 2009-2011 Josh Drummond
+    Copyright 2009-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -29,15 +29,15 @@ package net.webpasswordsafe.common.util;
 public class Utils
 {
 
-    public static String safeString(String s)
+    public static String safeString(Object o)
     {
-        return (null != s) ? s.trim() : "";
+        return (null != o) ? o.toString().trim() : "";
     }
     
-    public static int safeInt(String s)
+    public static int safeInt(Object o)
     {
         int num = -1;
-        s = safeString(s);
+        String s = safeString(o);
         try
         {
             if (!"".equals(s))
