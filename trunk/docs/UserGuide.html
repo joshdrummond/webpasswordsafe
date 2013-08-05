@@ -457,6 +457,24 @@ PUT /rest/passwords<br>
 curl -X PUT -H "Content-Type: application/json" -H "X-WPS-Username: admin" -H "X-WPS-Password: admin" -d '{"id":"1","title":"test","username":"test","password":"test","notes":"test","tags":"","active":"N"}' https://hostname/WebPasswordSafe/rest/passwords
 </p>
 
+<h3>6. Add User</h3>
+<p>
+Adds a new user.
+</p>
+<p>
+<i>Request API:</i><br>
+POST /rest/users<br>
+{"username":"test","password":"test","fullname":"test test","email":"test@test.org","active":"Y"}
+</p>
+<p>
+<i>Response API:</i><br>
+{"message":"","userId":"8","success":true}
+</p>
+<p>
+<i>Example:</i><br>
+curl -X POST -H "Content-Type: application/json" -H "X-WPS-Username: admin" -H "X-WPS-Password: admin" -d '{"username":"test","password":"test","fullname":"test test","email":"test@test.org","active":"Y"}' https://hostname/WebPasswordSafe/rest/users
+</p>
+
 <br/>
 
 </body>

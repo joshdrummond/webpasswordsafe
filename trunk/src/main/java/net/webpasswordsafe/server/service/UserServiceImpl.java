@@ -141,6 +141,7 @@ public class UserServiceImpl extends WPSXsrfProtectedServiceServlet implements U
         user.updateAuthnPasswordValue(digester.digest(newUser.getAuthnPasswordValue()));
         user.setDateCreated(now);
         userDAO.makePersistent(user);
+        newUser.setId(user.getId());
         
         // assign user to everyone group
         Group everyoneGroup = getEveryoneGroup();
