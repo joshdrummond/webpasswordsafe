@@ -144,6 +144,11 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         new ChangePasswordDialog().show();
     }
 
+    private void doTwoStepVerificationSettings()
+    {
+        new TwoStepVerificationDialog().show();
+    }
+
     private void refreshPasswordSearch()
     {
         mainPanel.removeAll();
@@ -181,6 +186,12 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             @Override
             public void componentSelected(MenuEvent ce) {
                 doChangePassword();
+            }
+        }));
+        userSettingsMenu.add(new MenuItem(textMessages.twoStepVerification(), new SelectionListener<MenuEvent>() {
+            @Override
+            public void componentSelected(MenuEvent ce) {
+                doTwoStepVerificationSettings();
             }
         }));
         userSettings.setSubMenu(userSettingsMenu);

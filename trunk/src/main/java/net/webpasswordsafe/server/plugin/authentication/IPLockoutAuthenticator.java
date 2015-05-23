@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 Josh Drummond
+    Copyright 2011-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Set;
 import javax.annotation.Resource;
 import net.webpasswordsafe.common.model.IPLockout;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.server.ServerSessionUtil;
 import net.webpasswordsafe.server.dao.IPLockoutDAO;
 import net.webpasswordsafe.server.plugin.audit.AuditLogger;
@@ -46,9 +47,9 @@ public class IPLockoutAuthenticator implements Authenticator
     private Set<String> whitelist;
 
     @Override
-    public boolean authenticate(String username, String password)
+    public AuthenticationStatus authenticate(String principal, String[] credentials)
     {
-        boolean isAuthSuccess = false;
+        AuthenticationStatus authStatus = AuthenticationStatus.FAILURE;
         boolean isLockedOut = false;
         Date dateNow = new Date();
         String ipaddress = ServerSessionUtil.getIP();
@@ -69,10 +70,10 @@ public class IPLockoutAuthenticator implements Authenticator
         
         if (!isLockedOut)
         {
-            isAuthSuccess = authenticator.authenticate(username, password);
+            authStatus = authenticator.authenticate(principal, credentials);
             if (!isWhitelistIP(ipaddress))
             {
-                if (!isAuthSuccess)
+                if (AuthenticationStatus.FAILURE == authStatus)
                 {
                     lockout = (null == lockout) ? new IPLockout(ipaddress, 0) : lockout;
                     int failCount = lockout.getFailCount() + 1;
@@ -81,7 +82,7 @@ public class IPLockoutAuthenticator implements Authenticator
                         lockout.setFailCount(0);
                         lockout.setLockoutDate(dateNow);
                         LOG.debug("IPLockoutAuthenticator: "+ipaddress+" is locked out");
-                        auditLogger.log(dateNow, username, ipaddress, "lockout", ipaddress, true, "IP blocked");
+                        auditLogger.log(dateNow, principal, ipaddress, "lockout", ipaddress, true, "IP blocked");
                     }
                     else
                     {
@@ -89,7 +90,7 @@ public class IPLockoutAuthenticator implements Authenticator
                     }
                     ipLockoutDAO.makePersistent(lockout);
                 }
-                else
+                else if (AuthenticationStatus.SUCCESS == authStatus)
                 {
                     if (null != lockout)
                     {
@@ -99,8 +100,8 @@ public class IPLockoutAuthenticator implements Authenticator
             }
         }
 
-        LOG.debug("IPLockoutAuthenticator: login success for "+username+"? "+isAuthSuccess);
-        return isAuthSuccess;
+        LOG.debug("IPLockoutAuthenticator: login success for "+principal+"? "+authStatus.name());
+        return authStatus;
     }
     
     private boolean isWhitelistIP(String ipaddress)

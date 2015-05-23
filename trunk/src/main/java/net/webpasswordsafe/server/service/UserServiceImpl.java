@@ -33,6 +33,7 @@ import net.webpasswordsafe.common.model.Password;
 import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.Template;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.model.UserAuthnTOTP;
 import net.webpasswordsafe.common.util.Constants.Function;
 import net.webpasswordsafe.server.ServerSessionUtil;
 import net.webpasswordsafe.server.dao.GroupDAO;
@@ -41,8 +42,10 @@ import net.webpasswordsafe.server.dao.PasswordDAO;
 import net.webpasswordsafe.server.dao.TemplateDAO;
 import net.webpasswordsafe.server.dao.UserDAO;
 import net.webpasswordsafe.server.plugin.audit.AuditLogger;
+import net.webpasswordsafe.server.plugin.authentication.TwoStepTOTPAuthenticator;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
 import net.webpasswordsafe.server.plugin.encryption.Digester;
+import net.webpasswordsafe.server.plugin.encryption.Encryptor;
 import net.webpasswordsafe.server.service.helper.WPSXsrfProtectedServiceServlet;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +84,9 @@ public class UserServiceImpl extends WPSXsrfProtectedServiceServlet implements U
     
     @Resource
     private Digester digester;
+
+    @Resource
+    private Encryptor encryptor;
 
     @Resource
     private AuditLogger auditLogger;
@@ -408,6 +414,32 @@ public class UserServiceImpl extends WPSXsrfProtectedServiceServlet implements U
         int numGroups = user.getGroups().size();
         LOG.debug(user.getName()+" has "+numGroups+" groups");
         return user;
+    }
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
+    public UserAuthnTOTP getCurrentUserTOTP()
+    {
+        User loggedInUser = getLoggedInUser();
+        UserAuthnTOTP userAuthnTOTP = new UserAuthnTOTP();
+        userAuthnTOTP.setEnabled(loggedInUser.getAuthnTOTPValue().isEnabled());
+        userAuthnTOTP.setKey(loggedInUser.getAuthnTOTPValue().getKey().equals("") ? "" : 
+            encryptor.decrypt(loggedInUser.getAuthnTOTPValue().getKey()));
+        return userAuthnTOTP;
+    }
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public void updateCurrentUserTOTP(UserAuthnTOTP userAuthnTOTP)
+    {
+        User loggedInUser = getLoggedInUser();
+        loggedInUser.updateAuthnTOTP(userAuthnTOTP.isEnabled(), encryptor.encrypt(userAuthnTOTP.getKey()));
+    }
+
+    @Override
+    public String generateTOTPKey()
+    {
+        return TwoStepTOTPAuthenticator.generateKey();
     }
 
     @Override

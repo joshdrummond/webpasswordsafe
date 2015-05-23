@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2011 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,6 +21,7 @@ package net.webpasswordsafe.server.plugin.authentication;
 
 import javax.annotation.Resource;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.server.dao.UserDAO;
 import net.webpasswordsafe.server.plugin.encryption.Digester;
 import org.apache.log4j.Logger;
@@ -39,16 +40,16 @@ public class LocalAuthenticator implements Authenticator
     private static Logger LOG = Logger.getLogger(LocalAuthenticator.class);
 
     @Override
-    public boolean authenticate(String username, String password)
+    public AuthenticationStatus authenticate(String principal, String[] credentials)
     {
-        boolean isValid = false;
-        User user = userDAO.findActiveUserByUsername(username);
+        AuthenticationStatus authStatus = AuthenticationStatus.FAILURE;
+        User user = userDAO.findActiveUserByUsername(principal);
         if (null != user)
         {
-            isValid = digester.check(password, user.getAuthnPasswordValue());
+            authStatus = digester.check(credentials[0], user.getAuthnPasswordValue()) ? AuthenticationStatus.SUCCESS : AuthenticationStatus.FAILURE;
         }
-        LOG.debug("LocalAuthenticator: login success for "+username+"? "+isValid);
-        return isValid;
+        LOG.debug("LocalAuthenticator: login success for "+principal+"? "+authStatus.name());
+        return authStatus;
     }
 
 }

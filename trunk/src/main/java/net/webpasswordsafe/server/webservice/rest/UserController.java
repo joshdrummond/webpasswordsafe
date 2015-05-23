@@ -21,12 +21,15 @@ package net.webpasswordsafe.server.webservice.rest;
 
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.common.util.Utils;
 import net.webpasswordsafe.server.ServerSessionUtil;
+import net.webpasswordsafe.server.report.JasperReportServlet;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,11 +59,39 @@ public class UserController
     private static Logger LOG = Logger.getLogger(UserController.class);
 
     
+    @RequestMapping(value = "/reports", method = RequestMethod.GET)
+    public void getReport(HttpServletRequest request, HttpServletResponse response,
+            @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
+            @RequestHeader(Constants.REST_AUTHN_TOTP) String authnTOTP)
+    {
+        try
+        {
+            ServerSessionUtil.setIP(request.getRemoteAddr());
+            AuthenticationStatus authStatus = loginService.login(authnUsername, Utils.buildCredentials(authnPassword, authnTOTP));
+            if (AuthenticationStatus.SUCCESS == authStatus)
+            {
+                JasperReportServlet servlet = new JasperReportServlet();
+                servlet.doPost(request, response);
+            }
+            else
+            {
+            }
+            loginService.logout();
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
+        }
+        
+    }
+    
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView addUser(@RequestBody Map<String, Object> userMap,
             HttpServletRequest request,
             @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
-            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword)
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
+            @RequestHeader(Constants.REST_AUTHN_TOTP) String authnTOTP)
     {
         boolean isSuccess = false;
         String message = "";
@@ -68,8 +99,8 @@ public class UserController
         try
         {
             ServerSessionUtil.setIP(request.getRemoteAddr());
-            boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
-            if (isAuthnValid)
+            AuthenticationStatus authStatus = loginService.login(authnUsername, Utils.buildCredentials(authnPassword, authnTOTP));
+            if (AuthenticationStatus.SUCCESS == authStatus)
             {
                 User user = new User();
                 user.setUsername(Utils.safeString(userMap.get("username")));

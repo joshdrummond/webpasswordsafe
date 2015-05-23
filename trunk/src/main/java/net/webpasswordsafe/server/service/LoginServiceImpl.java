@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.common.util.Constants.Function;
 import net.webpasswordsafe.server.ServerSessionUtil;
 import net.webpasswordsafe.server.dao.UserDAO;
@@ -100,34 +101,38 @@ public class LoginServiceImpl extends WPSXsrfProtectedServiceServlet implements 
      */
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public boolean login(String username, String password)
+    public AuthenticationStatus login(String principal, String[] credentials)
     {
-        boolean isValidLogin = false;
         Date now = new Date();
         String message = "";
-        username = trimUsername(username);
-        if (authenticator.authenticate(username, password))
+        principal = trimUsername(principal);
+        AuthenticationStatus authStatus = authenticator.authenticate(principal, credentials);
+        if (AuthenticationStatus.SUCCESS == authStatus)
         {
-            User user = userDAO.findActiveUserByUsername(username);
+            User user = userDAO.findActiveUserByUsername(principal);
             if (null != user)
             {
-                isValidLogin = true;
                 user.setLastLogin(now);
                 userDAO.makePersistent(user);
-                ServerSessionUtil.setUsername(username);
+                ServerSessionUtil.setUsername(principal);
                 ServerSessionUtil.setRoles(roleRetriever.retrieveRoles(user));
             }
             else
             {
+                authStatus = AuthenticationStatus.FAILURE;
                 message = "user not found";
             }
         }
-        else
+        else if (AuthenticationStatus.TWO_STEP_REQ == authStatus)
+        {
+            message = "two-step authentication required";
+        }
+        else 
         {
             message = "authentication failed";
         }
-        auditLogger.log(now, username, ServerSessionUtil.getIP(), "login", "", isValidLogin, message);
-        return isValidLogin;
+        auditLogger.log(now, principal, ServerSessionUtil.getIP(), "login", "", AuthenticationStatus.SUCCESS == authStatus, message);
+        return authStatus;
     }
 
     private String trimUsername(String username)

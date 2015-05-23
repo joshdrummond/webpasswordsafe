@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,6 +21,7 @@ package net.webpasswordsafe.server.plugin.authentication;
 
 import java.util.List;
 import java.util.Map;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import org.apache.log4j.Logger;
 
 
@@ -38,9 +39,9 @@ public class CompositeAuthenticator implements Authenticator
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean authenticate(String username, String password)
+    public AuthenticationStatus authenticate(String principal, String[] credentials)
     {
-        boolean valid = false;
+        AuthenticationStatus authStatus = AuthenticationStatus.FAILURE;
         if (authenticators != null)
         {
             for (Map<String,Object> authEntry : authenticators)
@@ -58,7 +59,7 @@ public class CompositeAuthenticator implements Authenticator
                     if (authEntry.containsKey(KEY_USERS))
                     {
                         List<String> users = (List<String>)authEntry.get(KEY_USERS);
-                        useForAuthentication = users.contains(username);
+                        useForAuthentication = users.contains(principal);
                     }
                 }
                 
@@ -66,15 +67,15 @@ public class CompositeAuthenticator implements Authenticator
                 if (useForAuthentication)
                 {
                     Authenticator authenticator = (Authenticator)authEntry.get(KEY_AUTHENTICATOR);
-                    valid = authenticator.authenticate(username, password);
+                    authStatus = authenticator.authenticate(principal, credentials);
                 }
                 
-                if (valid) break;
+                if (authStatus != AuthenticationStatus.FAILURE) break;
             }
         }
         
-        LOG.debug("CompositeAuthenticator: login success for "+username+"? "+valid);
-        return valid;
+        LOG.debug("CompositeAuthenticator: login success for "+principal+"? "+authStatus.name());
+        return authStatus;
     }
 
     public List<Map<String, Object>> getAuthenticators()

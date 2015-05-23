@@ -45,6 +45,7 @@ public class Constants
     public static final String CSRF_TOKEN_KEY = "X-WPS-CSRFToken";
     public static final String REST_AUTHN_USERNAME = "X-WPS-Username";
     public static final String REST_AUTHN_PASSWORD = "X-WPS-Password";
+    public static final String REST_AUTHN_TOTP = "X-WPS-TOTP";
 
     // reports
     public static final String VIEW_REPORT_PREFIX = "VIEW_REPORT_";
@@ -86,5 +87,6 @@ public class Constants
     public enum Function { ADD_USER, UPDATE_USER, ADD_GROUP, UPDATE_GROUP, DELETE_GROUP, ADD_PASSWORD,
         BYPASS_PASSWORD_PERMISSIONS, ADD_TEMPLATE, UPDATE_TEMPLATE, BYPASS_TEMPLATE_SHARING,
         UNBLOCK_IP };
+    public enum AuthenticationStatus { SUCCESS, FAILURE, TWO_STEP_REQ }
 
 }

@@ -23,6 +23,7 @@ import java.util.List;
 import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.model.UserAuthnTOTP;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -49,4 +50,7 @@ public interface UserServiceAsync {
     public void deleteGroup(Group group, AsyncCallback<Void> callback);
     public void isGroupTaken(String groupName, long ignoreGroupId, AsyncCallback<Boolean> callback);
     public void unblockIP(String ipaddress, AsyncCallback<Boolean> callback);
+    public void getCurrentUserTOTP(AsyncCallback<UserAuthnTOTP> callback);
+    public void updateCurrentUserTOTP(UserAuthnTOTP userAuthnTOTP, AsyncCallback<Void> callback);
+    public void generateTOTPKey(AsyncCallback<String> callback);
 }

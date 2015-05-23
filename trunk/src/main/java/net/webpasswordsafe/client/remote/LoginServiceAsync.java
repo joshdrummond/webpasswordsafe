@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2012 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.common.util.Constants.Function;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -35,7 +36,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface LoginServiceAsync {
     
     public void ping(AsyncCallback<Boolean> callback);
-    public void login(String username, String password, AsyncCallback<Boolean> callback);
+    public void login(String principal, String[] credentials, AsyncCallback<AuthenticationStatus> callback);
     public void logout(AsyncCallback<Boolean> callback);
     public void getLogin(AsyncCallback<User> callback);
     public void getLoginAuthorizations(Set<Function> functions, AsyncCallback<Map<Function, Boolean>> callback);

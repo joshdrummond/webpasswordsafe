@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2012 Josh Drummond
+    Copyright 2008-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.common.util.Constants.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -39,7 +40,7 @@ public interface LoginService extends XsrfProtectedService {
     
     @NoXsrfProtect
     public boolean ping();
-    public boolean login(String username, String password);
+    public AuthenticationStatus login(String principal, String[] credentials);
     public boolean logout();
     public User getLogin();
     public Map<Function, Boolean> getLoginAuthorizations(Set<Function> functions);
