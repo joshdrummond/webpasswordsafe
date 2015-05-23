@@ -57,6 +57,9 @@ public class User extends Subject
     @OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true, mappedBy="user")
     private Set<UserAuthnPassword> authnPassword;
     
+    @OneToMany(cascade={CascadeType.ALL}, orphanRemoval=true, mappedBy="user")
+    private Set<UserAuthnTOTP> authnTOTP;
+
     @Column(name="fullname", length=LENGTH_FULLNAME, nullable=false)
     private String fullname;
 
@@ -85,6 +88,7 @@ public class User extends Subject
         roles = new HashSet<Constants.Role>();
         activeFlag = true;
         authnPassword = new HashSet<UserAuthnPassword>(1);
+        authnTOTP = new HashSet<UserAuthnTOTP>(1);
     }
 
     public static User newActiveUser(String username, String password, String fullname, String email)
@@ -145,6 +149,42 @@ public class User extends Subject
 
     public void setUsername( String username ) {
         this.username = username;
+    }
+
+    public void setAuthnTOTP(Set<UserAuthnTOTP> authnTOTP)
+    {
+        this.authnTOTP = authnTOTP;
+    }
+
+    public Set<UserAuthnTOTP> getAuthnTOTP()
+    {
+        return authnTOTP;
+    }
+
+    public UserAuthnTOTP getAuthnTOTPValue()
+    {
+        Set<UserAuthnTOTP> uat = getAuthnTOTP();
+        return ((uat == null) || (uat.size() == 0)) ? new UserAuthnTOTP() : uat.iterator().next();
+    }
+
+    public void updateAuthnTOTP(boolean isEnabled, String key)
+    {
+        Set<UserAuthnTOTP> uat = getAuthnTOTP();
+        if ((uat == null) || (uat.size() == 0))
+        {
+            setAuthnTOTP((uat == null) ? new HashSet<UserAuthnTOTP>(1) : uat);
+            UserAuthnTOTP userAuthnTOTP = new UserAuthnTOTP();
+            userAuthnTOTP.setEnabled(isEnabled);
+            userAuthnTOTP.setKey(key);
+            userAuthnTOTP.setUser(this);
+            authnTOTP.add(userAuthnTOTP);
+        }
+        else
+        {
+            UserAuthnTOTP p = uat.iterator().next();
+            p.setEnabled(isEnabled);
+            p.setKey(key);
+        }
     }
 
     public void setAuthnPassword(Set<UserAuthnPassword> authnPassword)

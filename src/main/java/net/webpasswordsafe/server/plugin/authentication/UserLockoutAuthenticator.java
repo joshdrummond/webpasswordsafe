@@ -1,5 +1,5 @@
 /*
-    Copyright 2011 Josh Drummond
+    Copyright 2011-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.model.UserLockout;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.server.ServerSessionUtil;
 import net.webpasswordsafe.server.dao.UserDAO;
 import net.webpasswordsafe.server.dao.UserLockoutDAO;
@@ -49,16 +50,16 @@ public class UserLockoutAuthenticator implements Authenticator
     private Set<String> whitelist;
 
     @Override
-    public boolean authenticate(String username, String password)
+    public AuthenticationStatus authenticate(String principal, String[] credentials)
     {
-        boolean isAuthSuccess = false;
-        User user = userDAO.findActiveUserByUsername(username);
+        AuthenticationStatus authStatus = AuthenticationStatus.FAILURE;
+        User user = userDAO.findActiveUserByUsername(principal);
         if (null != user)
         {
-            isAuthSuccess = authenticator.authenticate(username, password);
-            if (!isWhitelistUser(username))
+            authStatus = authenticator.authenticate(principal, credentials);
+            if (!isWhitelistUser(principal))
             {
-                if (!isAuthSuccess)
+                if (AuthenticationStatus.FAILURE == authStatus)
                 {
                     UserLockout lockout = userLockoutDAO.findByUser(user);
                     lockout = (null == lockout) ? new UserLockout(user, 0) : lockout;
@@ -67,8 +68,8 @@ public class UserLockoutAuthenticator implements Authenticator
                     {
                         lockout.setFailCount(0);
                         user.setActiveFlag(false);
-                        LOG.debug("UserLockoutAuthenticator: "+username+" is locked out");
-                        auditLogger.log(new Date(), username, ServerSessionUtil.getIP(), "lockout", username, true, "user disabled");
+                        LOG.debug("UserLockoutAuthenticator: "+principal+" is locked out");
+                        auditLogger.log(new Date(), principal, ServerSessionUtil.getIP(), "lockout", principal, true, "user disabled");
                     }
                     else
                     {
@@ -76,7 +77,7 @@ public class UserLockoutAuthenticator implements Authenticator
                     }
                     userLockoutDAO.makePersistent(lockout);
                 }
-                else
+                else if (AuthenticationStatus.SUCCESS == authStatus)
                 {
                     UserLockout lockout = userLockoutDAO.findByUser(user);
                     if (null != lockout)
@@ -87,8 +88,8 @@ public class UserLockoutAuthenticator implements Authenticator
             }
         }
 
-        LOG.debug("UserLockoutAuthenticator: login success for "+username+"? "+isAuthSuccess);
-        return isAuthSuccess;
+        LOG.debug("UserLockoutAuthenticator: login success for "+principal+"? "+authStatus.name());
+        return authStatus;
     }
 
     private boolean isWhitelistUser(String username)

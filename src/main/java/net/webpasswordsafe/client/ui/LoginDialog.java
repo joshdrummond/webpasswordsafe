@@ -25,6 +25,7 @@ import net.webpasswordsafe.client.WebPasswordSafe;
 import net.webpasswordsafe.client.i18n.TextMessages;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.common.util.Utils;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.KeyListener;
@@ -55,7 +56,8 @@ public class LoginDialog extends Window
     private TextField<String> passwordTextBox;
     private Button enterButton;
     private MainWindow main;
-    private boolean isSubmitting;
+    private boolean isSubmitting, isTwoStep;
+    private String[] credentials;
     private final static TextMessages textMessages = GWT.create(TextMessages.class);
 
     public LoginDialog(MainWindow main)
@@ -67,6 +69,8 @@ public class LoginDialog extends Window
         this.setOnEsc(false);
         this.setResizable(false);
         this.isSubmitting = false;
+        this.isTwoStep = false;
+        this.credentials = new String[2];
         
         FormPanel form = new FormPanel();
         form.setHeaderVisible(false);
@@ -127,34 +131,83 @@ public class LoginDialog extends Window
         isSubmitting = isSubmit;
     }
     
+    private boolean validateFields()
+    {
+        if (Utils.safeString(usernameTextBox.getValue()).equals(""))
+        {
+            MessageBox.alert(textMessages.error(), textMessages.mustEnterUsername(), null);
+            return false;
+        }
+        if (Utils.safeString(passwordTextBox.getValue()).equals(""))
+        {
+            MessageBox.alert(textMessages.error(), isTwoStep ? textMessages.mustEnterTwoStepVerificationCode() : textMessages.mustEnterPassword(), null);
+            return false;
+        }
+        if (isTwoStep && (Utils.safeInt(passwordTextBox.getValue()) == -1))
+        {
+            MessageBox.alert(textMessages.error(), textMessages.mustEnterTwoStepVerificationCode(), null);
+            return false;
+        }
+        return true;
+    }
+
     private synchronized void doSubmit()
     {
         if (!isSubmitting)
         {
-            setSubmitting(true);
-            AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>()
+            if (validateFields())
             {
-                @Override
-                public void onFailure(Throwable caught) {
-                    WebPasswordSafe.handleServerFailure(caught);
-                    setSubmitting(false);
+                setSubmitting(true);
+                if (isTwoStep)
+                {
+                    credentials[1] = Utils.safeString(passwordTextBox.getValue());
                 }
-                @Override
-                public void onSuccess(Boolean result) {
-                    if (result.booleanValue())
-                    {
-                        doLoginSuccess();
-                    }
-                    else
-                    {
-                        MessageBox.alert(textMessages.error(), textMessages.invalidLogin(), null);
+                else
+                {
+                    credentials[0] = Utils.safeString(passwordTextBox.getValue());
+                    credentials[1] = "";
+                }
+                AsyncCallback<AuthenticationStatus> callback = new AsyncCallback<AuthenticationStatus>()
+                {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        WebPasswordSafe.handleServerFailure(caught);
                         setSubmitting(false);
                     }
-                }
-            };
-            LoginService.Util.getInstance().login(Utils.safeString(usernameTextBox.getValue()), 
-                    Utils.safeString(passwordTextBox.getValue()), callback);
+                    @Override
+                    public void onSuccess(AuthenticationStatus result) {
+                        if (AuthenticationStatus.SUCCESS == result)
+                        {
+                            doLoginSuccess();
+                        }
+                        else if (AuthenticationStatus.TWO_STEP_REQ == result)
+                        {
+                            doTwoStep();
+                        }
+                        else
+                        {
+                            MessageBox.alert(textMessages.error(), textMessages.invalidLogin(), null);
+                            isTwoStep = false;
+                            passwordTextBox.setFieldLabel(textMessages.password());
+                            passwordTextBox.setValue("");
+                            setSubmitting(false);
+                        }
+                    }
+                };
+                LoginService.Util.getInstance().login(Utils.safeString(usernameTextBox.getValue()), 
+                        credentials, callback);
+            }
         }
+    }
+    
+    private void doTwoStep()
+    {
+        setSubmitting(false);
+        isTwoStep = true;
+        usernameTextBox.setEnabled(false);
+        passwordTextBox.setFieldLabel(textMessages.twoStepVerificationCode());
+        passwordTextBox.setValue("");
+        passwordTextBox.focus();
     }
     
     private void doLoginSuccess()

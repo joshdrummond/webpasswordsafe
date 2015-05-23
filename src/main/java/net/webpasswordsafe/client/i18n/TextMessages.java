@@ -123,6 +123,9 @@ public interface TextMessages extends Messages
     @DefaultMessage("Full Name:")
     String fullname_();
 
+    @DefaultMessage("Generate Key")
+    String generateKey();
+
     @DefaultMessage("Generate Password")
     String generatePassword();
 
@@ -180,6 +183,9 @@ public interface TextMessages extends Messages
     @DefaultMessage("IP Address unblocked")
     String ipAddressUnblocked();
 
+    @DefaultMessage("Key:")
+    String key_();
+
     @DefaultMessage("Login")
     String login();
 
@@ -219,8 +225,14 @@ public interface TextMessages extends Messages
     @DefaultMessage("Must enter Title")
     String mustEnterTitle();
 
+    @DefaultMessage("Must enter Two-Step Verification Code")
+    String mustEnterTwoStepVerificationCode();
+
     @DefaultMessage("Must enter Username")
     String mustEnterUsername();
+
+    @DefaultMessage("Must generate Key")
+    String mustGenerateKey();
 
     @DefaultMessage("Must have at least one permission")
     String mustHaveOnePermission();
@@ -314,6 +326,9 @@ public interface TextMessages extends Messages
 
     @DefaultMessage("Please select group(s)")
     String pleaseSelectGroups();
+
+    @DefaultMessage("QR Code")
+    String qrCode();
 
     @DefaultMessage("Re-enter Password")
     String reenterPassword();
@@ -410,6 +425,18 @@ public interface TextMessages extends Messages
 
     @DefaultMessage("Username too long")
     String tooLongUsername();
+
+    @DefaultMessage("Scan/Enter Key into your Mobile Authenticator App:")
+    String twoStepKeyInstructions();
+
+    @DefaultMessage("Two-Step Verification")
+    String twoStepVerification();
+
+    @DefaultMessage("Two-Step Verification Code")
+    String twoStepVerificationCode();
+
+    @DefaultMessage("Two-Step Verification Saved")
+    String twoStepVerificationSaved();
 
     @DefaultMessage("Type")
     String type();

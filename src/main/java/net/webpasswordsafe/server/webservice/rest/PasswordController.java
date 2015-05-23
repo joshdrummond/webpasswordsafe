@@ -34,6 +34,7 @@ import net.webpasswordsafe.common.model.Permission;
 import net.webpasswordsafe.common.model.Tag;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.common.util.Constants.Match;
 import net.webpasswordsafe.common.util.Utils;
 import net.webpasswordsafe.server.ServerSessionUtil;
@@ -72,7 +73,8 @@ public class PasswordController
     public ModelAndView getPasswordList(@RequestParam(value="query",required=false) String query,
             HttpServletRequest request,
             @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
-            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword)
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
+            @RequestHeader(Constants.REST_AUTHN_TOTP) String authnTOTP)
     {
         boolean isSuccess = false;
         String message = "";
@@ -80,8 +82,8 @@ public class PasswordController
         try
         {
             ServerSessionUtil.setIP(request.getRemoteAddr());
-            boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
-            if (isAuthnValid)
+            AuthenticationStatus authStatus = loginService.login(authnUsername, Utils.buildCredentials(authnPassword, authnTOTP));
+            if (AuthenticationStatus.SUCCESS == authStatus)
             {
                 List<Password> results = passwordService.searchPassword(query, true, new HashSet<Tag>(), Match.AND);
                 for (Password password : results)
@@ -116,7 +118,8 @@ public class PasswordController
     public ModelAndView getPassword(@PathVariable("passwordId") String passwordId,
             HttpServletRequest request,
             @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
-            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword)
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
+            @RequestHeader(Constants.REST_AUTHN_TOTP) String authnTOTP)
     {
         boolean isSuccess = false;
         String message = "";
@@ -124,8 +127,8 @@ public class PasswordController
         try
         {
             ServerSessionUtil.setIP(request.getRemoteAddr());
-            boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
-            if (isAuthnValid)
+            AuthenticationStatus authStatus = loginService.login(authnUsername, Utils.buildCredentials(authnPassword, authnTOTP));
+            if (AuthenticationStatus.SUCCESS == authStatus)
             {
                 Password password = passwordService.getPassword(Long.valueOf(passwordId));
                 if (password != null)
@@ -163,7 +166,8 @@ public class PasswordController
     public ModelAndView getCurrentPassword(@PathVariable("passwordId") String passwordId,
             HttpServletRequest request, 
             @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
-            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword)
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
+            @RequestHeader(Constants.REST_AUTHN_TOTP) String authnTOTP)
     {
         boolean isSuccess = false;
         String message = "";
@@ -171,8 +175,8 @@ public class PasswordController
         try
         {
             ServerSessionUtil.setIP(request.getRemoteAddr());
-            boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
-            if (isAuthnValid)
+            AuthenticationStatus authStatus = loginService.login(authnUsername, Utils.buildCredentials(authnPassword, authnTOTP));
+            if (AuthenticationStatus.SUCCESS == authStatus)
             {
                 Password password = passwordService.getPassword(Long.valueOf(passwordId));
                 if (password != null)
@@ -205,7 +209,8 @@ public class PasswordController
     public ModelAndView addPassword(@RequestBody Map<String, Object> passwordMap,
             HttpServletRequest request,
             @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
-            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword)
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
+            @RequestHeader(Constants.REST_AUTHN_TOTP) String authnTOTP)
     {
         boolean isSuccess = false;
         String message = "";
@@ -213,8 +218,8 @@ public class PasswordController
         try
         {
             ServerSessionUtil.setIP(request.getRemoteAddr());
-            boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
-            if (isAuthnValid)
+            AuthenticationStatus authStatus = loginService.login(authnUsername, Utils.buildCredentials(authnPassword, authnTOTP));
+            if (AuthenticationStatus.SUCCESS == authStatus)
             {
                 User loggedInUser = loginService.getLogin();
                 Password password = new Password();
@@ -260,7 +265,8 @@ public class PasswordController
     public ModelAndView updatePassword(@RequestBody Map<String, Object> passwordMap,
             HttpServletRequest request,
             @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
-            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword)
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
+            @RequestHeader(Constants.REST_AUTHN_TOTP) String authnTOTP)
     {
         boolean isSuccess = false;
         String message = "";
@@ -268,8 +274,8 @@ public class PasswordController
         try
         {
             ServerSessionUtil.setIP(request.getRemoteAddr());
-            boolean isAuthnValid = loginService.login(authnUsername, authnPassword);
-            if (isAuthnValid)
+            AuthenticationStatus authStatus = loginService.login(authnUsername, Utils.buildCredentials(authnPassword, authnTOTP));
+            if (AuthenticationStatus.SUCCESS == authStatus)
             {
                 passwordId = Utils.safeString(passwordMap.get("id"));
                 int iPasswordId = Utils.safeInt(passwordId);

@@ -23,6 +23,7 @@ import java.util.List;
 import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.Subject;
 import net.webpasswordsafe.common.model.User;
+import net.webpasswordsafe.common.model.UserAuthnTOTP;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.rpc.XsrfProtectedService;
@@ -51,6 +52,9 @@ public interface UserService extends XsrfProtectedService {
     public void deleteGroup(Group group);
     public boolean isGroupTaken(String groupName, long ignoreGroupId);
     public boolean unblockIP(String ipaddress);
+    public UserAuthnTOTP getCurrentUserTOTP();
+    public void updateCurrentUserTOTP(UserAuthnTOTP userAuthnTOTP);
+    public String generateTOTPKey();
 
     /**
      * Utility class for simplifying access to the instance of async service.

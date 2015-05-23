@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,6 +19,8 @@
 */
 package net.webpasswordsafe.server.plugin.authentication;
 
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
+
 
 /**
  * @author Josh Drummond
@@ -29,8 +31,8 @@ public class DemoAuthenticator implements Authenticator {
     private String demoPassword = "";
     
     @Override
-    public boolean authenticate(String username, String password) {
-        return password.equals(demoPassword);
+    public AuthenticationStatus authenticate(String principal, String[] credentials) {
+        return credentials[0].equals(demoPassword) ? AuthenticationStatus.SUCCESS : AuthenticationStatus.FAILURE;
     }
 
     public String getDemoPassword() {

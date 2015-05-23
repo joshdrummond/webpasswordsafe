@@ -56,4 +56,12 @@ public class Utils
     {
         return s.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"); 
     }
+    
+    public static String[] buildCredentials(String password, String totp)
+    {
+        String[] credentials = new String[2];
+        credentials[0] = password;
+        credentials[1] = totp;
+        return credentials;
+    }
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2013 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,6 +19,7 @@
 */
 package net.webpasswordsafe.server.plugin.authentication;
 
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import org.apache.log4j.Logger;
 import org.springframework.ldap.core.LdapTemplate;
 
@@ -35,22 +36,22 @@ public class LdapAuthenticator implements Authenticator {
     private static Logger LOG = Logger.getLogger(LdapAuthenticator.class);
 
     @Override
-    public boolean authenticate(String username, String password)
+    public AuthenticationStatus authenticate(String principal, String[] credentials)
     {
-        boolean valid = false;
+        AuthenticationStatus authStatus = AuthenticationStatus.FAILURE;
         try
         {
-            String userFilter = filter.replace("$1", username);
+            String userFilter = filter.replace("$1", principal);
             LOG.debug("ldap filter="+userFilter);
-            valid = ldapTemplate.authenticate(base, userFilter, password);
+            authStatus = ldapTemplate.authenticate(base, userFilter, principal) ? AuthenticationStatus.SUCCESS : AuthenticationStatus.FAILURE;
         }
         catch (Exception e)
         {
             // an exception is expected when bad credentials are used
             LOG.debug("ldap error authenticating: "+ e.getMessage());
         }
-        LOG.debug("LdapAuthenticator: login success for "+username+"? "+valid);
-        return valid;
+        LOG.debug("LdapAuthenticator: login success for "+principal+"? "+authStatus.name());
+        return authStatus;
     }
 
     public LdapTemplate getLdapTemplate() {

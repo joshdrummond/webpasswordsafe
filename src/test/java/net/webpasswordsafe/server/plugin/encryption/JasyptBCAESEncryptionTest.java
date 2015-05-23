@@ -44,11 +44,24 @@ public class JasyptBCAESEncryptionTest
         String clearText = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
         System.out.println("clearText.length="+clearText.length());
         System.out.println("clearText="+clearText);
-        String encryptedText = encryptor.encrypt(clearText);
-        System.out.println("encryptedText.length="+encryptedText.length());
-        System.out.println("encryptedText="+encryptedText);
-        assertEquals(encryptedText.length(), 172);
-        String decryptedText = encryptor.decrypt(encryptedText);
-        assertEquals(decryptedText, clearText);
+        String encryptedText1 = encryptor.encrypt(clearText);
+        System.out.println("encryptedText1.length="+encryptedText1.length());
+        System.out.println("encryptedText1="+encryptedText1);
+        assertEquals(encryptedText1.length(), 172);
+        String decryptedText1 = encryptor.decrypt(encryptedText1);
+        assertEquals(decryptedText1, clearText);
+        String encryptedText2 = encryptor.encrypt(clearText);
+        System.out.println("encryptedText2.length="+encryptedText2.length());
+        System.out.println("encryptedText2="+encryptedText2);
+        assertEquals(encryptedText2.length(), 172);
+        String decryptedText2 = encryptor.decrypt(encryptedText2);
+        assertEquals(decryptedText2, clearText);
+        
+        String clearText2 = "1234567890123456";
+        System.out.println("clearText2.length="+clearText2.length());
+        System.out.println("clearText2="+clearText2);
+        String encryptedText3 = encryptor.encrypt(clearText2);
+        System.out.println("encryptedText3.length="+encryptedText3.length());
+        System.out.println("encryptedText3="+encryptedText3);
     }
 }
