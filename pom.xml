@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2010-2013 Josh Drummond
+    Copyright 2010-2015 Josh Drummond
     
     This file is part of WebPasswordSafe.
     
@@ -29,13 +29,13 @@
  <description>Web-based, multi-user, secure password safe with delegated access controls</description>
  <url>http://www.webpasswordsafe.net</url>
  <issueManagement>
-  <system>Google Code Issue Tracking</system>
-  <url>http://code.google.com/p/webpasswordsafe/issues/list</url>
+  <system>GitHub</system>
+  <url>https://github.com/joshdrummond/webpasswordsafe/issues</url>
  </issueManagement>
  <scm>
-  <connection>scm:svn:http://webpasswordsafe.googlecode.com/svn/trunk</connection>
-  <developerConnection>scm:svn:https://webpasswordsafe.googlecode.com/svn/trunk</developerConnection>
-  <url>http://code.google.com/p/webpasswordsafe/source/checkout</url>
+  <url>https://github.com/joshdrummond/webpasswordsafe</url>
+  <connection>scm:git:git://github.com/joshdrummond/webpasswordsafe.git</connection>
+  <developerConnection>scm:git:git@github.com:joshdrummond/webpasswordsafe.git</developerConnection>
  </scm>
 
  <properties>
