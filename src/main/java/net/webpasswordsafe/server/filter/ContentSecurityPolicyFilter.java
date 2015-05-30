@@ -1,5 +1,5 @@
 /*
-    Copyright 2013 Josh Drummond
+    Copyright 2013-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -54,13 +54,14 @@ public class ContentSecurityPolicyFilter implements Filter
     {
         HttpServletResponse httpResponse = ((HttpServletResponse) response);
         // GWT/GXT compiled code still uses inline script/style and eval :(
-        String policy = "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self'; img-src 'self' https://chart.googleapis.com; frame-src 'self'; style-src 'self' 'unsafe-inline'";
-        // Chrome, Firefox 23+
+        String policy = "default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self'; img-src 'self' data:; frame-src 'self'; style-src 'self' 'unsafe-inline'";
+        // Chrome 25+, Firefox 23+, Safari 7+
         httpResponse.addHeader("Content-Security-Policy", policy);
-        // Safari
+        //Legacy
+        // Chrome, Safari
         httpResponse.addHeader("X-WebKit-CSP", policy);
-        // Firefox, IE
-        httpResponse.addHeader("X-Content-Security-Policy", "default-src 'self' data:; img-src 'self' https://chart.googleapis.com; options inline-script eval-script");
+        // Firefox, IE 10+
+        httpResponse.addHeader("X-Content-Security-Policy", "default-src 'self' data:; img-src 'self' data:; options inline-script eval-script");
         chain.doFilter(request, response);
     }
 

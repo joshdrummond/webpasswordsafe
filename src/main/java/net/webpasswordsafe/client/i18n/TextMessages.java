@@ -1,5 +1,5 @@
 /*
-    Copyright 2011-2013 Josh Drummond
+    Copyright 2011-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -123,9 +123,6 @@ public interface TextMessages extends Messages
     @DefaultMessage("Full Name:")
     String fullname_();
 
-    @DefaultMessage("Generate Key")
-    String generateKey();
-
     @DefaultMessage("Generate Password")
     String generatePassword();
 
@@ -231,9 +228,6 @@ public interface TextMessages extends Messages
     @DefaultMessage("Must enter Username")
     String mustEnterUsername();
 
-    @DefaultMessage("Must generate Key")
-    String mustGenerateKey();
-
     @DefaultMessage("Must have at least one permission")
     String mustHaveOnePermission();
 
@@ -245,6 +239,9 @@ public interface TextMessages extends Messages
 
     @DefaultMessage("New Password")
     String newPassword();
+
+    @DefaultMessage("New Key")
+    String newKey();
 
     @DefaultMessage("You don''t have access to read that password!")
     String noAccessPasswordRead();

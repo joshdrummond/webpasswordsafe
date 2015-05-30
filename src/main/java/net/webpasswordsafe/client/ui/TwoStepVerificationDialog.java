@@ -1,5 +1,5 @@
 /*
-    Copyright 2013 Josh Drummond
+    Copyright 2013-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -31,8 +31,8 @@ import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.Html;
 import com.extjs.gxt.ui.client.widget.Info;
-import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
@@ -41,8 +41,8 @@ import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteData;
 import com.extjs.gxt.ui.client.widget.layout.AbsoluteLayout;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Image;
 
 
 /**
@@ -55,17 +55,16 @@ public class TwoStepVerificationDialog extends Window
     private TextField<String> keyTextBox;
     private UserAuthnTOTP userAuthnTOTP;
     private CheckBox enabledCheckBox;
-    private Image imgQRCode;
-    private boolean isShowQRCode;
+    private Html qrCodeDiv;
+    private JavaScriptObject qrCodeJS;
 
     public TwoStepVerificationDialog()
     {
         this.setHeading(textMessages.twoStepVerification());
         this.setModal(true);
         this.setLayout(new AbsoluteLayout());
-        this.setSize(375, 415);
+        this.setSize(375, 387);
         this.setResizable(false);
-        this.isShowQRCode = false;
 
         LabelField lblfldDesc = new LabelField(textMessages.twoStepKeyInstructions());
         add(lblfldDesc, new AbsoluteData(7, 6));
@@ -82,34 +81,25 @@ public class TwoStepVerificationDialog extends Window
         enabledCheckBox.setBoxLabel(textMessages.enabled());
         add(enabledCheckBox, new AbsoluteData(82, 34));
 
-        Button generateButton = new Button(textMessages.generateKey(), new SelectionListener<ButtonEvent>() {
+        Button generateButton = new Button(textMessages.newKey(), new SelectionListener<ButtonEvent>() {
             @Override
             public void componentSelected(ButtonEvent ce) {
                 doGenerateKey();
             }
         });
-        add(generateButton, new AbsoluteData(82, 62));
-        generateButton.setSize("110px", "22px");
-
-        Button qrCodeButton = new Button(textMessages.qrCode(), new SelectionListener<ButtonEvent>() {
-            @Override
-            public void componentSelected(ButtonEvent ce) {
-                doQRCode();
-            }
-        });
-        add(qrCodeButton, new AbsoluteData(200, 62));
-        qrCodeButton.setSize("82px", "22px");
+        add(generateButton, new AbsoluteData(290, 62));
+        generateButton.setSize("60px", "22px");
 
         LabelField lblfldKey = new LabelField(textMessages.key_());
-        add(lblfldKey, new AbsoluteData(7, 90));
+        add(lblfldKey, new AbsoluteData(7, 62));
 
         keyTextBox = new TextField<String>();
         keyTextBox.setReadOnly(true);
-        add(keyTextBox, new AbsoluteData(82, 90));
+        add(keyTextBox, new AbsoluteData(82, 62));
         keyTextBox.setSize("200px", "22px");
 
-        imgQRCode = new Image();
-        add(imgQRCode, new AbsoluteData(82, 118));
+        qrCodeDiv = new Html("<div id=\"qrcode\"></div>");
+        add(qrCodeDiv, new AbsoluteData(82, 90));
 
         Button saveButton = new Button(textMessages.save(), new SelectionListener<ButtonEvent>() {
             @Override
@@ -140,12 +130,6 @@ public class TwoStepVerificationDialog extends Window
         }
     }
     
-    private void doQRCode()
-    {
-        isShowQRCode = !isShowQRCode;
-        refreshKey(keyTextBox.getValue());
-    }
-    
     @Override
     public void show()
     {
@@ -158,20 +142,44 @@ public class TwoStepVerificationDialog extends Window
         keyTextBox.setValue(key);
         if (!key.equals(""))
         {
-            imgQRCode.setVisible(isShowQRCode);
-            imgQRCode.setUrl(isShowQRCode ? getQRBarcodeURL() : "");
+            if (null == qrCodeJS)
+            {
+                qrCodeJS = createQRCode(getQRBarcodeURL());
+            }
+            else
+            {
+                updateQRCode(qrCodeJS, getQRBarcodeURL());
+            }
         }
     }
     
     private String getQRBarcodeURL()
     {
-        return getQRBarcodeURL(ClientSessionUtil.getInstance().getLoggedInUser().getUsername(), "WebPasswordSafe", Utils.safeString(keyTextBox.getValue()));
+        return getQRBarcodeURL(ClientSessionUtil.getInstance().getLoggedInUser().getUsername(),
+                "WebPasswordSafe",
+                Utils.safeString(keyTextBox.getValue()));
     }
     
     private String getQRBarcodeURL(String user, String issuer, String secret)
-    { //otpauth://totp/XXX:XXX?secret=XXX&issuer=XXX
-        return "https://chart.googleapis.com/chart?chs=200x200&chld=M%7C0&cht=qr&chl=otpauth%3A%2F%2Ftotp%2F"+issuer+"%3A"+user+"%3Fsecret%3D"+secret+"%26issuer%3D"+issuer;
+    { 
+        return "otpauth://totp/"+issuer+":"+user+"?secret="+secret+"&issuer="+issuer;
     }
+    
+    private static native JavaScriptObject createQRCode(String url) /*-{
+        var qrcode = new $wnd.QRCode("qrcode", {
+           text: url,
+           width: 200,
+           height: 200,
+           colorDark: "#000000",
+           colorLight: "#ffffff",
+           correctLevel: $wnd.QRCode.CorrectLevel.M
+        });
+        return qrcode;
+    }-*/;
+    
+    private static native void updateQRCode(JavaScriptObject qrcode, String url) /*-{
+        qrcode.makeCode(url);
+    }-*/;
 
     private void setFields()
     {
@@ -218,11 +226,6 @@ public class TwoStepVerificationDialog extends Window
     
     private boolean validateFields()
     {
-        if (enabledCheckBox.getValue() && Utils.safeString(keyTextBox.getValue()).equals(""))
-        {
-            MessageBox.alert(textMessages.error(), textMessages.mustGenerateKey(), null);
-            return false;
-        }
         return true;
     }
     
