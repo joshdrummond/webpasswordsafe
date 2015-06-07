@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2012 Josh Drummond
+    Copyright 2008-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.webpasswordsafe.common.model.Group;
+import net.webpasswordsafe.common.dto.SystemSettings;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants.Function;
 
@@ -39,10 +39,10 @@ public class ClientSessionUtil
     private static final ClientSessionUtil clientSessionUtil = new ClientSessionUtil();
     
     private User user;
-    private Group everyoneGroup;
     private boolean isLoggedIn;
     private Map<Function, Boolean> authorizations;
     private List<Map<String, Object>> reports;
+    private SystemSettings systemSettings;
     
     public static ClientSessionUtil getInstance()
     {
@@ -105,14 +105,14 @@ public class ClientSessionUtil
         this.user = user;
     }
     
-    public Group getEveryoneGroup()
+    public SystemSettings getSystemSettings()
     {
-        return this.everyoneGroup;
+        return this.systemSettings;
     }
 
-    public void setEveryoneGroup(Group everyoneGroup)
+    public void setSystemSettings(SystemSettings systemSettings)
     {
-        this.everyoneGroup = everyoneGroup;
+        this.systemSettings = systemSettings;
     }
 
 }

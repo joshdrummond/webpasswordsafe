@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013 Josh Drummond
+    Copyright 2008-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -29,15 +29,19 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.Resource;
 import net.webpasswordsafe.client.remote.LoginService;
+import net.webpasswordsafe.client.remote.UserService;
+import net.webpasswordsafe.common.dto.SystemSettings;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.common.util.Constants.Function;
+import net.webpasswordsafe.common.util.Utils;
 import net.webpasswordsafe.server.ServerSessionUtil;
 import net.webpasswordsafe.server.dao.UserDAO;
 import net.webpasswordsafe.server.plugin.audit.AuditLogger;
 import net.webpasswordsafe.server.plugin.authentication.Authenticator;
 import net.webpasswordsafe.server.plugin.authentication.RoleRetriever;
+import net.webpasswordsafe.server.plugin.authentication.sso.SsoAuthenticator;
 import net.webpasswordsafe.server.plugin.authorization.Authorizer;
 import net.webpasswordsafe.server.report.ReportConfig;
 import net.webpasswordsafe.server.service.helper.WPSXsrfProtectedServiceServlet;
@@ -63,6 +67,9 @@ public class LoginServiceImpl extends WPSXsrfProtectedServiceServlet implements 
     @Resource
     private Authenticator authenticator;
     
+    @Resource
+    private SsoAuthenticator ssoAuthenticator;
+    
     @Autowired
     private UserDAO userDAO;
     
@@ -78,10 +85,22 @@ public class LoginServiceImpl extends WPSXsrfProtectedServiceServlet implements 
     @Resource
     private Authorizer authorizer;
 
-    
-    /* (non-Javadoc)
-     * @see net.webpasswordsafe.client.LoginService#getLogin()
-     */
+    @Autowired
+    private UserService userService;
+
+
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public SystemSettings getSystemSettings()
+    {
+        userService.verifyInitialization();
+        SystemSettings systemSettings = new SystemSettings();
+        systemSettings.setEveryoneGroup(userService.getEveryoneGroup());
+        systemSettings.setSsoEnabled(ssoAuthenticator.isSsoEnabled());
+        systemSettings.setLogoutUrl(Utils.safeString(ssoAuthenticator.getLogoutUrl()));
+        return systemSettings;
+    }
+
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public User getLogin()
@@ -96,43 +115,77 @@ public class LoginServiceImpl extends WPSXsrfProtectedServiceServlet implements 
         return user;
     }
 
-    /* (non-Javadoc)
-     * @see net.webpasswordsafe.client.LoginService#login(java.lang.String, java.lang.String)
-     */
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
     public AuthenticationStatus login(String principal, String[] credentials)
     {
         Date now = new Date();
+        AuthenticationStatus authStatus = AuthenticationStatus.SUCCESS;
         String message = "";
         principal = trimUsername(principal);
-        AuthenticationStatus authStatus = authenticator.authenticate(principal, credentials);
-        if (AuthenticationStatus.SUCCESS == authStatus)
+        //don't let them get around SSO if enabled
+        if (ssoAuthenticator.isSsoEnabled())
         {
-            User user = userDAO.findActiveUserByUsername(principal);
-            if (null != user)
-            {
-                user.setLastLogin(now);
-                userDAO.makePersistent(user);
-                ServerSessionUtil.setUsername(principal);
-                ServerSessionUtil.setRoles(roleRetriever.retrieveRoles(user));
-            }
-            else
+            if (!principal.equals("admin")) //FIXME
             {
                 authStatus = AuthenticationStatus.FAILURE;
-                message = "user not found";
+                message = "bypass SSO not allowed";
             }
         }
-        else if (AuthenticationStatus.TWO_STEP_REQ == authStatus)
+        //otherwise authenticate given credentials
+        if (authStatus == AuthenticationStatus.SUCCESS)
         {
-            message = "two-step authentication required";
-        }
-        else 
-        {
-            message = "authentication failed";
+            authStatus = authenticator.authenticate(principal, credentials);
+            if (AuthenticationStatus.SUCCESS == authStatus)
+            {
+                message = loginDB(principal);
+                authStatus = ("".equals(message)) ? AuthenticationStatus.SUCCESS : AuthenticationStatus.FAILURE;
+            }
+            else if (AuthenticationStatus.TWO_STEP_REQ == authStatus)
+            {
+                message = "two-step authentication required";
+            }
+            else 
+            {
+                message = "authentication failed";
+            }
         }
         auditLogger.log(now, principal, ServerSessionUtil.getIP(), "login", "", AuthenticationStatus.SUCCESS == authStatus, message);
         return authStatus;
+    }
+    
+    @Override
+    @Transactional(propagation=Propagation.REQUIRED)
+    public AuthenticationStatus checkSsoLogin()
+    {
+        AuthenticationStatus authStatus = AuthenticationStatus.SUCCESS;
+        if (ssoAuthenticator.isSsoEnabled())
+        {
+            String principal = ssoAuthenticator.getPrincipal();
+            String message = loginDB(principal);
+            authStatus = ("".equals(message)) ? AuthenticationStatus.SUCCESS : AuthenticationStatus.FAILURE;
+            auditLogger.log(new Date(), principal, ServerSessionUtil.getIP(), "login", "", AuthenticationStatus.SUCCESS == authStatus, message);
+        }
+        return authStatus;
+    }
+    
+    @Transactional(propagation=Propagation.REQUIRED)
+    protected String loginDB(String principal)
+    {
+        String message = "";
+        User user = userDAO.findActiveUserByUsername(principal);
+        if (null != user)
+        {
+            user.setLastLogin(new Date());
+            userDAO.makePersistent(user);
+            ServerSessionUtil.setUsername(principal);
+            ServerSessionUtil.setRoles(roleRetriever.retrieveRoles(user));
+        }
+        else
+        {
+            message = "user not found";
+        }
+        return message;
     }
 
     private String trimUsername(String username)
@@ -147,9 +200,6 @@ public class LoginServiceImpl extends WPSXsrfProtectedServiceServlet implements 
         }
     }
 
-    /* (non-Javadoc)
-     * @see net.webpasswordsafe.client.LoginService#logout()
-     */
     @Override
     public boolean logout()
     {
@@ -160,9 +210,6 @@ public class LoginServiceImpl extends WPSXsrfProtectedServiceServlet implements 
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see net.webpasswordsafe.client.remote.LoginService#getLoginAuthorizations(java.util.Set)
-     */
     @Override
     @Transactional(propagation=Propagation.REQUIRED, readOnly=true)
     public Map<Function, Boolean> getLoginAuthorizations(Set<Function> functions)

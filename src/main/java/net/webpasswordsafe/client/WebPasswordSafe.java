@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013 Josh Drummond
+    Copyright 2008-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -28,6 +28,7 @@ import net.webpasswordsafe.client.remote.PasswordService;
 import net.webpasswordsafe.client.remote.ServiceHelper;
 import net.webpasswordsafe.client.remote.UserService;
 import net.webpasswordsafe.client.ui.*;
+import net.webpasswordsafe.common.dto.SystemSettings;
 import net.webpasswordsafe.common.model.AccessLevel;
 import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.Password;
@@ -59,6 +60,7 @@ import com.extjs.gxt.ui.client.widget.menu.MenuBarItem;
 import com.extjs.gxt.ui.client.widget.menu.MenuItem;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -594,7 +596,7 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
             public void onSuccess(XsrfToken token)
             {
                 ServiceHelper.setXsrfToken(token);
-                doGetLoggedInUser(loginWindow);
+                getSystemSettings(loginWindow);
             }
             @Override
             public void onFailure(Throwable caught)
@@ -671,9 +673,9 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
         LoginService.Util.getInstance().getLoginReports(callback);
     }
 
-    private void verifyInitialization()
+    private void getSystemSettings(final LoginWindow loginWindow)
     {
-        AsyncCallback<Void> callback = new AsyncCallback<Void>()
+        AsyncCallback<SystemSettings> callback = new AsyncCallback<SystemSettings>()
         {
             @Override
             public void onFailure(Throwable caught)
@@ -681,31 +683,13 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                 WebPasswordSafe.handleServerFailure(caught);
             }
             @Override
-            public void onSuccess(Void result)
+            public void onSuccess(SystemSettings result)
             {
-                getEveryoneGroup();
+                clientSessionUtil.setSystemSettings(result);
+                doGetLoggedInUser(loginWindow);
             }
         };
-        UserService.Util.getInstance().verifyInitialization(callback);
-    }
-
-    private void getEveryoneGroup()
-    {
-        AsyncCallback<Group> callback = new AsyncCallback<Group>()
-        {
-            @Override
-            public void onFailure(Throwable caught)
-            {
-                WebPasswordSafe.handleServerFailure(caught);
-            }
-            @Override
-            public void onSuccess(Group result)
-            {
-                ClientSessionUtil.getInstance().setEveryoneGroup(result);
-                displayLoginDialog();
-            }
-        };
-        UserService.Util.getInstance().getEveryoneGroup(callback);
+        LoginService.Util.getInstance().getSystemSettings(callback);
     }
 
     private void doLogout()
@@ -724,8 +708,16 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
                 {
                     clientSessionUtil.getLoggedInUser().setUsername("");
                     clientSessionUtil.setLoggedIn(false);
-                    refreshLoginStatus();
-                    displayLoginDialog();
+                    String logoutUrl = clientSessionUtil.getSystemSettings().getLogoutUrl();
+                    if (logoutUrl.equals(""))
+                    {
+                        Window.Location.reload();
+                    }
+                    else
+                    {
+                        logoutUrl = logoutUrl.replace("$1", URL.encodeQueryString(GWT.getHostPageBaseURL()));
+                        Window.Location.replace(logoutUrl);
+                    }
                 }
             }
         };
@@ -757,7 +749,17 @@ public class WebPasswordSafe implements EntryPoint, MainWindow, LoginWindow
     @Override
     public void doGetLoginFailure()
     {
-        verifyInitialization();
+        String bypassSSO = Window.Location.getParameter("bypassSSO");
+        bypassSSO = (bypassSSO == null) ? "false" : bypassSSO;
+        if (clientSessionUtil.getSystemSettings().isSsoEnabled() && !bypassSSO.equals("true"))
+        {
+            // sso enabled and not bypass, redirect to sso filtered page
+            Window.Location.replace(GWT.getHostPageBaseURL()+"sso");
+        }
+        else
+        {
+            displayLoginDialog();
+        }
     }
     
     private void doShowAbout()

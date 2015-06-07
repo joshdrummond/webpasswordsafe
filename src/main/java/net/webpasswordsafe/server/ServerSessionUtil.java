@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2013 Josh Drummond
+    Copyright 2010-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,10 +21,14 @@ package net.webpasswordsafe.server;
 
 import java.util.Set;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Constants.Role;
 import org.gwtwidgets.server.spring.ServletUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 
 /**
@@ -41,17 +45,17 @@ public class ServerSessionUtil
     
     public static void invalidateSession()
     {
-        if (ServletUtils.getRequest() != null)
+        if (getRequest() != null)
         {
-            ServletUtils.getRequest().getSession().invalidate();
+            getRequest().getSession().invalidate();
         }
     }
 
     public static String getUsername()
     {
-        if (ServletUtils.getRequest() != null)
+        if (getRequest() != null)
         {
-            usernameRef.set((String)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
+            usernameRef.set((String)getRequest().getSession().getAttribute(Constants.SESSION_KEY_USERNAME));
         }
         return usernameRef.get();
     }
@@ -59,18 +63,18 @@ public class ServerSessionUtil
     @SuppressWarnings("unchecked")
     public static Set<Role> getRoles()
     {
-        if (ServletUtils.getRequest() != null)
+        if (getRequest() != null)
         {
-            rolesRef.set((Set<Role>)ServletUtils.getRequest().getSession().getAttribute(Constants.SESSION_KEY_ROLES));
+            rolesRef.set((Set<Role>)getRequest().getSession().getAttribute(Constants.SESSION_KEY_ROLES));
         }
         return rolesRef.get();
     }
     
     public static String getIP()
     {
-        if (ServletUtils.getRequest() != null)
+        if (getRequest() != null)
         {
-            ipRef.set(ServletUtils.getRequest().getRemoteAddr());
+            ipRef.set(getRequest().getRemoteAddr());
         }
         return ipRef.get();
     }
@@ -83,15 +87,15 @@ public class ServerSessionUtil
     public static void setUsername(String username)
     {
         usernameRef.set(username);
-        if (ServletUtils.getRequest() != null)
+        if (getRequest() != null)
         {
             if (username != null)
             {
-                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_USERNAME, usernameRef.get());
+                getRequest().getSession().setAttribute(Constants.SESSION_KEY_USERNAME, usernameRef.get());
             }
             else
             {
-                ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_USERNAME);
+                getRequest().getSession().removeAttribute(Constants.SESSION_KEY_USERNAME);
             }
         }
     }
@@ -99,29 +103,40 @@ public class ServerSessionUtil
     public static void setRoles(Set<Role> roles)
     {
         rolesRef.set(roles);
-        if (ServletUtils.getRequest() != null)
+        if (getRequest() != null)
         {
             if (roles != null)
             {
-                ServletUtils.getRequest().getSession().setAttribute(Constants.SESSION_KEY_ROLES, rolesRef.get());
+                getRequest().getSession().setAttribute(Constants.SESSION_KEY_ROLES, rolesRef.get());
             }
             else
             {
-                ServletUtils.getRequest().getSession().removeAttribute(Constants.SESSION_KEY_ROLES);
+                getRequest().getSession().removeAttribute(Constants.SESSION_KEY_ROLES);
             }
         }
     }
     
     public static void initCsrfSession()
     {
-        HttpSession session = ServletUtils.getRequest().getSession(false);
+        HttpSession session = getRequest().getSession(false);
         if (session.isNew() || (session.getAttribute(Constants.CSRF_TOKEN_KEY) == null))
         {
             // either new session or old session without csrf token set, so set it
             session.setAttribute(Constants.CSRF_TOKEN_KEY, session.getId());
             Cookie cookie = new Cookie(Constants.CSRF_TOKEN_KEY, session.getId());
-            cookie.setPath("".equals(ServletUtils.getRequest().getContextPath()) ? "/" : ServletUtils.getRequest().getContextPath());
-            ServletUtils.getResponse().addCookie(cookie);
+            cookie.setPath("".equals(getRequest().getContextPath()) ? "/" : getRequest().getContextPath());
+            getResponse().addCookie(cookie);
         }
     }
+    
+    public static HttpServletRequest getRequest()
+    {
+    	return ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+    }
+    
+    public static HttpServletResponse getResponse()
+    {
+    	return ServletUtils.getResponse();
+    }
+
 }

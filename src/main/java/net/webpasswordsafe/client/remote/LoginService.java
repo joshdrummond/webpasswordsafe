@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013 Josh Drummond
+    Copyright 2008-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -22,6 +22,7 @@ package net.webpasswordsafe.client.remote;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.webpasswordsafe.common.dto.SystemSettings;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import net.webpasswordsafe.common.util.Constants.Function;
@@ -40,6 +41,8 @@ public interface LoginService extends XsrfProtectedService {
     
     @NoXsrfProtect
     public boolean ping();
+    public AuthenticationStatus checkSsoLogin();
+    public SystemSettings getSystemSettings();
     public AuthenticationStatus login(String principal, String[] credentials);
     public boolean logout();
     public User getLogin();
