@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2011 Josh Drummond
+    Copyright 2010-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -19,6 +19,7 @@
 */
 package net.webpasswordsafe.server.plugin.authentication;
 
+import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
 import org.apache.log4j.Logger;
 import com.rsa.authagent.authapi.AuthSession;
 import com.rsa.authagent.authapi.AuthSessionFactory;
@@ -28,31 +29,32 @@ import com.rsa.authagent.authapi.AuthSessionFactory;
  * @author Josh Drummond
  *
  */
-public class RsaSecurIdAuthenticator implements Authenticator {
-
+public class RsaSecurIdAuthenticator implements Authenticator
+{
     private static Logger LOG = Logger.getLogger(RsaSecurIdAuthenticator.class);
     private String configPath;
 
     @Override
-    public boolean authenticate(String username, String password)
+    public AuthenticationStatus authenticate(String principal, String[] credentials)
     {
-        boolean valid = false;
+        AuthenticationStatus authStatus = AuthenticationStatus.FAILURE;
         try
         {
             AuthSessionFactory api = AuthSessionFactory.getInstance(configPath);
             AuthSession authSession = api.createUserSession();
-            int status = authSession.check(username, password);
+            int status = authSession.check(principal, credentials[0]);
             authSession.close();
             api.shutdown();
-            valid = (status == AuthSession.ACCESS_OK);
+            authStatus = (status == AuthSession.ACCESS_OK) ? AuthenticationStatus.SUCCESS : AuthenticationStatus.FAILURE;
         }
         catch (Exception e)
         {
             // an exception is expected when bad credentials are used
             LOG.debug("rsa securid error authenticating: "+ e.getMessage());
+            authStatus = AuthenticationStatus.FAILURE;
         }
-        LOG.debug("RsaSecurIdAuthenticator: login success for "+username+"? "+valid);
-        return valid;
+        LOG.debug("RsaSecurIdAuthenticator: login success for "+principal+"? "+authStatus.name());
+        return authStatus;
     }
 
     public String getConfigPath()

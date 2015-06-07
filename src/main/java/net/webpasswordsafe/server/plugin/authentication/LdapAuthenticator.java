@@ -1,5 +1,5 @@
 /*
-    Copyright 2010-2013 Josh Drummond
+    Copyright 2010-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -28,8 +28,8 @@ import org.springframework.ldap.core.LdapTemplate;
  * @author Josh Drummond
  *
  */
-public class LdapAuthenticator implements Authenticator {
-
+public class LdapAuthenticator implements Authenticator
+{
     private LdapTemplate ldapTemplate;
     private String filter;
     private String base;
@@ -43,12 +43,13 @@ public class LdapAuthenticator implements Authenticator {
         {
             String userFilter = filter.replace("$1", principal);
             LOG.debug("ldap filter="+userFilter);
-            authStatus = ldapTemplate.authenticate(base, userFilter, principal) ? AuthenticationStatus.SUCCESS : AuthenticationStatus.FAILURE;
+            authStatus = ldapTemplate.authenticate(base, userFilter, credentials[0]) ? AuthenticationStatus.SUCCESS : AuthenticationStatus.FAILURE;
         }
         catch (Exception e)
         {
             // an exception is expected when bad credentials are used
             LOG.debug("ldap error authenticating: "+ e.getMessage());
+            authStatus = AuthenticationStatus.FAILURE;
         }
         LOG.debug("LdapAuthenticator: login success for "+principal+"? "+authStatus.name());
         return authStatus;
