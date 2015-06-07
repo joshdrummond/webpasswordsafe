@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008-2013 Josh Drummond
+    Copyright 2008-2015 Josh Drummond
     
     This file is part of WebPasswordSafe.
     
@@ -25,6 +25,7 @@
     <display-name>WebPasswordSafe</display-name>
     <welcome-file-list>
         <welcome-file>WebPasswordSafe.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
  
     <session-config>
