@@ -124,13 +124,10 @@ public class LoginServiceImpl extends WPSXsrfProtectedServiceServlet implements 
         String message = "";
         principal = trimUsername(principal);
         //don't let them get around SSO if enabled
-        if (ssoAuthenticator.isSsoEnabled())
+        if (ssoAuthenticator.isSsoEnabled() && !ssoAuthenticator.isBypassAllowed(principal))
         {
-            if (!principal.equals("admin")) //FIXME
-            {
-                authStatus = AuthenticationStatus.FAILURE;
-                message = "bypass SSO not allowed";
-            }
+            authStatus = AuthenticationStatus.FAILURE;
+            message = "bypass SSO not allowed";
         }
         //otherwise authenticate given credentials
         if (authStatus == AuthenticationStatus.SUCCESS)

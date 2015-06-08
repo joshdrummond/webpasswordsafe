@@ -30,4 +30,5 @@ public interface SsoAuthenticator
     public boolean isSsoEnabled();
     public String getPrincipal();
     public String getLogoutUrl();
+    public boolean isBypassAllowed(String principal);
 }

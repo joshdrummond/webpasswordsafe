@@ -19,36 +19,36 @@
 */
 package net.webpasswordsafe.server.plugin.authentication.sso;
 
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * 
  * @author Josh Drummond
  *
  */
-public class NoSsoAuthenticator implements SsoAuthenticator
+public abstract class BypassWhitelistSsoAuthenticator
+    implements SsoAuthenticator
 {
-    @Override
-    public boolean isSsoEnabled()
-    {
-        return false;
-    }
-
-    @Override
-    public String getPrincipal()
-    {
-        return "";
-    }
+    private Set<String> bypassAllowedUsers;
     
-    @Override
-    public String getLogoutUrl()
+    public BypassWhitelistSsoAuthenticator()
     {
-        return "";
+        bypassAllowedUsers = new HashSet<String>();
     }
     
     @Override
     public boolean isBypassAllowed(String principal)
     {
-        return true;
+        return getBypassAllowedUsers().contains(principal);
+    }
+
+    public Set<String> getBypassAllowedUsers() {
+        return bypassAllowedUsers;
+    }
+    public void setBypassAllowedUsers(Set<String> bypassAllowedUsers) {
+        this.bypassAllowedUsers = bypassAllowedUsers;
     }
 
 }

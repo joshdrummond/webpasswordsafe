@@ -30,7 +30,7 @@ import org.jasig.cas.client.authentication.AttributePrincipal;
  * @author Josh Drummond
  *
  */
-public class CasSsoAuthenticator implements SsoAuthenticator
+public class CasSsoAuthenticator extends BypassWhitelistSsoAuthenticator
 {
     private static Logger LOG = Logger.getLogger(CasSsoAuthenticator.class);
     private String logoutUrl;
