@@ -19,7 +19,7 @@
 */
 package net.webpasswordsafe.server.plugin.generator;
 
-import java.util.Random;
+import java.security.SecureRandom;
 import org.apache.log4j.Logger;
 
 
@@ -40,11 +40,11 @@ public class SimpleRandomPasswordGenerator implements PasswordGenerator
     private static Logger LOG = Logger.getLogger(SimpleRandomPasswordGenerator.class);
 
     /**
-     * Constructor creating default length of 10
+     * Constructor creating default length of 16
      */
     public SimpleRandomPasswordGenerator()
     {
-        passwordLength = 10;
+        passwordLength = 16;
     }
     
     /* (non-Javadoc)
@@ -53,7 +53,7 @@ public class SimpleRandomPasswordGenerator implements PasswordGenerator
     @Override
     public String generatePassword()
     {
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
         StringBuilder password = new StringBuilder(passwordLength);
         StringBuilder allowedChars = getAllowedChars();
         for (int i = 0; i < passwordLength; i++)
