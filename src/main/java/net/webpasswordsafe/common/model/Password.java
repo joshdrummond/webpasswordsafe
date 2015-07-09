@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013 Josh Drummond
+    Copyright 2008-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -52,7 +52,7 @@ import org.hibernate.annotations.Type;
  */
 @Entity
 @Table(name="passwords")
-public class Password extends LightEntity implements Serializable
+public class Password extends LightEntity implements Serializable, Comparable<Password>
 {
     private static final long serialVersionUID = 7174192307771387126L;
     public static final int LENGTH_NAME = 100;
@@ -362,4 +362,51 @@ public class Password extends LightEntity implements Serializable
         return p;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result
+                + ((username == null) ? 0 : username.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Password))
+            return false;
+        Password other = (Password) obj;
+        if (id != other.id)
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int compareTo(Password other)
+    {
+        if (getName().equals(other.getName()))
+        {
+            return getUsername().compareTo(other.getUsername());
+        }
+        else
+        {
+            return getName().compareTo(other.getName());
+        }
+    }
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright 2008-2013 Josh Drummond
+    Copyright 2008-2015 Josh Drummond
 
     This file is part of WebPasswordSafe.
 
@@ -21,6 +21,7 @@ package net.webpasswordsafe.server.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -243,9 +244,49 @@ public class PasswordServiceImpl extends WPSXsrfProtectedServiceServlet implemen
         query = Utils.safeString(query);
         Date now = new Date();
         User loggedInUser = getLoggedInUser();
-        List<Password> passwords = passwordDAO.findPasswordByFuzzySearch(query, loggedInUser, activeOnly, tags, tagMatch);
+        List<Password> passwords = new ArrayList<Password>();
+        Set<String> searchTerms = parseSearchTerms(query);
+        if (searchTerms.isEmpty())
+        {
+            passwords.addAll(passwordDAO.findPasswordByFuzzySearch("", loggedInUser, activeOnly, tags, tagMatch));
+        }
+        else
+        {
+            Set<Password> passwordSet = new HashSet<Password>();
+            for (String searchTerm : searchTerms)
+            {
+                passwordSet.addAll(passwordDAO.findPasswordByFuzzySearch(searchTerm, loggedInUser, activeOnly, tags, tagMatch));
+            }
+            passwords.addAll(passwordSet);
+        }
+        Collections.sort(passwords);
         auditLogger.log(now, loggedInUser.getUsername(), ServerSessionUtil.getIP(), "search password", "query=["+query+"] activeOnly=["+activeOnly+"] tags=["+tags+"] tagMatch=["+tagMatch+"]", true, "found "+passwords.size());
         return passwords;
+    }
+    
+    private Set<String> parseSearchTerms(String query)
+    {
+        Set<String> searchTerms = new HashSet<String>();
+        String[] sOuter = query.split("\"");
+        boolean insideQuote = false;
+        for (String sOuterItem : sOuter)
+        {
+            if (insideQuote)
+            {
+                searchTerms.add(sOuterItem.trim());
+            }
+            else
+            {
+                String[] sInner = sOuterItem.split(" ");
+                for (String sInnerItem : sInner)
+                {
+                    searchTerms.add(sInnerItem.trim());
+                }
+            }
+            insideQuote = !insideQuote;
+        }
+        searchTerms.remove("");
+        return searchTerms;
     }
  
     @Override
