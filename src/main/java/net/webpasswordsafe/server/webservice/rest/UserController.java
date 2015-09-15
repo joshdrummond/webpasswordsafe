@@ -63,7 +63,7 @@ public class UserController
     public void getReport(HttpServletRequest request, HttpServletResponse response,
             @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
             @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
-            @RequestHeader(Constants.REST_AUTHN_TOTP) String authnTOTP)
+            @RequestHeader(value=Constants.REST_AUTHN_TOTP, required=false) String authnTOTP)
     {
         try
         {
@@ -91,7 +91,7 @@ public class UserController
             HttpServletRequest request,
             @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
             @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
-            @RequestHeader(Constants.REST_AUTHN_TOTP) String authnTOTP)
+            @RequestHeader(value=Constants.REST_AUTHN_TOTP, required=false) String authnTOTP)
     {
         boolean isSuccess = false;
         String message = "";
