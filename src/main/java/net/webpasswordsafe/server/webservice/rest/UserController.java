@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.webpasswordsafe.client.remote.LoginService;
 import net.webpasswordsafe.client.remote.UserService;
+import net.webpasswordsafe.common.model.Group;
 import net.webpasswordsafe.common.model.User;
 import net.webpasswordsafe.common.util.Constants;
 import net.webpasswordsafe.common.util.Constants.AuthenticationStatus;
@@ -62,7 +63,45 @@ public class UserController
     private View jsonView;
     private static Logger LOG = Logger.getLogger(UserController.class);
 
-    
+    @RequestMapping(value = "/groups", method = RequestMethod.GET)
+    public ModelAndView listGroups(@RequestParam(value="includeEveryone", defaultValue="false") String includeEveryone,
+            HttpServletRequest request, HttpServletResponse response,
+            @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
+            @RequestHeader(value=Constants.REST_AUTHN_TOTP, required=false) String authnTOTP)
+    {
+        boolean isSuccess = false;
+        String message = "";
+        List<Map<String, String>> groupList = new ArrayList<Map<String, String>>();
+        try
+        {
+            ServerSessionUtil.setIP(request.getRemoteAddr());
+            AuthenticationStatus authStatus = loginService.login(authnUsername, Utils.buildCredentials(authnPassword, authnTOTP));
+            if (AuthenticationStatus.SUCCESS == authStatus)
+            {
+                List<Group> results = userService.getGroups(Boolean.parseBoolean(includeEveryone));
+                for (Group group : results)
+                {
+                    Map<String, String> groupMap = new HashMap<String, String>();
+                    groupMap.put("id", String.valueOf(group.getId()));
+                    groupMap.put("name", group.getName());
+                    groupList.add(groupMap);
+                }
+                isSuccess = true;
+            }
+            else
+            {
+                message = "Invalid authentication";
+            }
+            loginService.logout();
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
+        }
+        return createModelAndView(isSuccess, message, "groupList", groupList);
+    }
+
     @RequestMapping(value = "/reports", method = RequestMethod.GET)
     public void getReport(HttpServletRequest request, HttpServletResponse response,
             @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
@@ -117,6 +156,7 @@ public class UserController
                     userMap.put("active", Boolean.toString(user.isActiveFlag()));
                     userList.add(userMap);
                 }
+                isSuccess = true;
             }
             else
             {
