@@ -19,6 +19,9 @@
 */
 package net.webpasswordsafe.server.webservice.rest;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
@@ -86,6 +90,47 @@ public class UserController
         
     }
     
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public ModelAndView listUsers(@RequestParam(value="activeOnly", defaultValue="false") String activeOnly,
+            HttpServletRequest request, HttpServletResponse response,
+            @RequestHeader(Constants.REST_AUTHN_USERNAME) String authnUsername,
+            @RequestHeader(Constants.REST_AUTHN_PASSWORD) String authnPassword,
+            @RequestHeader(value=Constants.REST_AUTHN_TOTP, required=false) String authnTOTP)
+    {
+        boolean isSuccess = false;
+        String message = "";
+        List<Map<String, String>> userList = new ArrayList<Map<String, String>>();
+        try
+        {
+            ServerSessionUtil.setIP(request.getRemoteAddr());
+            AuthenticationStatus authStatus = loginService.login(authnUsername, Utils.buildCredentials(authnPassword, authnTOTP));
+            if (AuthenticationStatus.SUCCESS == authStatus)
+            {
+                List<User> results = userService.getUsers(Boolean.parseBoolean(activeOnly));
+                for (User user : results)
+                {
+                    Map<String, String> userMap = new HashMap<String, String>();
+                    userMap.put("id", String.valueOf(user.getId()));
+                    userMap.put("username", user.getUsername());
+                    userMap.put("fullname", user.getFullname());
+                    userMap.put("email", user.getEmail());
+                    userMap.put("active", Boolean.toString(user.isActiveFlag()));
+                    userList.add(userMap);
+                }
+            }
+            else
+            {
+                message = "Invalid authentication";
+            }
+            loginService.logout();
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
+        }
+        return createModelAndView(isSuccess, message, "userList", userList);
+    }
+
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     public ModelAndView addUser(@RequestBody Map<String, Object> userMap,
             HttpServletRequest request,
